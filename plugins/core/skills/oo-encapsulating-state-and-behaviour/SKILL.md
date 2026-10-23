@@ -80,8 +80,9 @@ for clinic actions, and hands out answers instead of raw collections.
 6. Rule. **Copy a mutable input or output at the boundary.** Copy a list
    passed in before storing it, and copy a mutable list or a date handed
    out before the caller gets it, so later changes on either side cannot
-   reach the object's state. A read-only view is not mutable, so a view
-   is the alternative when callers only read. An entity is not a mutable
+   reach the object's state. A read-only view cannot be changed by the
+   caller, though it shows the object's later changes, so a view is the
+   alternative when callers only read. An entity is not a mutable
    value: a `Slot` is shared by identity, so a method that records one
    keeps the instance it was given.
 
@@ -123,7 +124,7 @@ After:
 class Clinician
   - slots: List<Slot>
   + new()
-    slots := new List<Slot>
+    slots := new List<Slot>()
   + addSlot(slot: Slot): void
     raises SlotsOverlap
     if slots.anyOverlaps(slot) then
@@ -142,7 +143,7 @@ class Scheduler
     return
 ```
 
-`new List<Slot>` is taken to mean an empty list the clinician owns.
+`new List<Slot>()` is taken to mean an empty list the clinician owns.
 `slots.anyOverlaps(slot)` is taken to mean true when some slot the
 clinician already holds overlaps the new one. `slots.add(slot)` appends
 to the clinician's own list once. `slots.readOnlyView()` returns a
