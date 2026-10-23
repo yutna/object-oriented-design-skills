@@ -24,3 +24,9 @@ test('Terms splits on anything that is not a letter or digit', () => {
 test('Terms keeps a word rather than stemming below three letters', () => {
   assert.deepEqual(Terms.of('ied').words, ['ied'])
 })
+
+test('Terms folds create, creates and created to one term', () => {
+  assert.deepEqual(
+    Terms.of('create creates created').words,
+    ['creat', 'creat', 'creat'])
+})
