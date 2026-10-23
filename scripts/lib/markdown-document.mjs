@@ -84,6 +84,20 @@ export class MarkdownDocument {
       .join('\n')
   }
 
+  proseWithoutCode() {
+    const text = this.prose()
+    const spans = this.#inlineCodeSpans(text)
+    let result = ''
+    let at = 0
+    for (const span of spans) {
+      result += text.slice(at, span.start)
+      // Same length keeps every line and column where the reader sees it.
+      result += ' '.repeat(span.end - span.start)
+      at = span.end
+    }
+    return result + text.slice(at)
+  }
+
   links() {
     const text = this.prose()
     const spans = this.#inlineCodeSpans(text)
