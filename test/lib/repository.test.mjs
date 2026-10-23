@@ -120,3 +120,49 @@ test('Repository.at on this repository finds the two skills and the package vers
       'SKILL.md')))
   assert.ok(!markdownPaths.includes(join(root, 'OOP_SOURCES.md')))
 })
+
+test('scriptFiles lists every .mjs under scripts in path order', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'oo-scripts-'))
+  try {
+    await writeFile(
+      join(root, 'package.json'),
+      JSON.stringify({ name: 'fixture', version: '1.0.0' }))
+    await mkdir(join(root, 'scripts', 'lib', 'checks'), {
+      recursive: true
+    })
+    await writeFile(join(root, 'scripts', 'entry.mjs'), 'export {}\n')
+    await writeFile(
+      join(root, 'scripts', 'lib', 'second.mjs'),
+      'export class Second {}\n')
+    await writeFile(
+      join(root, 'scripts', 'lib', 'first.mjs'),
+      'export class First {}\n')
+    await writeFile(
+      join(root, 'scripts', 'lib', 'checks', 'deep.mjs'),
+      'export class Deep {}\n')
+    await writeFile(join(root, 'scripts', 'ignored.txt'), 'ignored\n')
+
+    const files = Repository.at(root).scriptFiles()
+    assert.deepEqual(files.map((file) => file.path), [
+      join(root, 'scripts', 'entry.mjs'),
+      join(root, 'scripts', 'lib', 'checks', 'deep.mjs'),
+      join(root, 'scripts', 'lib', 'first.mjs'),
+      join(root, 'scripts', 'lib', 'second.mjs')
+    ])
+    assert.equal(files[2].text, 'export class First {}\n')
+  } finally {
+    await rm(root, { recursive: true, force: true })
+  }
+})
+
+test('scriptFiles is empty when scripts does not exist', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'oo-no-scripts-'))
+  try {
+    await writeFile(
+      join(root, 'package.json'),
+      JSON.stringify({ name: 'fixture', version: '1.0.0' }))
+    assert.deepEqual(Repository.at(root).scriptFiles(), [])
+  } finally {
+    await rm(root, { recursive: true, force: true })
+  }
+})

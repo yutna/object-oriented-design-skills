@@ -1,4 +1,4 @@
-import { readdirSync } from 'node:fs'
+import { existsSync, readdirSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 
 import { ManifestError } from './errors.mjs'
@@ -70,6 +70,14 @@ export class Repository {
     return files.sort().map((path) => TextFile.read(path))
   }
 
+  scriptFiles() {
+    const directory = join(this.#root, 'scripts')
+    if (!existsSync(directory)) return []
+    const files = []
+    this.#collectScripts(directory, files)
+    return files.sort().map((path) => TextFile.read(path))
+  }
+
   #collectMarkdown(directory, files) {
     for (const entry of readdirSync(directory, { withFileTypes: true })) {
       if (entry.isDirectory()) {
@@ -79,6 +87,17 @@ export class Repository {
       }
       if (!entry.isFile() || !entry.name.endsWith('.md')) continue
       if (Repository.#SKIPPED_FILES.has(entry.name)) continue
+      files.push(join(directory, entry.name))
+    }
+  }
+
+  #collectScripts(directory, files) {
+    for (const entry of readdirSync(directory, { withFileTypes: true })) {
+      if (entry.isDirectory()) {
+        this.#collectScripts(join(directory, entry.name), files)
+        continue
+      }
+      if (!entry.isFile() || !entry.name.endsWith('.mjs')) continue
       files.push(join(directory, entry.name))
     }
   }
