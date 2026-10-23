@@ -49,9 +49,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          export HOME="$(mktemp -d)"
+          HOME="$(mktemp -d)"
+          export HOME
           ./scripts/install.sh | tee first.out
-          test -f "$HOME/.claude/skills/oo-no-such-skill/SKILL.md"
+          test -f "$HOME/.claude/skills/oo-design/SKILL.md"
           grep -qxF '## Object-oriented design skills' first.out
           ./scripts/install.sh | tee second.out
           if grep -q '^copied' second.out; then
@@ -127,7 +128,7 @@ jobs:
           $env:HOME = $temp
           ./scripts/install.ps1 | Tee-Object -FilePath first.out
           if ($LASTEXITCODE -ne 0) { throw 'install failed' }
-          if (-not (Test-Path "$env:USERPROFILE/.claude/skills/oo-no-such-skill/SKILL.md")) { throw 'wrong path' }
+          if (-not (Test-Path "$env:USERPROFILE/.claude/skills/oo-design/SKILL.md")) { throw 'install missing' }
           if (-not (Select-String -Path first.out -SimpleMatch '## Object-oriented design skills' -Quiet)) { throw 'block missing' }
           ./scripts/install.ps1 | Tee-Object -FilePath second.out
           if ($LASTEXITCODE -ne 0) { throw 'second install failed' }
