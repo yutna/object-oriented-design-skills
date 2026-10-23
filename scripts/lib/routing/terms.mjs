@@ -59,6 +59,8 @@ export class Terms {
       // "ies" folds back to "y", the way the singular is written.
       return suffix === 'ies' ? `${base}y` : base
     }
+    // A trailing e carries no sound of its own after the suffix rules.
+    if (word.length > 3 && word.endsWith('e')) return word.slice(0, -1)
     return word
   }
 }
