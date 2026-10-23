@@ -11,6 +11,7 @@ import {
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
+import { RepoError } from '../../scripts/lib/errors.mjs'
 import { Report } from '../../scripts/lib/report.mjs'
 import { Repository } from '../../scripts/lib/repository.mjs'
 import { VersionBump } from '../../scripts/lib/version-bump.mjs'
@@ -358,6 +359,22 @@ test('a SKILL.md without a version line is an error', async () => {
         repository.marketplacePath(),
         repository.pluginPath()
       ])
+  } finally {
+    await repository.close()
+  }
+})
+
+test('an invalid package.json version throws', async () => {
+  const repository = await TempRepository.create({
+    packageVersion: '0.3'
+  })
+  try {
+    const writer = new MemoryWriter()
+    assert.throws(
+      () => repository.run(writer),
+      (error) => error instanceof RepoError &&
+        error.message === 'Invalid version: 0.3')
+    assert.deepEqual(writer.writes, [])
   } finally {
     await repository.close()
   }

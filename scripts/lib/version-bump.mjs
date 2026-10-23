@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 import { Check } from './check.mjs'
+import { Version } from './version.mjs'
 
 export class VersionBump extends Check {
   static #VERSION_PAIR = /("version": ")[^"]*(")/g
@@ -22,7 +23,7 @@ export class VersionBump extends Check {
   }
 
   inspect(report) {
-    const version = this.#repository.packageVersion
+    const version = Version.parse(this.#repository.packageVersion)
     const marketplace = this.#repository.marketplace()
     const plugins = marketplace.plugins()
     let count = 0
