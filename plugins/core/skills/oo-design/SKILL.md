@@ -73,8 +73,11 @@ skills land.
 |---|---|
 |Which class should do this?|[Assigning responsibilities][assigning]|
 |This class does too much|[Assigning responsibilities][assigning]|
+|A change ripples through many classes|[Diagnosing coupling][coupling]|
+|How tightly are these two parts tied?|[Diagnosing coupling][coupling]|
 
 [assigning]: ../oo-assigning-responsibilities/SKILL.md
+[coupling]: ../oo-diagnosing-coupling/SKILL.md
 
 ## Red flags
 

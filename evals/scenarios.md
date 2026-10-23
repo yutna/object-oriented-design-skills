@@ -45,3 +45,19 @@ existing owner; no service, new class or redesign. The sizing table's
 one-method row skips remodelling.
 
 Should reach `oo-design`.
+
+## 4. The change that touches everything
+
+> Every time we change how a slot is booked, we also edit the reminder
+> sender, the invoice builder and two reports. Our
+> `reminders.send(appointment, 2, true)` call has a number and a flag
+> that nobody remembers. How do we tell how tightly these parts are
+> tied, and what should we loosen first?
+
+Must contain: naming the ties present (the call's positional number
+and flag, and the parts that change together); replacing the number
+and the flag with a named value or type; using what changes together
+in the history as evidence before restructuring; loosening the
+strongest, most widespread tie first.
+
+Should reach `oo-diagnosing-coupling`.

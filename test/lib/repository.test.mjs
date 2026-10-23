@@ -98,7 +98,7 @@ test('a valid repository with one plugin and two skills', async () => {
   }
 })
 
-test('Repository.at on this repository finds the two skills and the package version', async () => {
+test('Repository.at on this repository finds the three skills and the package version', async () => {
   const root = process.cwd()
   const repository = Repository.at(root)
   const packageData = JSON.parse(
@@ -106,7 +106,7 @@ test('Repository.at on this repository finds the two skills and the package vers
   assert.equal(repository.packageVersion, packageData.version)
   assert.deepEqual(
     repository.skills().map((skill) => skill.name).sort(),
-    ['oo-assigning-responsibilities', 'oo-design'])
+    ['oo-assigning-responsibilities', 'oo-design', 'oo-diagnosing-coupling'])
   const markdownPaths = repository.markdownFiles()
     .map((file) => file.path)
   assert.ok(markdownPaths.includes(
