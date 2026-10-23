@@ -32,6 +32,7 @@
     "validate:oop": "node scripts/validate-oop.mjs",
     "validate:skills": "node scripts/validate-skills.mjs",
     "validate:rules": "node scripts/validate-rules.mjs",
+    "bump-version": "node scripts/bump-version.mjs",
     "gate": "npm test && npm run test:unit"
   },
   "devDependencies": {
