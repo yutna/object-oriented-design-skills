@@ -13,7 +13,9 @@ jobs:
       preflight: >-
         test "$(jq -r .version package.json)" = "$VERSION" &&
         test "$(jq -r '.plugins[].version' .claude-plugin/marketplace.json | sort -u)" = "$VERSION" &&
-        test "$(jq -r .version plugins/*/.claude-plugin/plugin.json | sort -u)" = "$VERSION"
+        test "$(jq -r .version plugins/*/.claude-plugin/plugin.json | sort -u)" = "$VERSION" &&
+        test "$(ls plugins/*/skills/*/SKILL.md | wc -l)" -gt 0 &&
+        test "$(grep -lx "  version: $VERSION" plugins/*/skills/*/SKILL.md | wc -l)" -eq "$(ls plugins/*/skills/*/SKILL.md | wc -l)"
   # publish:                                 # stack-specific, optional
   #   needs: release
   #   if: needs.release.outputs.released == 'true'
