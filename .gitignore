@@ -167,3 +167,8 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+
+# Local-only notes. Never tracked; CI fails if they are.
+OOP_SOURCES.md
+PRIVATE-NOTES.md
+.claude/work/
