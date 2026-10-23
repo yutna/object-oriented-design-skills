@@ -8,7 +8,8 @@ export class EmptyTreeRun extends Check {
   static SCRIPTS = Object.freeze([
     'scripts/validate-oop.mjs',
     'scripts/validate-skills.mjs',
-    'scripts/validate-rules.mjs'
+    'scripts/validate-rules.mjs',
+    'scripts/eval-routing.mjs'
   ])
 
   #root
