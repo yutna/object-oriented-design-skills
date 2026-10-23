@@ -1,0 +1,14 @@
+{
+  "name": "object-oriented-design-skills",
+  "version": "0.1.0",
+  "description": "Agent Skills carrying design rules for codebases written in an object-oriented style: assigning responsibilities, modelling a domain in objects, inverting dependencies, structuring a system, and refactoring toward all of it",
+  "author": {
+    "name": "Yutthana Siphuengchai",
+    "url": "https://github.com/yutna"
+  },
+  "homepage": "https://github.com/yutna/object-oriented-design-skills",
+  "repository": "https://github.com/yutna/object-oriented-design-skills",
+  "license": "MIT",
+  "keywords": ["object-oriented-design", "software-design", "domain-driven-design", "refactoring", "code-review", "architecture"],
+  "skills": "./skills/"
+}
