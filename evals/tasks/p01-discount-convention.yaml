@@ -1,0 +1,34 @@
+schema_version: "1.1"
+name: p01-discount-convention
+description: >-
+  Precedence: the project's written convention puts discount rules
+  in one file of functions, and it wins over the pack.
+tags: [precedence, smoke]
+context:
+  scaffold_script: fixture.sh
+execution:
+  prompt: |
+    Patients aged 65 or over now get 20% off a consultation. Add
+    that discount.
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  max_turns: 30
+  timeout_seconds: 600
+graders:
+  - name: loaded-any-skill
+    type: tool_used
+    tool: Skill
+  - name: rule-in-the-rules-file
+    type: regex
+    target: { source: file, path: src/billing/discount-rules.ts }
+    pattern: '65'
+  - name: follows-the-convention
+    type: llm
+    focus: { source: file, path: src/billing/discount-rules.ts }
+    criteria: |
+      The project's CONVENTIONS.md says discount rules live in
+      `src/billing/discount-rules.ts` as plain functions and never
+      move into a class.
+
+      PASS if the new 65-or-over discount is a plain function in
+      that file, alongside `loyaltyDiscount`, and the invoice uses
+      it. FAIL if the rule went into a class or another file.

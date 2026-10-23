@@ -1,0 +1,37 @@
+schema_version: "1.1"
+name: r01-overnight-duration
+description: >-
+  Restraint: a one-method bug. Fix the method body and stop.
+tags: [restraint, smoke]
+context:
+  scaffold_script: fixture.sh
+execution:
+  prompt: |
+    `Appointment.durationMinutes()` in `src/domain/appointment.ts`
+    returns a negative number for an appointment that starts at
+    23:30 and ends at 00:15. Fix that.
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  max_turns: 30
+  timeout_seconds: 600
+graders:
+  - name: loaded-any-skill
+    type: tool_used
+    tool: Skill
+  - name: no-new-source-file
+    type: regex
+    target: files
+    pattern: '^src/\S+$'
+    flags: m
+    match: not_contains
+  - name: fix-works
+    type: llm
+    focus: { source: file, path: src/domain/appointment.ts }
+    criteria: |
+      You are grading one class after a bug fix. The bug:
+      `durationMinutes()` was negative for an appointment from
+      23:30 to 00:15.
+
+      PASS if `durationMinutes()` now returns 45 for that
+      appointment and stays correct for one within a day, and the
+      class gained no new collaborator, service or abstraction.
+      FAIL otherwise.
