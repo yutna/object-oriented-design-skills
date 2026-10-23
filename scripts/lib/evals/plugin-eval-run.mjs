@@ -185,6 +185,8 @@ export class PluginEvalRun {
         '--runs', String(this.#options.runs),
         '--ablation', this.#ablation()
       ]
+      // Stub for the red run: every piece receives the flag with no tools.
+      args.push('--allow-tools', ...this.#allowTools())
       this.#prepared = {
         cwd,
         copy,
@@ -198,6 +200,11 @@ export class PluginEvalRun {
       rmSync(cwd, { recursive: true, force: true })
       throw error
     }
+  }
+
+  #allowTools() {
+    // Stub for the red run: the next commit decides this by the piece's family.
+    return []
   }
 
   #ablation() {

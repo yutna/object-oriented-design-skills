@@ -352,6 +352,40 @@ test('a block piece runs the exact command the issue pins', async () => {
   }
 })
 
+test('a task piece grants Write and Edit', async () => {
+  const fixture = await RunFixture.create({
+    result: SampleResult.read(),
+    cases: [
+      CaseFixture.task(EvalRepositoryFixture.TASK),
+      CaseFixture.task(EvalRepositoryFixture.RESTRAINT, 'restraint')
+    ]
+  })
+  try {
+    const command = fixture.run.command()
+    const at = command.indexOf('--allow-tools')
+    assert.notEqual(at, -1, 'the task command holds no --allow-tools')
+    assert.deepEqual(
+      command.slice(at, at + 3),
+      ['--allow-tools', 'Write', 'Edit'])
+  } finally {
+    fixture.run.close()
+    await fixture.close()
+  }
+})
+
+test('a question piece grants no tool', async () => {
+  const fixture = await RunFixture.create({ result: SampleResult.read() })
+  try {
+    assert.equal(
+      fixture.run.command().includes('--allow-tools'),
+      false,
+      'the question command holds --allow-tools')
+  } finally {
+    fixture.run.close()
+    await fixture.close()
+  }
+})
+
 test('a baseline piece runs with-without and keeps its no-plugin runs',
   async () => {
     const scaffold = await mkdtemp(join(tmpdir(), 'e-'))
