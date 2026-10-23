@@ -1,0 +1,89 @@
+---
+name: oo-design
+description: Use when starting or sizing design work in an object-oriented codebase, or when unsure which object design rule applies to a change.
+license: MIT
+metadata:
+  version: 0.1.0
+  pack: object-oriented-design-skills
+---
+
+# Object-Oriented Design
+
+## Overview
+
+The pack is design rules for codebases written in an object-oriented
+style, not universal advice. A project's own written conventions win over
+the pack. Follow the idiom of the module being changed. This skill sizes
+the task and names the skill that fits.
+
+## How much design a task warrants
+
+|Task|Use|Skip|
+|---|---|---|
+|An answer used once, then thrown away|Nothing|Everything|
+|One method in a class that exists|Its name and its contract|Remodelling|
+|A feature inside an existing flow|The idiom that flow uses|New boundaries|
+|A new class or module|The design loop|Nothing|
+|A new context|The loop, then its boundaries|Nothing|
+|A new system from nothing|The loop, contexts, then structure|Nothing|
+
+## Before designing
+
+Before designing, state the gate: one rule the software must follow,
+with one example it accepts and one it rejects. For example, "A slot can
+hold at most one appointment." It accepts booking a second patient into
+a different slot and rejects booking a second patient into the same
+slot. If you can write the rule down, start. If you cannot, what is
+missing is not design, and this pack cannot supply it.
+
+## The design loop
+
+1. Say what the software must do in the domain's words, and find the
+   object that knows what each behaviour needs.
+2. Find the consistency boundary: what must be true together in one
+   transaction.
+3. Decide where each rule lives: an entity, a value object, or a domain
+   service.
+4. Design the messages each object answers, and make illegal states
+   impossible to construct.
+5. Invert dependencies so the domain knows nothing of the database or
+   the framework.
+6. Name things in the domain's words, and comment only what the code
+   cannot say.
+7. Check the result against the red flags below.
+
+## How strictly a rule is meant
+
+Every core rule in this pack carries one of three labels, and the label
+says how strictly it is meant.
+
+- **Rule.** Breaking it is a defect. No framework excuses it.
+- **Default.** Do this unless a stated condition holds. The condition is
+  its own sentence, never a trailing clause.
+- **Judgement.** Two answers are defensible. The skill says what tips the
+  balance.
+
+## Symptoms to skills
+
+Symptoms point to the skill that treats them, and this table grows as
+skills land.
+
+|Symptom|Skill|
+|---|---|
+
+## Red flags
+
+Places to look, not verdicts. A red flag becomes a finding only with
+evidence: a measurement, a reproducible bug, or a failing test.
+
+- A class named Manager, Helper or Util.
+- A method that asks another object for its data and then decides for
+  it.
+- A constructor that leaves the object unusable until a setter runs.
+- One business rule whose change touches many classes.
+- A test that needs many mocks to check one decision.
+
+## Further reading
+
+- [Notation](references/notation.md)
+- [The CLAUDE.md block](references/claude-md-block.md)
