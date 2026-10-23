@@ -40,10 +40,10 @@ export class NegativeCases {
   static #OOP_TEXT = 'function broken() {}\n' +
     'export class NegativeFixture {}\n'
   static #UNKNOWN_ROUTING_FIND =
-    'which object should hold the rule for a booking change -> oo-design'
+    'which class owns the appointment reminder -> ' +
+    'oo-assigning-responsibilities'
   static #UNKNOWN_ROUTING_REPLACE =
-    'which object should hold the rule for a booking change -> ' +
-    'oo-no-such-skill'
+    'which class owns the appointment reminder -> oo-no-such-skill'
   static #ZERO_ROUTING_FIND =
     'we need to size this appointment design work -> oo-design'
   static #ZERO_ROUTING_REPLACE =
