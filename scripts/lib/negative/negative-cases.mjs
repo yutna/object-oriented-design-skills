@@ -12,6 +12,8 @@ export class NegativeCases {
   static #OOP = 'scripts/validate-oop.mjs'
   static #EVAL = 'scripts/eval-routing.mjs'
   static #PROSE = 'scripts/validate-prose.mjs'
+  static #COUNTS = 'scripts/validate-counts.mjs'
+  static #README = 'evals/README.md'
   static #ROUTING = 'evals/routing-cases.md'
   static #SCENARIOS = 'evals/scenarios.md'
 
@@ -63,6 +65,10 @@ export class NegativeCases {
     "style, not universal advice. A project's own written conventions " +
     "win over\nthe pack. Follow the idiom of the module being changed. " +
     "This skill sizes\nthe task and names the skill that fits."
+  static #COUNT_FIND = 'carries one of three labels'
+  static #COUNT_REPLACE = 'carries one of four labels'
+  static #SCENARIO_CLAIM_FIND = '`scenarios.md` holds 3 scenarios'
+  static #SCENARIO_CLAIM_REPLACE = '`scenarios.md` contains 3 scenarios'
 
   static ALL = Object.freeze([
     new NegativeCase(
@@ -298,6 +304,22 @@ export class NegativeCases {
         '## Overview\n\n' + NegativeCases.#SHARED_COPY +
         '\n\nEvery behaviour needs an owner.'),
       'paragraph is shared by oo-design and ' +
-      'oo-assigning-responsibilities')
+      'oo-assigning-responsibilities'),
+    new NegativeCase(
+      'counts rejects a stale label count',
+      NegativeCases.#COUNTS,
+      new ReplaceText(
+        NegativeCases.#INDEX,
+        NegativeCases.#COUNT_FIND,
+        NegativeCases.#COUNT_REPLACE),
+      'stated four but the fact is 3'),
+    new NegativeCase(
+      'counts rejects a missing scenario claim',
+      NegativeCases.#COUNTS,
+      new ReplaceText(
+        NegativeCases.#README,
+        NegativeCases.#SCENARIO_CLAIM_FIND,
+        NegativeCases.#SCENARIO_CLAIM_REPLACE),
+      'claim not found: /holds (\\S+) scenarios/')
   ])
 }
