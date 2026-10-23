@@ -5,15 +5,27 @@
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 Agent Skills carrying design rules for codebases written in an
-object-oriented style. For Claude Code.
+object-oriented style, for Claude Code. They are not universal advice:
+a project's own written conventions win.
 
-## Features
+## Status
+
+Pre-1.0 and growing. Each 0.x release adds skills. The index skill
+lists only skills that exist.
 
 ## Installation
 
-## Usage
+In Claude Code:
+
+```text
+/plugin marketplace add yutna/object-oriented-design-skills
+/plugin install object-oriented-design-skills@object-oriented-design-skills
+```
 
 ## Development
+
+Run `npm run gate`. See [AGENTS.md](AGENTS.md) and
+[CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Contributing
 
