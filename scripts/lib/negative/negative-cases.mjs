@@ -203,6 +203,15 @@ export class NegativeCases {
       'oop rejects a top-level function in scripts/lib',
       NegativeCases.#OOP,
       new CreateFile(NegativeCases.#OOP_FILE, NegativeCases.#OOP_TEXT),
-      'top-level FunctionDeclaration is not allowed')
+      'top-level FunctionDeclaration is not allowed'),
+    new NegativeCase(
+      'oop rejects a class inside the main guard',
+      NegativeCases.#OOP,
+      new ReplaceText(
+        NegativeCases.#OOP,
+        'if (import.meta.main) {\n',
+        'if (import.meta.main) {\n  class GuardClass {}\n'),
+      'the main guard may only compose objects, not declare ' +
+      'ClassDeclaration')
   ])
 }
