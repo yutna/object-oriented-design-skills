@@ -81,7 +81,7 @@ Never take an issue from `Backlog` or one without a milestone.
    npm run gate && git commit -m "<message>"
    ```
 
-   Until issue #2 adds the toolchain, there is no gate to run.
+   Until the toolchain issue of v0.1.0 lands, there is no gate to run.
 
 5. Fill the Acceptance criteria section of the pull request body: copy
    every criterion from the issue, tick it, and put the evidence beside
