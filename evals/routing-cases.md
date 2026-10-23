@@ -18,6 +18,8 @@ where should this reminder behaviour live -> oo-assigning-responsibilities
 this clinic design has one class doing too much -> oo-assigning-responsibilities
 the visit handler decides if a slot is free -> oo-assigning-responsibilities
 we are starting this design with one class for visits -> oo-design
+which object should hold the booking rule -> oo-assigning-responsibilities
+should the schedule create the appointment -> oo-assigning-responsibilities
 ```
 
 ## Known misses
