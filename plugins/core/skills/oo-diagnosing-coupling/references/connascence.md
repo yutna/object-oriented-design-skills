@@ -107,15 +107,15 @@ class Appointment
 
 Two parts must act at the same moment. A reminder sender once had to be
 called at the minute the appointment ended. Weaken it by letting the
-reminder carry its own time and answer whether it is due, so the caller
-no longer shares a clock.
+reminder carry its own time and answer whether it is due from `sendAt`
+on, so the caller no longer shares a clock.
 
 ```text
 class Reminder
   - sendAt: DateTime
   + new(sendAt: DateTime)
   + due(now: DateTime): Boolean
-    return now = sendAt
+    return now.isAtOrAfter(sendAt)
 ```
 
 ### Value
