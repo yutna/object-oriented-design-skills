@@ -3,6 +3,65 @@
 Two eval files, two different checks. Neither proves that an agent
 routes correctly.
 
+## Tiers
+
+**Tier 0, static.** This tier runs `npm run gate`: the Markdown lint,
+the skill and rules validators, the keyword routing check, the case
+format check and the coverage check. It reads files and calls no model.
+It measures whether the cases and pack obey their own rules, not whether
+an agent routes or answers well. A clean run proves only that the
+repository is consistent; it does not prove that any case measures the
+right thing. It spends no quota, and every pull request passes it.
+
+**Tier 1, one model call per case.** This tier runs
+`node scripts/eval-route-model.mjs` through the queue, with
+`--dry-run` to print the calls without making them. It shows the
+listing exactly as an agent sees it and asks a small model for one
+skill name per routing case. It measures top-1 routing against the
+expected skill and prints each miss with the answer it gave. A clean run
+does not prove that the skill text helps, that a real session would
+choose the same skill, or that one run would repeat. It costs about
+0.04% of a week's quota per run, under 1% for the routing cases as they
+stand.
+
+**Tier 2, the quality of what changed.** This tier runs the plugin-eval
+pieces for the skills a milestone added or changed, three runs per case,
+with the block against a stored no-pack baseline. Queue the pieces with
+`node scripts/eval-plugin.mjs --queue`, then let the queue run them.
+`node scripts/eval-summary.mjs <results dir>` reads each piece as cases
+won and lost, names the failed graders, and lists the skills each run
+opened. A clean run does not prove general quality: three runs are a
+sample, the judge can be wrong, and a case can swing with no change. It
+costs about 2.5% of a week per skill milestone; a blocked batch waits
+for quota and does not hold a milestone open.
+
+**Tier 3, the release sweep.** This tier runs every case in both arms,
+three runs each, with baselines reused when the agent model is
+unchanged. Queue a baseline sweep with `--arm baseline` first, then the
+block sweep with `--arm block`; summarise the timestamp folder with
+`node scripts/eval-summary.mjs evals/results/<stamp>`. Read every losing
+case before changing anything, and rerun it in the next window. A clean
+run does not prove that the release is stable across models or that a
+loss has one cause. It costs 15% to 30% of a week, in sittings of up to
+50 runs.
+
+### Queue rules
+
+- The reviewer runs every model tier. The implementer builds cases and
+  code, and never spends quota.
+- A new piece starts only when the five-hour window is under 50% used
+  and the seven-day window is under 75% used.
+- A batch stops before its next piece when the five-hour window reaches
+  70% or the seven-day window reaches 85%. The queue prints a `WAIT:`
+  line with both readings and the reset time, and leaves the piece at
+  the front.
+- A pause line prints `PAUSE:` and stops the run. The first piece of a
+  plugin-eval batch is followed by `read the traces of piece 1 before
+  more runs`.
+- `evals/results/queue.json` is the backlog. The oldest entry runs
+  first, and a batch the meter blocks keeps its place until the next
+  sitting. No release or review waits for it.
+
 ## Routing cases
 
 `routing-cases.md` is a keyword check on the skill names and

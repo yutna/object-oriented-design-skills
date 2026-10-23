@@ -1,0 +1,291 @@
+{
+  "schemaVersion": 1,
+  "gradedRuns": 10,
+  "cases": {
+    "q01-the-slot-rule-keeps-moving": {
+      "family": "question",
+      "arms": {
+        "block": {
+          "graded": 2,
+          "passed": 1,
+          "errored": 1,
+          "unjudged": 1,
+          "failedGraders": [
+            "substance"
+          ],
+          "skillsLoaded": [
+            "oo-assigning-responsibilities"
+          ],
+          "skillFilesRead": [
+            "oo-design"
+          ],
+          "runs": [
+            {
+              "state": "graded",
+              "passed": false,
+              "failedGraders": [
+                "substance"
+              ],
+              "skillsLoaded": [
+                "oo-assigning-responsibilities"
+              ],
+              "skillFilesRead": []
+            },
+            {
+              "state": "graded",
+              "passed": true,
+              "failedGraders": [],
+              "skillsLoaded": [],
+              "skillFilesRead": [
+                "oo-design"
+              ]
+            },
+            {
+              "state": "unjudged",
+              "passed": false,
+              "failedGraders": [
+                "substance"
+              ],
+              "skillsLoaded": [],
+              "skillFilesRead": []
+            },
+            {
+              "state": "errored",
+              "passed": false,
+              "failedGraders": [],
+              "skillsLoaded": [],
+              "skillFilesRead": []
+            }
+          ]
+        },
+        "none": {
+          "graded": 2,
+          "passed": 1,
+          "errored": 0,
+          "unjudged": 0,
+          "failedGraders": [
+            "substance"
+          ],
+          "skillsLoaded": [],
+          "skillFilesRead": [],
+          "runs": [
+            {
+              "state": "graded",
+              "passed": true,
+              "failedGraders": [],
+              "skillsLoaded": [],
+              "skillFilesRead": []
+            },
+            {
+              "state": "graded",
+              "passed": false,
+              "failedGraders": [
+                "substance"
+              ],
+              "skillsLoaded": [],
+              "skillFilesRead": []
+            }
+          ]
+        }
+      }
+    },
+    "t01-check-before-booking": {
+      "family": "task",
+      "arms": {
+        "block": {
+          "graded": 1,
+          "passed": 0,
+          "errored": 0,
+          "unjudged": 0,
+          "failedGraders": [
+            "files-changed"
+          ],
+          "skillsLoaded": [],
+          "skillFilesRead": [],
+          "runs": [
+            {
+              "state": "graded",
+              "passed": false,
+              "failedGraders": [
+                "files-changed"
+              ],
+              "skillsLoaded": [],
+              "skillFilesRead": []
+            }
+          ]
+        },
+        "none": {
+          "graded": 1,
+          "passed": 1,
+          "errored": 0,
+          "unjudged": 0,
+          "failedGraders": [],
+          "skillsLoaded": [],
+          "skillFilesRead": [],
+          "runs": [
+            {
+              "state": "graded",
+              "passed": true,
+              "failedGraders": [],
+              "skillsLoaded": [],
+              "skillFilesRead": []
+            }
+          ]
+        }
+      }
+    },
+    "r01-overnight-duration": {
+      "family": "restraint",
+      "arms": {
+        "block": {
+          "graded": 1,
+          "passed": 1,
+          "errored": 0,
+          "unjudged": 0,
+          "failedGraders": [],
+          "skillsLoaded": [],
+          "skillFilesRead": [],
+          "runs": [
+            {
+              "state": "graded",
+              "passed": true,
+              "failedGraders": [],
+              "skillsLoaded": [],
+              "skillFilesRead": []
+            }
+          ]
+        },
+        "none": {
+          "graded": 1,
+          "passed": 0,
+          "errored": 0,
+          "unjudged": 0,
+          "failedGraders": [
+            "files-changed"
+          ],
+          "skillsLoaded": [],
+          "skillFilesRead": [],
+          "runs": [
+            {
+              "state": "graded",
+              "passed": false,
+              "failedGraders": [
+                "files-changed"
+              ],
+              "skillsLoaded": [],
+              "skillFilesRead": []
+            }
+          ]
+        }
+      }
+    },
+    "p01-discount-convention": {
+      "family": "precedence",
+      "arms": {
+        "block": {
+          "graded": 1,
+          "passed": 1,
+          "errored": 0,
+          "unjudged": 0,
+          "failedGraders": [],
+          "skillsLoaded": [],
+          "skillFilesRead": [],
+          "runs": [
+            {
+              "state": "graded",
+              "passed": true,
+              "failedGraders": [],
+              "skillsLoaded": [],
+              "skillFilesRead": []
+            }
+          ]
+        },
+        "none": {
+          "graded": 1,
+          "passed": 1,
+          "errored": 0,
+          "unjudged": 0,
+          "failedGraders": [],
+          "skillsLoaded": [],
+          "skillFilesRead": [],
+          "runs": [
+            {
+              "state": "graded",
+              "passed": true,
+              "failedGraders": [],
+              "skillsLoaded": [],
+              "skillFilesRead": []
+            }
+          ]
+        }
+      }
+    }
+  },
+  "families": {
+    "precedence": {
+      "block": {
+        "graded": 1,
+        "passed": 1,
+        "rate": 1
+      },
+      "none": {
+        "graded": 1,
+        "passed": 1,
+        "rate": 1
+      }
+    },
+    "question": {
+      "block": {
+        "graded": 2,
+        "passed": 1,
+        "rate": 0.5
+      },
+      "none": {
+        "graded": 2,
+        "passed": 1,
+        "rate": 0.5
+      }
+    },
+    "restraint": {
+      "block": {
+        "graded": 1,
+        "passed": 1,
+        "rate": 1
+      },
+      "none": {
+        "graded": 1,
+        "passed": 0,
+        "rate": 0
+      }
+    },
+    "task": {
+      "block": {
+        "graded": 1,
+        "passed": 0,
+        "rate": 0
+      },
+      "none": {
+        "graded": 1,
+        "passed": 1,
+        "rate": 1
+      }
+    }
+  },
+  "wins": {
+    "block": [
+      "r01-overnight-duration"
+    ]
+  },
+  "losses": {
+    "block": [
+      "t01-check-before-booking"
+    ]
+  },
+  "pieces": [
+    {
+      "path": "run-1",
+      "arm": "block",
+      "graded": 5
+    }
+  ]
+}
