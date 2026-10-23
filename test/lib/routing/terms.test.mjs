@@ -30,3 +30,15 @@ test('Terms folds create, creates and created to one term', () => {
     Terms.of('create creates created').words,
     ['creat', 'creat', 'creat'])
 })
+
+test('Terms folds rule and rules to one term', () => {
+  assert.deepEqual(Terms.of('rule rules').words, ['rul', 'rul'])
+})
+
+test('Terms keeps treat and treated as one term', () => {
+  assert.deepEqual(Terms.of('treat treated').words, ['treat', 'treat'])
+})
+
+test('Terms keeps a three-letter word ending in e', () => {
+  assert.deepEqual(Terms.of('axe').words, ['axe'])
+})
