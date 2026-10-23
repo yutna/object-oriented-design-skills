@@ -16,8 +16,8 @@ route passes.
 > decision live?
 
 Must contain: the check moving to the object that holds the slot's
-booking data; the scheduler and the controller asking that object; one
-owner for the rule.
+booking data; neither the scheduler nor the controller deciding it from
+the slot's fields itself; one owner for the rule.
 
 Should reach `oo-assigning-responsibilities`.
 
