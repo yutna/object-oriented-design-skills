@@ -17,7 +17,8 @@ export class Cli {
     } catch (error) {
       if (error instanceof RepoError) {
         this.#process.stderr.write(`error: ${error.message}\n`)
-        this.#process.exitCode = 1
+        // The error carries 1 for a failed check and 2 for a refusal.
+        this.#process.exitCode = error.exitCode
         return
       }
       const stack = error instanceof Error ? error.stack : String(error)
