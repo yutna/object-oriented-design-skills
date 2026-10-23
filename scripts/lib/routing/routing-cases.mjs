@@ -4,11 +4,36 @@ import { RoutingCase } from './routing-case.mjs'
 
 export class RoutingCases {
   static #LANGUAGE = 'text'
+  static #KNOWN_MISSES = 'Known misses'
 
   static of(textFile) {
-    // Only the text fence holds cases; other fences are not routing data.
+    // Only the first text fence holds cases; other fences are not routing data.
     const fence = new MarkdownDocument(textFile).fences()
       .find((candidate) => candidate.language === RoutingCases.#LANGUAGE)
+    return RoutingCases.#read(textFile, fence)
+  }
+
+  static knownMissesOf(textFile) {
+    // A known miss sits only in its own section; no section means none.
+    const document = new MarkdownDocument(textFile)
+    return RoutingCases.#read(
+      textFile,
+      RoutingCases.#knownMissFence(document))
+  }
+
+  static #knownMissFence(document) {
+    const heading = document.headings().find((candidate) =>
+      candidate.text === RoutingCases.#KNOWN_MISSES)
+    if (heading === undefined) return undefined
+    const next = document.headings().find((candidate) =>
+      candidate.line > heading.line && candidate.level <= heading.level)
+    return document.fences().find((candidate) =>
+      candidate.language === RoutingCases.#LANGUAGE &&
+      candidate.startLine > heading.line &&
+      (next === undefined || candidate.startLine < next.line))
+  }
+
+  static #read(textFile, fence) {
     if (fence === undefined) return Object.freeze([])
     const cases = []
     const lines = fence.body.split('\n')
