@@ -24,7 +24,11 @@ value WorkingPeriod
 class WorkingHours
   - periods: List<WorkingPeriod>
   + new(initialPeriods: List<WorkingPeriod>)
-    periods := initialPeriods.copy()
+    raises OverlappingHours
+    if initialPeriods.hasOverlap() then
+      raise OverlappingHours
+    else
+      periods := initialPeriods.copy()
   + add(period: WorkingPeriod): void
     raises OverlappingHours
     if periods.anyOverlaps(period) then
@@ -36,14 +40,16 @@ class WorkingHours
     return periods.readOnlyView()
 ```
 
-`periods.anyOverlaps(period)` is taken to mean true when some period in
-the list overlaps the new one. `periods.add(period)` appends to the
-clinician's own list once. `initialPeriods.copy()` is taken to mean a
-new list with the same periods, so a caller that later changes its own
-list does not change the working hours. `periods.readOnlyView()` returns
-a `ReadOnlyList<WorkingPeriod>` that readers cannot change. The
-constructor sets `periods` before any method reads it, and every field
-is private.
+`initialPeriods.hasOverlap()` is taken to mean true when two periods in
+the list overlap. `initialPeriods.copy()` is taken to mean a new list
+with the same periods, so a caller that later changes its own list does
+not change the working hours. `periods.anyOverlaps(period)` is taken to
+mean true when some period in the list overlaps the new one.
+`periods.add(period)` appends to the clinician's own list once.
+`periods.readOnlyView()` returns a `ReadOnlyList<WorkingPeriod>` that
+readers cannot change. The constructor raises rather than store an
+overlapping list, sets `periods` before any method reads it, and every
+field is private.
 
 ## Methods that name the action
 
@@ -55,7 +61,11 @@ question without changing anything.
 class Patient
   - allergies: List<Allergy>
   + new(initialAllergies: List<Allergy>)
-    allergies := initialAllergies.copy()
+    raises AllergyAlreadyRecorded
+    if initialAllergies.hasDuplicates() then
+      raise AllergyAlreadyRecorded
+    else
+      allergies := initialAllergies.copy()
   + record(allergy: Allergy): void
     raises AllergyAlreadyRecorded
     if allergies.contains(allergy) then
@@ -69,13 +79,15 @@ class Patient
     return allergies.readOnlyView()
 ```
 
-`allergies.contains(allergy)` is taken to mean true when the list holds
-an allergy equal to the new one. `allergies.add(allergy)` appends once.
-`initialAllergies.copy()` is taken to mean a new list with the same
-allergies, so the caller keeps no handle on the stored list. `record` is
-a command and returns nothing; `hasAllergy` and `allergies()` are
-queries and change nothing. The constructor sets `allergies` before
-either query reads it, and every field is private.
+`initialAllergies.hasDuplicates()` is taken to mean true when two
+allergies in the list are equal. `initialAllergies.copy()` is taken to
+mean a new list with the same allergies, so the caller keeps no handle
+on the stored list. `allergies.contains(allergy)` is taken to mean true
+when the list holds an allergy equal to the new one.
+`allergies.add(allergy)` appends once. `record` is a command and returns
+nothing; `hasAllergy` and `allergies()` are queries and change nothing.
+The constructor raises rather than store a duplicate, sets `allergies`
+before either query reads it, and every field is private.
 
 ## Copy what crosses the boundary
 
