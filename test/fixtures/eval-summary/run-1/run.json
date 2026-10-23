@@ -1,0 +1,14 @@
+{
+  "costUsd": 0.18,
+  "model": "claude-sonnet-5-5",
+  "judgeModel": "claude-haiku-5-5",
+  "commit": "0123456789abcdef0123456789abcdef01234567",
+  "dirty": false,
+  "arm": "block",
+  "cases": [
+    "q01-the-slot-rule-keeps-moving",
+    "t01-check-before-booking",
+    "r01-overnight-duration",
+    "p01-discount-convention"
+  ]
+}

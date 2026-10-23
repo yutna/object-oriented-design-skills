@@ -1,0 +1,2 @@
+{"type":"assistant","message":{"content":[{"type":"tool_use","id":"toolu_01MriiK91JpMMuYYfYmvqMPK","name":"Skill","input":{"skill":"object-oriented-design-skills:oo-assigning-responsibilities"}}]}}
+{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"toolu_01MriiK91JpMMuYYfYmvqMPK","is_error":null,"content":"Launching skill: object-oriented-design-skills:oo-assigning-responsibilities"}]}}

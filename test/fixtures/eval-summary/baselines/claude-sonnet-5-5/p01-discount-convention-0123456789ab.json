@@ -1,0 +1,22 @@
+[
+  {
+    "passed": true,
+    "score": 1,
+    "costUsd": 0.04,
+    "judgeCostUsd": 0,
+    "error": null,
+    "tracePath": null,
+    "skippedPaidGraders": false,
+    "graders": [
+      {
+        "name": "files-changed",
+        "passed": true,
+        "scored": true,
+        "withOnly": false,
+        "judgeVotes": null,
+        "explanation": "the convention won",
+        "evidence": ""
+      }
+    ]
+  }
+]

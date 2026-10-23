@@ -1,0 +1,2 @@
+{"type":"assistant","message":{"content":[{"type":"tool_use","id":"toolu_01ReadSkill","name":"Read","input":{"file_path":"/repo/plugins/core/skills/oo-design/SKILL.md"}}]}}
+{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"toolu_01ReadSkill","is_error":null,"content":"# Design"}]}}
