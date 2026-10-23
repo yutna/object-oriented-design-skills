@@ -28,6 +28,7 @@ test('a Skill reads its frontmatter, document and references', async () => {
     await writeFile(join(references, 'b.md'), '# B\n')
     await writeFile(join(references, 'a.md'), '# A\n')
     await writeFile(join(references, 'image.png'), 'not markdown\n')
+    await mkdir(join(references, 'nested'))
 
     const skill = new Skill(directory, TextFile.read(path))
     assert.equal(skill.directoryName, 'oo-demo')
@@ -46,6 +47,34 @@ test('a Skill reads its frontmatter, document and references', async () => {
     assert.deepEqual(
       skill.referenceFiles().map((file) => file.path),
       [join(references, 'a.md'), join(references, 'b.md')])
+    assert.deepEqual(
+      skill.referenceEntries(),
+      ['a.md', 'b.md', 'image.png', 'nested/'])
+  } finally {
+    await rm(root, { recursive: true, force: true })
+  }
+})
+
+test('a Skill without references has no reference entries', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'oo-skill-empty-'))
+  try {
+    const directory = join(root, 'oo-demo')
+    await mkdir(directory, { recursive: true })
+    const path = join(directory, 'SKILL.md')
+    await writeFile(path, [
+      '---',
+      'name: oo-demo',
+      'description: Use when testing.',
+      'metadata:',
+      '  version: 0.1.0',
+      '  pack: object-oriented-design-skills',
+      '---',
+      '# Demo',
+      ''
+    ].join('\n'))
+
+    const skill = new Skill(directory, TextFile.read(path))
+    assert.deepEqual(skill.referenceEntries(), [])
   } finally {
     await rm(root, { recursive: true, force: true })
   }
