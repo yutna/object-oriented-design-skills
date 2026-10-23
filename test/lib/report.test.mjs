@@ -50,3 +50,27 @@ test('a later count cannot hide an earlier zero', () => {
     'failed: measured nothing (0 file(s))'
   ])
 })
+
+test('Report prints a note after errors and before the summary', () => {
+  const report = new Report()
+  report.error('a', 'bad')
+  report.note('labels: Rule 50% (1), Default 50% (1)')
+  report.count('rule(s)', 2)
+  assert.equal(report.failed, true)
+  assert.deepEqual(report.lines(), [
+    'error a: bad',
+    'labels: Rule 50% (1), Default 50% (1)',
+    'failed: 1 error(s)'
+  ])
+})
+
+test('Report note never changes failed', () => {
+  const report = new Report()
+  report.count('file(s)', 1)
+  report.note('exact text')
+  assert.equal(report.failed, false)
+  assert.deepEqual(report.lines(), [
+    'exact text',
+    'ok 1 file(s)'
+  ])
+})

@@ -247,7 +247,7 @@ metadata:
 - `## Core rules` is a numbered list. Each item opens with `Rule.`,
   `Default.` or `Judgement.` and then a bold statement. The index
   defines the three labels. A `Default` states its exception as a
-  sentence of its own.
+  sentence of its own that starts with "The exception".
 - `## Pattern` uses the neutral notation, in `text` fences. Real syntax
   belongs only in language packs.
 - Every code fence in every file of a skill is traced before commit:
