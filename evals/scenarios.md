@@ -61,3 +61,18 @@ in the history as evidence before restructuring; loosening the
 strongest, most widespread tie first.
 
 Should reach `oo-diagnosing-coupling`.
+
+## 5. Getters, setters and a form every clinic defines
+
+> Our `Patient`, `Appointment` and `Slot` classes only have getters and
+> setters, and `BookingService` holds every booking rule. A colleague
+> says this is an anemic model and we must move everything into the
+> classes. Our intake form, though, has questions that each clinic
+> defines in its settings. What should change, and what should not?
+
+Must contain: the model is a problem where booking rules have no home,
+so those rules move to the objects whose data they read; the
+clinic-defined intake form stays data (answers plus a schema) rather
+than a class per form.
+
+Should reach `oo-deciding-object-or-data`.
