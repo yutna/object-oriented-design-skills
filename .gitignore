@@ -173,3 +173,6 @@ OOP_SOURCES.md
 PRIVATE-NOTES.md
 .claude/work/
 .claude/skills/
+
+# Local eval queue and run log.
+evals/results/
