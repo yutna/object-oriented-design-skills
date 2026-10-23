@@ -10,6 +10,7 @@ export class EmptyTreeRun extends Check {
     'scripts/validate-skills.mjs',
     'scripts/validate-rules.mjs',
     'scripts/validate-prose.mjs',
+    'scripts/validate-counts.mjs',
     'scripts/eval-routing.mjs'
   ])
 

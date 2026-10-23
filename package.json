@@ -27,13 +27,14 @@
   ],
   "scripts": {
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\" \"#OOP_SOURCES.md\" \"#PRIVATE-NOTES.md\" \"#.claude\"",
-    "test": "npm run lint:md && npm run validate:oop && npm run validate:skills && npm run validate:rules && npm run validate:prose && npm run eval:routing",
+    "test": "npm run lint:md && npm run validate:oop && npm run validate:skills && npm run validate:rules && npm run validate:prose && npm run validate:counts && npm run eval:routing",
     "test:unit": "node --test \"test/**/*.test.mjs\"",
     "test:negative": "node scripts/negative-test.mjs",
     "validate:oop": "node scripts/validate-oop.mjs",
     "validate:skills": "node scripts/validate-skills.mjs",
     "validate:rules": "node scripts/validate-rules.mjs",
     "validate:prose": "node scripts/validate-prose.mjs",
+    "validate:counts": "node scripts/validate-counts.mjs",
     "eval:routing": "node scripts/eval-routing.mjs",
     "bump-version": "node scripts/bump-version.mjs",
     "gate": "npm test && npm run test:unit && npm run test:negative"
