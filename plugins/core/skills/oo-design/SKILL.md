@@ -3,7 +3,7 @@ name: oo-design
 description: Use when starting or sizing design work in an object-oriented codebase, or when unsure which object design rule applies to a change.
 license: MIT
 metadata:
-  version: 0.1.0
+  version: 0.2.0
   pack: object-oriented-design-skills
 ---
 
