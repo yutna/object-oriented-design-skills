@@ -28,7 +28,8 @@
   "scripts": {
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\" \"#OOP_SOURCES.md\" \"#PRIVATE-NOTES.md\" \"#.claude\"",
     "test": "npm run lint:md",
-    "gate": "npm test"
+    "test:unit": "node --test \"test/**/*.test.mjs\"",
+    "gate": "npm test && npm run test:unit"
   },
   "devDependencies": {
     "markdownlint-cli2": "0.23.2"
