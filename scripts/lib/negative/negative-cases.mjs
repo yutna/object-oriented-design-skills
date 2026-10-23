@@ -10,6 +10,8 @@ export class NegativeCases {
   static #SKILLS = 'scripts/validate-skills.mjs'
   static #RULES = 'scripts/validate-rules.mjs'
   static #OOP = 'scripts/validate-oop.mjs'
+  static #EVAL = 'scripts/eval-routing.mjs'
+  static #ROUTING = 'evals/routing-cases.md'
 
   static #BACK_LINK = '[rule strictness]' +
     '(../oo-design/SKILL.md#how-strictly-a-rule-is-meant).'
@@ -37,6 +39,15 @@ export class NegativeCases {
   static #OOP_FILE = 'scripts/lib/negative-fixture.mjs'
   static #OOP_TEXT = 'function broken() {}\n' +
     'export class NegativeFixture {}\n'
+  static #UNKNOWN_ROUTING_FIND =
+    'which object should hold the rule for a booking change -> oo-design'
+  static #UNKNOWN_ROUTING_REPLACE =
+    'which object should hold the rule for a booking change -> ' +
+    'oo-no-such-skill'
+  static #ZERO_ROUTING_FIND =
+    'we need to size this appointment design work -> oo-design'
+  static #ZERO_ROUTING_REPLACE =
+    'a clinic appointment slot -> oo-design'
 
   static ALL = Object.freeze([
     new NegativeCase(
@@ -212,6 +223,22 @@ export class NegativeCases {
         'if (import.meta.main) {\n',
         'if (import.meta.main) {\n  class GuardClass {}\n'),
       'the main guard may only compose objects, not declare ' +
-      'ClassDeclaration')
+      'ClassDeclaration'),
+    new NegativeCase(
+      'routing rejects an unknown expected skill',
+      NegativeCases.#EVAL,
+      new ReplaceText(
+        NegativeCases.#ROUTING,
+        NegativeCases.#UNKNOWN_ROUTING_FIND,
+        NegativeCases.#UNKNOWN_ROUTING_REPLACE),
+      'unknown expected skill: oo-no-such-skill'),
+    new NegativeCase(
+      'routing rejects a symptom with no shared term',
+      NegativeCases.#EVAL,
+      new ReplaceText(
+        NegativeCases.#ROUTING,
+        NegativeCases.#ZERO_ROUTING_FIND,
+        NegativeCases.#ZERO_ROUTING_REPLACE),
+      'expected oo-design in the top 1 with a score above zero')
   ])
 }
