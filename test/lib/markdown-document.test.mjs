@@ -80,6 +80,18 @@ test('repeated heading slugs', () => {
   assert.deepEqual([...document.anchors()], ['visit', 'visit-1', 'visit-2'])
 })
 
+test('proseWithoutCode blanks inline code without moving lines', () => {
+  const raw = '# Title\n\nUse `ISBN` and `Chapter 4` here.\n'
+  const document = new MarkdownDocument(new TextFile('note.md', raw))
+  const prose = document.prose().split('\n')
+  const blanked = document.proseWithoutCode().split('\n')
+  assert.deepEqual(
+    blanked.map((line) => line.length),
+    prose.map((line) => line.length))
+  assert.equal(blanked.join('\n').includes('ISBN'), false)
+  assert.equal(blanked.join('\n').includes('Chapter 4'), false)
+})
+
 test('prose() keeps line count', () => {
   const raw = '# Title\n\n```text\n# hidden\n```\n\nafter\n'
   const file = new TextFile('note.md', raw)

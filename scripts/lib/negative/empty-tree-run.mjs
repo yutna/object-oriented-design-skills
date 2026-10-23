@@ -9,6 +9,7 @@ export class EmptyTreeRun extends Check {
     'scripts/validate-oop.mjs',
     'scripts/validate-skills.mjs',
     'scripts/validate-rules.mjs',
+    'scripts/validate-prose.mjs',
     'scripts/eval-routing.mjs'
   ])
 

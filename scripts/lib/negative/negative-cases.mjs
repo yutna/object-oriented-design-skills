@@ -11,6 +11,7 @@ export class NegativeCases {
   static #RULES = 'scripts/validate-rules.mjs'
   static #OOP = 'scripts/validate-oop.mjs'
   static #EVAL = 'scripts/eval-routing.mjs'
+  static #PROSE = 'scripts/validate-prose.mjs'
   static #ROUTING = 'evals/routing-cases.md'
   static #SCENARIOS = 'evals/scenarios.md'
 
@@ -57,6 +58,11 @@ export class NegativeCases {
     'Should reach `oo-assigning-responsibilities`.'
   static #SCENARIO_UNKNOWN_REPLACE =
     'Should reach `oo-no-such-skill`.'
+  static #SHARED_COPY =
+    "The pack is design rules for codebases written in an object-oriented\n" +
+    "style, not universal advice. A project's own written conventions " +
+    "win over\nthe pack. Follow the idiom of the module being changed. " +
+    "This skill sizes\nthe task and names the skill that fits."
 
   static ALL = Object.freeze([
     new NegativeCase(
@@ -265,6 +271,33 @@ export class NegativeCases {
         NegativeCases.#SCENARIOS,
         NegativeCases.#SCENARIO_UNKNOWN_FIND,
         NegativeCases.#SCENARIO_UNKNOWN_REPLACE),
-      'scenario 1 names unknown skill: oo-no-such-skill')
+      'scenario 1 names unknown skill: oo-no-such-skill'),
+    new NegativeCase(
+      'prose rejects a citation in a skill',
+      NegativeCases.#PROSE,
+      new ReplaceText(
+        NegativeCases.#SKILL,
+        '## Red flags\n\nPlaces to look',
+        '## Red flags\n\nFowler et al. wrote about this.\n\n' +
+        'Places to look'),
+      'citation mark: et al.'),
+    new NegativeCase(
+      'prose rejects a stock example in a pattern fence',
+      NegativeCases.#PROSE,
+      new ReplaceText(
+        NegativeCases.#SKILL,
+        'class Slot\n  - patient: PatientId?',
+        'class Customer\n  - patient: PatientId?'),
+      'stock example word: customer'),
+    new NegativeCase(
+      'prose rejects a shared paragraph',
+      NegativeCases.#PROSE,
+      new ReplaceText(
+        NegativeCases.#SKILL,
+        '## Overview\n\nEvery behaviour needs an owner.',
+        '## Overview\n\n' + NegativeCases.#SHARED_COPY +
+        '\n\nEvery behaviour needs an owner.'),
+      'paragraph is shared by oo-design and ' +
+      'oo-assigning-responsibilities')
   ])
 }

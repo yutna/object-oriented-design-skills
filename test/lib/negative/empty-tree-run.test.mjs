@@ -34,13 +34,14 @@ test('EmptyTreeRun records an error for exit 0', () => {
     { exitCode: 0, output: 'ok' },
     { exitCode: 0, output: 'ok' },
     { exitCode: 0, output: 'ok' },
+    { exitCode: 0, output: 'ok' },
     { exitCode: 0, output: 'ok' }
   ])
   const report = new Report()
   new EmptyTreeRun(process.cwd(), runner).inspect(report)
 
   assert.equal(report.failed, true)
-  assert.equal(runner.calls.length, 4)
+  assert.equal(runner.calls.length, 5)
   assert.ok(report.lines().some((line) =>
     line.includes('expected exit 1')))
   for (const { cwd, entries } of runner.calls) {
@@ -54,13 +55,14 @@ test('EmptyTreeRun records an error for exit 1 without refusal', () => {
     { exitCode: 1, output: 'stack trace only' },
     { exitCode: 1, output: 'stack trace only' },
     { exitCode: 1, output: 'stack trace only' },
+    { exitCode: 1, output: 'stack trace only' },
     { exitCode: 1, output: 'stack trace only' }
   ])
   const report = new Report()
   new EmptyTreeRun(process.cwd(), runner).inspect(report)
 
   assert.equal(report.failed, true)
-  assert.equal(runner.calls.length, 4)
+  assert.equal(runner.calls.length, 5)
   assert.ok(report.lines().some((line) =>
     line.includes('expected exit 1')))
   for (const { cwd, entries } of runner.calls) {
@@ -74,15 +76,18 @@ test('EmptyTreeRun accepts exit 1 with a refusal', () => {
     { exitCode: 1, output: 'measured nothing' },
     { exitCode: 1, output: 'error: no marketplace' },
     { exitCode: 1, output: 'error: no marketplace' },
+    { exitCode: 1, output: 'error: no marketplace' },
     { exitCode: 1, output: 'error: no marketplace' }
   ])
   const report = new Report()
   new EmptyTreeRun(process.cwd(), runner).inspect(report)
 
   assert.equal(report.failed, false)
-  assert.equal(runner.calls.length, 4)
+  assert.equal(runner.calls.length, 5)
   assert.ok(report.lines().some((line) =>
     line.includes('ok scripts/validate-oop.mjs refuses an empty tree')))
+  assert.ok(report.lines().some((line) =>
+    line.includes('ok scripts/validate-prose.mjs refuses an empty tree')))
   assert.ok(report.lines().some((line) =>
     line.includes('ok scripts/eval-routing.mjs refuses an empty tree')))
   for (const { cwd, entries } of runner.calls) {
