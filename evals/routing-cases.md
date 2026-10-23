@@ -26,6 +26,8 @@ our patient class is only getters and setters -> oo-deciding-object-or-data
 should this intake form be a class or just a map -> oo-deciding-object-or-data
 every new insurer means editing the invoice code -> oo-encapsulating-what-varies
 how flexible should the reminder module be -> oo-encapsulating-what-varies
+callers check appointment status first -> oo-encapsulating-state-and-behaviour
+any code can set a slot back to free -> oo-encapsulating-state-and-behaviour
 ```
 
 ## Known misses

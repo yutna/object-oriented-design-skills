@@ -91,3 +91,18 @@ class instead of editing working code; no framework for the kinds of
 message that have not varied.
 
 Should reach `oo-encapsulating-what-varies`.
+
+## 7. A cancelled appointment came back
+
+> Our `Appointment` has public setters. The controller checks
+> `getStart()` and `getStatus()` and then calls
+> `setStatus(CANCELLED)`, and the reports module sometimes adds notes
+> to `appointment.getNotes()` directly. Last week a cancelled
+> appointment came back as booked. How should we fix the class?
+
+Must contain: replacing the status setter with a cancel method that
+checks the rule itself; callers telling the appointment instead of
+reading its state and deciding; no longer handing out the internal
+notes list (an add method or a read-only view instead).
+
+Should reach `oo-encapsulating-state-and-behaviour`.

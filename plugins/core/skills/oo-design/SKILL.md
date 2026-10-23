@@ -77,12 +77,15 @@ skills land.
 |How tightly are these two parts tied?|[Diagnosing coupling][coupling]|
 |Is this an object or just data?|[Deciding object or data][object-or-data]|
 |Our domain model is anemic|[Deciding object or data][object-or-data]|
+|Other code decides for this object|[Encapsulating state and behaviour][state-and-behaviour]|
+|Setters let this object break its rules|[Encapsulating state and behaviour][state-and-behaviour]|
 |Every new case means editing working code|[Encapsulating what varies][what-varies]|
 |How much flexibility should this have?|[Encapsulating what varies][what-varies]|
 
 [assigning]: ../oo-assigning-responsibilities/SKILL.md
 [coupling]: ../oo-diagnosing-coupling/SKILL.md
 [object-or-data]: ../oo-deciding-object-or-data/SKILL.md
+[state-and-behaviour]: ../oo-encapsulating-state-and-behaviour/SKILL.md
 [what-varies]: ../oo-encapsulating-what-varies/SKILL.md
 
 ## Red flags
