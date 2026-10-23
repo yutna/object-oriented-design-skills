@@ -1,5 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import { join } from 'node:path'
 
 import { OwnershipReader } from '../../../scripts/lib/install/ownership-reader.mjs'
 import { NotInstalled } from '../../../scripts/lib/install/not-installed.mjs'
@@ -38,8 +39,8 @@ class SkillText {
   }
 }
 
-const DIRECTORY = '/home/.claude/skills/oo-design'
-const SKILL = `${DIRECTORY}/SKILL.md`
+const DIRECTORY = join('/home', '.claude', 'skills', 'oo-design')
+const SKILL = join(DIRECTORY, 'SKILL.md')
 
 test('OwnershipReader returns NotInstalled when the directory is absent', () => {
   const reader = new OwnershipReader(new FakeFileSystem([], []))

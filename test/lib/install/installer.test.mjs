@@ -52,9 +52,10 @@ test('--dry-run installs nothing and prints the block', () => {
   const lines = report.lines()
   assert.ok(lines.includes(
     'would copy oo-assigning-responsibilities -> ' +
-    '/home/.claude/skills/oo-assigning-responsibilities'))
+    join('/home', '.claude', 'skills', 'oo-assigning-responsibilities')))
   assert.ok(lines.includes(
-    'would copy oo-design -> /home/.claude/skills/oo-design'))
+    `would copy oo-design -> ${
+      join('/home', '.claude', 'skills', 'oo-design')}`))
   assert.ok(lines.includes(
     "add this block to the project's CLAUDE.md:"))
   assert.ok(lines.includes('## Object-oriented design skills'))
@@ -71,9 +72,10 @@ test('Installer copies every core skill, then skips them', async () => {
     assert.equal(first.failed, false)
     assert.ok(first.lines().includes(
       'copied oo-assigning-responsibilities -> ' +
-      `${home}/.claude/skills/oo-assigning-responsibilities`))
+      join(home, '.claude', 'skills', 'oo-assigning-responsibilities')))
     assert.ok(first.lines().includes(
-      `copied oo-design -> ${home}/.claude/skills/oo-design`))
+      'copied oo-design -> ' +
+      join(home, '.claude', 'skills', 'oo-design')))
     assert.equal(first.lines().at(-1), 'ok 2 skill(s) considered')
     const installed = join(home, '.claude', 'skills', 'oo-design', 'SKILL.md')
     assert.equal(existsSync(installed), true)
