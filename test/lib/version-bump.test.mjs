@@ -94,7 +94,8 @@ class TempRepository {
 
   static async create({
     packageVersion = '0.2.0',
-    missingVersion = null
+    missingVersion = null,
+    empty = false
   } = {}) {
     const root = await mkdtemp(join(tmpdir(), 'oo-version-bump-'))
     await writeFile(
@@ -106,7 +107,10 @@ class TempRepository {
     await mkdir(join(root, '.claude-plugin'), { recursive: true })
     await writeFile(
       join(root, '.claude-plugin', 'marketplace.json'),
-      TempRepository.#marketplace())
+      empty
+        ? TempRepository.#emptyMarketplace()
+        : TempRepository.#marketplace())
+    if (empty) return new TempRepository(root)
     await mkdir(join(root, 'plugins', 'core', '.claude-plugin'), {
       recursive: true
     })
@@ -164,6 +168,16 @@ class TempRepository {
       '      "keywords": ["alpha", "beta"]',
       '    }',
       '  ]',
+      '}',
+      ''
+    ].join('\n')
+  }
+
+  static #emptyMarketplace() {
+    return [
+      '{',
+      '  "name": "fixture-market",',
+      '  "plugins": []',
       '}',
       ''
     ].join('\n')
@@ -281,7 +295,10 @@ test('a temporary repository bumps only version lines', async () => {
     const writer = new RecordingWriter()
     const report = repository.run(writer)
     assert.equal(report.failed, false)
-    assert.deepEqual(report.lines(), ['ok 4 versioned file(s)'])
+    assert.deepEqual(report.lines(), [
+      'changed 4 file(s)',
+      'ok 4 versioned file(s)'
+    ])
     assert.deepEqual(
       writer.writes.map(({ path }) => path),
       [
@@ -329,11 +346,28 @@ test('a temporary repository bumps only version lines', async () => {
     const againWriter = new RecordingWriter()
     const againReport = repository.run(againWriter)
     assert.deepEqual(againWriter.writes, [])
-    assert.equal(againReport.failed, true)
+    assert.equal(againReport.failed, false)
     assert.deepEqual(againReport.lines(), [
-      'failed: measured nothing (0 versioned file(s))'
+      'changed 0 file(s)',
+      'ok 4 versioned file(s)'
     ])
     assert.equal((await repository.snapshot()).equals(after), true)
+  } finally {
+    await repository.close()
+  }
+})
+
+test('a tree with no versioned file fails measured nothing', async () => {
+  const repository = await TempRepository.create({ empty: true })
+  try {
+    const writer = new MemoryWriter()
+    const report = repository.run(writer)
+    assert.deepEqual(writer.writes, [])
+    assert.equal(report.failed, true)
+    assert.deepEqual(report.lines(), [
+      'changed 0 file(s)',
+      'failed: measured nothing (0 versioned file(s))'
+    ])
   } finally {
     await repository.close()
   }
@@ -350,6 +384,7 @@ test('a SKILL.md without a version line is an error', async () => {
     assert.deepEqual(report.lines(), [
       `error ${repository.skillPath('oo-first')}: ` +
       'No "  version:" line in the metadata block',
+      'changed 3 file(s)',
       'failed: 1 error(s)'
     ])
     assert.deepEqual(

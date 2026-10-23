@@ -26,23 +26,27 @@ export class VersionBump extends Check {
     const version = Version.parse(this.#repository.packageVersion)
     const marketplace = this.#repository.marketplace()
     const plugins = marketplace.plugins()
-    let count = 0
+    const results = []
     for (const plugin of plugins) {
       for (const skill of plugin.skills()) {
-        count += this.#bumpSkill(skill, version, report)
+        results.push(this.#bumpSkill(skill, version, report))
       }
     }
-    count += this.#bumpManifest(
+    results.push(this.#bumpManifest(
       join(this.#repository.root, '.claude-plugin', 'marketplace.json'),
       version,
-      report)
+      report))
     for (const plugin of plugins) {
-      count += this.#bumpManifest(
+      results.push(this.#bumpManifest(
         join(plugin.directory, '.claude-plugin', 'plugin.json'),
         version,
-        report)
+        report))
     }
-    report.count('versioned file(s)', count)
+    // A file that already holds the version was still versioned.
+    const versioned = results.filter((result) => result !== null).length
+    const changed = results.filter((result) => result === true).length
+    report.count('versioned file(s)', versioned)
+    report.note(`changed ${changed} file(s)`)
   }
 
   #bumpSkill(skill, version, report) {
@@ -52,29 +56,31 @@ export class VersionBump extends Check {
       report.error(
         skill.path,
         'No "  version:" line in the metadata block')
-      return 0
+      return null
     }
-    if (updated === text) return 0
+    if (updated === text) return false
     this.#writer.write(skill.path, updated)
-    return 1
+    return true
   }
 
   #bumpManifest(path, version, report) {
     const text = readFileSync(path, 'utf8')
+    // A manifest without a version does not hold one after the run.
+    if (text.match(VersionBump.#VERSION_PAIR) === null) return null
     const updated = text.replace(
       VersionBump.#VERSION_PAIR,
       (_, before, after) => `${before}${version}${after}`)
-    if (updated === text) return 0
+    if (updated === text) return false
     try {
       JSON.parse(updated)
     } catch {
       report.error(
         path,
         'Manifest is not valid JSON after the version replacement')
-      return 0
+      return null
     }
     this.#writer.write(path, updated)
-    return 1
+    return true
   }
 
   #replaceSkillVersion(text, version) {
