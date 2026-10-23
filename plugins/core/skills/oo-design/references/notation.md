@@ -57,11 +57,15 @@ class Appointment
 ## Methods
 
 A method is written as `+ name(parameter: Type): ReturnType` inside its
-class.
+class. A `static` method belongs to the class, not to an instance, and
+is called on the class name: `Slot.between(clinician, startsAt)`. A
+named factory is a `static` method that returns `new ...`.
 
 ```text
-class Appointment
-  + cancel(reason: CancellationReason): void
+class Slot
+  + static between(clinician: ClinicianId, startsAt: DateTime): Slot
+    return new Slot(clinician, startsAt)
+  + reserve(patient: PatientId): void
 ```
 
 ## Constructors
@@ -111,7 +115,8 @@ class Appointment
     else
       raise AppointmentNotCancellable
     return
-  + book(slot: Slot, patient: PatientId): Appointment
+  + static book(slot: Slot, patient: PatientId): Appointment
+    slot.reserve(patient)
     return new Appointment(slot, patient)
 ```
 
@@ -136,8 +141,10 @@ class Appointment
   - patient: PatientId
   - status: AppointmentStatus
   + new(slot: Slot, patient: PatientId)
-    slot.reserve(patient)
     status := Scheduled
+  + static book(slot: Slot, patient: PatientId): Appointment
+    slot.reserve(patient)
+    return new Appointment(slot, patient)
   + cancel(reason: CancellationReason): void
     if status = Scheduled then
       status := Cancelled
@@ -159,4 +166,5 @@ class Slot
     patient := null
 ```
 
-The notation has no other keywords and no semicolons.
+The notation has no other keywords than those above, `static` included,
+and no semicolons.

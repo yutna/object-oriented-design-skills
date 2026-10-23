@@ -58,8 +58,8 @@ class ReferralCheck
 ## Coordinates others
 
 It directs several objects through a flow and holds the order of
-steps. A `VisitCoordinator` takes a patient off the triage queue,
-then creates the appointment, whose constructor reserves the slot.
+steps. A `VisitCoordinator` takes a patient off the triage queue, then
+books the appointment, which reserves the slot.
 
 ```text
 class VisitCoordinator
@@ -67,7 +67,7 @@ class VisitCoordinator
   + new(triage: TriageQueue)
   + checkIn(patient: PatientId, slot: Slot): Appointment
     triage.remove(patient)
-    return new Appointment(slot, patient)
+    return Appointment.book(slot, patient)
 ```
 
 ## Controls a flow
@@ -82,7 +82,7 @@ class CheckInFlow
   + new(referrals: ReferralCheck)
   + run(patient: PatientId, clinician: Clinician, slot: Slot): Appointment
     referrals.confirm(patient, clinician)
-    return new Appointment(slot, patient)
+    return Appointment.book(slot, patient)
 ```
 
 ## Talks to the outside world
@@ -109,7 +109,7 @@ ready.
   cancel the booking and release the slot.
 - Collaborators: `Slot`, `PatientId`.
 
-Read it while booking: the `Appointment` constructor reserves the
-slot and sets the slot and patient, and the card shows that
-cancellation belongs to the same object. If the card also said
-"remind the patient", it would need another card and another class.
+Read it while booking: `Appointment.book` reserves the slot, and the
+constructor sets the slot and patient; the card shows that cancellation
+belongs to the same object. If the card also said "remind the patient",
+it would need another card and another class.
