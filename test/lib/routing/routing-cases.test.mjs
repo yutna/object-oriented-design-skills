@@ -18,6 +18,12 @@ test('RoutingCases reads the cases from the text fence', () => {
     'which class owns the reminder -> oo-assigning-responsibilities',
     'a symptom with -> an arrow -> oo-design',
     '```',
+    '',
+    '## Known misses',
+    '',
+    '```text',
+    'a known miss -> oo-design',
+    '```',
     ''
   ].join('\n')
   const cases = RoutingCases.of(
@@ -46,4 +52,46 @@ test('RoutingCases reports the file and line when a case has no arrow', () => {
   assert.throws(() => RoutingCases.of(file), (error) =>
     error instanceof RepoError &&
     error.message.includes('evals/routing-cases.md:5'))
+})
+
+test('RoutingCases reads known misses under their heading', () => {
+  const text = [
+    '# Routing Cases',
+    '',
+    '```text',
+    'a clinic visit -> oo-design',
+    '```',
+    '',
+    '## Known misses',
+    '',
+    '```text',
+    'a slot rule -> oo-assigning-responsibilities',
+    'a visit class -> oo-assigning-responsibilities',
+    '```',
+    ''
+  ].join('\n')
+  const file = new TextFile('evals/routing-cases.md', text)
+  assert.equal(Object.isFrozen(RoutingCases.knownMissesOf(file)), true)
+  assert.deepEqual(
+    RoutingCases.knownMissesOf(file)
+      .map(({ symptom, expected }) => [symptom, expected]),
+    [
+      ['a slot rule', 'oo-assigning-responsibilities'],
+      ['a visit class', 'oo-assigning-responsibilities']
+    ])
+})
+
+test('RoutingCases reads no known misses without the section', () => {
+  const text = [
+    '# Routing Cases',
+    '',
+    '```text',
+    'a clinic visit -> oo-design',
+    '```',
+    ''
+  ].join('\n')
+  assert.deepEqual(
+    RoutingCases.knownMissesOf(
+      new TextFile('evals/routing-cases.md', text)),
+    [])
 })

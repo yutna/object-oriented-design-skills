@@ -19,3 +19,11 @@ this clinic design has one class doing too much -> oo-assigning-responsibilities
 the visit handler decides if a slot is free -> oo-assigning-responsibilities
 we are starting this design with one class for visits -> oo-design
 ```
+
+## Known misses
+
+A routing line that misses the gate is kept here as a note, never as a
+case.
+
+```text
+```

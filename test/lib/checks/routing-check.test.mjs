@@ -28,12 +28,13 @@ class FakeRepository {
   #skills
   #cases
 
-  constructor(skills, lines) {
+  constructor(skills, lines, knownMisses = []) {
     this.#skills = Object.freeze([...skills])
     this.#cases = new TextFile(
       'evals/routing-cases.md',
       ['# Routing Cases', '', 'A test file.', '', '```text',
-        ...lines, '```', ''].join('\n'))
+        ...lines, '```', '', '## Known misses', '', '```text',
+        ...knownMisses, '```', ''].join('\n'))
   }
 
   skills() {
@@ -47,9 +48,9 @@ class FakeRepository {
 }
 
 class CheckRun {
-  static of(skills, lines, noise = false) {
+  static of(skills, lines, noise = false, knownMisses = []) {
     const report = new Report()
-    const repository = new FakeRepository(skills, lines)
+    const repository = new FakeRepository(skills, lines, knownMisses)
     new RoutingCheck(repository, noise).inspect(report)
     return report
   }
@@ -113,6 +114,34 @@ test('a passing check counts the routing cases', () => {
     'a clinic design -> oo-design'
   ])
   assert.equal(report.lines().at(-1), 'ok 1 routing case(s)')
+})
+
+test('a known miss is noted with its rank and never fails', () => {
+  const report = CheckRun.of(SKILLS, [
+    'a clinic design -> oo-design'
+  ], false, [
+    'a clinic appointment slot -> oo-design'
+  ])
+  assert.equal(report.failed, false)
+  assert.deepEqual(report.lines(), [
+    'top-1: 1/1',
+    'known miss: a clinic appointment slot -> oo-design (rank 2)',
+    'ok 1 routing case(s)'
+  ])
+})
+
+test('a known miss that now passes is noted and never fails', () => {
+  const report = CheckRun.of(SKILLS, [
+    'a clinic design -> oo-design'
+  ], false, [
+    'a clinic design -> oo-design'
+  ])
+  assert.equal(report.failed, false)
+  assert.deepEqual(report.lines(), [
+    'top-1: 1/1',
+    'known miss now passes: a clinic design',
+    'ok 1 routing case(s)'
+  ])
 })
 
 test('noise reports every skill worst first and never fails', () => {
