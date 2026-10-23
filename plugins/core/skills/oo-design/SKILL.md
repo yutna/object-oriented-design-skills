@@ -39,7 +39,8 @@ missing is not design, and this pack cannot supply it.
 ## The design loop
 
 1. Say what the software must do in the domain's words, and find the
-   object that knows what each behaviour needs.
+   object that knows what each behaviour needs
+   ([assigning responsibilities](../oo-assigning-responsibilities/SKILL.md)).
 2. Find the consistency boundary: what must be true together in one
    transaction.
 3. Decide where each rule lives: an entity, a value object, or a domain
@@ -70,6 +71,10 @@ skills land.
 
 |Symptom|Skill|
 |---|---|
+|Which class should do this?|[Assigning responsibilities][assigning]|
+|This class does too much|[Assigning responsibilities][assigning]|
+
+[assigning]: ../oo-assigning-responsibilities/SKILL.md
 
 ## Red flags
 
