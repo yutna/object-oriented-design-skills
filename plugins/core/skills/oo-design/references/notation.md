@@ -14,7 +14,8 @@
 
 ## Declarations
 
-A `class` names a mutable object. An `interface` names a set of messages
+A `class` names an object with identity: two instances are equal only
+when they are the same object. An `interface` names a set of messages
 another object answers. A `value` is immutable and compares by value.
 
 ```text
@@ -66,7 +67,8 @@ class Appointment
 ## Constructors
 
 A constructor is written as `+ new(parameter: Type)` and has no return
-type.
+type. A constructor parameter with the same name as a field sets that
+field.
 
 ```text
 class Appointment
@@ -95,7 +97,10 @@ class Slot
 ## Bodies
 
 A body is indented under its signature and holds plain statements:
-`if … then …`, `raise X`, `return x`, a message send, and construction.
+`if … then … else …`, `raise X`, `return x`, a message send, and
+construction with `new`. `:=` assigns, `=` compares, `null` is the
+absent value of a `Type?`, and `void` means the method returns
+nothing. A bare `return` ends a `void` method.
 
 ```text
 class Appointment
@@ -107,7 +112,6 @@ class Appointment
       raise AppointmentNotCancellable
     return
   + book(slot: Slot, patient: PatientId): Appointment
-    slot.reserve(patient)
     return new Appointment(slot, patient)
 ```
 
