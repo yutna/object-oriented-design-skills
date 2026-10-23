@@ -1,6 +1,7 @@
 export class Report {
   #errors = []
   #counts = []
+  #notes = []
 
   error(where, message) {
     this.#errors.push({ where, message })
@@ -8,6 +9,10 @@ export class Report {
 
   count(noun, n) {
     this.#counts.push({ noun, n })
+  }
+
+  note(text) {
+    this.#notes.push(text)
   }
 
   get failed() {
@@ -19,6 +24,7 @@ export class Report {
   lines() {
     const lines = this.#errors.map(({ where, message }) =>
       `error ${where}: ${message}`)
+    lines.push(...this.#notes)
     lines.push(this.#summary())
     return lines
   }

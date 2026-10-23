@@ -27,10 +27,11 @@
   ],
   "scripts": {
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\" \"#OOP_SOURCES.md\" \"#PRIVATE-NOTES.md\" \"#.claude\"",
-    "test": "npm run lint:md && npm run validate:oop && npm run validate:skills",
+    "test": "npm run lint:md && npm run validate:oop && npm run validate:skills && npm run validate:rules",
     "test:unit": "node --test \"test/**/*.test.mjs\"",
     "validate:oop": "node scripts/validate-oop.mjs",
     "validate:skills": "node scripts/validate-skills.mjs",
+    "validate:rules": "node scripts/validate-rules.mjs",
     "gate": "npm test && npm run test:unit"
   },
   "devDependencies": {
