@@ -1,6 +1,6 @@
 ---
 name: oo-assigning-responsibilities
-description: Use when deciding what class owns a method or rule, what object holds the data a behaviour needs, creates an appointment or schedule, or a class does too much.
+description: Use when deciding which class owns a behaviour, rule or new method, which object holds its data or should create another, or when a class does too much.
 license: MIT
 metadata:
   version: 0.5.0
