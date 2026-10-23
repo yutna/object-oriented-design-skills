@@ -1,0 +1,22 @@
+[
+  {
+    "passed": false,
+    "score": 0,
+    "costUsd": 0.04,
+    "judgeCostUsd": 0,
+    "error": null,
+    "tracePath": null,
+    "skippedPaidGraders": false,
+    "graders": [
+      {
+        "name": "files-changed",
+        "passed": false,
+        "scored": true,
+        "withOnly": false,
+        "judgeVotes": null,
+        "explanation": "the code was changed",
+        "evidence": ""
+      }
+    ]
+  }
+]
