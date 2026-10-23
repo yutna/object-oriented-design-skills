@@ -76,3 +76,18 @@ clinic-defined intake form stays data (answers plus a schema) rather
 than a class per form.
 
 Should reach `oo-deciding-object-or-data`.
+
+## 6. A reminder channel every month
+
+> We added text-message reminders last month and app reminders this
+> week, and each time we edited `ReminderService` in five places.
+> Product says a chat app is next. A teammate wants a plugin framework
+> with a registry for every kind of message the clinic sends. What
+> should we do?
+
+Must contain: isolating the reminder channel, the part that has
+changed twice, behind one interface; the next channel then adds one
+class instead of editing working code; no framework for the kinds of
+message that have not varied.
+
+Should reach `oo-encapsulating-what-varies`.

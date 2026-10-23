@@ -24,6 +24,8 @@ every change to booking touches five other classes -> oo-diagnosing-coupling
 these two clinic modules always change together -> oo-diagnosing-coupling
 our patient class is only getters and setters -> oo-deciding-object-or-data
 should this intake form be a class or just a map -> oo-deciding-object-or-data
+every new insurer means editing the invoice code -> oo-encapsulating-what-varies
+how flexible should the reminder module be -> oo-encapsulating-what-varies
 ```
 
 ## Known misses
