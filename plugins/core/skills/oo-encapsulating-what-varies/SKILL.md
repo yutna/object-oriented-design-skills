@@ -68,21 +68,24 @@ case alone.
    change cross a boundary for no gain, so keep it together until the
    changes pull apart.
 
-4. Judgement. **Build no seam for a variation that has not appeared.**
-   One case is built directly. The second or third real case shows the
-   axis and justifies the seam. That is a judgement about the evidence,
-   not a counting rule.
+4. Judgement. **Build no seam for a variation that has neither
+   appeared nor been named by the business with a reason.** One case is
+   built directly. The second or third real case shows the axis and
+   justifies the seam. That is a judgement about the evidence, not a
+   counting rule.
 
-5. Rule. **A seam on the wrong axis makes the real change harder.**
-   Until the axis is clear, a little duplication is cheaper than the
-   wrong abstraction. Duplication is visible and can be removed; a
-   wrong seam spreads through every caller.
+5. Judgement. **Prefer a little duplication to a seam on an axis the
+   evidence has not confirmed.** A seam on the wrong axis makes the
+   real change harder: duplication is visible and can be removed,
+   while a wrong seam spreads through every caller.
 
 ## Pattern
 
 Before, three classes, `ResultsScreen`, `VisitSummary` and
 `LabFollowUp`, call `LabResultsClient` directly. The client builds one
-lab's URL and reads its status codes. A second lab is about to join, and
+lab's URL and reads its status codes. A second lab has signed and starts
+next month. Each lab is an outside system with its own URL format and
+status codes, so the lab is the axis that varies, and without a seam
 each caller would have to choose a client.
 
 Before:
@@ -153,7 +156,10 @@ class CityLabResults implements LabResults
     if response.status = 200 then
       return new LabReport(order, Ready)
     else
-      return new LabReport(order, Pending)
+      if response.status = 409 then
+        return new LabReport(order, Rejected)
+      else
+        return new LabReport(order, Pending)
 
 class RegionalLabResults implements LabResults
   - http: LabHttp
@@ -192,7 +198,8 @@ In both fences `http` and `baseUrl` are private and the constructor sets
 them before `fetch` or `resultsFor` reads them. The callers hold one
 field, `lab` or `results`, and no caller reads a lab's URL or status
 codes. Each method reaches the network once, and every branch returns a
-`LabReport`.
+`LabReport`. `CityLabResults` maps the status codes exactly as
+`LabResultsClient` did, so moving the code changed no lab's behaviour.
 
 ## Red flags
 

@@ -104,7 +104,8 @@ A seam is worth its cost when all three hold:
 1. The next real case lands as a new class or entry, and no tested
    caller changes.
 2. The interface names the variation, not one adapter's technology.
-3. The history shows the axis, not a single case.
+3. The history, or a case the business has named with a reason, shows
+   the axis, not a single case.
 
 When one fails, keep the direct code and wait for the next case. A
 small duplication is cheaper than a seam on an axis nobody has
