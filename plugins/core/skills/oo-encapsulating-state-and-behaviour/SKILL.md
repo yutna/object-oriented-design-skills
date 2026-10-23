@@ -55,8 +55,8 @@ for clinic actions, and hands out answers instead of raw collections.
    state, check the rule, and change only what the action allows.
 
    The exception is a framework that maps fields through setters or a
-   no-argument constructor. Let it map at the edge, and enforce the rule
-   in the object's action method or in the layer the project names.
+   no-argument constructor. Let it map at the edge, enforce the rule in
+   the object's action method, and say in the code where the rule lives.
 
 3. Rule. **Tell the object what to do instead of asking for its state
    and deciding for it.** Replace the getter-check-set sequence with one
