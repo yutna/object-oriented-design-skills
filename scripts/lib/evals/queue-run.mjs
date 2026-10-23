@@ -1,5 +1,5 @@
-import { appendFileSync, mkdirSync } from 'node:fs'
-import { join } from 'node:path'
+import { appendFileSync, mkdirSync, writeFileSync } from 'node:fs'
+import { dirname, join, posix } from 'node:path'
 
 import { Check } from '../check.mjs'
 import { RepoError } from '../errors.mjs'
@@ -11,6 +11,7 @@ export class QueueRun extends Check {
     '--add <label> -- <script> [args...] | --pause <text> | ' +
     '--run [--dry-run]'
   static #RUNS = 'evals/results/runs.jsonl'
+  static #PIECES = 'evals/results/pieces'
 
   #repository
   #argv
@@ -127,6 +128,8 @@ export class QueueRun extends Check {
       const result = this.#runPiece(entry)
       const endedAt = this.#clock.now().toISOString()
       const after = this.#meter.read()
+      const log = this.#logPath(entry.id)
+      this.#writeLog(log, result.output)
       this.#appendRun({
         id: entry.id,
         label: entry.label,
@@ -136,12 +139,18 @@ export class QueueRun extends Check {
         dirty,
         startedAt,
         endedAt,
+        log,
         exitStatus: result.exitCode,
         quotaBefore: before,
         quotaAfter: after
       })
       queue.drop()
       piecesRun += 1
+      // A failed measurement is recorded, not hidden, so it is a note.
+      if (result.exitCode !== 0) {
+        report.note(
+          `piece ${entry.id} exited ${result.exitCode}; see ${log}`)
+      }
       if (!policy.mayContinue(after)) break
     }
     this.#count(report, { piecesRun, paused, waiting })
@@ -227,6 +236,17 @@ export class QueueRun extends Check {
       if (previous === undefined) delete process.env.OO_EVAL_QUEUE
       else process.env.OO_EVAL_QUEUE = previous
     }
+  }
+
+  #logPath(id) {
+    // The recorded path is repository notation, not platform notation.
+    return posix.join(QueueRun.#PIECES, `${id}.log`)
+  }
+
+  #writeLog(log, output) {
+    const path = join(this.#repository.root, log)
+    mkdirSync(dirname(path), { recursive: true })
+    writeFileSync(path, output)
   }
 
   #appendRun(record) {
