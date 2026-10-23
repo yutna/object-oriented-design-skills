@@ -90,8 +90,10 @@ class InvoiceTotal
 
 Two parts must run their steps in a fixed order. Callers once reserved a
 slot and then constructed the appointment; a missed reservation left a
-held slot with no booking. Weaken it by moving the order inside one
-constructor or method, so no caller can run half of it.
+held slot with no booking, and constructing a saved appointment reserved
+its slot again. Weaken it by moving the order inside one named factory or
+method, so no caller can run half of it, and keep the constructor to its
+own fields.
 
 ```text
 class Appointment
@@ -99,8 +101,10 @@ class Appointment
   - patient: PatientId
   - status: AppointmentStatus
   + new(slot: Slot, patient: PatientId)
-    slot.reserve(patient)
     status := Scheduled
+  + static book(slot: Slot, patient: PatientId): Appointment
+    slot.reserve(patient)
+    return new Appointment(slot, patient)
 ```
 
 ### Timing

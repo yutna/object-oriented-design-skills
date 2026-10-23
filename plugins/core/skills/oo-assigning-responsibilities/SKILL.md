@@ -159,8 +159,10 @@ class Appointment
   + status: AppointmentStatus
   + cancellationReason: CancellationReason?
   + new(slot: Slot, patient: PatientId)
-    slot.reserve(patient)
     status := Scheduled
+  + static book(slot: Slot, patient: PatientId): Appointment
+    slot.reserve(patient)
+    return new Appointment(slot, patient)
 
 class CancelAppointment
   + run(appointment: Appointment, reason: CancellationReason): void
@@ -192,8 +194,10 @@ class Appointment
   - status: AppointmentStatus
   - cancellationReason: CancellationReason?
   + new(slot: Slot, patient: PatientId)
-    slot.reserve(patient)
     status := Scheduled
+  + static book(slot: Slot, patient: PatientId): Appointment
+    slot.reserve(patient)
+    return new Appointment(slot, patient)
   + cancel(reason: CancellationReason): void
     if status = Scheduled then
       status := Cancelled
@@ -209,9 +213,9 @@ class CancelAppointment
     return
 ```
 
-The constructor reserves the slot and sets the status. Only `cancel` sets
-the reason and releases the slot. No field is read before it is set, and
-no step runs twice.
+`Appointment.book` reserves the slot, and the constructor sets the
+status. Only `cancel` sets the reason and releases the slot. No field is
+read before it is set, and no step runs twice.
 
 ## Red flags
 
