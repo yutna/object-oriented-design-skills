@@ -1,0 +1,4 @@
+* text=auto eol=lf
+# Windows scripts (gradlew.bat, mvnw.cmd) must keep CRLF.
+*.bat text eol=crlf
+*.cmd text eol=crlf
