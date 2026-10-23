@@ -3,7 +3,7 @@ name: oo-assigning-responsibilities
 description: Use when deciding which class should own a behaviour, where a new method belongs, or when one class has grown to do too much.
 license: MIT
 metadata:
-  version: 0.2.0
+  version: 0.3.0
   pack: object-oriented-design-skills
 ---
 
