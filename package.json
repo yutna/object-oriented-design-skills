@@ -27,11 +27,13 @@
   ],
   "scripts": {
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\" \"#OOP_SOURCES.md\" \"#PRIVATE-NOTES.md\" \"#.claude\"",
-    "test": "npm run lint:md",
+    "test": "npm run lint:md && npm run validate:oop",
     "test:unit": "node --test \"test/**/*.test.mjs\"",
+    "validate:oop": "node scripts/validate-oop.mjs",
     "gate": "npm test && npm run test:unit"
   },
   "devDependencies": {
+    "acorn": "8.19.0",
     "markdownlint-cli2": "0.23.2",
     "yaml": "2.9.1"
   }
