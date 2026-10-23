@@ -69,8 +69,8 @@ for clinic actions, and hands out answers instead of raw collections.
    a second effect.
 
    The exception is the identifier of something just created, such as a
-   new appointment's identifier. Returning it is deliberate, and the
-   method still does one job: create the thing.
+   new booking's identifier. Returning it is deliberate, and the method
+   still does one job: create the thing.
 
 5. Rule. **Never hand out the internal collection.** Offer methods that
    name what callers may do with it, or return a read-only view. A caller
@@ -142,6 +142,7 @@ class Scheduler
     return
 ```
 
+`new List<Slot>` is taken to mean an empty list the clinician owns.
 `slots.anyOverlaps(slot)` is taken to mean true when some slot the
 clinician already holds overlaps the new one. `slots.add(slot)` appends
 to the clinician's own list once. `slots.readOnlyView()` returns a
