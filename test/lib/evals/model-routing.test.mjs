@@ -91,6 +91,17 @@ class FakeRunner {
   }
 }
 
+class FakeGit {
+  static COMMIT = 'abc123'
+
+  run(command, args, cwd) {
+    if (command !== 'git' || args[0] !== 'rev-parse') {
+      throw new Error(`unexpected git command ${command}`)
+    }
+    return { exitCode: 0, output: `${FakeGit.COMMIT}\n` }
+  }
+}
+
 class SequenceRunner {
   #outputs
   #calls = []
@@ -182,6 +193,7 @@ class TempRepository {
   inspect({
     argv = [],
     runner,
+    git = new FakeGit(),
     environment = { OO_EVAL_QUEUE: '1' }
   } = {}) {
     const report = new Report()
@@ -189,7 +201,8 @@ class TempRepository {
       this.repository,
       argv,
       runner,
-      environment).inspect(report)
+      environment,
+      git).inspect(report)
     return report
   }
 
@@ -227,9 +240,10 @@ test('ModelRouting takes the first Skill call and strips its prefix',
         'object-oriented-design-skills:oo-assigning-responsibilities'))
       const report = fixture.inspect({ runner })
       assert.deepEqual(report.lines(), [
-        'top-1: 1/2',
-        'miss: which class owns the appointment reminder ' +
-          '-> expected oo-assigning-responsibilities, answered oo-design',
+        'hits: 3/6',
+        '0/3 which class owns the appointment reminder ' +
+          '-> expected oo-assigning-responsibilities; ' +
+          'answered oo-design, oo-design, oo-design',
         'ok 2 routed case(s)'
       ])
     } finally {
@@ -244,14 +258,19 @@ test('ModelRouting reads the real text answer and strips its prefix',
       const runner = new FakeRunner(Fixtures.route())
       const report = fixture.inspect({ runner })
       assert.deepEqual(report.lines(), [
-        'top-1: 1/2',
-        'miss: we are sizing this appointment design work ' +
-          '-> expected oo-design, answered oo-assigning-responsibilities',
+        'hits: 3/6',
+        '0/3 we are sizing this appointment design work ' +
+          '-> expected oo-design; ' +
+          'answered oo-assigning-responsibilities, ' +
+          'oo-assigning-responsibilities, oo-assigning-responsibilities',
         'ok 2 routed case(s)'
       ])
       const [directory] = fixture.results()
       const answers = await fixture.answers(directory)
-      assert.equal(answers.results.length, 2)
+      assert.equal(answers.model, 'claude-haiku-5-5')
+      assert.equal(answers.commit, FakeGit.COMMIT)
+      assert.equal(answers.runs, 3)
+      assert.equal(answers.results.length, 6)
       assert.equal(
         answers.results[0].answer,
         'oo-assigning-responsibilities')
@@ -271,11 +290,11 @@ test('ModelRouting answers none when no Skill call or skill name appears',
       const report = fixture.inspect({ runner })
       assert.equal(report.failed, false)
       assert.deepEqual(report.lines(), [
-        'top-1: 0/2',
-        'miss: we are sizing this appointment design work ' +
-          '-> expected oo-design, answered none',
-        'miss: which class owns the appointment reminder ' +
-          '-> expected oo-assigning-responsibilities, answered none',
+        'hits: 0/6',
+        '0/3 we are sizing this appointment design work ' +
+          '-> expected oo-design; answered none, none, none',
+        '0/3 which class owns the appointment reminder ' +
+          '-> expected oo-assigning-responsibilities; answered none, none, none',
         'ok 2 routed case(s)'
       ])
     } finally {
@@ -325,14 +344,14 @@ test('--dry-run prints one command per case and calls nothing', async () => {
   try {
     const runner = new FakeRunner('must not run')
     const report = fixture.inspect({
-      argv: ['--dry-run'],
+      argv: ['--dry-run', '--runs', '2'],
       runner,
       environment: {}
     })
     assert.equal(runner.calls.length, 0)
     assert.equal(report.failed, false)
     const lines = report.lines()
-    assert.equal(lines.length, 3)
+    assert.equal(lines.length, 5)
     assert.match(
       lines[0],
       /^claude -p --model claude-haiku-5-5 --setting-sources "" /)
@@ -348,7 +367,9 @@ test('--dry-run prints one command per case and calls nothing', async () => {
     assert.match(
       lines[0],
       /request best\? Reply with its name only, or none\."$/)
-    assert.match(lines[1], /^claude .*which class owns/)
+    assert.equal(lines[1], lines[0])
+    assert.match(lines[2], /^claude .*which class owns/)
+    assert.equal(lines[3], lines[2])
     assert.equal(lines.at(-1), 'ok 2 routed case(s)')
     assert.deepEqual(fixture.results(), [])
   } finally {
@@ -366,9 +387,9 @@ test('--selftest runs every case against a fake runner', async () => {
       environment: {}
     })
     assert.equal(report.failed, false)
-    assert.equal(report.lines()[0], 'top-1: 1/2')
+    assert.equal(report.lines()[0], 'hits: 3/6')
     assert.equal(report.lines().at(-1), 'ok 2 routed case(s)')
-    assert.equal(runner.calls, 2)
+    assert.equal(runner.calls, 6)
   } finally {
     await fixture.close()
   }
@@ -393,6 +414,8 @@ test('ModelRouting counts hits per case across three runs', async () => {
     ])
     const [directory] = fixture.results()
     const answers = await fixture.answers(directory)
+    assert.equal(answers.model, 'claude-haiku-5-5')
+    assert.equal(answers.commit, FakeGit.COMMIT)
     assert.equal(answers.runs, 3)
     assert.deepEqual(
       answers.results.map(({ answer }) => answer),
