@@ -17,7 +17,7 @@ metadata:
 ## Overview
 
 Some parts of a clinic program are objects that keep rules and protect
-them. Others are data: a configuration, an intake form a clinic defines,
+them. Others are data: a configuration, opening hours a clinic defines,
 or a payload another system sends. This skill tells the two apart by
 where the rules live, so a class is added when it owns a rule and not
 only to make a design look object-oriented.
@@ -28,7 +28,8 @@ only to make a design look object-oriented.
   model.
 - A new type could be a class, a record, a map or a data transfer
   object.
-- An API response or an intake form is being modelled in the domain.
+- An API response or opening hours a clinic defines are being modelled
+  in the domain.
 - A business rule sits in a service that reads another class's fields.
 - A record or data transfer object has started to grow behaviour.
 - A design mixes data at the edge with objects in the core, and the
@@ -67,9 +68,9 @@ only to make a design look object-oriented.
    needs it, and let the record carry the data until then.
 
    The exception is a value whose construction must reject an
-   impossible state, such as an appointment that would start before the
-   clinic opens. Give that type a constructor that enforces the rule,
-   and it becomes a value object with a reason to exist.
+   impossible state, such as a time range whose end must come after its
+   start. Give that type a constructor that enforces the rule, and it
+   becomes a value object with a reason to exist.
 
 5. Rule. **Let a domain object earn its place by protecting an
    invariant or owning a rule.** The test is direct: which rule would
@@ -132,11 +133,15 @@ enum AppointmentStatus
   Cancelled
 
 class Appointment
-  + patient: PatientId
-  + startsAt: DateTime
-  + status: AppointmentStatus
+  - patient: PatientId
+  - startsAt: DateTime
+  - status: AppointmentStatus
   + new(patient: PatientId, startsAt: DateTime)
     status := Scheduled
+  + patient(): PatientId
+    return patient
+  + startsAt(): DateTime
+    return startsAt
   + cancel(): void
     raises AppointmentNotCancellable
     if status = Scheduled then
@@ -157,12 +162,14 @@ class BookingApi
   + new(appointments: AppointmentRepository, clock: Clock)
   + appointment(id: AppointmentId): AppointmentView
     appointment := appointments.find(id)
-    late := appointment.startsAt < clock.now()
-    return new AppointmentView(appointment.patient, appointment.startsAt, late)
+    startsAt := appointment.startsAt()
+    late := startsAt.isBefore(clock.now())
+    return new AppointmentView(appointment.patient(), startsAt, late)
 ```
 
-The view copies three values; `BookingApi` compares the start with the
-clock before it builds the view. `cancel` is the only place that
+The view copies three values. `BookingApi` asks the appointment for its
+start and compares it with the clock before it builds the view. The
+appointment's fields are private, so `cancel` is the only place that
 changes `status`, and no field is read before its constructor sets it.
 
 ## Red flags
