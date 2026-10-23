@@ -29,6 +29,7 @@ export class PluginEvalRun {
   static #TRACES = 'traces'
   static #CLAUDE = 'claude'
   static #SCAFFOLD = /^e-[A-Za-z0-9]+$/
+  static #WRITE_TOOLS = Object.freeze(['Write', 'Edit'])
 
   #repository
   #runner
@@ -182,9 +183,13 @@ export class PluginEvalRun {
         '--model', this.#options.model,
         '--judge-model', this.#options.judgeModel,
         '--max-cost-usd', String(this.#options.maxCostUsd),
-        '--runs', String(this.#options.runs),
-        '--ablation', this.#ablation()
+        '--runs', String(this.#options.runs)
       ]
+      const tools = this.#allowTools()
+      // The tool list stops at the next flag, so the ablation stays last and
+      // every command keeps the same tail.
+      if (tools !== null) args.push('--allow-tools', ...tools)
+      args.push('--ablation', this.#ablation())
       this.#prepared = {
         cwd,
         copy,
@@ -198,6 +203,15 @@ export class PluginEvalRun {
       rmSync(cwd, { recursive: true, force: true })
       throw error
     }
+  }
+
+  #allowTools() {
+    // A task piece edits files in its workspace, so it needs both tools; a
+    // question piece answers in place and takes no grant at all.
+    return this.#cases.some(({ family }) =>
+      family !== PluginEvalRun.#QUESTION)
+      ? PluginEvalRun.#WRITE_TOOLS
+      : null
   }
 
   #ablation() {
