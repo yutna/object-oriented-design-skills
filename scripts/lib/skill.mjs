@@ -29,6 +29,10 @@ export class Skill {
     return basename(this.#directory)
   }
 
+  get frontmatter() {
+    return this.#frontmatter
+  }
+
   get name() {
     return this.#frontmatter.get('name')
   }
