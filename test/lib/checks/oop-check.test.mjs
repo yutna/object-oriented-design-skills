@@ -144,6 +144,57 @@ test('an entry script with an unguarded call yields its error', async () => {
   }
 })
 
+test('a class inside the main guard yields exactly its error', async () => {
+  const repository = await TempRepository.create()
+  try {
+    const file = join('scripts', 'guard-class.mjs')
+    await repository.install(file, 'guard-class.mjs')
+    const report = await repository.inspect()
+    assert.equal(report.failed, true)
+    assert.deepEqual(report.lines(), [
+      `error ${file}:2: the main guard may only compose objects, ` +
+      'not declare ClassDeclaration',
+      'failed: 1 error(s)'
+    ])
+  } finally {
+    await repository.close()
+  }
+})
+
+test('an arrow inside the main guard yields exactly its error', async () => {
+  const repository = await TempRepository.create()
+  try {
+    const file = join('scripts', 'guard-arrow.mjs')
+    await repository.install(file, 'guard-arrow.mjs')
+    const report = await repository.inspect()
+    assert.equal(report.failed, true)
+    assert.deepEqual(report.lines(), [
+      `error ${file}:2: the main guard may only compose objects, ` +
+      'not declare ArrowFunctionExpression',
+      'failed: 1 error(s)'
+    ])
+  } finally {
+    await repository.close()
+  }
+})
+
+test('an entry whose main guard only composes passes', async () => {
+  const repository = await TempRepository.create()
+  try {
+    await repository.install(
+      join('scripts', 'lib', 'valid-lib.mjs'),
+      'valid-lib.mjs')
+    await repository.install(
+      join('scripts', 'composing-entry.mjs'),
+      'composing-entry.mjs')
+    const report = await repository.inspect()
+    assert.equal(report.failed, false)
+    assert.deepEqual(report.lines(), ['ok 2 file(s), 1 class(es)'])
+  } finally {
+    await repository.close()
+  }
+})
+
 test('a lib file with no exported class yields its error', async () => {
   const repository = await TempRepository.create()
   try {

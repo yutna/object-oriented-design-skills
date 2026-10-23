@@ -1,9 +1,18 @@
 import { parse } from 'acorn'
+import { full } from 'acorn-walk'
 import { basename, dirname, join, relative, sep } from 'node:path'
 
 import { Check } from '../check.mjs'
 
 export class OopCheck extends Check {
+  static #DECLARATIONS = new Set([
+    'ArrowFunctionExpression',
+    'ClassDeclaration',
+    'ClassExpression',
+    'FunctionDeclaration',
+    'FunctionExpression'
+  ])
+
   #repository
 
   constructor(repository) {
@@ -93,7 +102,20 @@ export class OopCheck extends Check {
     }
     if (guards !== 1 || !this.#isMainGuard(guard)) {
       report.error(path, 'needs exactly one import.meta.main guard')
+      return
     }
+    this.#inspectGuard(path, guard, report)
+  }
+
+  #inspectGuard(path, guard, report) {
+    // An entry is a composition root: code here cannot be imported or tested.
+    full(guard.consequent, (node) => {
+      if (!OopCheck.#DECLARATIONS.has(node.type)) return
+      report.error(
+        `${path}:${node.loc.start.line}`,
+        'the main guard may only compose objects, ' +
+        `not declare ${node.type}`)
+    })
   }
 
   #isMainGuard(node) {
