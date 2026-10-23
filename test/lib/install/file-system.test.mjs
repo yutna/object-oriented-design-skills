@@ -14,6 +14,24 @@ import { join } from 'node:path'
 
 import { FileSystem } from '../../../scripts/lib/install/file-system.mjs'
 
+test('FileSystem links and sees a link', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'oo-file-system-'))
+  try {
+    const target = join(root, 'target')
+    await mkdir(target)
+    const path = join(root, 'link')
+    const fileSystem = new FileSystem()
+
+    fileSystem.link(target, path)
+
+    assert.equal(fileSystem.isLink(path), true)
+    assert.equal(fileSystem.isLink(target), false)
+    assert.equal(existsSync(path), true)
+  } finally {
+    await rm(root, { recursive: true, force: true })
+  }
+})
+
 test('FileSystem.remove removes a link without its target', async () => {
   const root = await mkdtemp(join(tmpdir(), 'oo-file-system-'))
   try {

@@ -4,7 +4,9 @@ import {
   lstatSync,
   mkdirSync,
   readFileSync,
+  readdirSync,
   rmSync,
+  symlinkSync,
   unlinkSync
 } from 'node:fs'
 
@@ -36,5 +38,24 @@ export class FileSystem {
 
   makeDirectory(path) {
     mkdirSync(path, { recursive: true })
+  }
+
+  link(target, path) {
+    // A Windows junction is a link without admin rights; it needs an
+    // absolute target, which the link-local entry always supplies.
+    const type = process.platform === 'win32' ? 'junction' : 'dir'
+    symlinkSync(target, path, type)
+  }
+
+  isLink(path) {
+    try {
+      return lstatSync(path).isSymbolicLink()
+    } catch {
+      return false
+    }
+  }
+
+  readDirectory(path) {
+    return readdirSync(path)
   }
 }
