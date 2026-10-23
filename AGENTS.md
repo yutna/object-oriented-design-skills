@@ -85,8 +85,8 @@ Never take an issue from `Backlog` or one without a milestone.
    every criterion from the issue, tick it, and put the evidence beside
    it. Evidence is a command with the last lines of its output, a file
    path, or a link to a CI run.
-6. Mark the pull request ready with `gh pr ready`. Then stop and print
-   the pull request URL.
+6. Mark the pull request ready with `gh pr ready`. That finishes the
+   issue.
 
 Do not merge. Do not close milestones, edit issue bodies, or change any
 label except `blocked`. Do not push to `main`. Commits are signed by
@@ -114,7 +114,7 @@ reason outside your scope:
 1. Comment on the issue: what you tried, the exact error, and one
    question with the options you see.
 2. Add the `blocked` label to the issue.
-3. Stop. Do not guess, and do not widen the scope.
+3. Leave the issue there. Do not guess, and do not widen the scope.
 
 ## Hard constraints
 
@@ -250,6 +250,10 @@ metadata:
   sentence of its own.
 - `## Pattern` uses the neutral notation, in `text` fences. Real syntax
   belongs only in language packs.
+- Every code fence in every file of a skill is traced before commit:
+  it uses only keywords `notation.md` defines, every field is set
+  before it is read, no side effect happens twice, and the skill's
+  files agree with each other.
 - `## Red flags` are places to look, not verdicts. A red flag becomes a
   finding only with evidence: a measurement, a reproducible bug, or a
   failing test.
