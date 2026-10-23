@@ -30,9 +30,8 @@ variations and needs two seams, not one.
 ## Claim exports, insurer by insurer
 
 The clinic first sent claims to one insurer. `ClaimExport` wrote that
-insurer's layout directly: one method, one set of field names. A seam
-would have added an interface with one implementation, so there was
-none.
+insurer's layout directly: one method, one layout name. A seam would
+have added an interface with one implementation, so there was none.
 
 The second insurer arrived with a different layout. The method grew a
 condition. The two cases were visible, but the change was still small,
