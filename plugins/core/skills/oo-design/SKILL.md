@@ -1,6 +1,6 @@
 ---
 name: oo-design
-description: Use when starting or sizing design work in an object-oriented codebase, or when unsure which object design rule applies to a change.
+description: Use when starting a new module, feature or system in an object-oriented codebase, sizing design, or unsure which object rule applies.
 license: MIT
 metadata:
   version: 0.6.0
