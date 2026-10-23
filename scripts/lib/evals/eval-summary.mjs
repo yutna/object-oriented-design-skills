@@ -31,13 +31,11 @@ export class EvalSummary extends Check {
 
   constructor(directory) {
     super()
-    // The summary reads one results directory; a missing argument cannot
-    // name a piece to grade.
-    if (typeof directory !== 'string' || directory === '') {
-      throw new RepoError(
-        'usage: eval-summary.mjs <results dir>', 2)
-    }
-    this.#directory = resolve(directory)
+    // A missing argument is refused when the check runs, so only Cli turns
+    // it into an exit code.
+    this.#directory = typeof directory === 'string' && directory !== ''
+      ? resolve(directory)
+      : null
     Object.freeze(this)
   }
 
@@ -50,6 +48,10 @@ export class EvalSummary extends Check {
   }
 
   summary() {
+    if (this.#directory === null) {
+      throw new RepoError(
+        'usage: eval-summary.mjs <results dir>', 2)
+    }
     if (this.#summary === null) this.#summary = this.#build()
     return this.#summary
   }
@@ -90,6 +92,9 @@ export class EvalSummary extends Check {
         piece, result.cases, baselines, cases)
     }
     for (const baseline of baselines.values()) {
+      // The baseline folder accumulates every case; only a case in this
+      // results folder has a block run to compare against it.
+      if (!cases.has(baseline.case)) continue
       const entry = this.#entry(
         cases, baseline.case, this.#familyOfName(baseline.case))
       for (const run of baseline.runs) {
@@ -428,13 +433,15 @@ export class EvalSummary extends Check {
       EvalSummary.#row(widths.map((width) => '-'.repeat(width)), widths),
       ...rows.map((row) => EvalSummary.#row(row, widths))
     ]
-    const lines = [...table, '']
+    const opened = []
     for (const [name, entry] of Object.entries(summary.cases)) {
       for (const [arm, counts] of Object.entries(entry.arms)) {
-        const opened = EvalSummary.#opened(counts)
-        if (opened !== null) lines.push(`${name} ${arm}: ${opened}`)
+        const used = EvalSummary.#opened(counts)
+        if (used !== null) opened.push(`${name} ${arm}: ${used}`)
       }
     }
+    const lines = [...table]
+    if (opened.length > 0) lines.push('', ...opened)
     lines.push('', 'family pass rate')
     for (const [family, arms] of Object.entries(summary.families)) {
       for (const [arm, counts] of Object.entries(arms)) {

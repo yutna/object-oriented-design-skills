@@ -74,7 +74,11 @@ export class RunGrade {
   }
 
   static #isJudge(grader) {
-    return grader.type === 'llm' || Array.isArray(grader.judgeVotes)
+    // The result row may leave out the type, but a judge either leaves its
+    // votes behind or says in its explanation that it voted.
+    return grader.type === 'llm' ||
+      Array.isArray(grader.judgeVotes) ||
+      String(grader.explanation ?? '').startsWith('judge votes:')
   }
 
   static #used(trace) {

@@ -49,6 +49,9 @@ loss has one cause. It costs 15% to 30% of a week, in sittings of up to
 
 - The reviewer runs every model tier. The implementer builds cases and
   code, and never spends quota.
+- `node scripts/eval-queue.mjs --run` takes the oldest entry, and
+  `--dry-run` previews it. A piece that needs a model refuses to start
+  outside the queue.
 - A new piece starts only when the five-hour window is under 50% used
   and the seven-day window is under 75% used.
 - A batch stops before its next piece when the five-hour window reaches
