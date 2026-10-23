@@ -45,9 +45,11 @@ class FakeMeter {
 class FakeRunner {
   #calls = []
   #dirty
+  #piece
 
-  constructor({ dirty = false } = {}) {
+  constructor({ dirty = false, exitCode = 0, output = 'piece done\n' } = {}) {
     this.#dirty = dirty
+    this.#piece = { exitCode, output }
   }
 
   run(command, args, cwd) {
@@ -66,7 +68,7 @@ class FakeRunner {
         output: this.#dirty ? ' M evals/x\n' : ''
       }
     }
-    return { exitCode: 0, output: 'piece done\n' }
+    return { ...this.#piece }
   }
 
   get calls() {
@@ -387,6 +389,68 @@ test('--run logs one line with both readings and drops the piece',
       await fixture.close()
     }
   })
+
+test('--run writes the combined output to the piece log', async () => {
+  const fixture = await TempRun.of([PieceEntry.first()])
+  try {
+    const meter = new FakeMeter([
+      ReadingAt.of(10, 20),
+      ReadingAt.of(12, 21)
+    ])
+    const report = fixture.inspect(
+      ['--run'],
+      meter,
+      new FakeRunner({ output: 'arm=clinic\nverdict=pass\n' }),
+      new FakeClock(Times.pieceRun()))
+    assert.deepEqual(report.lines(), ['ok 1 piece(s) run'])
+    const path = join(fixture.root, 'evals', 'results', 'pieces', 'p1.log')
+    assert.equal(existsSync(path), true)
+    assert.equal(await readFile(path, 'utf8'), 'arm=clinic\nverdict=pass\n')
+  } finally {
+    await fixture.close()
+  }
+})
+
+test('--run notes a non-zero exit and still passes', async () => {
+  const fixture = await TempRun.of([PieceEntry.first()])
+  try {
+    const meter = new FakeMeter([
+      ReadingAt.of(10, 20),
+      ReadingAt.of(12, 21)
+    ])
+    const report = fixture.inspect(
+      ['--run'],
+      meter,
+      new FakeRunner({ exitCode: 1, output: 'tier 1 failed\n' }),
+      new FakeClock(Times.pieceRun()))
+    assert.equal(report.failed, false)
+    assert.deepEqual(report.lines(), [
+      'piece p1 exited 1; see evals/results/pieces/p1.log',
+      'ok 1 piece(s) run'
+    ])
+  } finally {
+    await fixture.close()
+  }
+})
+
+test('--run records the log path relative to the repository', async () => {
+  const fixture = await TempRun.of([PieceEntry.first()])
+  try {
+    const meter = new FakeMeter([
+      ReadingAt.of(10, 20),
+      ReadingAt.of(12, 21)
+    ])
+    fixture.inspect(
+      ['--run'],
+      meter,
+      new FakeRunner(),
+      new FakeClock(Times.pieceRun()))
+    const [run] = await fixture.runs()
+    assert.equal(run.log, 'evals/results/pieces/p1.log')
+  } finally {
+    await fixture.close()
+  }
+})
 
 test('--run records a dirty checkout in the run line', async () => {
   const fixture = await TempRun.of([PieceEntry.first()])
