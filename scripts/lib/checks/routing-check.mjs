@@ -22,7 +22,9 @@ export class RoutingCheck extends Check {
   inspect(report) {
     const skills = this.#repository.skills()
     const index = new RoutingIndex(skills)
-    const cases = RoutingCases.of(this.#repository.file(RoutingCheck.#CASES))
+    const file = this.#repository.file(RoutingCheck.#CASES)
+    const cases = RoutingCases.of(file)
+    const knownMisses = RoutingCases.knownMissesOf(file)
     // A run that read no case is a failed measurement, not a clean pass.
     report.count('routing case(s)', cases.length)
     // The cap keeps the gate meaningful when a pack has few skills.
@@ -58,7 +60,26 @@ export class RoutingCheck extends Check {
     }
     // The top-1 note is a rank count, shown on every run.
     report.note(`top-1: ${top1}/${cases.length}`)
+    this.#noteKnownMisses(report, index, knownMisses, top)
     if (this.#noise) this.#reportNoise(report, noise)
+  }
+
+  #noteKnownMisses(report, index, knownMisses, top) {
+    for (const knownMiss of knownMisses) {
+      const ranked = index.rank(knownMiss.symptom)
+      const position = ranked.findIndex(({ name }) =>
+        name === knownMiss.expected) + 1
+      const score = ranked[position - 1]?.score ?? 0
+      // A known miss that would pass now can move back into the cases.
+      if (position > 0 && position <= top && score > 0) {
+        report.note(`known miss now passes: ${knownMiss.symptom}`)
+        continue
+      }
+      // A known miss is a result, so its rank is a note, not an error.
+      report.note(
+        `known miss: ${knownMiss.symptom} -> ${knownMiss.expected} ` +
+        `(rank ${position})`)
+    }
   }
 
   #reportNoise(report, noise) {

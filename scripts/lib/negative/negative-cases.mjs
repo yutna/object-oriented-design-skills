@@ -61,6 +61,7 @@ export class NegativeCases {
     'Should reach `oo-assigning-responsibilities`.'
   static #SCENARIO_UNKNOWN_REPLACE =
     'Should reach `oo-no-such-skill`.'
+  static #SCENARIO_DESIGN_FIND = 'Should reach `oo-design`.'
   static #SHARED_COPY =
     "The pack is design rules for codebases written in an object-oriented\n" +
     "style, not universal advice. A project's own written conventions " +
@@ -342,6 +343,14 @@ export class NegativeCases {
         NegativeCases.#TASK,
         NegativeCases.#TASK_SKILL_FIND,
         NegativeCases.#TASK_SKILL_REPLACE),
-      'unknown skill in input_match: oo-no-such-skill')
+      'unknown skill in input_match: oo-no-such-skill'),
+    new NegativeCase(
+      'coverage rejects a skill with no scenario',
+      NegativeCases.#EVAL,
+      new ReplaceText(
+        NegativeCases.#SCENARIOS,
+        NegativeCases.#SCENARIO_DESIGN_FIND,
+        ''),
+      'oo-design has no scenario')
   ])
 }
