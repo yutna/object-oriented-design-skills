@@ -40,20 +40,26 @@ class ClinicSchedule
 
 ## Provides a service
 
-It answers a task that does not belong to one entity. A `BookingService`
-turns a slot and a patient into an appointment.
+It answers a question that no single entity can answer, and creates
+nothing. A `ReferralCheck` confirms that a patient holds a referral
+for a clinician's specialty.
 
 ```text
-class BookingService
-  + book(slot: Slot, patient: PatientId): Appointment
-    slot.reserve(patient)
-    return new Appointment(slot, patient)
+class ReferralCheck
+  - referrals: ReferralBook
+  + new(referrals: ReferralBook)
+  + confirm(patient: PatientId, clinician: Clinician): void
+    raises ReferralMissing
+    if referrals.find(patient, clinician.specialty()) = null then
+      raise ReferralMissing
+    return
 ```
 
 ## Coordinates others
 
-It directs several objects through a flow and holds the order of steps.
-A `VisitCoordinator` removes a patient from triage and books the slot.
+It directs several objects through a flow and holds the order of
+steps. A `VisitCoordinator` takes a patient off the triage queue,
+then creates the appointment, whose constructor reserves the slot.
 
 ```text
 class VisitCoordinator
@@ -61,20 +67,21 @@ class VisitCoordinator
   + new(triage: TriageQueue)
   + checkIn(patient: PatientId, slot: Slot): Appointment
     triage.remove(patient)
-    slot.reserve(patient)
     return new Appointment(slot, patient)
 ```
 
 ## Controls a flow
 
 It decides the order of steps for one use case and stops when a step
-fails. A `CheckInFlow` reserves the slot before it creates the
-appointment.
+fails. A `CheckInFlow` confirms the referral first; a missing
+referral raises, and no appointment is created.
 
 ```text
 class CheckInFlow
-  + run(patient: PatientId, slot: Slot): Appointment
-    slot.reserve(patient)
+  - referrals: ReferralCheck
+  + new(referrals: ReferralCheck)
+  + run(patient: PatientId, clinician: Clinician, slot: Slot): Appointment
+    referrals.confirm(patient, clinician)
     return new Appointment(slot, patient)
 ```
 
@@ -97,12 +104,12 @@ to explain, or a collaborator appears only to fetch data, the card is not
 ready.
 
 - Class: `Appointment`
-- Responsibilities: hold the slot and patient chosen for the booking;
-  answer whether the booking is scheduled; cancel the booking and
-  release the slot.
+- Responsibilities: reserve the slot and hold the slot and patient
+  chosen for the booking; answer whether the booking is scheduled;
+  cancel the booking and release the slot.
 - Collaborators: `Slot`, `PatientId`.
 
-Read it while booking: `Slot.reserve` takes the slot, the `Appointment`
-constructor sets the slot and patient, and the card shows that
-cancellation belongs to the same object. If the card also said "remind
-the patient", it would need another card and another class.
+Read it while booking: the `Appointment` constructor reserves the
+slot and sets the slot and patient, and the card shows that
+cancellation belongs to the same object. If the card also said
+"remind the patient", it would need another card and another class.

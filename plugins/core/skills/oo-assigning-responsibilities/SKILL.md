@@ -46,11 +46,15 @@ to change.
 
 ## Core rules
 
-1. Rule. **Give a behaviour to the object that holds the information
+1. Default. **Give a behaviour to the object that holds the information
    it needs.** If a class already holds the values a decision reads,
    the decision belongs there. Asking another object for those values
    and deciding outside puts the rule and its data in different places,
    where they drift apart.
+
+   The exception is a behaviour that would drag a database, a
+   framework or another context into the object. Give it to a
+   collaborator, as rule 4 describes.
 
 2. Default. **Create an object where its lifetime is controlled: in the
    object that contains, records, or closely uses it, or in the object
@@ -98,13 +102,14 @@ to change.
    class along the line between them. A method that changes for the same
    reason as its neighbours stays.
 
-   The exception is a small value object whose operations always change
-   together for the same caller. Keep it whole until their reasons
-   diverge.
+   The exception is two kinds of change that always arrive in the
+   same request. Splitting them would make every such request touch
+   two classes, so keep them together until they arrive apart.
 
 8. Rule. **Extract a class when one class knows and does too much.**
-   Symptoms are a growing list of unrelated methods, fields used by only
-   one method, and a name that needs "and" to describe it. Move the
+   Symptoms are a growing list of unrelated methods, groups of methods
+   that each use their own group of fields, and a name that needs "and"
+   to describe it. Move the
    fields and methods that change together into a new class, give it a
    domain name, and keep the original as a collaborator. The reference
    on extracting a class starts from a `ClinicManager` that books,
@@ -130,9 +135,10 @@ to change.
 
 ## Pattern
 
-Before, the service reads public fields from `Appointment` and decides
-whether the booking can be cancelled. After, `Appointment` owns that
-decision and the service only delegates.
+Before, the use-case object `CancelAppointment` reads public fields
+from `Appointment` and decides whether the booking can be cancelled.
+After, `Appointment` owns that decision and the use-case object only
+delegates.
 
 Before:
 
@@ -156,8 +162,8 @@ class Appointment
     slot.reserve(patient)
     status := Scheduled
 
-class AppointmentService
-  + cancel(appointment: Appointment, reason: CancellationReason): void
+class CancelAppointment
+  + run(appointment: Appointment, reason: CancellationReason): void
     if appointment.status = Scheduled then
       appointment.status := Cancelled
       appointment.cancellationReason := reason
@@ -197,8 +203,8 @@ class Appointment
       raise AppointmentNotCancellable
     return
 
-class AppointmentService
-  + cancel(appointment: Appointment, reason: CancellationReason): void
+class CancelAppointment
+  + run(appointment: Appointment, reason: CancellationReason): void
     appointment.cancel(reason)
     return
 ```

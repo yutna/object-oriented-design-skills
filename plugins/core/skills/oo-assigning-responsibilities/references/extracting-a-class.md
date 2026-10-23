@@ -68,28 +68,31 @@ for the next steps.
 
 ## After
 
-```text
-class ClinicManager
-  - schedule: ClinicSchedule
-  - reminders: ReminderWriter
-  - invoices: InvoiceWriter
-  + book(slot: Slot, patient: PatientId): Appointment
-    return schedule.book(slot, patient)
-  + remind(appointment: Appointment): void
-    reminders.remind(appointment)
-    return
-  + invoice(appointment: Appointment): Invoice
-    return invoices.invoice(appointment)
-```
+`ClinicManager` now only forwards every call, so delete it and let
+the use-case object talk to the three classes. A forwarding shell
+with no rule is not a class.
 
-If `ClinicManager` now only forwards every call, delete it and let the
-use-case object talk to the three collaborators. A forwarding shell with
-no rule is not a class.
+```text
+class ClinicSchedule
+  - appointments: List<Appointment>
+  + new(appointments: List<Appointment>)
+  + book(slot: Slot, patient: PatientId): Appointment
+
+class ReminderWriter
+  - reminders: ReminderLog
+  + new(reminders: ReminderLog)
+  + remind(appointment: Appointment): void
+
+class InvoiceWriter
+  - invoices: InvoiceBook
+  + new(invoices: InvoiceBook)
+  + invoice(appointment: Appointment): Invoice
+```
 
 ## Check the result
 
 - Each class has one or two roles and one reason to change.
-- The manager no longer holds reminder or invoice data.
+- No class holds booking, reminder and invoice data together.
 - A use case delegates to a domain object instead of deciding for it.
-- A new rule that needs two collaborators goes to a service; the caller
-  does not reach through one object to another.
+- A new rule goes to the object that holds its data, and no caller
+  reaches through one object to another.
