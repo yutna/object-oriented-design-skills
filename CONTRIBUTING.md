@@ -34,4 +34,12 @@ npm ci
 npm run gate
 ```
 
+To use the working copies in this checkout, link them into
+`.claude/skills` and remove the links again:
+
+```sh
+./scripts/link-local.sh
+./scripts/link-local.sh --remove
+```
+
 `AGENTS.md` is the full working contract, including what the gate checks.
