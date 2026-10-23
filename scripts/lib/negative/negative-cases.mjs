@@ -69,8 +69,8 @@ export class NegativeCases {
     "This skill sizes\nthe task and names the skill that fits."
   static #COUNT_FIND = 'carries one of three labels'
   static #COUNT_REPLACE = 'carries one of four labels'
-  static #SCENARIO_CLAIM_FIND = '`scenarios.md` holds 4 scenarios'
-  static #SCENARIO_CLAIM_REPLACE = '`scenarios.md` contains 4 scenarios'
+  static #SCENARIO_CLAIM_FIND = '`scenarios.md` holds 5 scenarios'
+  static #SCENARIO_CLAIM_REPLACE = '`scenarios.md` contains 5 scenarios'
   static #TASK_TAGS_FIND = 'tags: [task, smoke]'
   static #TASK_TAGS_REPLACE = 'tags: [smoke]'
   static #TASK_SKILL_FIND = 'oo-assigning-responsibilities"\''
@@ -266,7 +266,7 @@ export class NegativeCases {
         NegativeCases.#ROUTING,
         NegativeCases.#ZERO_ROUTING_FIND,
         NegativeCases.#ZERO_ROUTING_REPLACE),
-      'expected oo-design in the top 2 with a score above zero'),
+      'expected oo-design in the top 3 with a score above zero'),
     new NegativeCase(
       'scenarios reject a gap in numbering',
       NegativeCases.#EVAL,

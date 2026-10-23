@@ -22,6 +22,8 @@ which object should hold the booking rule -> oo-assigning-responsibilities
 should the schedule create the appointment -> oo-assigning-responsibilities
 every change to booking touches five other classes -> oo-diagnosing-coupling
 these two clinic modules always change together -> oo-diagnosing-coupling
+our patient class is only getters and setters -> oo-deciding-object-or-data
+should this intake form be a class or just a map -> oo-deciding-object-or-data
 ```
 
 ## Known misses

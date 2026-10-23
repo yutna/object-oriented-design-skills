@@ -75,9 +75,12 @@ skills land.
 |This class does too much|[Assigning responsibilities][assigning]|
 |A change ripples through many classes|[Diagnosing coupling][coupling]|
 |How tightly are these two parts tied?|[Diagnosing coupling][coupling]|
+|Is this an object or just data?|[Deciding object or data][object-or-data]|
+|Our domain model is anemic|[Deciding object or data][object-or-data]|
 
 [assigning]: ../oo-assigning-responsibilities/SKILL.md
 [coupling]: ../oo-diagnosing-coupling/SKILL.md
+[object-or-data]: ../oo-deciding-object-or-data/SKILL.md
 
 ## Red flags
 
