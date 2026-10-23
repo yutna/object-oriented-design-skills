@@ -81,8 +81,6 @@ Never take an issue from `Backlog` or one without a milestone.
    npm run gate && git commit -m "<message>"
    ```
 
-   Until the toolchain issue of v0.1.0 lands, there is no gate to run.
-
 5. Fill the Acceptance criteria section of the pull request body: copy
    every criterion from the issue, tick it, and put the evidence beside
    it. Evidence is a command with the last lines of its output, a file
@@ -125,7 +123,9 @@ Breaking one of these fails review, whatever the issue says.
 - Markdown passes `markdownlint` default rules. There is no
   configuration file and no inline disable comment; rewrite the text
   instead. Lines stay within 80 characters, code blocks and tables
-  included.
+  included. The one exception is the default rule's own: a line may
+  run longer only where nothing after column 80 contains a space,
+  such as a long URL.
 - Every tracked file is in English.
 - Skill content under `plugins/` never cites: no book titles, author
   names, publishers, chapter numbers, editions, or years in
@@ -183,7 +183,10 @@ review even when it works.
   ```
 
 - State is private (`#field`). Collaborators arrive through the
-  constructor. A class builds only value objects itself.
+  constructor. A class may build value objects, and the objects it
+  owns or reads into being (a `Repository` builds its `Marketplace`;
+  a `Cli` builds the `Report` for one run). It never builds a
+  collaborator it could be given.
 - Value objects are immutable (`Object.freeze(this)` at the end of the
   constructor) and compare by value.
 - Behaviour varies by polymorphism: a new check is a new subclass of
