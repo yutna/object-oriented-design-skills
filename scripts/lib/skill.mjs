@@ -53,6 +53,16 @@ export class Skill {
     return join(this.#directory, 'SKILL.md')
   }
 
+  referenceEntries() {
+    const directory = join(this.#directory, 'references')
+    if (!existsSync(directory)) return []
+    return readdirSync(directory, { withFileTypes: true })
+      .map((entry) => entry.isDirectory()
+        ? `${entry.name}/`
+        : entry.name)
+      .sort((left, right) => left.localeCompare(right))
+  }
+
   referenceFiles() {
     const directory = join(this.#directory, 'references')
     if (!existsSync(directory)) return []

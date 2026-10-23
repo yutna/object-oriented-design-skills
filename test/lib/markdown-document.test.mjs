@@ -54,6 +54,26 @@ test('a link inside inline code is not a link', () => {
   assert.deepEqual(document.inlineCode(), ['[not](a-link)'])
 })
 
+test('a reference-style definition is a link outside fences', () => {
+  const raw = [
+    '[first]: a-target',
+    '   [second]: b-target',
+    '```text',
+    '[third]: c-target',
+    '```',
+    '[fourth]: d-target',
+    ''
+  ].join('\n')
+  const document = new MarkdownDocument(new TextFile('note.md', raw))
+  assert.deepEqual(
+    document.links().map((link) => [link.label, link.target, link.line]),
+    [
+      ['first', 'a-target', 1],
+      ['second', 'b-target', 2],
+      ['fourth', 'd-target', 6]
+    ])
+})
+
 test('repeated heading slugs', () => {
   const raw = '# Visit\n## Visit\n### Visit\n'
   const document = new MarkdownDocument(new TextFile('note.md', raw))

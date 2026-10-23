@@ -87,16 +87,20 @@ export class MarkdownDocument {
   links() {
     const text = this.prose()
     const spans = this.#inlineCodeSpans(text)
-    const links = []
-    const pattern = /(?<!!)\[([^\]]*)\]\(([^)]*)\)/g
-    for (const match of text.matchAll(pattern)) {
-      const inCode = spans.some((span) =>
-        match.index >= span.start && match.index < span.end)
-      if (inCode) continue
-      const line = text.slice(0, match.index).split('\n').length
-      links.push(new Link(match[1], match[2], line))
+    const found = []
+    const inlinePattern = /(?<!!)\[([^\]]*)\]\(([^)]*)\)/g
+    for (const match of text.matchAll(inlinePattern)) {
+      if (this.#inside(spans, match.index)) continue
+      found.push({ index: match.index, label: match[1], target: match[2] })
     }
-    return links
+    const referencePattern = /^ {0,3}\[([^\]]*)\]:[ \t]+(\S+)[ \t]*$/gm
+    for (const match of text.matchAll(referencePattern)) {
+      if (this.#inside(spans, match.index)) continue
+      found.push({ index: match.index, label: match[1], target: match[2] })
+    }
+    found.sort((left, right) => left.index - right.index)
+    return found.map(({ index, label, target }) =>
+      new Link(label, target, text.slice(0, index).split('\n').length))
   }
 
   inlineCode() {
@@ -124,6 +128,10 @@ export class MarkdownDocument {
       .replace(/[^\p{L}\p{N}\s_-]/gu, '')
       .trim()
       .replace(/\s/g, '-')
+  }
+
+  #inside(spans, index) {
+    return spans.some((span) => index >= span.start && index < span.end)
   }
 
   #outdent(lines, indent) {
