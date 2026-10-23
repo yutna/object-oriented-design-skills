@@ -9,8 +9,11 @@ jobs:
     permissions:
       contents: write
       issues: write
-    # with:
-    #   preflight: test "$(jq -r .version package.json)" = "$VERSION"
+    with:
+      preflight: >-
+        test "$(jq -r .version package.json)" = "$VERSION" &&
+        test "$(jq -r '.plugins[].version' .claude-plugin/marketplace.json | sort -u)" = "$VERSION" &&
+        test "$(jq -r .version plugins/*/.claude-plugin/plugin.json | sort -u)" = "$VERSION"
   # publish:                                 # stack-specific, optional
   #   needs: release
   #   if: needs.release.outputs.released == 'true'
