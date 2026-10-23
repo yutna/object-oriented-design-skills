@@ -52,7 +52,7 @@ export class FrontmatterCheck extends Check {
     const metadata = skill.metadata
     const description = skill.description
 
-    // Claude Code reads only these keys; an extra key is silently ignored.
+    // AGENTS.md allows only these keys, so every skill reads the same way.
     if (!this.#sameKeys(frontmatter.keys(), FrontmatterCheck.#KEYS)) {
       report.error(
         skill.path,
@@ -75,7 +75,7 @@ export class FrontmatterCheck extends Check {
     if (skill.name !== skill.directoryName) {
       report.error(skill.path, 'name must equal the directory name')
     }
-    // Claude Code accepts only lower-case oo- names.
+    // The oo- prefix keeps this pack's skills apart from other packs'.
     if (typeof skill.name !== 'string' ||
       !FrontmatterCheck.#NAME.test(skill.name)) {
       report.error(

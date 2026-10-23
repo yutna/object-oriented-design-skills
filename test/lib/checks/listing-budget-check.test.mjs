@@ -82,7 +82,16 @@ class TempRepository {
 test('ListingBudgetCheck.CEILINGS is frozen and gives the pack 8000', () => {
   assert.equal(Object.isFrozen(ListingBudgetCheck.CEILINGS), true)
   assert.equal(
-    ListingBudgetCheck.CEILINGS.get('object-oriented-design-skills'),
+    ListingBudgetCheck.CEILINGS['object-oriented-design-skills'],
+    8000)
+})
+
+test('ListingBudgetCheck.CEILINGS rejects mutation', () => {
+  assert.throws(() => {
+    ListingBudgetCheck.CEILINGS['object-oriented-design-skills'] = 9000
+  }, TypeError)
+  assert.equal(
+    ListingBudgetCheck.CEILINGS['object-oriented-design-skills'],
     8000)
 })
 
@@ -94,8 +103,7 @@ test('a listing at its ceiling passes the listing budget check', async () => {
       'oo-other',
       'oo-other',
       'Use when testing.')
-    const report = repository.inspect(
-      new Map([['fixture-plugin', 49]]))
+    const report = repository.inspect({ 'fixture-plugin': 49 })
     assert.equal(report.failed, false)
     assert.deepEqual(report.lines(), ['ok 1 listing(s)'])
   } finally {
@@ -111,8 +119,7 @@ test('a listing over its ceiling is rejected', async () => {
       'oo-other',
       'oo-other',
       'Use when testing.')
-    const report = repository.inspect(
-      new Map([['fixture-plugin', 48]]))
+    const report = repository.inspect({ 'fixture-plugin': 48 })
     assert.ok(report.lines().includes(
       `error ${repository.pluginDirectory()}: ` +
       'plugin fixture-plugin listing is 49 characters, over its ' +

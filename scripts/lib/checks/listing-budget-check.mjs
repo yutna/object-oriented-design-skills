@@ -2,9 +2,9 @@ import { Check } from '../check.mjs'
 
 export class ListingBudgetCheck extends Check {
   // A ceiling only ever comes down: Claude Code drops descriptions at its cap.
-  static CEILINGS = Object.freeze(new Map([
-    ['object-oriented-design-skills', 8000]
-  ]))
+  static CEILINGS = Object.freeze({
+    'object-oriented-design-skills': 8000
+  })
 
   static #DEFAULT_CEILING = 1200
 
@@ -32,8 +32,9 @@ export class ListingBudgetCheck extends Check {
           this.#length(skill.name) +
           this.#length(skill.description),
         0)
-      const ceiling = this.#ceilings.get(plugin.name) ??
-        ListingBudgetCheck.#DEFAULT_CEILING
+      const ceiling = Object.hasOwn(this.#ceilings, plugin.name)
+        ? this.#ceilings[plugin.name]
+        : ListingBudgetCheck.#DEFAULT_CEILING
       // Past its ceiling, Claude Code drops descriptions from the listing.
       if (sum > ceiling) {
         report.error(

@@ -4,6 +4,7 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
+import { ManifestError } from '../../scripts/lib/errors.mjs'
 import { Repository } from '../../scripts/lib/repository.mjs'
 
 test('a valid repository with one plugin and two skills', async () => {
@@ -220,6 +221,28 @@ test('filesNamed returns sorted relative paths and skips node_modules', async ()
       join('plugins', 'other', 'deep', 'package.json')
     ])
     assert.deepEqual(repository.filesNamed('package.json', 'missing'), [])
+  } finally {
+    await rm(root, { recursive: true, force: true })
+  }
+})
+
+test('Repository.at on an empty mkdtemp folder does not throw', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'oo-empty-repository-'))
+  try {
+    assert.doesNotThrow(() => Repository.at(root))
+  } finally {
+    await rm(root, { recursive: true, force: true })
+  }
+})
+
+test('packageVersion there throws ManifestError whose message holds the path', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'oo-empty-version-'))
+  try {
+    const path = join(root, 'package.json')
+    assert.throws(
+      () => Repository.at(root).packageVersion,
+      (error) => error instanceof ManifestError &&
+        error.message.includes(path))
   } finally {
     await rm(root, { recursive: true, force: true })
   }

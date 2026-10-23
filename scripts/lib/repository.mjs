@@ -18,7 +18,6 @@ export class Repository {
   ])
 
   #root
-  #packageVersion
 
   static at(rootPath) {
     return new Repository(rootPath)
@@ -26,6 +25,13 @@ export class Repository {
 
   constructor(rootPath) {
     this.#root = resolve(rootPath)
+  }
+
+  get root() {
+    return this.#root
+  }
+
+  get packageVersion() {
     const path = join(this.#root, 'package.json')
     let text
     try {
@@ -34,20 +40,12 @@ export class Repository {
       throw new ManifestError(path, 'Cannot read package manifest')
     }
     try {
-      this.#packageVersion = JSON.parse(text).version
+      return JSON.parse(text).version
     } catch (error) {
       throw new ManifestError(
         path,
         `Invalid package manifest: ${error.message}`)
     }
-  }
-
-  get root() {
-    return this.#root
-  }
-
-  get packageVersion() {
-    return this.#packageVersion
   }
 
   marketplace() {
