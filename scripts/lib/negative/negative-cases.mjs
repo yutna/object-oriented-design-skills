@@ -12,6 +12,7 @@ export class NegativeCases {
   static #OOP = 'scripts/validate-oop.mjs'
   static #EVAL = 'scripts/eval-routing.mjs'
   static #ROUTING = 'evals/routing-cases.md'
+  static #SCENARIOS = 'evals/scenarios.md'
 
   static #BACK_LINK = '[rule strictness]' +
     '(../oo-design/SKILL.md#how-strictly-a-rule-is-meant).'
@@ -48,6 +49,14 @@ export class NegativeCases {
     'we need to size this appointment design work -> oo-design'
   static #ZERO_ROUTING_REPLACE =
     'a clinic appointment slot -> oo-design'
+  static #SCENARIO_GAP_FIND =
+    '## 3. A one-line fix that needs no redesign'
+  static #SCENARIO_GAP_REPLACE =
+    '## 4. A one-line fix that needs no redesign'
+  static #SCENARIO_UNKNOWN_FIND =
+    'Should reach `oo-assigning-responsibilities`.'
+  static #SCENARIO_UNKNOWN_REPLACE =
+    'Should reach `oo-no-such-skill`.'
 
   static ALL = Object.freeze([
     new NegativeCase(
@@ -239,6 +248,23 @@ export class NegativeCases {
         NegativeCases.#ROUTING,
         NegativeCases.#ZERO_ROUTING_FIND,
         NegativeCases.#ZERO_ROUTING_REPLACE),
-      'expected oo-design in the top 1 with a score above zero')
+      'expected oo-design in the top 1 with a score above zero'),
+    new NegativeCase(
+      'scenarios reject a gap in numbering',
+      NegativeCases.#EVAL,
+      new ReplaceText(
+        NegativeCases.#SCENARIOS,
+        NegativeCases.#SCENARIO_GAP_FIND,
+        NegativeCases.#SCENARIO_GAP_REPLACE),
+      'scenario numbering must start at 1 and run without gaps ' +
+      'or repeats'),
+    new NegativeCase(
+      'scenarios reject an unknown skill',
+      NegativeCases.#EVAL,
+      new ReplaceText(
+        NegativeCases.#SCENARIOS,
+        NegativeCases.#SCENARIO_UNKNOWN_FIND,
+        NegativeCases.#SCENARIO_UNKNOWN_REPLACE),
+      'scenario 1 names unknown skill: oo-no-such-skill')
   ])
 }
