@@ -6,7 +6,7 @@ Please **do not open a public issue** for a security vulnerability.
 
 Report it privately through GitHub: **Security** tab → **Report a
 vulnerability**
-(<https://github.com/{{OWNER}}/{{REPO}}/security/advisories/new>).
+(<https://github.com/yutna/object-oriented-design-skills/security/advisories/new>).
 
 ## Supported versions
 

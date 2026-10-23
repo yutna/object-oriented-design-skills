@@ -1,10 +1,10 @@
-# {{REPO}}
+# object-oriented-design-skills
 
-[![ci](https://github.com/{{OWNER}}/{{REPO}}/actions/workflows/ci.yml/badge.svg)](https://github.com/{{OWNER}}/{{REPO}}/actions/workflows/ci.yml)
-[![release](https://img.shields.io/github/v/release/{{OWNER}}/{{REPO}}?sort=semver)](https://github.com/{{OWNER}}/{{REPO}}/releases/latest)
+[![ci](https://github.com/yutna/object-oriented-design-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/yutna/object-oriented-design-skills/actions/workflows/ci.yml)
+[![release](https://img.shields.io/github/v/release/yutna/object-oriented-design-skills?sort=semver)](https://github.com/yutna/object-oriented-design-skills/releases/latest)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-{{DESCRIPTION}}
+Agent Skills carrying design rules for codebases written in an object-oriented style. For Claude Code.
 
 ## Features
 
