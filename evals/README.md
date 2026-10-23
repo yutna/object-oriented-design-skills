@@ -45,9 +45,9 @@ block sweep with `--arm block`; summarise the timestamp folder with
 `node scripts/eval-summary.mjs evals/results/<stamp>`. Read every losing
 case before changing anything, and rerun it in the next window. A clean
 run does not prove that the release is stable across models or that a
-loss has one cause. About 70 cases in two arms, three runs each, is about 420 runs:
-about 20 to 30 USD at list price, or 20% to 30% of a week's quota,
-in sittings over several five-hour windows.
+loss has one cause. About 70 cases in two arms, three runs each, is about 420
+runs: about 20 to 30 USD at list price, or 20% to 30% of a week's
+quota, in sittings over several five-hour windows.
 
 ### Queue rules
 
