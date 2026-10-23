@@ -20,6 +20,8 @@ the visit handler decides if a slot is free -> oo-assigning-responsibilities
 we are starting this design with one class for visits -> oo-design
 which object should hold the booking rule -> oo-assigning-responsibilities
 should the schedule create the appointment -> oo-assigning-responsibilities
+every change to booking touches five other classes -> oo-diagnosing-coupling
+these two clinic modules always change together -> oo-diagnosing-coupling
 ```
 
 ## Known misses
