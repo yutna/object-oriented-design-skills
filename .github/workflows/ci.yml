@@ -45,6 +45,40 @@ jobs:
           echo "No markdownlint configuration or suppression found."
       - name: Run the gate
         run: npm run gate
+      - name: Run the installers
+        shell: bash
+        run: |
+          set -euo pipefail
+          export HOME="$(mktemp -d)"
+          ./scripts/install.sh | tee first.out
+          test -f "$HOME/.claude/skills/oo-no-such-skill/SKILL.md"
+          grep -qxF '## Object-oriented design skills' first.out
+          ./scripts/install.sh | tee second.out
+          if grep -q '^copied' second.out; then
+            echo "second install copied again"
+            exit 1
+          fi
+          ./scripts/install.sh --force
+          rm -rf "$HOME/.claude/skills/oo-design"
+          foreign="$HOME/.claude/skills/oo-design/SKILL.md"
+          mkdir -p "$(dirname "$foreign")"
+          printf '%s\n' '---' 'name: oo-design' 'metadata:' \
+            '  pack: someone-else' '---' > "$foreign"
+          before="$(cat "$foreign")"
+          status=0
+          if ./scripts/install.sh --force | tee foreign.out; then
+            status=0
+          else
+            status=$?
+          fi
+          test "$status" -eq 1
+          test "$(cat "$foreign")" = "$before"
+          grep -q 'belongs to someone-else' foreign.out
+          ./scripts/link-local.sh
+          test -L .claude/skills/oo-design
+          ./scripts/link-local.sh --remove
+          test ! -e .claude/skills
+          test -f plugins/core/skills/oo-design/SKILL.md
       - name: Confirm local-only notes are untracked
         run: |
           if git ls-files -- OOP_SOURCES.md PRIVATE-NOTES.md .claude/work | grep -q .; then
@@ -83,6 +117,40 @@ jobs:
           }
       - name: Run the gate
         run: npm run gate
+      - name: Run the installers
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $temp = Join-Path $env:RUNNER_TEMP ([guid]::NewGuid().ToString())
+          New-Item -ItemType Directory -Path $temp | Out-Null
+          $env:USERPROFILE = $temp
+          $env:HOME = $temp
+          ./scripts/install.ps1 | Tee-Object -FilePath first.out
+          if ($LASTEXITCODE -ne 0) { throw 'install failed' }
+          if (-not (Test-Path "$env:USERPROFILE/.claude/skills/oo-no-such-skill/SKILL.md")) { throw 'wrong path' }
+          if (-not (Select-String -Path first.out -SimpleMatch '## Object-oriented design skills' -Quiet)) { throw 'block missing' }
+          ./scripts/install.ps1 | Tee-Object -FilePath second.out
+          if ($LASTEXITCODE -ne 0) { throw 'second install failed' }
+          if (Select-String -Path second.out -Pattern '^copied' -Quiet) { throw 'second install copied' }
+          ./scripts/install.ps1 --force
+          if ($LASTEXITCODE -ne 0) { throw 'force install failed' }
+          Remove-Item -Recurse -Force "$env:USERPROFILE/.claude/skills/oo-design"
+          $foreign = "$env:USERPROFILE/.claude/skills/oo-design/SKILL.md"
+          New-Item -ItemType Directory -Path (Split-Path $foreign) -Force | Out-Null
+          Set-Content -Path $foreign -Value "---`nname: oo-design`nmetadata:`n  pack: someone-else`n---"
+          $before = Get-Content -Raw $foreign
+          ./scripts/install.ps1 --force
+          $status = $LASTEXITCODE
+          if ($status -ne 1) { throw 'foreign install should fail' }
+          if ((Get-Content -Raw $foreign) -ne $before) { throw 'foreign skill changed' }
+          ./scripts/link-local.ps1
+          if ($LASTEXITCODE -ne 0) { throw 'link-local failed' }
+          $link = Get-Item .claude/skills/oo-design
+          if ($link.LinkType -notin @('Junction', 'SymbolicLink')) { throw 'not a link' }
+          ./scripts/link-local.ps1 --remove
+          if ($LASTEXITCODE -ne 0) { throw 'link-local remove failed' }
+          if (Test-Path .claude/skills) { throw 'skills remains' }
+          if (-not (Test-Path plugins/core/skills/oo-design/SKILL.md)) { throw 'plugin skill missing' }
   # ci-ok is the one required check: add every job above to its needs.
   ci-ok:
     if: always()
