@@ -261,6 +261,32 @@ test('the block arm appends the CLAUDE.md block to every case', async () => {
   }
 })
 
+test('the baseline arm builds without the CLAUDE.md block', async () => {
+  const fixture = await EvalFixture.create()
+  try {
+    fixture.build({ arm: 'baseline' })
+    const question = parse(fixture.read(RepositoryFixture.QUESTION))
+    assert.equal(
+      question.execution.append_system_prompt, RepositoryFixture.SYSTEM)
+    assert.equal(
+      fixture.read('t01-check-before-booking'),
+      fixture.repository.source('t01-check-before-booking.yaml'))
+  } finally {
+    await fixture.close()
+  }
+})
+
+test('EvalBuild refuses an arm it does not know', async () => {
+  const fixture = await EvalFixture.create()
+  try {
+    assert.throws(
+      () => fixture.build({ arm: 'with-without' }),
+      /--arm must be none, block or baseline/)
+  } finally {
+    await fixture.close()
+  }
+})
+
 test('fixture.sh copies the fixture from its own directory', async () => {
   const fixture = await EvalFixture.create()
   try {

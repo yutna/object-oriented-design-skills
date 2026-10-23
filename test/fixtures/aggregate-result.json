@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "claudeVersion": "2.1.308",
+  "costUsd": 0.06658909999999998,
+  "partial": false,
+  "partialReason": null,
+  "cases": [
+    {
+      "name": "q01-the-slot-rule-keeps-moving",
+      "arms": {
+        "with": [
+          {
+            "passed": false,
+            "score": 0.3333333333333333,
+            "costUsd": 0.06658909999999998,
+            "judgeCostUsd": 0.0007796999999999999,
+            "error": null,
+            "tracePath": "/private/tmp/e-9PP488/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "substance",
+                "passed": false,
+                "scored": true,
+                "withOnly": false,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ],
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "evidence": "**Put the decision on `Slot`.** `Slot` is the object that ho"
+              },
+              {
+                "name": "loaded-oo-assigning-responsibilities",
+                "passed": true,
+                "scored": true,
+                "withOnly": false,
+                "judgeVotes": null,
+                "explanation": "Skill called 1x (expected 1..∞)",
+                "evidence": ""
+              },
+              {
+                "name": "read-oo-assigning-responsibilities",
+                "passed": false,
+                "scored": true,
+                "withOnly": false,
+                "judgeVotes": null,
+                "explanation": "Read called 0x (expected 1..∞)",
+                "evidence": ""
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "aggregates": {
+    "casesTotal": 1,
+    "casesPassed": 0,
+    "overallScore": 0.3333333333333333,
+    "overallPassRate": 0
+  }
+}

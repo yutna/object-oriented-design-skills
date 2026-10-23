@@ -34,9 +34,11 @@ export class EvalBuild {
   }
 
   build({ arm = 'none', only = [], tag = null } = {}) {
-    // A block arm stands in for a project's CLAUDE.md, which never loads in a run.
-    if (arm !== 'none' && arm !== 'block') {
-      throw new RepoError(`--arm must be block, not "${arm}"`, 2)
+    // A block arm stands in for a project's CLAUDE.md, which never loads in
+    // a run; a baseline arm measures the plugin without that block.
+    if (arm !== 'none' && arm !== 'block' && arm !== 'baseline') {
+      throw new RepoError(
+        `--arm must be none, block or baseline, not "${arm}"`, 2)
     }
     const block = arm === 'block' ? this.#block() : null
     const entries = this.#entries(block)
