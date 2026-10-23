@@ -4,6 +4,7 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
+import { ManifestError } from '../../scripts/lib/errors.mjs'
 import { Repository } from '../../scripts/lib/repository.mjs'
 
 test('a valid repository with one plugin and two skills', async () => {
@@ -162,6 +163,86 @@ test('scriptFiles is empty when scripts does not exist', async () => {
       join(root, 'package.json'),
       JSON.stringify({ name: 'fixture', version: '1.0.0' }))
     assert.deepEqual(Repository.at(root).scriptFiles(), [])
+  } finally {
+    await rm(root, { recursive: true, force: true })
+  }
+})
+
+test('exists is true for a file or a directory and false otherwise', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'oo-exists-'))
+  try {
+    await writeFile(
+      join(root, 'package.json'),
+      JSON.stringify({ name: 'fixture', version: '1.0.0' }))
+    await mkdir(join(root, 'plugins'))
+    await writeFile(join(root, 'README.md'), '# Readme\n')
+
+    const repository = Repository.at(root)
+    assert.equal(repository.exists('README.md'), true)
+    assert.equal(repository.exists('plugins'), true)
+    assert.equal(repository.exists('missing'), false)
+  } finally {
+    await rm(root, { recursive: true, force: true })
+  }
+})
+
+test('filesNamed returns sorted relative paths and skips node_modules', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'oo-files-named-'))
+  try {
+    await writeFile(
+      join(root, 'package.json'),
+      JSON.stringify({ name: 'fixture', version: '1.0.0' }))
+    await mkdir(join(root, 'plugins', 'core', '.claude-plugin'), {
+      recursive: true
+    })
+    await writeFile(
+      join(root, 'plugins', 'core', '.claude-plugin', 'plugin.json'),
+      '{}')
+    await writeFile(
+      join(root, 'plugins', 'core', 'package.json'),
+      '{}')
+    await mkdir(join(root, 'plugins', 'other', 'deep'), {
+      recursive: true
+    })
+    await writeFile(
+      join(root, 'plugins', 'other', 'deep', 'package.json'),
+      '{}')
+    await mkdir(join(root, 'plugins', 'node_modules', 'nested'), {
+      recursive: true
+    })
+    await writeFile(
+      join(root, 'plugins', 'node_modules', 'nested', 'package.json'),
+      '{}')
+    await writeFile(join(root, 'plugins', 'core', 'other.json'), '{}')
+
+    const repository = Repository.at(root)
+    assert.deepEqual(repository.filesNamed('package.json', 'plugins'), [
+      join('plugins', 'core', 'package.json'),
+      join('plugins', 'other', 'deep', 'package.json')
+    ])
+    assert.deepEqual(repository.filesNamed('package.json', 'missing'), [])
+  } finally {
+    await rm(root, { recursive: true, force: true })
+  }
+})
+
+test('Repository.at on an empty mkdtemp folder does not throw', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'oo-empty-repository-'))
+  try {
+    assert.doesNotThrow(() => Repository.at(root))
+  } finally {
+    await rm(root, { recursive: true, force: true })
+  }
+})
+
+test('packageVersion there throws ManifestError whose message holds the path', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'oo-empty-version-'))
+  try {
+    const path = join(root, 'package.json')
+    assert.throws(
+      () => Repository.at(root).packageVersion,
+      (error) => error instanceof ManifestError &&
+        error.message.includes(path))
   } finally {
     await rm(root, { recursive: true, force: true })
   }

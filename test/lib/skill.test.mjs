@@ -31,6 +31,7 @@ test('a Skill reads its frontmatter, document and references', async () => {
 
     const skill = new Skill(directory, TextFile.read(path))
     assert.equal(skill.directoryName, 'oo-demo')
+    assert.equal(skill.frontmatter.get('name'), 'oo-demo')
     assert.equal(skill.name, 'oo-demo')
     assert.equal(skill.description, 'Use when testing.')
     assert.deepEqual(skill.metadata, {

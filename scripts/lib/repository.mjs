@@ -1,5 +1,5 @@
 import { existsSync, readdirSync } from 'node:fs'
-import { join, resolve } from 'node:path'
+import { join, relative, resolve } from 'node:path'
 
 import { ManifestError } from './errors.mjs'
 import { Marketplace } from './marketplace.mjs'
@@ -18,7 +18,6 @@ export class Repository {
   ])
 
   #root
-  #packageVersion
 
   static at(rootPath) {
     return new Repository(rootPath)
@@ -26,6 +25,13 @@ export class Repository {
 
   constructor(rootPath) {
     this.#root = resolve(rootPath)
+  }
+
+  get root() {
+    return this.#root
+  }
+
+  get packageVersion() {
     const path = join(this.#root, 'package.json')
     let text
     try {
@@ -34,20 +40,12 @@ export class Repository {
       throw new ManifestError(path, 'Cannot read package manifest')
     }
     try {
-      this.#packageVersion = JSON.parse(text).version
+      return JSON.parse(text).version
     } catch (error) {
       throw new ManifestError(
         path,
         `Invalid package manifest: ${error.message}`)
     }
-  }
-
-  get root() {
-    return this.#root
-  }
-
-  get packageVersion() {
-    return this.#packageVersion
   }
 
   marketplace() {
@@ -62,6 +60,18 @@ export class Repository {
 
   file(relativePath) {
     return TextFile.read(join(this.#root, relativePath))
+  }
+
+  exists(relativePath) {
+    return existsSync(join(this.#root, relativePath))
+  }
+
+  filesNamed(fileName, underRelativeDir) {
+    const directory = join(this.#root, underRelativeDir)
+    if (!existsSync(directory)) return []
+    const files = []
+    this.#collectNamed(directory, fileName, files)
+    return files.sort().map((path) => relative(this.#root, path))
   }
 
   markdownFiles() {
@@ -98,6 +108,18 @@ export class Repository {
         continue
       }
       if (!entry.isFile() || !entry.name.endsWith('.mjs')) continue
+      files.push(join(directory, entry.name))
+    }
+  }
+
+  #collectNamed(directory, fileName, files) {
+    for (const entry of readdirSync(directory, { withFileTypes: true })) {
+      if (entry.isDirectory()) {
+        if (entry.name === 'node_modules') continue
+        this.#collectNamed(join(directory, entry.name), fileName, files)
+        continue
+      }
+      if (!entry.isFile() || entry.name !== fileName) continue
       files.push(join(directory, entry.name))
     }
   }
