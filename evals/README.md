@@ -20,9 +20,9 @@ listing exactly as an agent sees it and asks a small model for one
 skill name per routing case. It measures top-1 routing against the
 expected skill and prints each miss with the answer it gave. A clean run
 does not prove that the skill text helps, that a real session would
-choose the same skill, or that one run would repeat. It costs about
-0.04% of a week's quota per run, under 1% for the routing cases as they
-stand.
+choose the same skill, or that one run would repeat. Measured on Claude
+Pro with Haiku 5.5: about 0.0015 USD per case; 11 cases three times
+moved the five-hour window under 1 point.
 
 **Tier 2, the quality of what changed.** This tier runs the plugin-eval
 pieces for the skills a milestone added or changed, three runs per case,
@@ -31,9 +31,12 @@ with the block against a stored no-pack baseline. Queue the pieces with
 `node scripts/eval-summary.mjs <results dir>` reads each piece as cases
 won and lost, names the failed graders, and lists the skills each run
 opened. A clean run does not prove general quality: three runs are a
-sample, the judge can be wrong, and a case can swing with no change. It
-costs about 2.5% of a week per skill milestone; a blocked batch waits
-for quota and does not hold a milestone open.
+sample, the judge can be wrong, and a case can swing with no change.
+Measured on Claude Pro with Sonnet 5.5 as agent and Haiku 5.5 as judge,
+one run: a question case costs about 0.067 USD and a task case about
+0.037 USD (a refused edit; a real edit costs more); one piece moved the
+five-hour window about 1 point and the seven-day window under 1 point;
+a blocked batch waits for quota and does not hold a milestone open.
 
 **Tier 3, the release sweep.** This tier runs every case in both arms,
 three runs each, with baselines reused when the agent model is
@@ -42,8 +45,9 @@ block sweep with `--arm block`; summarise the timestamp folder with
 `node scripts/eval-summary.mjs evals/results/<stamp>`. Read every losing
 case before changing anything, and rerun it in the next window. A clean
 run does not prove that the release is stable across models or that a
-loss has one cause. It costs 15% to 30% of a week, in sittings of up to
-50 runs.
+loss has one cause. About 70 cases in two arms, three runs each, is about 420
+runs: about 20 to 30 USD at list price, or 20% to 30% of a week's
+quota, in sittings over several five-hour windows.
 
 ### Queue rules
 
