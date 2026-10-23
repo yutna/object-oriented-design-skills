@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { existsSync } from 'node:fs'
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
 
 import { EvalPluginCheck } from '../../../scripts/lib/checks/eval-plugin-check.mjs'
 import { RepoError } from '../../../scripts/lib/errors.mjs'
@@ -310,8 +310,16 @@ test('--dry-run prints two pieces and their full commands', async () => {
 
 test('each piece carries only its own cases in its copy', async () => {
   const fixture = await TempCheck.create()
+  const roots = []
   try {
-    const lines = fixture.inspect(['--dry-run', ...Args.valid([])]).lines()
+    const lines = fixture.inspect(
+      ['--dry-run', '--keep', ...Args.valid([])]).lines()
+    const printed = lines.filter((line) => line.startsWith('copy: '))
+    assert.equal(printed.length, 2)
+    for (const line of printed) {
+      assert.ok(line.endsWith(' (kept)'))
+      roots.push(dirname(line.slice('copy: '.length, -' (kept)'.length)))
+    }
     const copies = lines
       .filter((line) => line.startsWith('piece '))
       .map((line, index) => ({
@@ -335,12 +343,30 @@ test('each piece carries only its own cases in its copy', async () => {
       existsSync(`${tasks}/evals/${EvalRepositoryFixture.TASK}`), true)
     assert.equal(
       existsSync(`${tasks}/evals/${EvalRepositoryFixture.RESTRAINT}`), true)
-    await Promise.all(copies.map(({ copy }) =>
-      rm(copy, { recursive: true, force: true })))
   } finally {
+    await Promise.all(roots.map((root) =>
+      rm(root, { recursive: true, force: true })))
     await fixture.close()
   }
 })
+
+test('--dry-run removes each printed copy unless --keep is given',
+  async () => {
+    const fixture = await TempCheck.create()
+    try {
+      const lines = fixture.inspect(
+        ['--dry-run', ...Args.valid([])]).lines()
+      const printed = lines.filter((line) => line.startsWith('copy: '))
+      assert.equal(printed.length, 2)
+      for (const line of printed) {
+        assert.ok(line.endsWith(' (removed)'))
+        const path = line.slice('copy: '.length, -' (removed)'.length)
+        assert.equal(existsSync(dirname(path)), false)
+      }
+    } finally {
+      await fixture.close()
+    }
+  })
 
 test('--queue adds one piece, a pause after it, then the next piece',
   async () => {

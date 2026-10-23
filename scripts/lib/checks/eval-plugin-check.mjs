@@ -6,13 +6,15 @@ import { PluginCopy } from '../evals/plugin-copy.mjs'
 import { PluginEvalRun } from '../evals/plugin-eval-run.mjs'
 
 export class EvalPluginCheck extends Check {
-  static #SWITCHES = Object.freeze(['--dry-run', '--queue'])
+  static #SWITCHES = Object.freeze(['--dry-run', '--keep', '--queue'])
   static #VALUES = Object.freeze([
     '--arm', '--only', '--tag', '--model', '--judge-model',
     '--max-cost-usd', '--runs'
   ])
   static #ARMS = Object.freeze(['block', 'baseline'])
   static #DEFAULT_RUNS = 1
+  // A piece's command is [plugin, eval, copy path, ...], so the path sits here.
+  static #COPY_PATH = 2
   // The queue pauses after its first piece so a person can read the traces
   // before the next piece spends more quota.
   static #PAUSE = 'read the traces of piece 1 before more runs'
@@ -49,7 +51,7 @@ export class EvalPluginCheck extends Check {
     }
     const runs = this.#runs(options)
     if (options.dryRun) {
-      this.#dryRun(runs, report)
+      this.#dryRun(runs, report, options.keep)
       return
     }
     if (options.queue) {
@@ -74,7 +76,7 @@ export class EvalPluginCheck extends Check {
         this.#repository, this.#runner, this.#clock, options, piece))
   }
 
-  #dryRun(runs, report) {
+  #dryRun(runs, report, keep) {
     let cases = 0
     try {
       for (const run of runs) {
@@ -87,6 +89,13 @@ export class EvalPluginCheck extends Check {
     } catch (error) {
       for (const run of runs) run.close()
       throw error
+    }
+    for (const run of runs) {
+      const path = run.command()[EvalPluginCheck.#COPY_PATH]
+      // A copy exists only to print its command, so it goes once the line is
+      // printed; the printed path says whether the caller asked to keep it.
+      report.note(`copy: ${path} (${keep ? 'kept' : 'removed'})`)
+      if (!keep) run.close()
     }
     report.count('case(s) built', cases)
   }
@@ -142,6 +151,7 @@ export class EvalPluginCheck extends Check {
     }
     return Object.freeze({
       dryRun: this.#argv.includes('--dry-run'),
+      keep: this.#argv.includes('--keep'),
       queue: this.#argv.includes('--queue'),
       arm,
       only: Object.freeze(only),
