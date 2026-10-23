@@ -91,6 +91,27 @@ class FakeRunner {
   }
 }
 
+class SequenceRunner {
+  #outputs
+  #calls = []
+
+  constructor(outputs) {
+    this.#outputs = [...outputs]
+  }
+
+  run(command, args, cwd) {
+    this.#calls.push({ command, args: [...args], cwd })
+    if (this.#outputs.length === 0) {
+      throw new Error('no scripted output left')
+    }
+    return { exitCode: 0, output: this.#outputs.shift() }
+  }
+
+  get calls() {
+    return this.#calls
+  }
+}
+
 class TempRepository {
   static #CASES = Object.freeze([
     'we are sizing this appointment design work -> oo-design',
@@ -348,6 +369,58 @@ test('--selftest runs every case against a fake runner', async () => {
     assert.equal(report.lines()[0], 'top-1: 1/2')
     assert.equal(report.lines().at(-1), 'ok 2 routed case(s)')
     assert.equal(runner.calls, 2)
+  } finally {
+    await fixture.close()
+  }
+})
+
+test('ModelRouting counts hits per case across three runs', async () => {
+  const fixture = await TempRepository.of({
+    cases: ['we are sizing this appointment design work -> oo-design']
+  })
+  try {
+    const runner = new SequenceRunner([
+      RouteStream.text('object-oriented-design-skills:oo-design'),
+      RouteStream.text('object-oriented-design-skills:oo-design'),
+      RouteStream.text('update-config')
+    ])
+    const report = fixture.inspect({ argv: ['--runs', '3'], runner })
+    assert.deepEqual(report.lines(), [
+      'hits: 2/3',
+      '2/3 we are sizing this appointment design work ' +
+        '-> expected oo-design; answered oo-design, oo-design, update-config',
+      'ok 1 routed case(s)'
+    ])
+    const [directory] = fixture.results()
+    const answers = await fixture.answers(directory)
+    assert.equal(answers.runs, 3)
+    assert.deepEqual(
+      answers.results.map(({ answer }) => answer),
+      ['oo-design', 'oo-design', 'update-config'])
+  } finally {
+    await fixture.close()
+  }
+})
+
+test('ModelRouting keeps a built-in skill answer verbatim', async () => {
+  const fixture = await TempRepository.of()
+  try {
+    const runner = new FakeRunner(RouteStream.text(
+      '  object-oriented-design-skills:update-config  '))
+    const report = fixture.inspect({ argv: ['--runs', '1'], runner })
+    assert.deepEqual(report.lines(), [
+      'hits: 0/2',
+      '0/1 we are sizing this appointment design work ' +
+        '-> expected oo-design; answered update-config',
+      '0/1 which class owns the appointment reminder ' +
+        '-> expected oo-assigning-responsibilities; answered update-config',
+      'ok 2 routed case(s)'
+    ])
+    const [directory] = fixture.results()
+    const answers = await fixture.answers(directory)
+    assert.deepEqual(
+      answers.results.map(({ answer }) => answer),
+      ['update-config', 'update-config'])
   } finally {
     await fixture.close()
   }
