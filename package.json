@@ -1,0 +1,36 @@
+{
+  "name": "object-oriented-design-skills",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "author": "Yutthana Siphuengchai",
+  "description": "Agent Skills carrying design rules for codebases written in an object-oriented style. For Claude Code.",
+  "homepage": "https://github.com/yutna/object-oriented-design-skills",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yutna/object-oriented-design-skills.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yutna/object-oriented-design-skills/issues"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "keywords": [
+    "object-oriented-design",
+    "software-design",
+    "domain-driven-design",
+    "agent-skills",
+    "claude-code",
+    "refactoring"
+  ],
+  "scripts": {
+    "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\" \"#OOP_SOURCES.md\" \"#PRIVATE-NOTES.md\" \"#.claude\"",
+    "test": "npm run lint:md",
+    "gate": "npm test"
+  },
+  "devDependencies": {
+    "markdownlint-cli2": "0.23.2"
+  }
+}

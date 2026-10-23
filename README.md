@@ -4,7 +4,8 @@
 [![release](https://img.shields.io/github/v/release/yutna/object-oriented-design-skills?sort=semver)](https://github.com/yutna/object-oriented-design-skills/releases/latest)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Agent Skills carrying design rules for codebases written in an object-oriented style. For Claude Code.
+Agent Skills carrying design rules for codebases written in an
+object-oriented style. For Claude Code.
 
 ## Features
 
