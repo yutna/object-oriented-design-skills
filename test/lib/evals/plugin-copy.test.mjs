@@ -1,12 +1,50 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { existsSync } from 'node:fs'
+import { spawnSync } from 'node:child_process'
+import { existsSync, readdirSync } from 'node:fs'
 import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 
 import { PluginCopy } from '../../../scripts/lib/evals/plugin-copy.mjs'
 import { Repository } from '../../../scripts/lib/repository.mjs'
+
+class EvalTestRun {
+  static #FILES = Object.freeze([
+    'test/lib/evals/eval-build.test.mjs',
+    'test/lib/evals/plugin-eval-run.test.mjs',
+    'test/lib/evals/model-routing.test.mjs',
+    'test/lib/checks/eval-plugin-check.test.mjs'
+  ])
+  static #ROUNDS = 2
+  static #PREFIX = 'oo-plugin-copy-'
+
+  static twice(temporary) {
+    // Each round gets a private temporary folder, so a concurrent test file
+    // cannot add a folder this run did not make.
+    for (let round = 0; round < EvalTestRun.#ROUNDS; round += 1) {
+      const environment = {
+        ...process.env,
+        TMPDIR: temporary,
+        TMP: temporary,
+        TEMP: temporary
+      }
+      delete environment.NODE_TEST_CONTEXT
+      const child = spawnSync(
+        process.execPath,
+        ['--test', ...EvalTestRun.#FILES],
+        { cwd: process.cwd(), env: environment, encoding: 'utf8' })
+      assert.equal(
+        child.status, 0,
+        `round ${round + 1} failed\n${child.stdout}${child.stderr}`)
+    }
+  }
+
+  static copies(temporary) {
+    return readdirSync(temporary)
+      .filter((name) => name.startsWith(EvalTestRun.#PREFIX))
+  }
+}
 
 class PluginFixture {
   static SKILLS = Object.freeze([
@@ -67,3 +105,15 @@ test('PluginCopy copies plugins/core and removes only the copy on close',
       await PluginFixture.close(root)
     }
   })
+
+test('two runs of the eval tests leave no plugin copy behind', async () => {
+  const temporary = await mkdtemp(join(tmpdir(), 'oo-eval-tests-'))
+  try {
+    EvalTestRun.twice(temporary)
+    assert.deepEqual(
+      EvalTestRun.copies(temporary), [],
+      'the eval tests left plugin copies behind')
+  } finally {
+    await rm(temporary, { recursive: true, force: true })
+  }
+})
