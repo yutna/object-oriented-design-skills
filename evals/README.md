@@ -48,3 +48,13 @@ It does not run a model.
 What it proves: the file's structure is complete enough to run. What it
 does not prove: that an answer will be good. Scenario results move with
 the model and the session, so no score is recorded as if stable.
+
+## Task cases
+
+`tasks/` carries cases that ask an agent to change a small clinic
+project. Each starts from `fixture-tasks/`, a dependency-free
+TypeScript project with a slot-booking handler, an invoice and an
+appointment that crosses midnight. They cover the task, restraint and
+precedence families.
+
+`tasks/` holds 3 task cases.

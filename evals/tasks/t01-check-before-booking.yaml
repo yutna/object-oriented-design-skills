@@ -1,0 +1,38 @@
+schema_version: "1.1"
+name: t01-check-before-booking
+description: >-
+  Task: a booking check belongs with the data it reads, and the
+  handler asks for it.
+tags: [task, smoke]
+context:
+  scaffold_script: fixture.sh
+execution:
+  prompt: |
+    `bookSlot` in `src/http/book-slot.ts` books a slot even when it
+    is already taken, or when the clinician does not work that day.
+    Make booking refuse both.
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  max_turns: 30
+  timeout_seconds: 600
+graders:
+  - name: loaded-any-skill
+    type: tool_used
+    tool: Skill
+  - name: loaded-assigning-responsibilities
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?oo-assigning-responsibilities"'
+  - name: handler-asks-the-objects
+    type: llm
+    focus: { source: file, path: src/http/book-slot.ts }
+    criteria: |
+      You are grading a booking handler after a change. It must now
+      refuse a slot that is already taken and a day the clinician
+      does not work.
+
+      PASS if the handler gets both answers by asking objects that
+      hold the data (for example `slot.isFree()` and
+      `clinician.worksOn(date)`), and does not itself compare the
+      slot's patient or read the clinician's working days. FAIL if
+      the handler makes either decision from those fields itself,
+      or if it does not refuse both cases.
