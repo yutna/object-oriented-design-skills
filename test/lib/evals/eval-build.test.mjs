@@ -174,7 +174,7 @@ class EvalFixture {
       join(this.#copy.path, 'evals', name, file), 'utf8')
   }
 
-  exists(name, file) {
+  exists(name, file = 'case.yaml') {
     return existsSync(join(this.#copy.path, 'evals', name, file))
   }
 
@@ -208,8 +208,8 @@ test('EvalBuild writes a case.yaml for every question and task case',
         cases.map(({ name, family }) => [name, family]),
         [
           ['q01-the-slot-rule-keeps-moving', 'question'],
-          ['t01-check-before-booking', 'task'],
-          ['r01-overnight-duration', 'restraint']
+          ['r01-overnight-duration', 'restraint'],
+          ['t01-check-before-booking', 'task']
         ])
       const question = parse(fixture.read(RepositoryFixture.QUESTION))
       assert.equal(question.schema_version, '1.1')
@@ -245,7 +245,7 @@ test('the block arm appends the CLAUDE.md block to every case', async () => {
     const cases = fixture.build({ arm: 'block' })
     assert.deepEqual(
       cases.map(({ family }) => family),
-      ['question', 'task', 'restraint'])
+      ['question', 'restraint', 'task'])
     const question = parse(fixture.read(RepositoryFixture.QUESTION))
     assert.equal(
       question.execution.append_system_prompt,
