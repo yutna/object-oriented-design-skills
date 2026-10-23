@@ -329,9 +329,10 @@ test('a temporary repository bumps only version lines', async () => {
     const againWriter = new RecordingWriter()
     const againReport = repository.run(againWriter)
     assert.deepEqual(againWriter.writes, [])
-    assert.equal(againReport.failed, true)
+    assert.equal(againReport.failed, false)
     assert.deepEqual(againReport.lines(), [
-      'failed: measured nothing (0 versioned file(s))'
+      'changed 0 file(s)',
+      'ok 4 versioned file(s)'
     ])
     assert.equal((await repository.snapshot()).equals(after), true)
   } finally {
