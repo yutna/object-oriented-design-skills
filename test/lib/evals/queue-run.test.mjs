@@ -359,6 +359,7 @@ test('--run logs one line with both readings and drops the piece',
         dirty: false,
         startedAt: '2026-10-23T10:00:00.000Z',
         endedAt: '2026-10-23T10:00:05.000Z',
+        log: 'evals/results/pieces/p1.log',
         exitStatus: 0,
         quotaBefore: {
           fiveHour: 10,
