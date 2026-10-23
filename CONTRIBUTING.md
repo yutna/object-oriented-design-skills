@@ -28,4 +28,10 @@ on GitHub are the changelog.
 
 ## Local development
 
-<!-- Stack-specific setup, build and test commands go here. -->
+```sh
+mise install
+npm ci
+npm run gate
+```
+
+`AGENTS.md` is the full working contract, including what the gate checks.

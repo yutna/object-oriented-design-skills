@@ -1,0 +1,4 @@
+# Node comes from .node-version, which continuous integration reads.
+
+[settings]
+idiomatic_version_file_enable_tools = ["node"]
