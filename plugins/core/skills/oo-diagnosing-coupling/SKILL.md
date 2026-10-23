@@ -121,13 +121,13 @@ places to look, not as scores to chase.
 
 ## Pattern
 
-Before, `BillingDesk` calls `InvoiceBuilder.build` with four positional
-values. `"AXA"` is an insurer code that billing and claims must spell
-the same way, `2` is the plan tier, and `true` means lab fees are
-included. The call carries connascence of meaning, because the bare code
-and tier are conventions, and connascence of position, because the
-caller must remember which slot is which. The flag also steers the
-builder's logic, which is control coupling.
+Before, `BillingDesk` calls `InvoiceBuilder.build(visit, "AXA", 2, true)`.
+`"AXA"` is an insurer code that billing and claims must spell the same
+way, `2` is the plan tier, and `true` means lab fees are included. The
+call carries connascence of meaning, because the bare code and tier are
+conventions, and connascence of position, because the caller must
+remember which slot is which. The flag also steers the builder's logic,
+which is control coupling.
 
 Before:
 
@@ -143,11 +143,11 @@ class InvoiceBuilder
     return new Invoice(visit, insurer, tier, labFees)
 ```
 
-After, the caller passes one `Coverage` value. The insurer code is an
-`InsurerCode`, the tier is a `PlanTier`, and the lab-fee choice is a
-`LabFees`. The three parts are named, so a caller cannot put the tier
-where the insurer belongs, and the flag no longer reaches the builder
-as a bare switch.
+After, `InvoiceBuilder.build(visit, coverage)` takes one `Coverage`.
+The insurer code is an `InsurerCode`, the tier is a `PlanTier`, and the
+lab-fee choice is a `LabFees`. The three parts are named, so a caller
+cannot put the tier where the insurer belongs, and the flag no longer
+reaches the builder as a bare switch.
 
 After:
 
