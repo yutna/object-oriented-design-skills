@@ -2,6 +2,7 @@ import { CountClaim } from './count-claim.mjs'
 import { ListItemsUnder } from './list-items-under.mjs'
 import { RoutingCaseCount } from './routing-case-count.mjs'
 import { ScenarioCount } from './scenario-count.mjs'
+import { TaskCaseCount } from './task-case-count.mjs'
 
 export class CountClaims {
   // The index and the evals README state numbers about the pack itself.
@@ -19,6 +20,10 @@ export class CountClaims {
     new CountClaim(
       'evals/README.md',
       /holds (\S+) scenarios/,
-      new ScenarioCount())
+      new ScenarioCount()),
+    new CountClaim(
+      'evals/README.md',
+      /holds (\S+) task cases/,
+      new TaskCaseCount())
   ])
 }

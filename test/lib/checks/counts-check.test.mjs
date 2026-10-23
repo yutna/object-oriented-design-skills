@@ -1,5 +1,8 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 
 import { CountsCheck } from '../../../scripts/lib/checks/counts-check.mjs'
 import { Report } from '../../../scripts/lib/report.mjs'
@@ -32,6 +35,8 @@ const README = [
   '`routing-cases.md` holds 11 routing cases.',
   '',
   '`scenarios.md` holds 3 scenarios.',
+  '',
+  '`tasks/` holds 3 task cases.',
   ''
 ].join('\n')
 
@@ -85,9 +90,15 @@ const SCENARIOS = [
 
 class FakeRepository {
   #files
+  #root
 
-  constructor(files) {
+  constructor(files, root) {
     this.#files = new Map(files)
+    this.#root = root
+  }
+
+  get root() {
+    return this.#root
   }
 
   file(path) {
@@ -103,16 +114,26 @@ class CheckRun {
       [ROUTING_PATH, ROUTING],
       [SCENARIO_PATH, SCENARIOS]
     ].map(([path, text]) => [path, new TextFile(path, text)])
-    const report = new Report()
-    new CountsCheck(new FakeRepository(files)).inspect(report)
-    return report
+    const root = mkdtempSync(join(tmpdir(), 'oo-counts-'))
+    try {
+      const tasks = join(root, 'evals', 'tasks')
+      mkdirSync(tasks, { recursive: true })
+      for (const name of ['a01-one.yaml', 'b02-two.yaml', 'c03-three.yaml']) {
+        writeFileSync(join(tasks, name), '{}\n')
+      }
+      const report = new Report()
+      new CountsCheck(new FakeRepository(files, root)).inspect(report)
+      return report
+    } finally {
+      rmSync(root, { recursive: true, force: true })
+    }
   }
 }
 
 test('a matching claim counts the claims', () => {
   const report = CheckRun.of()
   assert.equal(report.failed, false)
-  assert.deepEqual(report.lines(), ['ok 3 claim(s)'])
+  assert.deepEqual(report.lines(), ['ok 4 claim(s)'])
 })
 
 test('a stale number names the file, number and fact', () => {
@@ -132,6 +153,17 @@ test('a missing claim sentence is an error', () => {
   assert.deepEqual(report.lines(), [
     'error evals/README.md: ' +
       'claim not found: /holds (\\S+) scenarios/',
+    'failed: 1 error(s)'
+  ])
+})
+
+test('a missing task-case claim is an error', () => {
+  const report = CheckRun.of(
+    README.replace('holds 3 task cases', 'contains 3 task cases'))
+  assert.equal(report.failed, true)
+  assert.deepEqual(report.lines(), [
+    'error evals/README.md: ' +
+      'claim not found: /holds (\\S+) task cases/',
     'failed: 1 error(s)'
   ])
 })

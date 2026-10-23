@@ -16,6 +16,7 @@ export class NegativeCases {
   static #README = 'evals/README.md'
   static #ROUTING = 'evals/routing-cases.md'
   static #SCENARIOS = 'evals/scenarios.md'
+  static #TASK = 'evals/tasks/t01-check-before-booking.yaml'
 
   static #BACK_LINK = '[rule strictness]' +
     '(../oo-design/SKILL.md#how-strictly-a-rule-is-meant).'
@@ -69,6 +70,10 @@ export class NegativeCases {
   static #COUNT_REPLACE = 'carries one of four labels'
   static #SCENARIO_CLAIM_FIND = '`scenarios.md` holds 3 scenarios'
   static #SCENARIO_CLAIM_REPLACE = '`scenarios.md` contains 3 scenarios'
+  static #TASK_TAGS_FIND = 'tags: [task, smoke]'
+  static #TASK_TAGS_REPLACE = 'tags: [smoke]'
+  static #TASK_SKILL_FIND = 'oo-assigning-responsibilities"\''
+  static #TASK_SKILL_REPLACE = 'oo-no-such-skill"\''
 
   static ALL = Object.freeze([
     new NegativeCase(
@@ -320,6 +325,23 @@ export class NegativeCases {
         NegativeCases.#README,
         NegativeCases.#SCENARIO_CLAIM_FIND,
         NegativeCases.#SCENARIO_CLAIM_REPLACE),
-      'claim not found: /holds (\\S+) scenarios/')
+      'claim not found: /holds (\\S+) scenarios/'),
+    new NegativeCase(
+      'eval cases reject tags without a family',
+      NegativeCases.#EVAL,
+      new ReplaceText(
+        NegativeCases.#TASK,
+        NegativeCases.#TASK_TAGS_FIND,
+        NegativeCases.#TASK_TAGS_REPLACE),
+      'tags must hold exactly one family tag of task, restraint ' +
+      'or precedence'),
+    new NegativeCase(
+      'eval cases reject an unknown input_match skill',
+      NegativeCases.#EVAL,
+      new ReplaceText(
+        NegativeCases.#TASK,
+        NegativeCases.#TASK_SKILL_FIND,
+        NegativeCases.#TASK_SKILL_REPLACE),
+      'unknown skill in input_match: oo-no-such-skill')
   ])
 }

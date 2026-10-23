@@ -1,3 +1,4 @@
+import { TaskCases } from '../evals/task-cases.mjs'
 import { Fact } from './fact.mjs'
 
 export class TaskCaseCount extends Fact {
@@ -6,8 +7,8 @@ export class TaskCaseCount extends Fact {
     Object.freeze(this)
   }
 
-  value() {
-    return 0
+  value(repository) {
+    return TaskCases.of(repository).length
   }
 
   equals(other) {
