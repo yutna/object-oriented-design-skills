@@ -9,6 +9,10 @@ export class NotationCheck extends Check {
     /\bnew\s+[A-Za-z_][A-Za-z0-9_]*(?:<[^()]*>)?(?![<\w])(?!\s*\()/g
   static #SELF = /\b(this|self)\b/g
   static #SEMICOLON = /;/g
+  static #DECLARATION = /^(class|interface|value|enum)\s/
+  static #MEMBER = /^\s*[+-] /
+  static #RAISE = /^\s*raise\s+([A-Za-z_][A-Za-z0-9_]*)\s*$/
+  static #RAISES = /^\s*raises\s+(.+?)\s*$/
 
   #repository
 
@@ -47,12 +51,17 @@ export class NotationCheck extends Check {
   }
 
   #inspectFence(path, fence, report) {
+    // A comment is prose for a reader, not syntax to check.
     const lines = fence.body.split('\n')
+      .map((line) => line.replace(NotationCheck.#COMMENT, ''))
     for (let index = 0; index < lines.length; index += 1) {
-      // A comment is prose for a reader, not syntax to check.
-      const line = lines[index].replace(NotationCheck.#COMMENT, '')
-      this.#inspectLine(path, fence.startLine + index + 1, line, report)
+      this.#inspectLine(
+        path,
+        fence.startLine + index + 1,
+        lines[index],
+        report)
     }
+    this.#inspectRaises(path, fence.startLine, lines, report)
   }
 
   #inspectLine(path, number, line, report) {
@@ -115,6 +124,53 @@ export class NotationCheck extends Check {
         path,
         number,
         'notation: semicolons are not used')
+    }
+  }
+
+  #inspectRaises(path, startLine, lines, report) {
+    // A caller must be able to handle every error the body raises itself.
+    let member = null
+    for (let index = 0; index < lines.length; index += 1) {
+      const line = lines[index]
+      if (NotationCheck.#DECLARATION.test(line)) {
+        this.#checkMemberRaises(path, startLine, member, report)
+        member = null
+        continue
+      }
+      if (NotationCheck.#MEMBER.test(line)) {
+        this.#checkMemberRaises(path, startLine, member, report)
+        member = { raises: new Set(), raised: [] }
+        continue
+      }
+      if (member === null) continue
+      this.#recordMemberLine(member, line, index)
+    }
+    this.#checkMemberRaises(path, startLine, member, report)
+  }
+
+  #recordMemberLine(member, line, index) {
+    const raise = NotationCheck.#RAISE.exec(line)
+    if (raise !== null) {
+      member.raised.push({ name: raise[1], index })
+      return
+    }
+    const raises = NotationCheck.#RAISES.exec(line)
+    if (raises === null) return
+    for (const name of raises[1].split(',')) {
+      member.raises.add(name.trim())
+    }
+  }
+
+  #checkMemberRaises(path, startLine, member, report) {
+    if (member === null) return
+    for (const { name, index } of member.raised) {
+      if (member.raises.has(name)) continue
+      this.#report(
+        report,
+        path,
+        startLine + index + 1,
+        `notation: raise "${name}" needs a "raises ${name}" line ` +
+        'under the signature')
     }
   }
 
