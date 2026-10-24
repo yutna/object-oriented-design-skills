@@ -166,6 +166,9 @@ refuses raises the error named for it.
 |Completed|start, complete, cancel|nothing|each error above|
 |Cancelled|start, complete, cancel|nothing|each error above|
 
+A move asked of a state that does not list it is refused with the error
+named for that move. `Completed` and `Cancelled` refuse all three.
+
 ```text
 enum AppointmentStatus
   Scheduled

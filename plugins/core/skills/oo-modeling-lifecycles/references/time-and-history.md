@@ -97,18 +97,19 @@ passes the time it was given, so a test can pass any moment.
 
 When the only question is where an appointment is now, the enumeration
 is enough. When a report asks every change, the object needs a record
-of them. Each entry says which state was reached, when, and who made
-the change; a cancellation also says why. The list is read-only from
-outside, so a report cannot edit the history it reads.
+of them. Each entry says which state was reached and when; it names the
+clinician who made the change when a clinician did, and a cancellation
+also says why. The list is read-only from outside, so a report cannot
+edit the history it reads.
 
 ```text
 value BookingChange
   - status: AppointmentStatus
   - at: DateTime
-  - by: ClinicianId
+  - by: ClinicianId?
   - reason: CancellationReason?
   + new(status: AppointmentStatus, at: DateTime,
-      by: ClinicianId, reason: CancellationReason?)
+      by: ClinicianId?, reason: CancellationReason?)
 
 class BookingHistory
   - changes: List<BookingChange>
@@ -126,13 +127,14 @@ owns. `record` appends one entry once, and `changes` returns a read-only
 view, so every reader sees the same list and no reader changes it. The
 entry for a cancellation carries the `CancellationReason` and the
 moment, so the answer to why survives after the status has moved on.
-The entry also names the clinician who made the change, which is the
-who the business asks about. `Appointment` keeps the notation's three
-fields, so its history lives beside it: the use case that cancels an
-appointment, or the job that records a no-show, writes the change and
-its entry together. A change without its entry is history the business
-asked for and did not get. When nobody asks when or why, the current
-state is enough, and the list is cost without a reader.
+The entry also names the clinician who made the change when a clinician
+did; a change the clock made leaves it null, and the time still says
+when. `Appointment` keeps the notation's three fields, so its history
+lives beside it: the use case that cancels an appointment, or the job
+that records a no-show, writes the change and its entry together. A
+change without its entry is history the business asked for and did not
+get. When nobody asks when or why, the current state is enough, and the
+list is cost without a reader.
 
 ## Undoing a final state
 
