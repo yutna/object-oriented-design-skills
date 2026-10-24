@@ -117,6 +117,8 @@ A body is indented under its signature and holds plain statements:
 construction with `new`. `:=` assigns, `=` compares, `null` is the
 absent value of a `Type?`, and `void` means the method returns
 nothing. A bare `return` ends a `void` method.
+An `if … then …` may leave out its `else`, and then does nothing when
+the condition is false.
 
 ```text
 class Appointment
