@@ -727,3 +727,168 @@ test('--run refuses a seven-day start above the continue', async () => {
     await fixture.close()
   }
 })
+
+test('--run --dry-run accepts a five-hour line and reads nothing',
+  async () => {
+    const fixture = await TempRun.of([PieceEntry.first()])
+    try {
+      const meter = new FakeMeter([])
+      const runner = new FakeRunner()
+      const report = fixture.inspect(
+        ['--run', '--dry-run', '--five-hour-start', '90'],
+        meter,
+        runner,
+        new FakeClock([]))
+      assert.equal(report.failed, false)
+      assert.deepEqual(report.lines(), [
+        'RUN: node evals/piece.mjs --arm clinic',
+        'ok 1 entry(ies) previewed'
+      ])
+      assert.deepEqual(await fixture.queue(), [PieceEntry.first()])
+      assert.equal(meter.reads, 0)
+      assert.equal(runner.calls.length, 0)
+    } finally {
+      await fixture.close()
+    }
+  })
+
+test('--run starts on an 80% five-hour reading with --five-hour-start 90',
+  async () => {
+    const fixture = await TempRun.of([PieceEntry.first()])
+    try {
+      const meter = new FakeMeter([
+        ReadingAt.of(80, 10),
+        ReadingAt.of(81, 12)
+      ])
+      const report = fixture.inspect(
+        ['--run', '--five-hour-start', '90'],
+        meter,
+        new FakeRunner(),
+        new FakeClock(Times.pieceRun()))
+      assert.equal(report.failed, false)
+      assert.deepEqual(report.lines(), ['ok 1 piece(s) run'])
+      assert.equal(meter.reads, 2)
+      assert.deepEqual(await fixture.queue(), [])
+    } finally {
+      await fixture.close()
+    }
+  })
+
+test('--run waits on an 80% five-hour reading without --five-hour-start',
+  async () => {
+    const fixture = await TempRun.of([PieceEntry.first()])
+    try {
+      const meter = new FakeMeter([ReadingAt.of(80, 10)])
+      const runner = new FakeRunner()
+      const report = fixture.inspect(['--run'], meter, runner)
+      assert.equal(report.failed, false)
+      assert.deepEqual(report.lines(), [
+        'WAIT: 5h=80% 7d=10%; the five-hour window resets 13:00',
+        'ok 1 piece(s) waiting'
+      ])
+      assert.deepEqual(await fixture.queue(), [PieceEntry.first()])
+      assert.equal(meter.reads, 1)
+      assert.equal(runner.calls.length, 0)
+    } finally {
+      await fixture.close()
+    }
+  })
+
+test('--run keeps the seven-day line at 75 beside --five-hour-start 90',
+  async () => {
+    const fixture = await TempRun.of([PieceEntry.first()])
+    try {
+      const meter = new FakeMeter([ReadingAt.of(85, 80)])
+      const report = fixture.inspect(
+        ['--run', '--five-hour-start', '90'],
+        meter)
+      assert.deepEqual(report.lines(), [
+        'WAIT: 5h=85% 7d=80%; the five-hour window resets 13:00',
+        'ok 1 piece(s) waiting'
+      ])
+      assert.deepEqual(await fixture.queue(), [PieceEntry.first()])
+      assert.equal(meter.reads, 1)
+    } finally {
+      await fixture.close()
+    }
+  })
+
+test('--run goes on to the next piece with --five-hour-continue 80',
+  async () => {
+    const fixture = await TempRun.of([
+      PieceEntry.first(),
+      PieceEntry.second()
+    ])
+    try {
+      const meter = new FakeMeter([
+        ReadingAt.of(10, 20),
+        ReadingAt.of(75, 21),
+        ReadingAt.of(30, 40),
+        ReadingAt.of(32, 41)
+      ])
+      const report = fixture.inspect(
+        ['--run', '--five-hour-continue', '80'],
+        meter,
+        new FakeRunner(),
+        new FakeClock(Times.twoPieces()))
+      assert.deepEqual(report.lines(), ['ok 2 piece(s) run'])
+      assert.equal(meter.reads, 4)
+      assert.deepEqual(await fixture.queue(), [])
+    } finally {
+      await fixture.close()
+    }
+  })
+
+test('--run refuses a five-hour line outside 1 to 100', async () => {
+  const fixture = await TempRun.of()
+  try {
+    for (const [option, value] of [
+      ['--five-hour-start', '0'],
+      ['--five-hour-continue', '101'],
+      ['--five-hour-start', '90.5']
+    ]) {
+      const processLike = await fixture.exitOf(
+        ['--run', option, value],
+        new FakeMeter([]))
+      assert.equal(processLike.exitCode, 2, `${option} ${value}`)
+      assert.deepEqual(processLike.stderrChunks, [
+        `error: ${option} must be a whole percentage from 1 to 100\n`
+      ])
+      assert.deepEqual(processLike.stdoutChunks, [])
+    }
+  } finally {
+    await fixture.close()
+  }
+})
+
+test('--run refuses a five-hour line with no value', async () => {
+  const fixture = await TempRun.of()
+  try {
+    const processLike = await fixture.exitOf(
+      ['--run', '--five-hour-start'],
+      new FakeMeter([]))
+    assert.equal(processLike.exitCode, 2)
+    assert.deepEqual(processLike.stderrChunks, [
+      'error: --five-hour-start must be a whole percentage from 1 to 100\n'
+    ])
+    assert.deepEqual(processLike.stdoutChunks, [])
+  } finally {
+    await fixture.close()
+  }
+})
+
+test('--run refuses a five-hour start above the continue', async () => {
+  const fixture = await TempRun.of()
+  try {
+    const processLike = await fixture.exitOf(
+      ['--run', '--five-hour-start', '70', '--five-hour-continue', '70'],
+      new FakeMeter([]))
+    assert.equal(processLike.exitCode, 2)
+    assert.deepEqual(processLike.stderrChunks, [
+      'error: --five-hour-start must be below --five-hour-continue\n'
+    ])
+    assert.deepEqual(processLike.stdoutChunks, [])
+  } finally {
+    await fixture.close()
+  }
+})

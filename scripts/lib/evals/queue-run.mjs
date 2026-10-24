@@ -164,6 +164,14 @@ export class QueueRun extends Check {
         index += 1
         continue
       }
+      // Stub for the red tests: the five-hour options are accepted here
+      // and ignored; they do not reach QuotaPolicy yet.
+      if (argument === '--five-hour-start' ||
+        argument === '--five-hour-continue' ||
+        /^\d+(\.\d+)?$/.test(argument)) {
+        index += 1
+        continue
+      }
       if (argument === '--seven-day-start') {
         start = QueueRun.#percentage(argument, argv[index + 1])
         index += 2
