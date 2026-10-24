@@ -62,7 +62,7 @@ other's rule.
 ## Two classes with their own words
 
 The split keeps the booked slot as reception's `Appointment` and gives
-billing its own `BillableVisit`, which holds the appointment it prices.
+billing its own `BillableVisit`, which names the appointment it prices.
 Each class has one meaning, and no field waits for a group that will
 never read it.
 
@@ -85,9 +85,9 @@ class Appointment
     return
 
 class BillableVisit
-  - appointment: Appointment
+  - appointment: AppointmentId
   - invoiceNumber: String?
-  + new(appointment: Appointment)
+  + new(appointment: AppointmentId)
     invoiceNumber := null
   + bill(number: String): void
     raises VisitAlreadyBilled
@@ -105,9 +105,9 @@ constructor sets `status` once, `book` reserves the slot and creates the
 appointment, and `cancel` changes the status and releases the slot
 once. `BillableVisit` sets `invoiceNumber` once in its constructor and
 once in `bill`, and `invoice` reads it without changing anything. The
-link to `Appointment` lets billing ask for the facts it prices without
-copying them, and a second `bill` is refused instead of overwriting the
-first invoice number.
+identifier keeps the two models apart while billing can still name the
+appointment it prices, and a second `bill` is refused instead of
+overwriting the first invoice number.
 
 ## A glossary entry
 
