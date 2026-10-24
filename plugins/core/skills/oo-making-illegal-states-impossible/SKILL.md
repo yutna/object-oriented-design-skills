@@ -134,7 +134,7 @@ class Prescription
     return
 ```
 
-After, four classes form a closed set behind `interface Prescription`.
+After, four values form a closed set behind `interface Prescription`.
 Each holds only its own state's data, every field is required, and the
 three actions each return a new value.
 
@@ -145,7 +145,7 @@ interface Prescription
   -- closed: these four states are the only prescriptions
   + medicine(): Medicine
 
-class DraftPrescription implements Prescription
+value DraftPrescription implements Prescription
   - id: PrescriptionId
   - patient: PatientId
   - medicine: Medicine
@@ -155,7 +155,7 @@ class DraftPrescription implements Prescription
   + issue(by: ClinicianId): IssuedPrescription
     return new IssuedPrescription(id, patient, medicine, by)
 
-class IssuedPrescription implements Prescription
+value IssuedPrescription implements Prescription
   - id: PrescriptionId
   - patient: PatientId
   - medicine: Medicine
@@ -170,7 +170,7 @@ class IssuedPrescription implements Prescription
     return new CancelledPrescription(id, patient, medicine, issuedBy,
       reason)
 
-class DispensedPrescription implements Prescription
+value DispensedPrescription implements Prescription
   - id: PrescriptionId
   - patient: PatientId
   - medicine: Medicine
@@ -181,7 +181,7 @@ class DispensedPrescription implements Prescription
   + medicine(): Medicine
     return medicine
 
-class CancelledPrescription implements Prescription
+value CancelledPrescription implements Prescription
   - id: PrescriptionId
   - patient: PatientId
   - medicine: Medicine
