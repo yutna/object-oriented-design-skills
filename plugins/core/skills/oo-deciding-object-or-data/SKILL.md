@@ -42,7 +42,7 @@ only to make a design look object-oriented.
 - The code is a script or a data pipeline with no business rule to
   protect. Leave the data and its functions in their own idiom.
 - The question is whether two values are equal or whether one has
-  identity. That is the later skill on values and entities.
+  identity. That is modeling values and entities.
 
 ## Core rules
 
@@ -202,6 +202,7 @@ evidence: a measurement, a reproducible bug, or a failing test.
   rule labels.
 - [oo-assigning-responsibilities](../oo-assigning-responsibilities/SKILL.md)
   decides which class owns a rule once the question is ownership.
+- [oo-modeling-values-and-entities](../oo-modeling-values-and-entities/SKILL.md)
 
 ## Further reading
 

@@ -121,3 +121,18 @@ named factory methods for the one-off and the weekly case instead of a
 long constructor.
 
 Should reach `oo-constructing-valid-objects`.
+
+## 9. The address that moved two patients
+
+> A `Patient` holds an `Address` object with setters. When one patient
+> in a family moved, we called `address.setStreet(...)` and her
+> brother's record moved too, because both patients held the same
+> `Address`. Our duplicate check compares patients by name and birth
+> date, and last month it merged two different people. How should we
+> model addresses and patient identity?
+
+Must contain: the address as an immutable value, so a move gives that
+patient a new address and changes no one else; patients compared by a
+stable identifier, never by name and birth date.
+
+Should reach `oo-modeling-values-and-entities`.

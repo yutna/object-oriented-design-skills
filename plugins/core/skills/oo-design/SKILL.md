@@ -83,12 +83,15 @@ skills land.
 |This constructor takes too many arguments|[Constructing valid objects][constructing]|
 |Every new case means editing working code|[Encapsulating what varies][what-varies]|
 |How much flexibility should this have?|[Encapsulating what varies][what-varies]|
+|Is this a value or an entity?|[Modeling values and entities][values]|
+|Raw strings and numbers carry domain rules|[Modeling values and entities][values]|
 
 [assigning]: ../oo-assigning-responsibilities/SKILL.md
 [constructing]: ../oo-constructing-valid-objects/SKILL.md
 [coupling]: ../oo-diagnosing-coupling/SKILL.md
 [object-or-data]: ../oo-deciding-object-or-data/SKILL.md
 [state-and-behaviour]: ../oo-encapsulating-state-and-behaviour/SKILL.md
+[values]: ../oo-modeling-values-and-entities/SKILL.md
 [what-varies]: ../oo-encapsulating-what-varies/SKILL.md
 
 ## Red flags
