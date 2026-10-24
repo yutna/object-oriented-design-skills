@@ -32,8 +32,9 @@ receives. The two lists agree only because someone keeps them in step.
 export carries one without changing the visit's shape.
 
 The same work has one secret when the format lives in one module. The
-writer asks for the line and the reader hands the line back, and neither
-knows the columns.
+writer asks for the line and appends it to its destination, the reader
+takes the next line from its source and asks the format what visit it
+holds, and neither knows the columns.
 
 ```text
 class VisitFile
@@ -42,23 +43,29 @@ class VisitFile
 
 class ExportWriter
   - file: VisitFile
-  + new(file: VisitFile)
-  + lineFor(visit: Visit): String
-    return file.lineFor(visit)
+  - destination: ExportDestination
+  + new(file: VisitFile, destination: ExportDestination)
+  + write(visit: Visit): void
+    destination.append(file.lineFor(visit))
+    return
 
 class ExportReader
   - file: VisitFile
-  + new(file: VisitFile)
-  + visitIn(line: String): Visit
-    return file.visitIn(line)
+  - source: ExportSource
+  + new(file: VisitFile, source: ExportSource)
+  + next(): Visit
+    return file.visitIn(source.nextLine())
 ```
 
 `VisitFile.lineFor` is taken to lay out one visit in the file's field
 order and answer the line, and `VisitFile.visitIn` is taken to read one
-such line back into a visit. Each class sends one message, and each
-constructor sets `file` before its method reads it. A new column changes
-`VisitFile` alone. The format is the secret; the writer and the reader
-are the steps.
+such line back into a visit. `ExportDestination.append(line)` is taken
+to append one line to the destination, and `ExportSource.nextLine()` is
+taken to answer the next line and move the source past it. Each
+constructor sets its fields before its method reads them. A new column
+changes `VisitFile` alone. The format is the secret; the writer owns the
+destination, the reader owns the source, and the format stays in
+`VisitFile`.
 
 ## Deep or shallow
 

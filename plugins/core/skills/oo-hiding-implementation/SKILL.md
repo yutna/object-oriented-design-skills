@@ -108,10 +108,13 @@ Before:
 ```text
 class DayPlan
   - blocks: List<PatientId?>
-  + new(entries: List<PatientId?>)
+  - opensAt: DateTime
+  - blockLength: Duration
+  + new(entries: List<PatientId?>, opensAt: DateTime,
+      blockLength: Duration)
     blocks := entries.copy()
   + blockIndex(startsAt: DateTime): Int
-    return blocks.indexAt(startsAt)
+    return startsAt.blockIndexFrom(opensAt, blockLength)
   + blockAt(index: Int): PatientId?
     return blocks.at(index)
   + setBlock(index: Int, patient: PatientId?): void
@@ -135,7 +138,10 @@ After:
 ```text
 class DayPlan
   - blocks: List<PatientId?>
-  + new(entries: List<PatientId?>)
+  - opensAt: DateTime
+  - blockLength: Duration
+  + new(entries: List<PatientId?>, opensAt: DateTime,
+      blockLength: Duration)
     blocks := entries.copy()
   + reserve(startsAt: DateTime, patient: PatientId): void
     raises SlotTaken
@@ -148,7 +154,7 @@ class DayPlan
   + isFree(startsAt: DateTime): Boolean
     return blocks.at(indexOf(startsAt)) = null
   - indexOf(startsAt: DateTime): Int
-    return blocks.indexAt(startsAt)
+    return startsAt.blockIndexFrom(opensAt, blockLength)
 
 class CallCentre
   - plan: DayPlan
@@ -160,16 +166,19 @@ class CallCentre
 
 The block list arrives through the constructor and is copied, so a
 caller that later changes its own list cannot change the plan.
-`entries.copy()` makes a new list with the same entries. `blocks.at(index)`
-is taken to mean the entry at that position, and
-`blocks.replace(index, patient)` is taken to mean that the entry at that
-position is replaced once. `blocks.indexAt(startsAt)` is taken to mean
-the position of the block that holds that start time; `indexOf` is the
-one private place that asks, so no caller does arithmetic.
+`entries.copy()` makes a new list with the same entries. The opening time
+and the block length arrive as constructor parameters named for their
+fields, so the constructor sets both. `blocks.at(index)` is taken to mean
+the entry at that position, and `blocks.replace(index, patient)` is taken
+to mean that the entry at that position is replaced once.
+`startsAt.blockIndexFrom(opensAt, blockLength)` is taken to mean the
+position of the block of that length that begins at that time; `indexOf`
+is the one private place that asks, so no caller does arithmetic.
 `isFree` asks the same question as the test inside `reserve` and changes
 nothing. `reserve` tests one block once, sets it once, and raises
 `SlotTaken` without changing anything when it is taken. `CallCentre.book`
-sends one message. A change to the block size now touches only `DayPlan`.
+sends one message. A change to the block size now touches `DayPlan` and
+the one place that builds it.
 
 ## Red flags
 
