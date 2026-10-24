@@ -90,8 +90,13 @@ export class QueueRun extends Check {
   }
 
   #run(queue, report, dryRun) {
+    // Stub for the red tests: the seven-day options are accepted here
+    // and ignored; they do not reach QuotaPolicy yet.
     if (!this.#argv.every((argument) =>
-      argument === '--run' || argument === '--dry-run')) {
+      argument === '--run' || argument === '--dry-run' ||
+      argument === '--seven-day-start' ||
+      argument === '--seven-day-continue' ||
+      /^\d+(\.\d+)?$/.test(argument))) {
       throw new RepoError(QueueRun.#USAGE)
     }
     const first = queue.peek()

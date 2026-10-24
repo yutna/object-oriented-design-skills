@@ -5,9 +5,33 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 
+import { Cli } from '../../../scripts/lib/cli.mjs'
 import { QuotaReading } from '../../../scripts/lib/evals/quota-reading.mjs'
 import { QueueRun } from '../../../scripts/lib/evals/queue-run.mjs'
 import { Report } from '../../../scripts/lib/report.mjs'
+
+class FakeProcess {
+  #stdoutChunks = []
+  #stderrChunks = []
+
+  constructor() {
+    this.exitCode = undefined
+    this.stdout = {
+      write: (chunk) => this.#stdoutChunks.push(chunk)
+    }
+    this.stderr = {
+      write: (chunk) => this.#stderrChunks.push(chunk)
+    }
+  }
+
+  get stdoutChunks() {
+    return this.#stdoutChunks
+  }
+
+  get stderrChunks() {
+    return this.#stderrChunks
+  }
+}
 
 class FakeRepository {
   #root
@@ -185,6 +209,17 @@ class TempRun {
       runner,
       clock).inspect(report)
     return report
+  }
+
+  async exitOf(argv, meter, runner = new FakeRunner()) {
+    const processLike = new FakeProcess()
+    await new Cli(processLike).run(new QueueRun(
+      new FakeRepository(this.#root),
+      argv,
+      meter,
+      runner,
+      new FakeClock([])))
+    return processLike
   }
 
   async queue() {
@@ -544,6 +579,150 @@ test('--run --dry-run prints the piece and reads nothing', async () => {
     assert.deepEqual(await fixture.queue(), [PieceEntry.first()])
     assert.equal(meter.reads, 0)
     assert.equal(runner.calls.length, 0)
+  } finally {
+    await fixture.close()
+  }
+})
+
+test('--run --dry-run accepts a seven-day line and reads nothing',
+  async () => {
+    const fixture = await TempRun.of([PieceEntry.first()])
+    try {
+      const meter = new FakeMeter([])
+      const runner = new FakeRunner()
+      const report = fixture.inspect(
+        ['--run', '--dry-run', '--seven-day-start', '90'],
+        meter,
+        runner,
+        new FakeClock([]))
+      assert.equal(report.failed, false)
+      assert.deepEqual(report.lines(), [
+        'RUN: node evals/piece.mjs --arm clinic',
+        'ok 1 entry(ies) previewed'
+      ])
+      assert.deepEqual(await fixture.queue(), [PieceEntry.first()])
+      assert.equal(meter.reads, 0)
+      assert.equal(runner.calls.length, 0)
+    } finally {
+      await fixture.close()
+    }
+  })
+
+test('--run starts on an 80% seven-day reading with --seven-day-start 90',
+  async () => {
+    const fixture = await TempRun.of([PieceEntry.first()])
+    try {
+      const meter = new FakeMeter([
+        ReadingAt.of(10, 80),
+        ReadingAt.of(12, 81)
+      ])
+      const report = fixture.inspect(
+        ['--run', '--seven-day-start', '90'],
+        meter,
+        new FakeRunner(),
+        new FakeClock(Times.pieceRun()))
+      assert.equal(report.failed, false)
+      assert.deepEqual(report.lines(), ['ok 1 piece(s) run'])
+      assert.equal(meter.reads, 2)
+      assert.deepEqual(await fixture.queue(), [])
+    } finally {
+      await fixture.close()
+    }
+  })
+
+test('--run waits on an 80% seven-day reading without --seven-day-start',
+  async () => {
+    const fixture = await TempRun.of([PieceEntry.first()])
+    try {
+      const meter = new FakeMeter([ReadingAt.of(10, 80)])
+      const runner = new FakeRunner()
+      const report = fixture.inspect(['--run'], meter, runner)
+      assert.equal(report.failed, false)
+      assert.deepEqual(report.lines(), [
+        'WAIT: 5h=10% 7d=80%; the five-hour window resets 13:00',
+        'ok 1 piece(s) waiting'
+      ])
+      assert.deepEqual(await fixture.queue(), [PieceEntry.first()])
+      assert.equal(meter.reads, 1)
+      assert.equal(runner.calls.length, 0)
+    } finally {
+      await fixture.close()
+    }
+  })
+
+test('--run stops after one piece when --seven-day-continue is 80',
+  async () => {
+    const fixture = await TempRun.of([
+      PieceEntry.first(),
+      PieceEntry.second()
+    ])
+    try {
+      const meter = new FakeMeter([
+        ReadingAt.of(10, 20),
+        ReadingAt.of(12, 81)
+      ])
+      const report = fixture.inspect(
+        ['--run', '--seven-day-continue', '80'],
+        meter,
+        new FakeRunner(),
+        new FakeClock(Times.pieceRun()))
+      assert.deepEqual(report.lines(), ['ok 1 piece(s) run'])
+      assert.equal(meter.reads, 2)
+      assert.deepEqual(await fixture.queue(), [PieceEntry.second()])
+    } finally {
+      await fixture.close()
+    }
+  })
+
+test('--run refuses a seven-day line outside 1 to 100', async () => {
+  const fixture = await TempRun.of()
+  try {
+    for (const [option, value] of [
+      ['--seven-day-start', '0'],
+      ['--seven-day-continue', '101'],
+      ['--seven-day-start', '90.5']
+    ]) {
+      const processLike = await fixture.exitOf(
+        ['--run', option, value],
+        new FakeMeter([]))
+      assert.equal(processLike.exitCode, 2, `${option} ${value}`)
+      assert.deepEqual(processLike.stderrChunks, [
+        `error: ${option} must be a whole percentage from 1 to 100\n`
+      ])
+      assert.deepEqual(processLike.stdoutChunks, [])
+    }
+  } finally {
+    await fixture.close()
+  }
+})
+
+test('--run refuses a seven-day line with no value', async () => {
+  const fixture = await TempRun.of()
+  try {
+    const processLike = await fixture.exitOf(
+      ['--run', '--seven-day-start'],
+      new FakeMeter([]))
+    assert.equal(processLike.exitCode, 2)
+    assert.deepEqual(processLike.stderrChunks, [
+      'error: --seven-day-start must be a whole percentage from 1 to 100\n'
+    ])
+    assert.deepEqual(processLike.stdoutChunks, [])
+  } finally {
+    await fixture.close()
+  }
+})
+
+test('--run refuses a seven-day start above the continue', async () => {
+  const fixture = await TempRun.of()
+  try {
+    const processLike = await fixture.exitOf(
+      ['--run', '--seven-day-start', '90', '--seven-day-continue', '90'],
+      new FakeMeter([]))
+    assert.equal(processLike.exitCode, 2)
+    assert.deepEqual(processLike.stderrChunks, [
+      'error: --seven-day-start must be below --seven-day-continue\n'
+    ])
+    assert.deepEqual(processLike.stdoutChunks, [])
   } finally {
     await fixture.close()
   }
