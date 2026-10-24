@@ -32,9 +32,10 @@ receives. The two lists agree only because someone keeps them in step.
 export carries one without changing the visit's shape.
 
 The same work has one secret when the format lives in one module. The
-writer asks for the line and appends it to its destination, the reader
-takes the next line from its source and asks the format what visit it
-holds, and neither knows the columns.
+writer asks for the line and appends it to its destination. The reader
+answers the visit at the line its source is on, asking the format what
+visit the line holds; a separate command moves the source past that
+line. Neither knows the columns.
 
 ```text
 class VisitFile
@@ -53,11 +54,12 @@ class ExportReader
   - file: VisitFile
   - source: ExportSource
   + new(file: VisitFile, source: ExportSource)
-  + next(): Visit
-    line := source.currentLine()
-    visit := file.visitIn(line)
-    source.advance()
+  + currentVisit(): Visit
+    visit := file.visitIn(source.currentLine())
     return visit
+  + advance(): void
+    source.advance()
+    return
 ```
 
 `VisitFile.lineFor` is taken to lay out one visit in the file's field
@@ -65,12 +67,13 @@ order and answer the line, and `VisitFile.visitIn` is taken to read one
 such line back into a visit. `ExportDestination.append(line)` is taken
 to append one line to the destination. `ExportSource.currentLine()` is
 taken to answer the line the source is at and change nothing, while
-`ExportSource.advance()` moves it past that line. `ExportReader.next()`
-reads the current line, turns it into a visit, and only then advances the
-source. Each constructor sets its fields before its method reads them. A
-new column changes `VisitFile` alone. The format is the secret; the
-writer owns the destination, the reader owns the source, and the format
-stays in `VisitFile`.
+`ExportSource.advance()` moves it past that line.
+`ExportReader.currentVisit()` answers the visit at the line its source
+is on and changes nothing; `ExportReader.advance()` moves the source
+past that line and answers nothing. Each constructor sets its fields
+before its method reads them. A new column changes `VisitFile` alone.
+The format is the secret; the writer owns the destination, the reader
+owns the source, and the format stays in `VisitFile`.
 
 ## Deep or shallow
 
