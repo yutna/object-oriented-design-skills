@@ -20,6 +20,7 @@ export class ModelRouting extends Check {
   static #RUNS = '--runs'
   static #DEFAULT_RUNS = 3
   static #CASE = '--case'
+  static #TURN_LIMIT = 'error_max_turns'
 
   #repository
   #argv
@@ -152,8 +153,10 @@ export class ModelRouting extends Check {
         'claude',
         ModelRouting.#args(copyPath, routingCase.symptom),
         directory)
-      // A run that exits non-zero leaves no answer worth measuring.
-      if (exitCode !== 0) {
+      // A run the turn limit ends still answered when its Skill call came
+      // before the limit.
+      if (exitCode !== 0 &&
+        !ModelRouting.#answeredOnTheTurnLimit(output)) {
         throw new RepoError(
           `route run failed: exit ${exitCode}: ${output.trim()}`)
       }
@@ -161,6 +164,15 @@ export class ModelRouting extends Check {
     } finally {
       rmSync(directory, { recursive: true, force: true })
     }
+  }
+
+  static #answeredOnTheTurnLimit(output) {
+    const events = ModelRouting.#events(output)
+    const result = events
+      .filter((event) => event?.type === 'result').at(-1)
+    // Only the limit ending the session makes the exit worth keeping.
+    return result?.subtype === ModelRouting.#TURN_LIMIT &&
+      ModelRouting.#skillAnswer(events) !== null
   }
 
   #write(results, hits, runs, cases) {
@@ -262,15 +274,8 @@ export class ModelRouting extends Check {
 
   static #answer(output) {
     const events = ModelRouting.#events(output)
-    for (const event of events) {
-      if (event?.type !== 'assistant') continue
-      for (const part of event.message?.content ?? []) {
-        if (part.type === 'tool_use' && part.name === 'Skill' &&
-          typeof part.input?.skill === 'string') {
-          return ModelRouting.#withoutPlugin(part.input.skill)
-        }
-      }
-    }
+    const skill = ModelRouting.#skillAnswer(events)
+    if (skill !== null) return skill
     const result = events
       .filter((event) => event?.type === 'result').at(-1)
     const text = typeof result?.result === 'string'
@@ -282,6 +287,19 @@ export class ModelRouting extends Check {
     return match === null
       ? ModelRouting.#withoutPlugin(text)
       : ModelRouting.#withoutPlugin(match[0])
+  }
+
+  static #skillAnswer(events) {
+    for (const event of events) {
+      if (event?.type !== 'assistant') continue
+      for (const part of event.message?.content ?? []) {
+        if (part.type === 'tool_use' && part.name === 'Skill' &&
+          typeof part.input?.skill === 'string') {
+          return ModelRouting.#withoutPlugin(part.input.skill)
+        }
+      }
+    }
+    return null
   }
 
   static #withoutPlugin(answer) {
