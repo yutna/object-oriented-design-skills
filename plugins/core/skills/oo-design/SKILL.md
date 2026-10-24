@@ -99,11 +99,14 @@ skills land.
 |Interface or abstract base class?|[Designing interfaces][interfaces]|
 |Domain code depends on a database or framework|[Inverting dependencies][inverting]|
 |Where are objects created and wired together?|[Inverting dependencies][inverting]|
+|Callers know how another class stores or formats data|[Hiding implementation][hiding]|
+|A class leaks its internal errors or steps|[Hiding implementation][hiding]|
 
 [assigning]: ../oo-assigning-responsibilities/SKILL.md
 [composition]: ../oo-choosing-composition-over-inheritance/SKILL.md
 [constructing]: ../oo-constructing-valid-objects/SKILL.md
 [coupling]: ../oo-diagnosing-coupling/SKILL.md
+[hiding]: ../oo-hiding-implementation/SKILL.md
 [interfaces]: ../oo-designing-interfaces/SKILL.md
 [inverting]: ../oo-inverting-dependencies/SKILL.md
 [knows]: ../oo-limiting-what-an-object-knows/SKILL.md
