@@ -101,12 +101,15 @@ skills land.
 |Where are objects created and wired together?|[Inverting dependencies][inverting]|
 |Callers know how another class stores or formats data|[Hiding implementation][hiding]|
 |A class leaks its internal errors or steps|[Hiding implementation][hiding]|
+|Flags or optional fields allow impossible combinations|[Making illegal states impossible][illegal-states]|
+|A type admits values the domain never has|[Making illegal states impossible][illegal-states]|
 
 [assigning]: ../oo-assigning-responsibilities/SKILL.md
 [composition]: ../oo-choosing-composition-over-inheritance/SKILL.md
 [constructing]: ../oo-constructing-valid-objects/SKILL.md
 [coupling]: ../oo-diagnosing-coupling/SKILL.md
 [hiding]: ../oo-hiding-implementation/SKILL.md
+[illegal-states]: ../oo-making-illegal-states-impossible/SKILL.md
 [interfaces]: ../oo-designing-interfaces/SKILL.md
 [inverting]: ../oo-inverting-dependencies/SKILL.md
 [knows]: ../oo-limiting-what-an-object-knows/SKILL.md
