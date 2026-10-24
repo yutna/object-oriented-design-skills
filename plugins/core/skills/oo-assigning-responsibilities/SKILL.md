@@ -146,6 +146,7 @@ Before:
 class Slot
   - patient: PatientId?
   + reserve(patientId: PatientId): void
+    raises SlotTaken
     if patient = null then
       patient := patientId
     else
@@ -166,6 +167,7 @@ class Appointment
 
 class CancelAppointment
   + run(appointment: Appointment, reason: CancellationReason): void
+    raises AppointmentNotCancellable
     if appointment.status = Scheduled then
       appointment.status := Cancelled
       appointment.cancellationReason := reason
@@ -181,6 +183,7 @@ After:
 class Slot
   - patient: PatientId?
   + reserve(patientId: PatientId): void
+    raises SlotTaken
     if patient = null then
       patient := patientId
     else
@@ -199,6 +202,7 @@ class Appointment
     slot.reserve(patient)
     return new Appointment(slot, patient)
   + cancel(reason: CancellationReason): void
+    raises AppointmentNotCancellable
     if status = Scheduled then
       status := Cancelled
       cancellationReason := reason

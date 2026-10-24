@@ -114,8 +114,9 @@ class Appointment
       followUp: Boolean, duration: Minutes)
 ```
 
-After, the constructor is private, so only the class's own static
-methods can call it. `forNewPatient` reserves the slot once and builds
+After, the constructor is private, so only code inside `Appointment`
+can call it, and only the two factories do. `forNewPatient` reserves
+the slot once and builds
 an appointment with no previous visit. `followUp` first asks whether the
 previous visit belongs to this patient, and only then reserves the
 slot, once. A refused follow-up raises `NotThisPatientsVisit` before

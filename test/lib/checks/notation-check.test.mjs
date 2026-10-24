@@ -190,3 +190,53 @@ test('NotationCheck fails when it reads no text fence', () => {
     'failed: measured nothing (0 fence(s))'
   ])
 })
+
+test('NotationCheck rejects a raise without a raises line', () => {
+  const report = CheckRun.of(SkillText.of(
+    'class Slot',
+    '  + reserve(patient: PatientId): void',
+    '    if patient = null then',
+    '      patient := patientId',
+    '    else',
+    '      raise SlotTaken'))
+  assert.deepEqual(report.lines(), [
+    `error ${PATH} line 9: notation: raise "SlotTaken" needs a ` +
+    '"raises SlotTaken" line under the signature',
+    'failed: 1 error(s)'
+  ])
+})
+
+test('NotationCheck passes a raise named by its raises line', () => {
+  const report = CheckRun.of(SkillText.of(
+    'class Slot',
+    '  + reserve(patient: PatientId): void',
+    '    raises SlotTaken',
+    '    if patient = null then',
+    '      patient := patientId',
+    '    else',
+    '      raise SlotTaken'))
+  assert.deepEqual(report.lines(), ['ok 1 fence(s)'])
+})
+
+test('NotationCheck passes raises under a continued signature', () => {
+  const report = CheckRun.of(SkillText.of(
+    'class Appointment',
+    '  + static followUp(patient: PatientId, previous: Appointment,',
+    '      slot: Slot): Appointment',
+    '    raises NotThisPatientsVisit',
+    '    if previous.patient() = patient then',
+    '      slot.reserve(patient)',
+    '      return new Appointment(patient, slot, previous, true, 30)',
+    '    else',
+    '      raise NotThisPatientsVisit'))
+  assert.deepEqual(report.lines(), ['ok 1 fence(s)'])
+})
+
+test('NotationCheck passes a raises line the body does not raise', () => {
+  const report = CheckRun.of(SkillText.of(
+    'class VisitReportBuilder',
+    '  + build(): VisitReport',
+    '    raises PrescriptionWithoutDiagnosis',
+    '    return new VisitReport(patient, visit, clinician)'))
+  assert.deepEqual(report.lines(), ['ok 1 fence(s)'])
+})

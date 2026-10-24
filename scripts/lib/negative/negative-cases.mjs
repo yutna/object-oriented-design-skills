@@ -79,6 +79,10 @@ export class NegativeCases {
     'oo-constructing-valid-objects/SKILL.md'
   static #NOTATION_FIND = '    if previous.patient() = patient then'
   static #NOTATION_REPLACE = '    if previous.patient() != patient then'
+  static #COLLECTION_SKILL = 'plugins/core/skills/' +
+    'oo-encapsulating-state-and-behaviour/SKILL.md'
+  static #RAISES_FIND = '    raises SlotsOverlap\n'
+  static #RAISES_REPLACE = ''
 
   static ALL = Object.freeze([
     new NegativeCase(
@@ -323,6 +327,15 @@ export class NegativeCases {
         NegativeCases.#NOTATION_FIND,
         NegativeCases.#NOTATION_REPLACE),
       'notation: operator "!=" is not defined'),
+    new NegativeCase(
+      'prose rejects a raise without a raises line',
+      NegativeCases.#PROSE,
+      new ReplaceText(
+        NegativeCases.#COLLECTION_SKILL,
+        NegativeCases.#RAISES_FIND,
+        NegativeCases.#RAISES_REPLACE),
+      'notation: raise "SlotsOverlap" needs a "raises SlotsOverlap" ' +
+      'line under the signature'),
     new NegativeCase(
       'counts rejects a stale label count',
       NegativeCases.#COUNTS,
