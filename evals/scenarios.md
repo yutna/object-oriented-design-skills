@@ -152,3 +152,20 @@ visit where rooms are concerned; reuse the shared fee rules by holding
 a collaborator instead of extending `Visit`.
 
 Should reach `oo-choosing-composition-over-inheritance`.
+
+## 11. Group sessions that confuse the booking desk
+
+> `GroupSession` extends `Slot` so a physiotherapy class can take up to
+> eight patients. After `reserve`, a `Slot` used to be taken; a group
+> session stays open until its eighth patient. The booking desk shows a
+> group session as full after one booking, and the overbooking report
+> counts every group session as seven double bookings. The desk now
+> checks whether it holds a `GroupSession` in three places. What should
+> we change?
+
+Must contain: `GroupSession` breaks what `Slot` promises after
+`reserve`, so it cannot stand in for a `Slot`; the type checks are the
+symptom, not the fix; either `Slot`'s contract changes for every slot,
+with every caller updated, or `GroupSession` stops extending `Slot`.
+
+Should reach `oo-honouring-substitutability`.

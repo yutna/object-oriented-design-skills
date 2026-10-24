@@ -87,6 +87,8 @@ skills land.
 |Raw strings and numbers carry domain rules|[Modeling values and entities][values]|
 |Should this extend that class or hold it?|[Choosing composition over inheritance][composition]|
 |Changing a base class breaks its subclasses|[Choosing composition over inheritance][composition]|
+|A subclass breaks what its parent promises|[Honouring substitutability][substitutability]|
+|Code checks which subtype it holds|[Honouring substitutability][substitutability]|
 
 [assigning]: ../oo-assigning-responsibilities/SKILL.md
 [composition]: ../oo-choosing-composition-over-inheritance/SKILL.md
@@ -94,6 +96,7 @@ skills land.
 [coupling]: ../oo-diagnosing-coupling/SKILL.md
 [object-or-data]: ../oo-deciding-object-or-data/SKILL.md
 [state-and-behaviour]: ../oo-encapsulating-state-and-behaviour/SKILL.md
+[substitutability]: ../oo-honouring-substitutability/SKILL.md
 [values]: ../oo-modeling-values-and-entities/SKILL.md
 [what-varies]: ../oo-encapsulating-what-varies/SKILL.md
 
