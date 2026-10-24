@@ -59,10 +59,12 @@ this class exposes ten small steps that callers must call in order -> oo-hiding-
 a referral can be accepted and declined at the same time -> oo-making-illegal-states-impossible
 the cancellation reason is filled in on appointments nobody cancelled -> oo-making-illegal-states-impossible
 three booleans on the visit allow eight states but only three are real -> oo-making-illegal-states-impossible
-a small clinic change still needs design work -> oo-design
 the staff say no-show but the code says status four -> oo-speaking-the-domain-language
 the nurses talk about recalls but nothing in the code models them -> oo-speaking-the-domain-language
 billing and reception both say appointment but mean different things -> oo-speaking-the-domain-language
+two receptionists booked the last seat in a group class at the same time -> oo-designing-aggregates
+loading a clinician pulls in a whole year of appointments -> oo-designing-aggregates
+which objects must be saved together in one transaction -> oo-designing-aggregates
 ```
 
 ## Known misses
@@ -71,4 +73,5 @@ A routing line that misses the gate is kept here as a note, never as a
 case.
 
 ```text
+a small clinic change still needs design work -> oo-design
 ```
