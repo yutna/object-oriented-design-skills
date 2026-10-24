@@ -30,6 +30,9 @@ callers check appointment status first -> oo-encapsulating-state-and-behaviour
 any code can set a slot back to free -> oo-encapsulating-state-and-behaviour
 a new slot exists before its times are set -> oo-constructing-valid-objects
 appointment constructor takes eleven arguments -> oo-constructing-valid-objects
+patient ids are plain strings everywhere -> oo-modeling-values-and-entities
+changing one visit's duration changed another visit -> oo-modeling-values-and-entities
+two patient records with the same id do not compare equal -> oo-modeling-values-and-entities
 ```
 
 ## Known misses
