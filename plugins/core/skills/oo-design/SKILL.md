@@ -109,6 +109,8 @@ skills land.
 |Saves collide or one load pulls in too much|[Designing aggregates][aggregates]|
 |Which status changes are allowed?|[Modeling lifecycles][lifecycles]|
 |A cancelled or closed object changes again|[Modeling lifecycles][lifecycles]|
+|How should domain objects be stored and found?|[Designing repositories][repositories]|
+|The repository has a find method per screen|[Designing repositories][repositories]|
 
 [aggregates]: ../oo-designing-aggregates/SKILL.md
 [assigning]: ../oo-assigning-responsibilities/SKILL.md
@@ -125,6 +127,7 @@ skills land.
 [naming]: ../oo-naming-classes-and-methods/SKILL.md
 [object-or-data]: ../oo-deciding-object-or-data/SKILL.md
 [polymorphism]: ../oo-replacing-conditionals-with-polymorphism/SKILL.md
+[repositories]: ../oo-designing-repositories/SKILL.md
 [state-and-behaviour]: ../oo-encapsulating-state-and-behaviour/SKILL.md
 [substitutability]: ../oo-honouring-substitutability/SKILL.md
 [values]: ../oo-modeling-values-and-entities/SKILL.md

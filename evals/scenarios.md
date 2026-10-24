@@ -325,3 +325,22 @@ setting the status; paid and written off kept final, or undone only by
 a named transition with its own rule.
 
 Should reach `oo-modeling-lifecycles`.
+
+## 22. The patient table's many doors
+
+> `PatientDao` has `findByName`, `findByNameAndBirthDate`,
+> `findByPostcodeAndSurgery`, `updatePhone(id, phone)` and
+> `getConnection()`. The booking code calls `updatePhone` directly and
+> builds its own query text for the search screen. A new rule says a
+> patient's phone number must be confirmed by text message before it is
+> used, and nobody can find every place that changes it. How should
+> storing and finding patients be designed?
+
+Must contain: one repository for patients that reads like a
+collection and hands back whole patients; queries named for the
+questions the clinic asks, and a specification or a query object for
+the free search; the phone number changed through the patient, which
+keeps the new rule, then stored whole; no connection or query text
+outside the implementation at the edge.
+
+Should reach `oo-designing-repositories`.
