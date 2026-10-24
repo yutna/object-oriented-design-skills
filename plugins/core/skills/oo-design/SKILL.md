@@ -95,11 +95,14 @@ skills land.
 |This class only forwards calls|[Limiting what an object knows][knows]|
 |What should this class or method be called?|[Naming classes and methods][naming]|
 |Names like Manager, Helper or Util|[Naming classes and methods][naming]|
+|Callers depend on interface methods they never use|[Designing interfaces][interfaces]|
+|Interface or abstract base class?|[Designing interfaces][interfaces]|
 
 [assigning]: ../oo-assigning-responsibilities/SKILL.md
 [composition]: ../oo-choosing-composition-over-inheritance/SKILL.md
 [constructing]: ../oo-constructing-valid-objects/SKILL.md
 [coupling]: ../oo-diagnosing-coupling/SKILL.md
+[interfaces]: ../oo-designing-interfaces/SKILL.md
 [knows]: ../oo-limiting-what-an-object-knows/SKILL.md
 [naming]: ../oo-naming-classes-and-methods/SKILL.md
 [object-or-data]: ../oo-deciding-object-or-data/SKILL.md

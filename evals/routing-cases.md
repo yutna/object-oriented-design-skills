@@ -10,7 +10,6 @@ Format: `symptom -> expected-skill`, split on the last arrow.
 we need to size this appointment design work -> oo-design
 we are unsure which design rule applies to this clinic -> oo-design
 starting a new clinic service needs design help -> oo-design
-a small clinic change still needs design work -> oo-design
 which class owns the appointment reminder -> oo-assigning-responsibilities
 where does this new visit method belong -> oo-assigning-responsibilities
 our visit class has grown to do too much -> oo-assigning-responsibilities
@@ -48,6 +47,9 @@ this method uses the patient's data more than its own -> oo-limiting-what-an-obj
 what should we call the class that books appointments -> oo-naming-classes-and-methods
 our classes are named ClinicManager, SlotHelper and DateUtil -> oo-naming-classes-and-methods
 method names like process and handle say nothing -> oo-naming-classes-and-methods
+the scheduling interface has twenty methods and each caller uses two -> oo-designing-interfaces
+we copied every public method of the class into an interface -> oo-designing-interfaces
+should the reminder channel be an interface or an abstract class -> oo-designing-interfaces
 ```
 
 ## Known misses
@@ -56,4 +58,5 @@ A routing line that misses the gate is kept here as a note, never as a
 case.
 
 ```text
+a small clinic change still needs design work -> oo-design
 ```
