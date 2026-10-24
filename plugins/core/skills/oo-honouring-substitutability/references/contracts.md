@@ -25,7 +25,7 @@ class Referral
     raises ReferralAlreadyAccepted
     -- requires: acceptedBy is null
     -- guarantees: acceptedBy is clinician on return
-    -- invariant: acceptedBy names one clinician for good
+    -- invariant: once set, acceptedBy never changes
     if acceptedBy = null then
       acceptedBy := clinician
     else
@@ -35,8 +35,8 @@ class Referral
 
 `accept` requires that no clinician has accepted the referral. In return
 it guarantees that the clinician it was given is recorded. The invariant
-survives every call: once a clinician accepts, the referral never names
-another. A caller that sends the message when the requirement holds gets
+holds in every state: once `acceptedBy` is set, it never changes.
+A caller that sends the message when the requirement holds gets
 the guarantee; a caller that sends it after an acceptance gets the
 declared error. The constructor sets `acceptedBy` to `null`, so a referral
 starts with no accepting clinician. Because `accept` is named as
