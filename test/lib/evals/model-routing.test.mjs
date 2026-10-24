@@ -38,17 +38,23 @@ class RouteStream {
   static skill(skill, answer, skills = Skills.ALL) {
     return `${[
       RouteStream.#listed(skills),
-      JSON.stringify({
-        type: 'assistant',
-        message: {
-          content: [{
-            type: 'tool_use',
-            name: 'Skill',
-            input: { skill }
-          }]
-        }
-      }),
+      RouteStream.#skillCall(skill),
       RouteStream.#result(answer)
+    ].join('\n')}\n`
+  }
+
+  static maxTurns(skill, skills = Skills.ALL) {
+    return `${[
+      RouteStream.#listed(skills),
+      RouteStream.#skillCall(skill),
+      RouteStream.#limited()
+    ].join('\n')}\n`
+  }
+
+  static limited(skills = Skills.ALL) {
+    return `${[
+      RouteStream.#listed(skills),
+      RouteStream.#limited()
     ].join('\n')}\n`
   }
 
@@ -62,11 +68,34 @@ class RouteStream {
     })
   }
 
+  static #skillCall(skill) {
+    return JSON.stringify({
+      type: 'assistant',
+      message: {
+        content: [{
+          type: 'tool_use',
+          name: 'Skill',
+          input: { skill }
+        }]
+      }
+    })
+  }
+
   static #result(answer) {
     return JSON.stringify({
       type: 'result',
       subtype: 'success',
       result: answer
+    })
+  }
+
+  static #limited() {
+    return JSON.stringify({
+      type: 'result',
+      subtype: 'error_max_turns',
+      is_error: true,
+      stop_reason: 'tool_use',
+      result: 'Reached the maximum number of turns'
     })
   }
 }
@@ -246,6 +275,69 @@ test('ModelRouting takes the first Skill call and strips its prefix',
           'answered oo-design, oo-design, oo-design',
         'ok 2 routed case(s)'
       ])
+    } finally {
+      await fixture.close()
+    }
+  })
+
+test('ModelRouting keeps a max-turns run whose answer is a Skill call',
+  async () => {
+    const fixture = await TempRepository.of()
+    try {
+      const runner = new FakeRunner(RouteStream.maxTurns(
+        'object-oriented-design-skills:oo-design'), 1)
+      const report = fixture.inspect({ runner })
+      assert.deepEqual(report.lines(), [
+        'hits: 3/6',
+        '0/3 which class owns the appointment reminder ' +
+          '-> expected oo-assigning-responsibilities; ' +
+          'answered oo-design, oo-design, oo-design',
+        'ok 2 routed case(s)'
+      ])
+      const [directory] = fixture.results()
+      const answers = await fixture.answers(directory)
+      assert.deepEqual(
+        answers.results.map(({ answer }) => answer),
+        [
+          'oo-design',
+          'oo-design',
+          'oo-design',
+          'oo-design',
+          'oo-design',
+          'oo-design'
+        ])
+    } finally {
+      await fixture.close()
+    }
+  })
+
+test('ModelRouting throws when a non-zero exit ends after a Skill answer',
+  async () => {
+    const fixture = await TempRepository.of()
+    try {
+      const runner = new FakeRunner(RouteStream.skill(
+        'object-oriented-design-skills:oo-design',
+        'object-oriented-design-skills:oo-design'), 1)
+      assert.throws(
+        () => fixture.inspect({ runner }),
+        (error) => error instanceof RepoError &&
+          error.exitCode === 1 &&
+          error.message.startsWith('route run failed: exit 1: '))
+    } finally {
+      await fixture.close()
+    }
+  })
+
+test('ModelRouting throws when the turn limit ends a run with no Skill call',
+  async () => {
+    const fixture = await TempRepository.of()
+    try {
+      const runner = new FakeRunner(RouteStream.limited(), 1)
+      assert.throws(
+        () => fixture.inspect({ runner }),
+        (error) => error instanceof RepoError &&
+          error.exitCode === 1 &&
+          error.message.startsWith('route run failed: exit 1: '))
     } finally {
       await fixture.close()
     }
