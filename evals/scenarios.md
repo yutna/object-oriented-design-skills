@@ -136,3 +136,19 @@ patient a new address and changes no one else; patients compared by a
 stable identifier, never by name and birth date.
 
 Should reach `oo-modeling-values-and-entities`.
+
+## 10. Telehealth visits billed for a room
+
+> `TelehealthVisit` extends `Visit` and overrides `roomCharge()` to
+> return zero. Last sprint someone changed `Visit.fee()` to add the
+> room's price directly instead of calling `roomCharge()`, and every
+> telehealth patient was billed for a room. `TelehealthVisit` also
+> inherits `assignRoom()`, which makes no sense for it. Should
+> telehealth visits keep extending `Visit`?
+
+Must contain: the subclass broke because it relied on which of its
+parent's methods call which; a telehealth visit is not a kind of
+visit where rooms are concerned; reuse the shared fee rules by holding
+a collaborator instead of extending `Visit`.
+
+Should reach `oo-choosing-composition-over-inheritance`.

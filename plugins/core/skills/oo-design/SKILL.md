@@ -85,8 +85,11 @@ skills land.
 |How much flexibility should this have?|[Encapsulating what varies][what-varies]|
 |Is this a value or an entity?|[Modeling values and entities][values]|
 |Raw strings and numbers carry domain rules|[Modeling values and entities][values]|
+|Should this extend that class or hold it?|[Choosing composition over inheritance][composition]|
+|Changing a base class breaks its subclasses|[Choosing composition over inheritance][composition]|
 
 [assigning]: ../oo-assigning-responsibilities/SKILL.md
+[composition]: ../oo-choosing-composition-over-inheritance/SKILL.md
 [constructing]: ../oo-constructing-valid-objects/SKILL.md
 [coupling]: ../oo-diagnosing-coupling/SKILL.md
 [object-or-data]: ../oo-deciding-object-or-data/SKILL.md

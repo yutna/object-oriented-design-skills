@@ -54,6 +54,10 @@ test('--dry-run installs nothing and prints the block', () => {
     'would copy oo-assigning-responsibilities -> ' +
     join('/home', '.claude', 'skills', 'oo-assigning-responsibilities')))
   assert.ok(lines.includes(
+    `would copy oo-choosing-composition-over-inheritance -> ${
+      join('/home', '.claude', 'skills',
+        'oo-choosing-composition-over-inheritance')}`))
+  assert.ok(lines.includes(
     `would copy oo-constructing-valid-objects -> ${
       join('/home', '.claude', 'skills', 'oo-constructing-valid-objects')}`))
   assert.ok(lines.includes(
@@ -78,7 +82,7 @@ test('--dry-run installs nothing and prints the block', () => {
   assert.ok(lines.includes(
     "add this block to the project's CLAUDE.md:"))
   assert.ok(lines.includes('## Object-oriented design skills'))
-  assert.equal(lines.at(-1), 'ok 8 skill(s) considered')
+  assert.equal(lines.at(-1), 'ok 9 skill(s) considered')
 })
 
 test('Installer copies every core skill, then skips them', async () => {
@@ -92,6 +96,10 @@ test('Installer copies every core skill, then skips them', async () => {
     assert.ok(first.lines().includes(
       'copied oo-assigning-responsibilities -> ' +
       join(home, '.claude', 'skills', 'oo-assigning-responsibilities')))
+    assert.ok(first.lines().includes(
+      'copied oo-choosing-composition-over-inheritance -> ' +
+      join(home, '.claude', 'skills',
+        'oo-choosing-composition-over-inheritance')))
     assert.ok(first.lines().includes(
       'copied oo-constructing-valid-objects -> ' +
       join(home, '.claude', 'skills', 'oo-constructing-valid-objects')))
@@ -114,7 +122,7 @@ test('Installer copies every core skill, then skips them', async () => {
     assert.ok(first.lines().includes(
       'copied oo-modeling-values-and-entities -> ' +
       join(home, '.claude', 'skills', 'oo-modeling-values-and-entities')))
-    assert.equal(first.lines().at(-1), 'ok 8 skill(s) considered')
+    assert.equal(first.lines().at(-1), 'ok 9 skill(s) considered')
     const installed = join(home, '.claude', 'skills', 'oo-design', 'SKILL.md')
     assert.equal(existsSync(installed), true)
     const text = readFileSync(installed, 'utf8')
@@ -125,6 +133,9 @@ test('Installer copies every core skill, then skips them', async () => {
     assert.equal(second.failed, false)
     assert.ok(second.lines().includes(
       'skipped oo-assigning-responsibilities ' +
+      '(already installed; --force replaces it)'))
+    assert.ok(second.lines().includes(
+      'skipped oo-choosing-composition-over-inheritance ' +
       '(already installed; --force replaces it)'))
     assert.ok(second.lines().includes(
       'skipped oo-constructing-valid-objects ' +
@@ -146,7 +157,7 @@ test('Installer copies every core skill, then skips them', async () => {
     assert.ok(second.lines().includes(
       'skipped oo-modeling-values-and-entities ' +
       '(already installed; --force replaces it)'))
-    assert.equal(second.lines().at(-1), 'ok 8 skill(s) considered')
+    assert.equal(second.lines().at(-1), 'ok 9 skill(s) considered')
     assert.equal(readFileSync(installed, 'utf8'), text)
   } finally {
     await rm(home, { recursive: true, force: true })
