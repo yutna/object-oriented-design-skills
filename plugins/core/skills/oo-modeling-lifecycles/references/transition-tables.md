@@ -28,9 +28,9 @@ before then. `Done` and `Declined` end the life of a request.
 
 ## The methods
 
-Each row becomes a method named for its move. `decline` has two source
-states, so its method nests the `if` steps: each step tests one source
-state, and each call runs one step.
+Each row with a move becomes a method named for that move. `decline`
+has two source states, so its method nests the `if` steps: each step
+tests one source state, and each call runs one step.
 
 ```text
 enum HomeVisitStatus
@@ -113,7 +113,7 @@ Read the table before writing the methods, and ask three questions.
 
 Write one test for each row of the table. A test starts a visit in the
 row's source state, sends the move, and checks the status it reaches.
-For a refusal, it starts the visit in a state the row does not allow,
-sends the move, and checks the error. A row with no test is a rule
+For a refusal, it starts the visit in the row's state, sends a move the
+row does not list, and checks the error. A row with no test is a rule
 nobody has checked; a new row without its test is a move nobody will
 notice breaking.
