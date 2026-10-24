@@ -35,13 +35,15 @@ answers a row.
 
 ## A rule that checks one and selects many
 
-Reception may start an appointment only once its slot is near; earlier,
-the patient waits. The rule is one object, and two callers use it: a
-check-in checks one appointment, and a list for the reception desk
-selects every appointment the rule still allows.
+Reception may start a consultation only once the appointment's slot is
+near; earlier, the patient waits. The rule is one object, and two
+callers use it: starting a consultation checks one appointment, and a
+list for the reception desk selects every appointment the rule still
+allows.
 
 ```text
 interface AppointmentSpecification
+  -- closed: the clinic's specifications are a closed set
   + isSatisfiedBy(appointment: Appointment): Boolean
 
 value StartableByReception implements AppointmentSpecification
@@ -53,42 +55,49 @@ value StartableByReception implements AppointmentSpecification
     return cutoff
 ```
 
-`cutoff` is the latest slot start for which reception may start a
-visit now, and it is built once from the current time plus the clinic's
-hour. `appointment.startsBy(cutoff)` is taken to answer that the
-appointment is `Scheduled` and its slot starts at or before `cutoff`,
-and `cutoff()` hands the same moment to a store that translates the
-rule into its own query. The constructor sets `cutoff` before either
-method reads it, and neither method changes anything.
+`AppointmentSpecification` is marked closed: the clinic knows every
+rule, and each implementation handles every member of the set, so a new
+rule adds a case to each of them. `cutoff` is the latest slot start for
+which reception may start a visit now, taken as the current time plus
+the clinic's hour. A caller passes it in each time, so no specification
+wired in at startup goes stale. `appointment.startsBy(cutoff)` is taken
+to answer that the appointment is `Scheduled` and its slot starts at or
+before `cutoff`, and `cutoff()` hands the same moment to a store that
+translates the rule into its own query. The constructor sets `cutoff`
+before either method reads it, and neither method changes anything.
 
-One appointment is checked when reception starts it:
+One appointment is checked when a consultation starts:
 
 ```text
-class ReceptionCheckIn
+class StartConsultation
   - appointments: Appointments
-  - startable: AppointmentSpecification
-  + new(appointments: Appointments,
-      startable: AppointmentSpecification)
-  + run(id: AppointmentId): void
-    raises CheckInNotAllowed
+  + new(appointments: Appointments)
+  + run(id: AppointmentId, cutoff: DateTime): void
+    raises ConsultationNotStartable
     appointment := appointments.find(id)
-    if startable.isSatisfiedBy(appointment) then
+    specification := new StartableByReception(cutoff)
+    if specification.isSatisfiedBy(appointment) then
       appointment.start()
       appointments.save(appointment)
     else
-      raise CheckInNotAllowed
+      raise ConsultationNotStartable
     return
 ```
 
-`ReceptionCheckIn` holds the port and the rule, both set by its
-constructor. `run` finds the whole appointment, asks the specification,
-and either sends `start()` once and saves the appointment or raises
-`CheckInNotAllowed`; the two branches never both run. `start()` is the
-lifecycles skill's transition, and it refuses an appointment that is
-not `Scheduled`. `AppointmentNotFound` from `find` and
-`AppointmentNotStartable` from `start` pass to the caller. What is
-stored is the whole appointment, in the `Appointments` store, in the
-transaction the caller of `run` opens, and no other aggregate changes.
+`StartConsultation` holds the port, set by its constructor, and builds
+the rule once per call from the cutoff `run` is given. `run` finds the
+whole appointment, asks the specification, and either sends `start()`
+once and saves the appointment or raises `ConsultationNotStartable`;
+the two branches never both run. `start()` is the lifecycles skill's
+transition, and it refuses an appointment that is not `Scheduled`.
+Reception checks a patient in as a separate move, and this use case
+starts the consultation. `AppointmentNotFound` from `find` and
+`AppointmentNotStartable` from `start` pass to the caller.
+`ConsultationNotStartable` means the rule refused this start.
+`StartConsultation.run` opens the transaction and ends it after `save`,
+and the fence leaves those boundaries out. What is stored is the whole
+appointment, in the `Appointments` store, in that transaction, and no
+other aggregate changes.
 
 Many are selected when the reception desk asks which appointments it
 may start now:
@@ -102,12 +111,14 @@ class StartableAppointments
     return appointments.select(specification)
 ```
 
-`run` builds the rule once and asks the store for every appointment it
-accepts. A database implementation recognizes `StartableByReception`
-and forms one query: the status is `Scheduled` and the slot starts at or
-before `specification.cutoff()`. An in-memory implementation sends
-`isSatisfiedBy` to each stored appointment and answers the same list.
-The fence changes nothing, so no transaction is opened.
+`run` builds the rule once per call and asks the store for every
+appointment it accepts. Because the specifications are a closed set,
+each implementation handles every member, so a database implementation
+turns `StartableByReception` into one query: the status is `Scheduled`
+and the slot starts at or before `specification.cutoff()`. An in-memory
+implementation sends `isSatisfiedBy` to each stored appointment and
+answers the same list. The fence changes nothing, so `run` opens no
+transaction.
 
 ## A search whose criteria combine
 
@@ -133,8 +144,8 @@ class FindAppointments
 
 The constructor sets the four criteria; an absent criterion is null, so
 a caller can leave any of them out. `AppointmentKind` is taken to name
-the clinic's kinds of appointment, such as a first visit or a
-follow-up. `FindAppointments` holds the port, set by its constructor,
+the clinic's kinds of appointment, such as a consultation or a
+procedure. `FindAppointments` holds the port, set by its constructor,
 and `run` sends one message. A database implementation turns the
 criteria into one query: it adds a condition for each value that is
 present, leaves out each one that is null, and passes the values in the

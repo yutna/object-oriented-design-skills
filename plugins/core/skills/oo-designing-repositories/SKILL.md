@@ -122,11 +122,11 @@ class AppointmentDao
   + findByClinicianIdAndDate(clinicianId: String,
       date: String): List<AppointmentRow>
     return connection.query(
-      "SELECT appointment WHERE clinician_id = ? AND date = ?",
+      "appointments of one clinician on one day",
       clinicianId, date)
   + updateStatus(id: String, status: String): void
     connection.execute(
-      "UPDATE appointment SET status = ? WHERE id = ?", status, id)
+      "the status of one appointment by its id", status, id)
     return
 
 class FinishConsultation
@@ -139,16 +139,18 @@ class FinishConsultation
 
 `connection.query(text, ...)` is taken to run one read query and answer
 its rows, `connection.execute(text, ...)` to run one write statement
-once, and the text is a string literal with `?` where each argument
-goes. `AppointmentRow` is taken to be the store's row, not an
-appointment. `findByClinicianIdAndDate` answers rows for one clinician
-and one day, and `updateStatus` writes one status by id, so a caller
-decides the appointment's next state. `FinishConsultation.run` sends
-`"completed"` for any id, so an appointment that never started is
-marked completed and the appointment's own rule never runs.
-`"completed"` is the status text the table stores. What `updateStatus`
-stores is one status column, in the store the connection reaches, in
-the transaction the application service that calls `run` opens.
+once, and the text is a string literal that says what the call asks,
+with the values sent beside it as arguments; the store's own query
+language stays outside this pack. `AppointmentRow` is taken to be the
+store's row, not an appointment. `findByClinicianIdAndDate` answers rows
+for one clinician and one day, and `updateStatus` writes one status by
+id, so a caller decides the appointment's next state.
+`FinishConsultation.run` sends `"completed"` for any id, so an
+appointment that never started is marked completed and the appointment's
+own rule never runs. `"completed"` is the status text the table stores.
+What `updateStatus` stores is one status column, in the store the
+connection reaches, in the transaction `FinishConsultation.run` opens
+and ends; the fence leaves those boundaries out.
 
 After:
 
@@ -182,13 +184,13 @@ role, and `find` keeps the name
 to its `AppointmentRepository`. The store finds and saves an appointment
 by the `AppointmentId` it carries, which `notation.md`'s sketch of
 `Appointment` leaves out. The example takes the explicit `save` of
-rule 5, so the application service that calls `run` opens the transaction
-and `save` writes the appointment before that service ends it. What is
-stored is the whole appointment, in the `Appointments` store, in that
-transaction. `complete()` is the lifecycles skill's transition, and it
-refuses an appointment that is not in progress, so the appointment's
-own rule runs. The change touches the appointment alone: no other
-aggregate is read or saved.
+rule 5, so `FinishConsultation.run` opens the transaction and ends it
+once `save` has written the appointment; the fence leaves those
+boundaries out. What is stored is the whole appointment, in the
+`Appointments` store, in that transaction. `complete()` is the
+lifecycles skill's transition, and it refuses an appointment that is
+not in progress, so the appointment's own rule runs. The change touches
+the appointment alone: no other aggregate is read or saved.
 
 ## Red flags
 

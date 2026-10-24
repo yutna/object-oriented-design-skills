@@ -66,6 +66,7 @@ class DatabaseAppointments implements Appointments
   + add(appointment: Appointment): void
     database.insert(appointment)
     return
+  + due(now: DateTime): List<Appointment>
   + find(id: AppointmentId): Appointment
     raises AppointmentNotFound
   + forClinicianOn(clinician: ClinicianId, date: Date): List<Appointment>
@@ -75,14 +76,16 @@ class DatabaseAppointments implements Appointments
 ```
 
 `database`, set by the constructor, is the field the inverting skill
-gives this adapter. `find` and `save` have no body in the fence: `find`
-reads one record through `database.appointmentById` and rebuilds it
-with `Appointment.restore`, and `save` sends `database.update` the
-whole appointment once. `forClinicianOn` reads the day's records and
-rebuilds each one the same way. `add` sends `insert` once. `select` and
-`search` are the two query messages of the specifications reference;
-this adapter turns each into one query over its records. The store
-raises `NoSuchRecord` for an absent id, and the adapter answers
+gives this adapter. `find`, `save` and `due` have no body in the fence:
+`find` reads one record through `database.appointmentById` and rebuilds
+it with `Appointment.restore`, `save` sends `database.update` the whole
+appointment once, and `due` answers the appointments whose slot has
+ended by `now` and whose status is still `Scheduled`, the lifecycles
+skill's question. `forClinicianOn` reads the day's records and rebuilds
+each one the same way. `add` sends `insert` once. `select` and `search`
+are the two query messages of the specifications reference; this
+adapter turns each into one query over its records. The store raises
+`NoSuchRecord` for an absent id, and the adapter answers
 `AppointmentNotFound` instead, so no store type or store error crosses
 the port. What `save` stores is the whole appointment, in the clinic
 database, in the transaction the code that calls it opened; the adapter
@@ -135,6 +138,7 @@ class InMemoryAppointments implements Appointments
   + add(appointment: Appointment): void
     appointments.put(appointment.id(), appointment)
     return
+  + due(now: DateTime): List<Appointment>
   + find(id: AppointmentId): Appointment
     raises AppointmentNotFound
     appointment := appointments.get(id)
@@ -157,12 +161,12 @@ answers what is stored there or null. The constructor sets
 `appointments` before any method reads it. `add` stores one appointment
 once, `find` raises `AppointmentNotFound` for an absent id and changes
 nothing, and `save` replaces the stored appointment once. The fence
-leaves the bodies of `forClinicianOn`, `select` and `search` out; each
-answers the same list as its database counterpart, because it checks
-each stored appointment against the same day, rule or criteria. The
-in-memory store keeps the whole appointment in its map and opens no
-transaction, because a test calls one use case and nothing else changes
-at the same time.
+leaves the bodies of `due`, `forClinicianOn`, `select` and `search`
+out; each answers the same list as its database counterpart, because it
+checks each stored appointment against the same moment, day, rule or
+criteria. The in-memory store keeps the whole appointment in its map and
+opens no transaction, because a test calls one use case and nothing else
+changes at the same time.
 
 A test builds the domain with this store and runs the use case. It
 checks the appointment's decision, not the database's query, and it
