@@ -128,13 +128,15 @@ class StockRun
   - slot: Slot
   + new(slot: Slot)
   + run(): void
+    raises NoFreeDose
     -- sends checkAvailability, then take, then record, once each
     checkAvailability()
     take()
     record()
     return
   + checkAvailability(): void
-    -- an override keeps: refuses the slot when it has no free dose
+    raises NoFreeDose
+    -- an override keeps: raises NoFreeDose when the slot has no free dose
   + take(): void
     -- an override keeps: reserves one dose for the slot
   + record(): void
