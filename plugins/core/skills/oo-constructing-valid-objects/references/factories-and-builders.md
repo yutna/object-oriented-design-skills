@@ -52,10 +52,11 @@ that call it, so every appointment is built with all five fields set.
 
 A visit report has a required patient, visit and clinician, and several
 optional sections: a summary, a diagnosis, a prescription and a
-follow-up plan. A public constructor with seven parameters would make
-every caller count positions and pass `null` for each part it does not
-use. The builder keeps the required parts in its own constructor and
-adds each optional section through a command that returns nothing.
+follow-up plan. Calling the report's seven-parameter constructor
+directly makes a caller count positions and pass `null` for each part
+it does not use. The builder keeps the required parts in its own
+constructor and adds each optional section through a command that
+returns nothing.
 
 ```text
 class VisitReportBuilder
@@ -85,25 +86,39 @@ class VisitReportBuilder
     return
   + build(): VisitReport
     raises PrescriptionWithoutDiagnosis
-    if prescription = null then
-      return new VisitReport(patient, visit, clinician, summary,
-        diagnosis, null, followUpPlan)
+    return new VisitReport(patient, visit, clinician, summary,
+      diagnosis, prescription, followUpPlan)
+
+class VisitReport
+  - patient: PatientId
+  - visit: Visit
+  - clinician: ClinicianId
+  - summary: String?
+  - diagnosis: Diagnosis?
+  - prescription: Prescription?
+  - followUpPlan: FollowUpPlan?
+  + new(patient: PatientId, visit: Visit, clinician: ClinicianId,
+      summary: String?, diagnosis: Diagnosis?, drug: Prescription?,
+      followUpPlan: FollowUpPlan?)
+    raises PrescriptionWithoutDiagnosis
+    if drug = null then
+      prescription := null
     else
       if diagnosis = null then
         raise PrescriptionWithoutDiagnosis
       else
-        return new VisitReport(patient, visit, clinician, summary,
-          diagnosis, prescription, followUpPlan)
+        prescription := drug
 ```
 
-The constructor sets `summary`, `diagnosis`, `prescription` and
-`followUpPlan` to `null` before any command or `build` reads them. Each
-command sets one field once and returns nothing, so the calls do not
-chain. `build` reads the parts and raises `PrescriptionWithoutDiagnosis`
-when a prescription has no diagnosis; otherwise one of its two returns
-creates the report with every part it collected. `build` passes every
-part it holds to `VisitReport` in one call, so no caller sends a setter
-after it.
+The builder's constructor sets `summary`, `diagnosis`, `prescription`
+and `followUpPlan` to `null` before any command or `build` reads them.
+Each command sets one field once and returns nothing, so the calls do
+not chain. `build` passes every part it holds to `VisitReport` in one
+call, and the report's constructor holds the rule: it raises
+`PrescriptionWithoutDiagnosis` when a prescription has no diagnosis and
+sets `prescription` in each other branch. A report made through the
+builder or directly is checked in one place, and no caller sends a
+setter after it.
 
 A builder for a report with three required parts and four optional
 sections earns its code. An object with two fields does not: its

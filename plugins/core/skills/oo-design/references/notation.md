@@ -78,7 +78,7 @@ class's own `static` methods may call it.
 
 ```text
 class Appointment
-  + new(slot: Slot, patient: PatientId)
+  - new(slot: Slot, patient: PatientId, status: AppointmentStatus)
 ```
 
 ## Extension
@@ -119,7 +119,7 @@ class Appointment
     return
   + static book(slot: Slot, patient: PatientId): Appointment
     slot.reserve(patient)
-    return new Appointment(slot, patient)
+    return new Appointment(slot, patient, Scheduled)
 ```
 
 ## Comments and types

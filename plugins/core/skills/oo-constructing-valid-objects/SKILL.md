@@ -34,8 +34,7 @@ valid the moment it exists.
 - A class asks for a collaborator it builds itself instead of receiving
   it.
 - A builder has appeared for an object with a field or two.
-- A design review asks where a new object should be created and
-  checked.
+- A design review asks how a new object should be built and checked.
 
 ## When not to use
 
