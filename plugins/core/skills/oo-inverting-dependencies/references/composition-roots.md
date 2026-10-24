@@ -13,8 +13,8 @@ framework that creates its own objects takes the root's choices.
 ## One place, one order
 
 A hand-written root is a short list of constructor calls. Reading it from
-top to bottom shows the program's parts: the database first, then the
-adapter that wraps it, then the object that uses the adapter. A missing
+top to bottom shows the parts the root builds: the adapter that wraps the
+database it receives, then the object that uses the adapter. A missing
 collaborator stops the program at start-up, before a booking can fail
 halfway through.
 
