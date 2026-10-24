@@ -68,11 +68,14 @@ written, and flattens hierarchies that cost more to read than they save.
    would let a caller break the subclass's rules, or the subclass has to
    switch one off, hold the other class instead.
 
-3. Rule. **Never let a subclass depend on which of its parent's methods
-   send which.** An override that works because the parent sends it from
+3. Rule. **Never let a subclass depend on a send its parent keeps
+   internal.** An override that works because the parent sends it from
    another method breaks when the parent's author changes that internal
    send. A class that holds the other object sees only its public
-   messages, and the internal sends cannot reach it.
+   messages, and the internal sends cannot reach it. A parent built for
+   extension writes those sends into its contract, as honouring
+   substitutability's rule 5 asks, and then they are a promise a
+   subclass may rely on, not an internal send.
 
 4. Judgement. **Flatten a hierarchy when understanding one behaviour
    means reading up and down several levels.** Each level adds a place
