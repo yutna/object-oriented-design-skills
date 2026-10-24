@@ -33,6 +33,9 @@ appointment constructor takes eleven arguments -> oo-constructing-valid-objects
 patient ids are plain strings everywhere -> oo-modeling-values-and-entities
 changing one visit's duration changed another visit -> oo-modeling-values-and-entities
 two patient records with the same id do not compare equal -> oo-modeling-values-and-entities
+every clinic subclass breaks when the base visit class changes -> oo-choosing-composition-over-inheritance
+should telehealth visit extend visit or wrap it -> oo-choosing-composition-over-inheritance
+we subclass the reminder sender just to reuse one method -> oo-choosing-composition-over-inheritance
 ```
 
 ## Known misses
