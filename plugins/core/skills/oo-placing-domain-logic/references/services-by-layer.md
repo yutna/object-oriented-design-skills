@@ -51,10 +51,10 @@ class BookVisit
     return
 ```
 
-`Slots` is a port in the repository's shape: `find` answers one whole
-slot, and `save` stores one whole slot. `Appointments` is the port the
-inverting skill declares and the repositories skill extends; this fence
-sends it `add` alone, which stores one appointment once.
+`Slots` is a port in the repository's shape: `find` is taken to answer one
+whole slot, and `save` to store one whole slot. `Appointments` is the
+port the inverting skill declares and the repositories skill extends;
+this fence sends it `add` alone, which stores one appointment once.
 `Appointment.book` is the notation's factory: it reserves the slot once
 and builds the appointment that holds it.
 
@@ -139,8 +139,8 @@ slot through `Slots.save` in the transaction it opened.
 - A domain service that reads one aggregate's data and decides for it is
   an entity method in disguise. A `VisitPricing` that took an
   `Appointment` and read its kind and length would be one; the version
-  here takes the two values instead, so the appointment keeps its own
-  data.
+  here takes the values it needs instead, so the appointment keeps its
+  own data.
 - An application service that holds a business condition is doing the
   domain's work. Move the condition to the aggregate that holds the data,
   or to a domain service when several aggregates are needed.
