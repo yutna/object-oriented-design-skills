@@ -105,7 +105,10 @@ skills land.
 |A type admits values the domain never has|[Making illegal states impossible][illegal-states]|
 |The code's words differ from the staff's|[Speaking the domain language][domain-language]|
 |One word means different things to two teams|[Speaking the domain language][domain-language]|
+|Which objects must change together?|[Designing aggregates][aggregates]|
+|Saves collide or one load pulls in too much|[Designing aggregates][aggregates]|
 
+[aggregates]: ../oo-designing-aggregates/SKILL.md
 [assigning]: ../oo-assigning-responsibilities/SKILL.md
 [composition]: ../oo-choosing-composition-over-inheritance/SKILL.md
 [constructing]: ../oo-constructing-valid-objects/SKILL.md

@@ -292,3 +292,19 @@ the type code and the flag replaced by named states or types; the
 agreed words written down with the radiographers and used in the code.
 
 Should reach `oo-speaking-the-domain-language`.
+
+## 20. The clinician who holds everything
+
+> Our `Clinician` object holds every slot, appointment, leave day and
+> rota note for the year. Booking one slot loads all of it and takes
+> seconds. When two receptionists book different slots for the same
+> clinician, the second save fails with a conflict, although the two
+> bookings have nothing to do with each other. What should change?
+
+Must contain: each aggregate drawn around a rule that must hold at
+every change, not around everything a clinician is related to; smaller
+aggregates, such as a clinician's day, changed and saved apart; other
+aggregates referred to by identity, such as a `ClinicianId`; one
+aggregate changed in one transaction.
+
+Should reach `oo-designing-aggregates`.
