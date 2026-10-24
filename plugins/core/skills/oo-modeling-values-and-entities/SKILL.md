@@ -54,8 +54,8 @@ keeps the two kinds from borrowing each other's rules.
 1. Rule. **Decide value or entity with one question: are two instances
    with the same contents the same thing?** If yes, it is a value: two
    30-minute durations are interchangeable. If no, it is an entity: two
-   patients with the same name and birth date are two patients, and a
-   patient whose surname changes is still the same patient.
+   clinicians with the same surname are two clinicians, and a clinician
+   whose surname changes is still the same clinician.
 
 2. Rule. **Make a value immutable.** An operation that would change it
    returns a new value. A value can then be shared without a copy, and
@@ -63,9 +63,9 @@ keeps the two kinds from borrowing each other's rules.
 
 3. Rule. **Compare a value by all of its contents, and keep equality,
    hashing and any ordering in agreement.** Two equal values hash alike,
-   and an ordering ranks equal values as equal. In the notation `value`
-   gives this equality; how a language provides it belongs to the
-   language packs.
+   and an ordering ranks two values as equal exactly when they are
+   equal. In the notation `value` gives this equality; how a language
+   provides it belongs to the language packs.
 
 4. Rule. **Give an entity an identifier that is assigned once, when it
    is created or first stored, and never changes.** Compare two entities

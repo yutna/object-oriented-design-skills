@@ -45,12 +45,16 @@ instances.
 
 ## Equality, hashing and ordering agree
 
-A value equal to another must hash alike, and an ordering must rank the
-two as equal. Otherwise a set or a map looks for a key in the place one
-hash sent it while an equal key sits elsewhere, and a sorted list puts
-two equal values in an order that says nothing. When equality is
-written by hand, write hashing and ordering against the same fields,
-all of them.
+A hash and an ordering are two more answers to "is this the same
+thing?", so both must follow the same contents as equality. Two equal
+values must hash alike, and an ordering must rank two values as equal
+exactly when they are equal. A map or a set looks up a key by its hash,
+so an equal value with another hash sits where the lookup never looks.
+A sorted set or a sorted map decides sameness by the ordering alone:
+rank 10 in one currency against 10 in another as equal and it drops
+one of them, and rank two equal values as different and it keeps both.
+When equality is written by hand, write hashing and ordering against
+the same fields, all of them.
 
 ## One room, two jobs
 

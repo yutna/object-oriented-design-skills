@@ -9,13 +9,20 @@ returns a new value, and the old one stays as it was.
 
 ```text
 class Fee
-  - amount: Money
-  + new(amount: Money)
-  + add(other: Fee): void
-    amount := amount.plus(other.amount())
-    return
-  + amount(): Money
+  - amount: Int
+  - currency: Currency
+  + new(amount: Int, currency: Currency)
+  + amount(): Int
     return amount
+  + currency(): Currency
+    return currency
+  + add(other: Fee): void
+    raises CurrencyMismatch
+    if currency = other.currency() then
+      amount := amount.plus(other.amount())
+      return
+    else
+      raise CurrencyMismatch
 
 class Invoice
   - fee: Fee
@@ -25,20 +32,24 @@ class Invoice
     return
 ```
 
-`amount.plus(other.amount())` is taken to mean a new money amount that
-is the sum of the two. When one `Fee` instance reaches two invoices, as
-it does when a caller reads a fee once and passes it to both, `addLine`
-on the first invoice changes the fee the second invoice still holds. The
-second invoice's total changed, and no code asked it to.
+`amount.plus(other.amount())` is taken to mean a new number that is the
+sum of the two, and `currency = other.currency()` compares two
+`Currency` values by their contents. `add` changes the fee's own amount
+only after it checks that the two fees share a currency; a mismatch
+raises `CurrencyMismatch` before anything changes. When one `Fee`
+instance reaches two invoices, as it does when a caller reads a fee once
+and passes it to both, `addLine` on the first invoice changes the fee
+the second invoice still holds. The second invoice's total changed, and
+no code asked it to.
 
 ## The immutable fee
 
 ```text
 value Fee
-  - amount: Money
+  - amount: Int
   - currency: Currency
-  + new(amount: Money, currency: Currency)
-  + amount(): Money
+  + new(amount: Int, currency: Currency)
+  + amount(): Int
     return amount
   + currency(): Currency
     return currency
@@ -59,10 +70,11 @@ class Invoice
 
 `Fee` is a `value`, so it has no setter and no method that changes a
 field. `plus` returns a new fee and changes no field of the fee it is
-sent to. Two fees in one currency add; two fees in different currencies
-raise `CurrencyMismatch`, which names the rule that was broken.
-`currency = other.currency()` compares two `Currency` values by their
-contents. `Invoice.addLine` replaces its own fee with the new one, so an
+sent to. `amount.plus(other.amount())` is the sum of the two numbers,
+and `currency = other.currency()` compares two `Currency` values by
+their contents. Two fees in one currency add; two fees in different
+currencies raise `CurrencyMismatch`, which names the rule that was
+broken. `Invoice.addLine` replaces its own fee with the new one, so an
 invoice that shares the old fee shows no change.
 
 ## Why an immutable value needs no copy
