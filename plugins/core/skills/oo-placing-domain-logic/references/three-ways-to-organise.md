@@ -28,8 +28,9 @@ recall request both need that answer.
 `hasTemplateFor(channel)` is taken to answer whether the clinic writes
 that channel's message in that language. `ContactChannel` is a type only;
 `ConsentChoice` is the two-member enumeration the first fence declares.
-`new List<ConsentChoice>()` is taken to mean an empty list the object
-owns.
+`ChannelChoice` is the value the domain-model fence declares: one channel
+paired with the patient's choice for it. `new List<ChannelChoice>()` is
+taken to mean an empty list the object owns.
 
 ## As a transaction script
 
@@ -82,16 +83,22 @@ A domain model gives the patient's values and their rules one object.
 The object answers the contact question that both requests need.
 
 ```text
+value ChannelChoice
+  - channel: ContactChannel
+  - choice: ConsentChoice
+  + new(channel: ContactChannel, choice: ConsentChoice)
+
 class PatientContact
+  - patient: PatientId
   - preferredLanguage: Language
-  - choices: List<ConsentChoice>
-  + new(preferredLanguage: Language)
-    choices := new List<ConsentChoice>()
+  - choices: List<ChannelChoice>
+  + new(patient: PatientId, preferredLanguage: Language)
+    choices := new List<ChannelChoice>()
   + prefer(language: Language): void
     preferredLanguage := language
     return
-  + record(choice: ConsentChoice): void
-    choices.add(choice)
+  + record(channel: ContactChannel, choice: ConsentChoice): void
+    choices.add(new ChannelChoice(channel, choice))
     return
   + mayBeContactedBy(channel: ContactChannel): Boolean
     if preferredLanguage.hasTemplateFor(channel) then
@@ -100,17 +107,20 @@ class PatientContact
       return false
 ```
 
-The constructor sets `preferredLanguage` from its parameter and starts
-`choices` as an empty list. `prefer` replaces the language and `record`
-appends one choice. `choices.allowContactBy(channel)` is taken to answer
-whether the latest choice recorded for that channel allows contact, and
-`false` is taken to be the no answer of a `Boolean`. `mayBeContactedBy`
-reads both fields, so the rule that depends on them has one home.
+The constructor sets `patient` and `preferredLanguage` from its
+parameters and starts `choices` as an empty list. `prefer` replaces the
+language and `record` appends one `ChannelChoice`, which pairs the
+channel with the patient's choice for it.
+`choices.allowContactBy(channel)` is taken to answer whether the latest
+`ChannelChoice` recorded for that channel allows contact, and `false` is
+taken to be the no answer of a `Boolean`. `mayBeContactedBy` reads the
+language and the choices, so the rule that depends on them has one home.
 
 The fence changes the patient's contact object in memory. When a use case
 stores it, what is stored is the whole `PatientContact`, in its
 repository, in the transaction the application service opens and ends;
-the fence leaves the repository and those boundaries out.
+the store finds one contact by the patient's identity, and the fence
+leaves the repository and those boundaries out.
 
 ## As a table module
 
@@ -121,9 +131,9 @@ acts on it. The row's fields are open data.
 class PreferenceRow
   + patient: PatientId
   + language: Language
-  + choices: List<ConsentChoice>
+  + choices: List<ChannelChoice>
   + new(patient: PatientId, language: Language)
-    choices := new List<ConsentChoice>()
+    choices := new List<ChannelChoice>()
 
 class PatientPreferenceTable
   - rows: List<PreferenceRow>
@@ -135,7 +145,7 @@ class PatientPreferenceTable
   + recordChoice(patient: PatientId, channel: ContactChannel,
       choice: ConsentChoice): void
     row := rows.rowFor(patient)
-    row.choices.add(choice)
+    row.choices.add(new ChannelChoice(channel, choice))
     return
   + mayBeContactedBy(patient: PatientId,
       channel: ContactChannel): Boolean
@@ -149,10 +159,12 @@ class PatientPreferenceTable
 `rows.rowFor(patient)` is taken to answer the preference table's row for
 that patient. `PreferenceRow`'s constructor sets `patient` and `language`
 from its parameters and starts `choices` as an empty list.
-`recordLanguage` and `recordChoice` change one row directly, and
-`mayBeContactedBy` runs the contact check, which the other two methods do
-not need. The table module suits a bulk load or a report that works over
-every row at once.
+`recordLanguage` and `recordChoice` change one row directly;
+`recordChoice` adds one `ChannelChoice`, so a row keeps each channel
+beside its choice. `mayBeContactedBy` runs the contact check, which the
+other two methods do not need, and sends `allowContactBy` to the row's
+list just as the domain model does. The table module suits a bulk load
+or a report that works over every row at once.
 
 What `recordLanguage` and `recordChoice` store is one row of the
 preference table, in the table's store, in the transaction the caller

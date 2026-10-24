@@ -1,6 +1,6 @@
 ---
 name: oo-placing-domain-logic
-description: Use when business rules sit in controllers or use-case code, when choosing a domain service or an entity method, or scripts or a domain model.
+description: Use when choosing a domain service, entity method or application service, when use cases repeat one check, or picking scripts or a domain model.
 license: MIT
 metadata:
   version: 0.9.0

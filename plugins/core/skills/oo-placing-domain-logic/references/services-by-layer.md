@@ -17,9 +17,9 @@ returns, and each section then shows one booking example.
 
 |Kind|Holds|May know|Returns|Example|
 |---|---|---|---|---|
-|Application|Ports|Repositories, ports, transaction|Reply or none|BookVisit|
+|Application|Ports|Repositories, transaction|Reply or none|BookAppointment|
 |Domain|No state|Given values, a port|Decision or value|VisitPricing|
-|Entity|Fields|Own fields, parameters|Nothing or raises|Slot.reserve|
+|Entity|Fields|Own fields, parameters|A decision, a value, or none|Slot.reserve|
 
 The application service holds the ports one use case needs and may know
 repositories, ports and the transaction. The domain service holds no
@@ -29,9 +29,9 @@ holds its own fields and may know only them and its parameters.
 
 ## The application service
 
-`BookVisit` is the object one booking request runs in. It loads the slot,
-lets the domain build the appointment, stores both changes and answers
-nothing.
+`BookAppointment` is the object one booking request runs in. It loads the
+slot, lets the domain build the appointment, stores both changes and
+answers nothing.
 
 ```text
 interface Slots
@@ -39,7 +39,7 @@ interface Slots
     raises SlotNotFound
   + save(slot: Slot): void
 
-class BookVisit
+class BookAppointment
   - slots: Slots
   - appointments: Appointments
   + new(slots: Slots, appointments: Appointments)
@@ -52,24 +52,28 @@ class BookVisit
 ```
 
 `Slots` is a port in the repository's shape: `find` is taken to answer one
-whole slot, and `save` to store one whole slot. `Appointments` is the
-port the inverting skill declares and the repositories skill extends;
-this fence sends it `add` alone, which stores one appointment once.
-`Appointment.book` is the notation's factory: it reserves the slot once
-and builds the appointment that holds it. The aggregates skill decides
-whether that appointment holds the slot or the slot's identity; this
-reference shows the use-case coordination, not that boundary.
+whole slot, and `save` to store one whole slot. The store finds and saves
+a slot by a `SlotId` it carries, which `notation.md`'s sketch leaves out.
+`Appointments` is the port the inverting skill declares and the
+repositories skill extends; this fence sends it `add` alone, which stores
+one appointment once. `Appointment.book` is the notation's factory: it
+reserves the slot once and builds the appointment that holds it. The
+aggregates skill decides whether that appointment holds the slot or the
+slot's identity; this reference shows the use-case coordination, not that
+boundary. `BookAppointment` is the booking in the aggregates skill's
+reference, with the slot's store included, and takes the slot's identity
+rather than the slot.
 
-`BookVisit.run` opens the transaction before `slots.find` and ends it
-after `appointments.add`; the fence leaves those boundaries out. What is
-stored is the reserved slot in `Slots` and the new appointment in
+`BookAppointment.run` opens the transaction before `slots.find` and ends
+it after `appointments.add`; the fence leaves those boundaries out. What
+is stored is the reserved slot in `Slots` and the new appointment in
 `Appointments`, in that one transaction. Booking creates one aggregate
 while it changes another, which is the exception the aggregates skill
 allows for one store and one transaction.
 
 The body has no business condition. A rule that refuses a taken slot
 lives in `Slot.reserve`, and a rule about the price would live in a
-domain service. `BookVisit` only coordinates.
+domain service. `BookAppointment` only coordinates.
 
 ## The domain service
 

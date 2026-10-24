@@ -71,7 +71,7 @@ a completed visit gets reopened and edited weeks later -> oo-modeling-lifecycles
 the appointment repository has a find method for every screen -> oo-designing-repositories
 our repository hands back database rows instead of patients -> oo-designing-repositories
 should the repository offer an updateStatus method -> oo-designing-repositories
-business rules for booking sit in the controller -> oo-placing-domain-logic
+two use cases repeat the same eligibility check -> oo-placing-domain-logic
 should this rule go in a domain service or on the entity -> oo-placing-domain-logic
 a transaction script per request or a domain model for billing -> oo-placing-domain-logic
 ```

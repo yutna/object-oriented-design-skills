@@ -111,7 +111,7 @@ skills land.
 |A cancelled or closed object changes again|[Modeling lifecycles][lifecycles]|
 |How should domain objects be stored and found?|[Designing repositories][repositories]|
 |The repository has a find method per screen|[Designing repositories][repositories]|
-|Business rules sit in controllers or scripts|[Placing domain logic][placing]|
+|Use cases repeat the same business check|[Placing domain logic][placing]|
 |Domain service, entity method or application service?|[Placing domain logic][placing]|
 
 [aggregates]: ../oo-designing-aggregates/SKILL.md
