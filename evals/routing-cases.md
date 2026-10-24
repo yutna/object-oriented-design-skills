@@ -65,6 +65,9 @@ billing and reception both say appointment but mean different things -> oo-speak
 two receptionists booked the last seat in a group class at the same time -> oo-designing-aggregates
 loading a clinician pulls in a whole year of appointments -> oo-designing-aggregates
 which objects must be saved together in one transaction -> oo-designing-aggregates
+a cancelled appointment can still be checked in -> oo-modeling-lifecycles
+which status changes should a referral allow -> oo-modeling-lifecycles
+a completed visit gets reopened and edited weeks later -> oo-modeling-lifecycles
 ```
 
 ## Known misses
