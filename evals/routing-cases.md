@@ -68,6 +68,9 @@ which objects must be saved together in one transaction -> oo-designing-aggregat
 a cancelled appointment can still be checked in -> oo-modeling-lifecycles
 which status changes should a referral allow -> oo-modeling-lifecycles
 a completed visit gets reopened and edited weeks later -> oo-modeling-lifecycles
+the appointment repository has a find method for every screen -> oo-designing-repositories
+our repository hands back database rows instead of patients -> oo-designing-repositories
+should the repository offer an updateStatus method -> oo-designing-repositories
 ```
 
 ## Known misses
