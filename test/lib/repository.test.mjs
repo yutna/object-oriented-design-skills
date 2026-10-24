@@ -98,7 +98,7 @@ test('a valid repository with one plugin and two skills', async () => {
   }
 })
 
-test('Repository.at on this repository finds the fifteen skills and the package version', async () => {
+test('Repository.at on this repository finds the sixteen skills and the package version', async () => {
   const root = process.cwd()
   const repository = Repository.at(root)
   const packageData = JSON.parse(
@@ -116,6 +116,7 @@ test('Repository.at on this repository finds the fifteen skills and the package 
       'oo-diagnosing-coupling',
       'oo-encapsulating-state-and-behaviour',
       'oo-encapsulating-what-varies',
+      'oo-hiding-implementation',
       'oo-honouring-substitutability',
       'oo-inverting-dependencies',
       'oo-limiting-what-an-object-knows',

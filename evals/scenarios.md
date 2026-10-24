@@ -244,3 +244,18 @@ declares, which adapters for the database and the gateway implement; one
 composition root builds the real objects, and tests pass stand-ins.
 
 Should reach `oo-inverting-dependencies`.
+
+## 17. Six classes that speak the lab's format
+
+> Six classes send orders to the outside lab, and each builds the
+> message itself: patient id, test code and date joined with `|` in a
+> fixed order. The lab added a priority field after the test code, and
+> all six broke on the same day. Two of them also read the lab's error
+> codes and retry on `E42`. What should change?
+
+Must contain: one module owns the lab's message format and error codes
+as its secret, and the six classes ask it to send an order in their own
+terms; the lab's errors become the clinic's at that module's edge; the
+next format change touches only that module.
+
+Should reach `oo-hiding-implementation`.

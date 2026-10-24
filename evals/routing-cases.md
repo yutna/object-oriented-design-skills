@@ -53,6 +53,9 @@ should the reminder channel be an interface or an abstract class -> oo-designing
 the appointment class imports the database client directly -> oo-inverting-dependencies
 classes fetch their collaborators from a global registry -> oo-inverting-dependencies
 where should all these objects be created and wired together -> oo-inverting-dependencies
+every caller knows slots are stored as fifteen-minute blocks -> oo-hiding-implementation
+callers must handle the database's own error codes -> oo-hiding-implementation
+this class exposes ten small steps that callers must call in order -> oo-hiding-implementation
 ```
 
 ## Known misses

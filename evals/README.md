@@ -92,7 +92,7 @@ is missing, scores zero, or ranks outside the allowed top, and prints
 the first-place count. `--noise` also prints skills that reach the top
 three for cases they do not own.
 
-`routing-cases.md` holds 46 routing cases.
+`routing-cases.md` holds 49 routing cases.
 
 What it proves: the descriptions contain the words people use for the
 problems the skills own. What it does not prove: that an agent chooses
@@ -116,7 +116,7 @@ It checks the numbering, the prompt, the Must contain paragraph and
 the Should reach skill, and it checks that every named skill exists.
 It does not run a model.
 
-`scenarios.md` holds 16 scenarios.
+`scenarios.md` holds 17 scenarios.
 
 What it proves: the file's structure is complete enough to run. What it
 does not prove: that an answer will be good. Scenario results move with
