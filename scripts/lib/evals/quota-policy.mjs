@@ -1,13 +1,13 @@
 export class QuotaPolicy {
-  static DEFAULT = new QuotaPolicy(50, 75, 70, 85)
+  static DEFAULT = new QuotaPolicy()
 
   #fiveHourStart
   #sevenDayStart
   #fiveHourContinue
   #sevenDayContinue
 
-  constructor(fiveHourStart, sevenDayStart, fiveHourContinue,
-    sevenDayContinue) {
+  constructor({ fiveHourStart = 50, sevenDayStart = 75,
+    fiveHourContinue = 70, sevenDayContinue = 85 } = {}) {
     this.#fiveHourStart = fiveHourStart
     this.#sevenDayStart = sevenDayStart
     this.#fiveHourContinue = fiveHourContinue
