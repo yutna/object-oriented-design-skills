@@ -3,7 +3,7 @@ name: oo-constructing-valid-objects
 description: Use when an object can exist half-built, needs setup calls after its constructor, takes a long parameter list, or needs a factory or builder.
 license: MIT
 metadata:
-  version: 0.9.0
+  version: 0.10.0
   pack: object-oriented-design-skills
 ---
 

@@ -3,7 +3,7 @@ name: oo-placing-domain-logic
 description: Use when choosing a domain service, entity method or application service, when use cases repeat one check, or picking scripts or a domain model.
 license: MIT
 metadata:
-  version: 0.9.0
+  version: 0.10.0
   pack: object-oriented-design-skills
 ---
 
