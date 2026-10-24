@@ -68,9 +68,11 @@ class SlotPlanner
     return Slot.startingAt(clinician, clock.now())
 ```
 
-`Slot.startingAt` is the notation's named factory for a slot. A test
-clock that returns one moment makes `firstSlot` return the same slot on
-every run, while the program's clock returns the current time.
+`Slot.startingAt` is the notation's named factory for a slot, and each
+call builds a distinct slot. A test clock that returns one moment makes
+every run of `firstSlot` build a new slot that starts at that moment, so
+two runs give two slots, not one slot returned twice. The program's clock
+reads the current time instead.
 
 ## What gets a port
 
