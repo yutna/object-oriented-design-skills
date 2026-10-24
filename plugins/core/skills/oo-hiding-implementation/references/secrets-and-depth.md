@@ -9,10 +9,9 @@ side: a small interface over work that stays inside.
 
 A clinic exports each visit to a file that another system reads. In a
 design split by steps, `ExportWriter` and `ExportReader` each keep the
-file's column list, so the field order, the date layout and the text of
-an empty note are known twice. A new column changes both classes, and
-either can drift from the other without a test noticing until a file is
-read back.
+file's column list, so the column order and each column's meaning are
+known twice. A new column changes both classes, and either can drift
+from the other without a test noticing until a file is read back.
 
 ```text
 class ExportWriter

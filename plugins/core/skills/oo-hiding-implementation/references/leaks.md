@@ -87,13 +87,12 @@ class PatientDirectory
 ```
 
 `table.find` answers the row or null, and `find` turns either into the
-caller's profile or into `PatientNotFound`. `row` is the table's answer
-held in a local, and this adapter is the one place that reads the
-storage shape. `table.insert` answers a result that the adapter
-inspects, so the table's refusal becomes `PatientAlreadyRegistered` at
-this edge instead of a code every caller reads. `register` builds one
-row once, sends one insert once, and either returns or raises without a
-second write.
+caller's profile or into `PatientNotFound`. In `find`, `row` holds the
+table's answer, and this adapter is the one place that reads the storage
+shape. `table.insert` answers a result that the adapter inspects, so the
+table's refusal becomes `PatientAlreadyRegistered` at this edge instead
+of a code every caller reads. `register` builds one row once, sends one
+insert once, and either returns or raises without a second write.
 
 ## A release that changes nothing
 
