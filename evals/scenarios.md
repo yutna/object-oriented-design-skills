@@ -106,3 +106,18 @@ reading its state and deciding; no longer handing out the internal
 notes list (an add method or a read-only view instead).
 
 Should reach `oo-encapsulating-state-and-behaviour`.
+
+## 8. Slots that end before they start
+
+> We build a `Slot` with `new Slot()` and then call `setStart`,
+> `setEnd` and `setClinician`. Twice this month a slot ended before it
+> started, and once one had no clinician. Some slots repeat weekly,
+> and the constructor for those already takes eight arguments. How
+> should we build slots?
+
+Must contain: the slot built complete in one step, rejecting an end
+before its start at that moment; no setters needed after creation;
+named factory methods for the one-off and the weekly case instead of a
+long constructor.
+
+Should reach `oo-constructing-valid-objects`.

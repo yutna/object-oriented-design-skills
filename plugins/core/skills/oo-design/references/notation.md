@@ -58,12 +58,13 @@ class Appointment
 
 A method is written as `+ name(parameter: Type): ReturnType` inside its
 class. A `static` method belongs to the class, not to an instance, and
-is called on the class name: `Slot.between(clinician, startsAt)`. A
-named factory is a `static` method that returns `new ...`.
+is called on the class name:
+`Slot.startingAt(clinician, startsAt)`. A named factory is a `static`
+method that returns `new ...`.
 
 ```text
 class Slot
-  + static between(clinician: ClinicianId, startsAt: DateTime): Slot
+  + static startingAt(clinician: ClinicianId, startsAt: DateTime): Slot
     return new Slot(clinician, startsAt)
   + reserve(patient: PatientId): void
 ```
@@ -72,7 +73,8 @@ class Slot
 
 A constructor is written as `+ new(parameter: Type)` and has no return
 type. A constructor parameter with the same name as a field sets that
-field.
+field. A constructor written as `- new(...)` is private: only the
+class's own `static` methods may call it.
 
 ```text
 class Appointment
@@ -140,11 +142,13 @@ class Appointment
   - slot: Slot
   - patient: PatientId
   - status: AppointmentStatus
-  + new(slot: Slot, patient: PatientId)
-    status := Scheduled
+  - new(slot: Slot, patient: PatientId, status: AppointmentStatus)
   + static book(slot: Slot, patient: PatientId): Appointment
     slot.reserve(patient)
-    return new Appointment(slot, patient)
+    return new Appointment(slot, patient, Scheduled)
+  + static restore(slot: Slot, patient: PatientId,
+      status: AppointmentStatus): Appointment
+    return new Appointment(slot, patient, status)
   + cancel(reason: CancellationReason): void
     if status = Scheduled then
       status := Cancelled

@@ -28,6 +28,8 @@ every new insurer means editing the invoice code -> oo-encapsulating-what-varies
 how flexible should the reminder module be -> oo-encapsulating-what-varies
 callers check appointment status first -> oo-encapsulating-state-and-behaviour
 any code can set a slot back to free -> oo-encapsulating-state-and-behaviour
+a new slot exists before its times are set -> oo-constructing-valid-objects
+appointment constructor takes eleven arguments -> oo-constructing-valid-objects
 ```
 
 ## Known misses

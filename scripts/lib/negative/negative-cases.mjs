@@ -69,8 +69,8 @@ export class NegativeCases {
     "This skill sizes\nthe task and names the skill that fits."
   static #COUNT_FIND = 'carries one of three labels'
   static #COUNT_REPLACE = 'carries one of four labels'
-  static #SCENARIO_CLAIM_FIND = '`scenarios.md` holds 7 scenarios'
-  static #SCENARIO_CLAIM_REPLACE = '`scenarios.md` contains 7 scenarios'
+  static #SCENARIO_CLAIM_FIND = '`scenarios.md` holds 8 scenarios'
+  static #SCENARIO_CLAIM_REPLACE = '`scenarios.md` contains 8 scenarios'
   static #TASK_TAGS_FIND = 'tags: [task, smoke]'
   static #TASK_TAGS_REPLACE = 'tags: [smoke]'
   static #TASK_SKILL_FIND = 'oo-assigning-responsibilities"\''

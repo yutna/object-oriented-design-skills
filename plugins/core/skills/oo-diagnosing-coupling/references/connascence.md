@@ -92,20 +92,22 @@ Two parts must run their steps in a fixed order. Callers once reserved a
 slot and then constructed the appointment; a missed reservation left a
 held slot with no booking, and constructing a saved appointment reserved
 its slot again. Weaken it by moving the order inside one named factory or
-method: the booking path always reserves before it creates, and the
-constructor sets only its own fields, which is what loading a saved
-appointment needs.
+method: the booking path always reserves before it creates, and a saved
+appointment is rebuilt without a reservation. The constructor is private,
+so `book` and `restore` are the only ways to create an appointment.
 
 ```text
 class Appointment
   - slot: Slot
   - patient: PatientId
   - status: AppointmentStatus
-  + new(slot: Slot, patient: PatientId)
-    status := Scheduled
+  - new(slot: Slot, patient: PatientId, status: AppointmentStatus)
   + static book(slot: Slot, patient: PatientId): Appointment
     slot.reserve(patient)
-    return new Appointment(slot, patient)
+    return new Appointment(slot, patient, Scheduled)
+  + static restore(slot: Slot, patient: PatientId,
+      status: AppointmentStatus): Appointment
+    return new Appointment(slot, patient, status)
 ```
 
 ### Timing
