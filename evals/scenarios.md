@@ -199,3 +199,18 @@ for, what it uses; a change to where the channel lives touches only
 the classes next to it.
 
 Should reach `oo-limiting-what-an-object-knows`.
+
+## 14. The manager nobody can describe
+
+> `ClinicManager` has `doAll()`, `update(flag)`, `getData()` and
+> `checkIt()`. New developers keep asking what `doAll()` does: it books
+> the slot, emails the patient and writes an audit row. `getData()` also
+> marks the patient as seen. What should we rename, and what has to
+> change before a rename can help?
+
+Must contain: `getData()` hides a change of state, so it becomes a
+command named for that change, apart from any query; `doAll()` and the
+manager have no single honest name, so their jobs are split first; each
+new name says what its class is or what its method does.
+
+Should reach `oo-naming-classes-and-methods`.

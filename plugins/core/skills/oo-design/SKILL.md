@@ -93,12 +93,15 @@ skills land.
 |Subclasses or pattern matching?|[Replacing conditionals with polymorphism][polymorphism]|
 |Code reaches through a chain of objects|[Limiting what an object knows][knows]|
 |This class only forwards calls|[Limiting what an object knows][knows]|
+|What should this class or method be called?|[Naming classes and methods][naming]|
+|Names like Manager, Helper or Util|[Naming classes and methods][naming]|
 
 [assigning]: ../oo-assigning-responsibilities/SKILL.md
 [composition]: ../oo-choosing-composition-over-inheritance/SKILL.md
 [constructing]: ../oo-constructing-valid-objects/SKILL.md
 [coupling]: ../oo-diagnosing-coupling/SKILL.md
 [knows]: ../oo-limiting-what-an-object-knows/SKILL.md
+[naming]: ../oo-naming-classes-and-methods/SKILL.md
 [object-or-data]: ../oo-deciding-object-or-data/SKILL.md
 [polymorphism]: ../oo-replacing-conditionals-with-polymorphism/SKILL.md
 [state-and-behaviour]: ../oo-encapsulating-state-and-behaviour/SKILL.md
