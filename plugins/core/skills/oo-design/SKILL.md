@@ -111,6 +111,8 @@ skills land.
 |A cancelled or closed object changes again|[Modeling lifecycles][lifecycles]|
 |How should domain objects be stored and found?|[Designing repositories][repositories]|
 |The repository has a find method per screen|[Designing repositories][repositories]|
+|Use cases repeat the same business check|[Placing domain logic][placing]|
+|Domain service, entity method or application service?|[Placing domain logic][placing]|
 
 [aggregates]: ../oo-designing-aggregates/SKILL.md
 [assigning]: ../oo-assigning-responsibilities/SKILL.md
@@ -126,6 +128,7 @@ skills land.
 [lifecycles]: ../oo-modeling-lifecycles/SKILL.md
 [naming]: ../oo-naming-classes-and-methods/SKILL.md
 [object-or-data]: ../oo-deciding-object-or-data/SKILL.md
+[placing]: ../oo-placing-domain-logic/SKILL.md
 [polymorphism]: ../oo-replacing-conditionals-with-polymorphism/SKILL.md
 [repositories]: ../oo-designing-repositories/SKILL.md
 [state-and-behaviour]: ../oo-encapsulating-state-and-behaviour/SKILL.md

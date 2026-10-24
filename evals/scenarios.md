@@ -344,3 +344,21 @@ keeps the new rule, then stored whole; no connection or query text
 outside the implementation at the edge.
 
 Should reach `oo-designing-repositories`.
+
+## 23. The controller that knows the rules
+
+> `ReferralController` reads the form, checks that the referring
+> clinician may refer to this specialty, checks that the patient has no
+> open referral for it, picks the hospital with the shortest wait, saves
+> the referral and sends the letter, all in one method of 200 lines. The
+> same checks are copied into the nightly import of referrals from a
+> partner surgery. Where should each part go?
+
+Must contain: the form read and checked for shape at the edge; one
+application service per use case that loads, delegates, stores and sets
+the transaction; the referral's own rules on the referral and, where a
+rule needs several aggregates, such as the choice of hospital, a
+domain service named for that activity; the controller and the import
+both calling the same application service, so each rule lives once.
+
+Should reach `oo-placing-domain-logic`.
