@@ -19,6 +19,7 @@ export class ModelRouting extends Check {
   static #PREFIX = /^[\w-]+:/
   static #RUNS = '--runs'
   static #DEFAULT_RUNS = 3
+  static #CASE = '--case'
 
   #repository
   #argv
@@ -50,6 +51,8 @@ export class ModelRouting extends Check {
       throw new QueueGateError()
     }
     const runs = this.#runs()
+    // The text is read here; keeping the matching cases lands next.
+    this.#case()
     const cases = RoutingCases.of(
       this.#repository.file(ModelRouting.#ROUTING))
     const copy = PluginCopy.of(this.#repository)
@@ -117,6 +120,17 @@ export class ModelRouting extends Check {
         `--runs must be a whole number, 1 or more, not "${value}"`, 2)
     }
     return runs
+  }
+
+  #case() {
+    const at = this.#argv.indexOf(ModelRouting.#CASE)
+    if (at === -1) return null
+    const text = this.#argv[at + 1]
+    // A flag without its text names nothing to keep.
+    if (text === undefined) {
+      throw new RepoError('--case needs a text', 2)
+    }
+    return text
   }
 
   #run(copyPath, routingCase) {
