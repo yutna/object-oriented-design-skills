@@ -60,6 +60,9 @@ a referral can be accepted and declined at the same time -> oo-making-illegal-st
 the cancellation reason is filled in on appointments nobody cancelled -> oo-making-illegal-states-impossible
 three booleans on the visit allow eight states but only three are real -> oo-making-illegal-states-impossible
 a small clinic change still needs design work -> oo-design
+the staff say no-show but the code says status four -> oo-speaking-the-domain-language
+the nurses talk about recalls but nothing in the code models them -> oo-speaking-the-domain-language
+billing and reception both say appointment but mean different things -> oo-speaking-the-domain-language
 ```
 
 ## Known misses

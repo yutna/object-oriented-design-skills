@@ -274,3 +274,21 @@ cannot be built; the states marked as a closed set; the checks for
 impossible combinations removed.
 
 Should reach `oo-making-illegal-states-impossible`.
+
+## 19. The imaging team speaks another language
+
+> The imaging team talks about vetting a scan request, protocolling it,
+> sending a request back to the referrer and adding an addendum to a
+> report. The code has `ImgReq` with `type = 2`, `process()` and
+> `flag2`. Every planning meeting starts with someone translating. A
+> radiographer asked what happens when a request is sent back, and
+> nobody could find it in the code. How do we bring the code and the
+> radiographers' words together?
+
+Must contain: classes and methods named with the radiographers' words,
+such as a scan request that is vetted and protocolled; sending a
+request back given a place of its own in the code, holding its rule;
+the type code and the flag replaced by named states or types; the
+agreed words written down with the radiographers and used in the code.
+
+Should reach `oo-speaking-the-domain-language`.
