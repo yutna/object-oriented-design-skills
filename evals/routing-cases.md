@@ -45,6 +45,9 @@ should visit kinds be subclasses or a sealed type with matching -> oo-replacing-
 the invoice reaches through appointment to slot to clinician -> oo-limiting-what-an-object-knows
 this booking class only forwards calls to the calendar -> oo-limiting-what-an-object-knows
 this method uses the patient's data more than its own -> oo-limiting-what-an-object-knows
+what should we call the class that books appointments -> oo-naming-classes-and-methods
+our classes are named ClinicManager, SlotHelper and DateUtil -> oo-naming-classes-and-methods
+method names like process and handle say nothing -> oo-naming-classes-and-methods
 ```
 
 ## Known misses
