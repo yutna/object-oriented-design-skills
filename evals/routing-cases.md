@@ -56,6 +56,10 @@ where should all these objects be created and wired together -> oo-inverting-dep
 every caller knows slots are stored as fifteen-minute blocks -> oo-hiding-implementation
 callers must handle the database's own error codes -> oo-hiding-implementation
 this class exposes ten small steps that callers must call in order -> oo-hiding-implementation
+a referral can be accepted and declined at the same time -> oo-making-illegal-states-impossible
+the cancellation reason is filled in on appointments nobody cancelled -> oo-making-illegal-states-impossible
+three booleans on the visit allow eight states but only three are real -> oo-making-illegal-states-impossible
+a small clinic change still needs design work -> oo-design
 ```
 
 ## Known misses
@@ -64,5 +68,4 @@ A routing line that misses the gate is kept here as a note, never as a
 case.
 
 ```text
-a small clinic change still needs design work -> oo-design
 ```

@@ -259,3 +259,18 @@ terms; the lab's errors become the clinic's at that module's edge; the
 next format change touches only that module.
 
 Should reach `oo-hiding-implementation`.
+
+## 18. Doses given and refused
+
+> A `DoseRecord` has `given`, `refused` and `deferred` booleans, an
+> optional `batchNumber` and an optional `refusalReason`. A report found
+> doses marked both given and refused, and given doses with no batch
+> number. Code that reads a dose record first checks for combinations
+> that should never happen. How should we model this?
+
+Must contain: one type per real state of a dose, each holding only its
+own data with every field required, so the forbidden combinations
+cannot be built; the states marked as a closed set; the checks for
+impossible combinations removed.
+
+Should reach `oo-making-illegal-states-impossible`.
