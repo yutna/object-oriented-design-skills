@@ -75,6 +75,10 @@ export class NegativeCases {
   static #TASK_TAGS_REPLACE = 'tags: [smoke]'
   static #TASK_SKILL_FIND = 'oo-assigning-responsibilities"\''
   static #TASK_SKILL_REPLACE = 'oo-no-such-skill"\''
+  static #NOTATION_SKILL = 'plugins/core/skills/' +
+    'oo-constructing-valid-objects/SKILL.md'
+  static #NOTATION_FIND = '    if previous.patient() = patient then'
+  static #NOTATION_REPLACE = '    if previous.patient() != patient then'
 
   static ALL = Object.freeze([
     new NegativeCase(
@@ -311,6 +315,14 @@ export class NegativeCases {
         '\n\nEvery behaviour needs an owner.'),
       'paragraph is shared by oo-design and ' +
       'oo-assigning-responsibilities'),
+    new NegativeCase(
+      'prose rejects syntax the notation does not define',
+      NegativeCases.#PROSE,
+      new ReplaceText(
+        NegativeCases.#NOTATION_SKILL,
+        NegativeCases.#NOTATION_FIND,
+        NegativeCases.#NOTATION_REPLACE),
+      'notation: operator "!=" is not defined'),
     new NegativeCase(
       'counts rejects a stale label count',
       NegativeCases.#COUNTS,
