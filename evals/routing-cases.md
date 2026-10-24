@@ -50,6 +50,9 @@ method names like process and handle say nothing -> oo-naming-classes-and-method
 the scheduling interface has twenty methods and each caller uses two -> oo-designing-interfaces
 we copied every public method of the class into an interface -> oo-designing-interfaces
 should the reminder channel be an interface or an abstract class -> oo-designing-interfaces
+the appointment class imports the database client directly -> oo-inverting-dependencies
+classes fetch their collaborators from a global registry -> oo-inverting-dependencies
+where should all these objects be created and wired together -> oo-inverting-dependencies
 ```
 
 ## Known misses

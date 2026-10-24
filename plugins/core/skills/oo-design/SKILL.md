@@ -97,12 +97,15 @@ skills land.
 |Names like Manager, Helper or Util|[Naming classes and methods][naming]|
 |Callers depend on interface methods they never use|[Designing interfaces][interfaces]|
 |Interface or abstract base class?|[Designing interfaces][interfaces]|
+|Domain code depends on a database or framework|[Inverting dependencies][inverting]|
+|Where are objects created and wired together?|[Inverting dependencies][inverting]|
 
 [assigning]: ../oo-assigning-responsibilities/SKILL.md
 [composition]: ../oo-choosing-composition-over-inheritance/SKILL.md
 [constructing]: ../oo-constructing-valid-objects/SKILL.md
 [coupling]: ../oo-diagnosing-coupling/SKILL.md
 [interfaces]: ../oo-designing-interfaces/SKILL.md
+[inverting]: ../oo-inverting-dependencies/SKILL.md
 [knows]: ../oo-limiting-what-an-object-knows/SKILL.md
 [naming]: ../oo-naming-classes-and-methods/SKILL.md
 [object-or-data]: ../oo-deciding-object-or-data/SKILL.md

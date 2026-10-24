@@ -229,3 +229,18 @@ implementing every role; each test stand-in then answers only the role
 it replaces.
 
 Should reach `oo-designing-interfaces`.
+
+## 16. Tests that need the production database
+
+> `InvoiceService` calls `Database.instance().query(...)` and
+> `PaymentGateway.getInstance().charge(...)` inside its methods. Its
+> tests run only against a copy of the production database and the
+> payment provider's sandbox, so nobody runs them before a merge. How
+> should we restructure it?
+
+Must contain: `InvoiceService` receives what it needs through its
+constructor instead of fetching globals; it depends on interfaces it
+declares, which adapters for the database and the gateway implement; one
+composition root builds the real objects, and tests pass stand-ins.
+
+Should reach `oo-inverting-dependencies`.
