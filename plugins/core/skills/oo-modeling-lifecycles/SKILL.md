@@ -155,8 +155,8 @@ given, so `finish` completes an appointment that was never started.
 
 After:
 
-After, these are the only moves out of each state, and a move a state
-refuses raises the error named for it.
+The lifecycle has only these moves, and a move a state refuses raises
+the error named for it.
 
 |State|Move|Goes to|A refusal raises|
 |---|---|---|---|
