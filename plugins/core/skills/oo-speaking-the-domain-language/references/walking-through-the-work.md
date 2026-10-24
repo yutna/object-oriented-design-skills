@@ -23,18 +23,17 @@ refuse it and the name it becomes in the code.
    made by the nurse. The rule refuses an observation on a visit that
    is already closed, and requires a value. The code names are
    `Visit.record(observation)` and the type `Observation`.
-4. *Recall agreed.* The request is "bring this patient back in six
-   months", made by the nurse. The rule refuses a second recall for the
-   same reason when one is already booked. The code names are `Recall`
-   and `Recall.book(appointmentId)`.
+4. *Recall booked.* The request is "book this patient's recall", made
+   by the nurse. The rule refuses booking a recall that already has an
+   appointment, raising `RecallAlreadyBooked`. The code names are
+   `Recall` and `Recall.book(appointmentId)`.
 5. *Appointment missed.* The request is "record that this patient did
    not come", made by reception. The rule refuses a record before the
    appointment time and for an appointment that was checked in. The
    code name is `Appointment.recordNoShow`.
 6. *Patient discharged.* The request is "discharge this patient", made
    by the nurse. The rule refuses a discharge while an observation is
-   still waiting or a recall has no date. The code name is
-   `Visit.discharge`.
+   still waiting. The code name is `Visit.discharge`.
 
 Read the list back in the staff's words. A step with no name on the
 right is a gap: either the code has no concept for it, or the concept
