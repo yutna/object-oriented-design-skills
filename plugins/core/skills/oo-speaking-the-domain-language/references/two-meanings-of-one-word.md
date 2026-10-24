@@ -35,6 +35,10 @@ class Appointment
     billable := true
     invoiceNumber := number
     return
+  + isBilled(): Boolean
+    return billable
+  + invoice(): String?
+    return invoiceNumber
   + cancel(reason: CancellationReason): void
     raises AppointmentNotCancellable
     if status = Scheduled then
@@ -45,13 +49,15 @@ class Appointment
     return
 ```
 
-The `Appointment` here follows the notation's class and adds the two
-billing fields, `billable` and `invoiceNumber`, that reception never
+`false` and `true` are taken to mean the two values a `Boolean` can
+hold. The `Appointment` here follows the notation's class and adds the
+two billing fields, `billable` and `invoiceNumber`, that reception never
 reads. The constructor sets those fields once, `markBilled` sets both
-once, and `cancel` sets the status and releases the slot once. Nothing
-stops billing from marking an appointment billed after reception
-cancelled it, because the class holds both decisions and neither group
-sees the other's rule.
+once, `isBilled` and `invoice` read them without changing anything, and
+`cancel` sets the status and releases the slot once. Nothing stops
+billing from marking an appointment billed after reception cancelled
+it, because the class holds both decisions and neither group sees the
+other's rule.
 
 ## Two classes with their own words
 
@@ -90,15 +96,18 @@ class BillableVisit
     else
       raise VisitAlreadyBilled
     return
+  + invoice(): String?
+    return invoiceNumber
 ```
 
 `Appointment` in this fence is the notation's class again: the
 constructor sets `status` once, `book` reserves the slot and creates the
 appointment, and `cancel` changes the status and releases the slot
 once. `BillableVisit` sets `invoiceNumber` once in its constructor and
-once in `bill`. The link to `Appointment` lets billing ask for the facts
-it prices without copying them, and a second `bill` is refused instead
-of overwriting the first invoice number.
+once in `bill`, and `invoice` reads it without changing anything. The
+link to `Appointment` lets billing ask for the facts it prices without
+copying them, and a second `bill` is refused instead of overwriting the
+first invoice number.
 
 ## A glossary entry
 
