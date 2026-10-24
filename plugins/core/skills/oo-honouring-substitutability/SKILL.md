@@ -74,9 +74,9 @@ class should be extended at all.
 
 5. Default. **Close a class to extension unless it was built for it.**
    Built for it means the methods a subclass may override are named,
-   each with the contract an override must keep written beside it. An
-   open class that names no such method invites overrides its author
-   never meant to support.
+   each with the contract an override must keep written beside it, and
+   which of the class's own methods send them. An open class that names
+   no such method invites overrides its author never meant to support.
 
    The exception is a framework that must extend the class at run time,
    such as a proxy for lazy loading: leave it open and say in the code
@@ -143,9 +143,8 @@ class SmsChannel implements ReminderChannel
 
 class ReminderRun
   - channel: ReminderChannel
-  - reminders: List<Reminder>
-  + new(channel: ReminderChannel, reminders: List<Reminder>)
-  + run(): void
+  + new(channel: ReminderChannel)
+  + run(reminders: List<Reminder>): void
     reminders.sendEach(channel)
     return
 ```
@@ -198,9 +197,8 @@ class SmsChannel implements ReminderChannel
 
 class ReminderRun
   - channel: ReminderChannel
-  - reminders: List<Reminder>
-  + new(channel: ReminderChannel, reminders: List<Reminder>)
-  + run(): void
+  + new(channel: ReminderChannel)
+  + run(reminders: List<Reminder>): void
     reminders.sendEach(channel)
     return
 ```

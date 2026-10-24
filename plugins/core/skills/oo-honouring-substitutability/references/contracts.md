@@ -85,15 +85,21 @@ class Appointment
   - slot: Slot
   - patient: PatientId
   - status: AppointmentStatus
-  + new(slot: Slot, patient: PatientId)
-    status := Scheduled
-  + cancel(): void
+  - new(slot: Slot, patient: PatientId, status: AppointmentStatus)
+  + static book(slot: Slot, patient: PatientId): Appointment
+    slot.reserve(patient)
+    return new Appointment(slot, patient, Scheduled)
+  + static restore(slot: Slot, patient: PatientId,
+      status: AppointmentStatus): Appointment
+    return new Appointment(slot, patient, status)
+  + cancel(reason: CancellationReason): void
     raises AppointmentNotCancellable
     -- requires: status is Scheduled
-    -- guarantees: status is Cancelled on return
+    -- guarantees: status is Cancelled and the slot holds no patient
     -- invariant: patient never changes
     if status = Scheduled then
       status := Cancelled
+      slot.release(patient)
     else
       raise AppointmentNotCancellable
     return
@@ -110,6 +116,7 @@ class ReferralNotice
   - notifier: Notifier
   + new(patient: PatientId, notice: String, notifier: Notifier)
   + send(): void
+    -- guarantees: sends text() once, then deliver(message) once
     message := text()
     deliver(message)
     return
@@ -124,6 +131,7 @@ class ReferralNotice
 
 `notifier.notify(patient, message)` is taken to hand the message to the
 patient once. `send` asks `text` once and `deliver` once, so one override
-of each runs for one send. The comments beside the two methods are the
-only promises a subclass has to keep. The class stays open because those
-promises are written where a subclass author reads them.
+of each runs for one send. The comment under `send` writes that promise
+down, and a subclass may rely on it. The comments beside the two methods
+are the only promises a subclass has to keep. The class stays open
+because those promises are written where a subclass author reads them.
