@@ -9,7 +9,8 @@ import { QuotaPolicy } from './quota-policy.mjs'
 export class QueueRun extends Check {
   static #USAGE = 'usage: eval-queue.mjs --status | ' +
     '--add <label> -- <script> [args...] | --pause <text> | ' +
-    '--run [--dry-run] [--seven-day-start <n>] ' +
+    '--run [--dry-run] [--five-hour-start <n>] ' +
+    '[--five-hour-continue <n>] [--seven-day-start <n>] ' +
     '[--seven-day-continue <n>]'
   static #RUNS = 'evals/results/runs.jsonl'
   static #PIECES = 'evals/results/pieces'
@@ -91,7 +92,7 @@ export class QueueRun extends Check {
   }
 
   #run(queue, report, dryRun) {
-    const lines = this.#sevenDayLines()
+    const lines = this.#quotaLines()
     const first = queue.peek()
     if (dryRun) {
       // A dry run previews the next entry without reading quota.
@@ -154,9 +155,11 @@ export class QueueRun extends Check {
     this.#count(report, { piecesRun, paused, waiting })
   }
 
-  #sevenDayLines() {
-    let start
-    let end
+  #quotaLines() {
+    let fiveHourStart
+    let fiveHourEnd
+    let sevenDayStart
+    let sevenDayEnd
     const argv = this.#argv
     for (let index = 0; index < argv.length;) {
       const argument = argv[index]
@@ -164,34 +167,44 @@ export class QueueRun extends Check {
         index += 1
         continue
       }
-      // Stub for the red tests: the five-hour options are accepted here
-      // and ignored; they do not reach QuotaPolicy yet.
-      if (argument === '--five-hour-start' ||
-        argument === '--five-hour-continue' ||
-        /^\d+(\.\d+)?$/.test(argument)) {
-        index += 1
+      if (argument === '--five-hour-start') {
+        fiveHourStart = QueueRun.#percentage(argument, argv[index + 1])
+        index += 2
+        continue
+      }
+      if (argument === '--five-hour-continue') {
+        fiveHourEnd = QueueRun.#percentage(argument, argv[index + 1])
+        index += 2
         continue
       }
       if (argument === '--seven-day-start') {
-        start = QueueRun.#percentage(argument, argv[index + 1])
+        sevenDayStart = QueueRun.#percentage(argument, argv[index + 1])
         index += 2
         continue
       }
       if (argument === '--seven-day-continue') {
-        end = QueueRun.#percentage(argument, argv[index + 1])
+        sevenDayEnd = QueueRun.#percentage(argument, argv[index + 1])
         index += 2
         continue
       }
       throw new RepoError(QueueRun.#USAGE)
     }
     // A pair is only comparable when the sitting sets both.
-    if (start !== undefined && end !== undefined && start >= end) {
+    if (fiveHourStart !== undefined && fiveHourEnd !== undefined &&
+      fiveHourStart >= fiveHourEnd) {
+      throw new RepoError(
+        '--five-hour-start must be below --five-hour-continue', 2)
+    }
+    if (sevenDayStart !== undefined && sevenDayEnd !== undefined &&
+      sevenDayStart >= sevenDayEnd) {
       throw new RepoError(
         '--seven-day-start must be below --seven-day-continue', 2)
     }
     return Object.freeze({
-      sevenDayStart: start,
-      sevenDayContinue: end
+      fiveHourStart,
+      fiveHourContinue: fiveHourEnd,
+      sevenDayStart,
+      sevenDayContinue: sevenDayEnd
     })
   }
 
