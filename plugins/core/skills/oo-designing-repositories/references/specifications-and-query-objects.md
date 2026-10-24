@@ -35,77 +35,78 @@ answers a row.
 
 ## A rule that checks one and selects many
 
-Reception may cancel an appointment only while its slot is more than a
-day away; inside that day, the clinician decides. The rule is one
-object, and two callers use it: a cancellation checks one appointment,
-and a list for the reception desk selects every appointment the rule
-still allows.
+Reception may start an appointment only once its slot is near; earlier,
+the patient waits. The rule is one object, and two callers use it: a
+check-in checks one appointment, and a list for the reception desk
+selects every appointment the rule still allows.
 
 ```text
 interface AppointmentSpecification
   + isSatisfiedBy(appointment: Appointment): Boolean
 
-value CancellableByReception implements AppointmentSpecification
+value StartableByReception implements AppointmentSpecification
   - cutoff: DateTime
   + new(cutoff: DateTime)
   + isSatisfiedBy(appointment: Appointment): Boolean
-    return appointment.startsAfter(cutoff)
+    return appointment.startsBy(cutoff)
   + cutoff(): DateTime
     return cutoff
 ```
 
-`cutoff` is the first moment at which reception may no longer cancel,
-and it is built once from the current time plus the clinic's day.
-`appointment.startsAfter(cutoff)` is taken to answer that the
-appointment is `Scheduled` and its slot starts after `cutoff`, and
+`cutoff` is the latest slot start for which reception may start a
+visit now, and it is built once from the current time plus the clinic's
+hour.
+`appointment.startsBy(cutoff)` is taken to answer that the appointment
+is `Scheduled` and its slot starts at or before `cutoff`, and
 `cutoff()` hands the same moment to a store that translates the rule
 into its own query. The constructor sets `cutoff` before either method
 reads it, and neither method changes anything.
 
-One appointment is checked when reception cancels it:
+One appointment is checked when reception starts it:
 
 ```text
-class ReceptionCancellation
+class ReceptionCheckIn
   - appointments: Appointments
-  - cancellable: AppointmentSpecification
+  - startable: AppointmentSpecification
   + new(appointments: Appointments,
-      cancellable: AppointmentSpecification)
-  + run(id: AppointmentId, reason: CancellationReason): void
-    raises CancellationNeedsClinician
+      startable: AppointmentSpecification)
+  + run(id: AppointmentId): void
+    raises CheckInNotAllowed
     appointment := appointments.find(id)
-    if cancellable.isSatisfiedBy(appointment) then
-      appointment.cancel(reason)
+    if startable.isSatisfiedBy(appointment) then
+      appointment.start()
       appointments.save(appointment)
     else
-      raise CancellationNeedsClinician
+      raise CheckInNotAllowed
     return
 ```
 
-`ReceptionCancellation` holds the port and the rule, both set by its
+`ReceptionCheckIn` holds the port and the rule, both set by its
 constructor. `run` finds the whole appointment, asks the specification,
-and either sends `cancel(reason)` once and saves the appointment or
-raises `CancellationNeedsClinician`; the two branches never both run.
-`AppointmentNotFound` from `find` and `AppointmentNotCancellable` from
-`cancel` pass to the caller. What is stored is the whole appointment,
-in the `Appointments` store, in the transaction the caller of `run`
-opens, and no other aggregate changes.
+and either sends `start()` once and saves the appointment or raises
+`CheckInNotAllowed`; the two branches never both run. `start()` is the
+lifecycles skill's transition, and it refuses an appointment that is
+not `Scheduled`. `AppointmentNotFound` from `find` and
+`AppointmentNotStartable` from `start` pass to the caller. What is
+stored is the whole appointment, in the `Appointments` store, in the
+transaction the caller of `run` opens, and no other aggregate changes.
 
 Many are selected when the reception desk asks which appointments it
-may still cancel:
+may start now:
 
 ```text
-class CancellableAppointments
+class StartableAppointments
   - appointments: Appointments
   + new(appointments: Appointments)
   + run(cutoff: DateTime): List<Appointment>
-    specification := new CancellableByReception(cutoff)
+    specification := new StartableByReception(cutoff)
     return appointments.select(specification)
 ```
 
 `run` builds the rule once and asks the store for every appointment it
-accepts. A database implementation recognizes `CancellableByReception`
-and forms one query: the status is `Scheduled` and the slot starts after
-`specification.cutoff()`. An in-memory implementation sends
+accepts. A database implementation recognizes `StartableByReception`
+and forms one query: the status is `Scheduled` and the slot starts at or
+before `specification.cutoff()`. An in-memory implementation sends
 `isSatisfiedBy` to each stored appointment and answers the same list.
 The fence changes nothing, so no transaction is opened.
 

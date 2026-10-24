@@ -146,10 +146,9 @@ and one day, and `updateStatus` writes one status by id, so a caller
 decides the appointment's next state. `FinishConsultation.run` sends
 `"completed"` for any id, so an appointment that never started is
 marked completed and the appointment's own rule never runs.
-`"completed"` is the status text the table stores. The fence leaves the
-transaction out: what `updateStatus` stores is one status column, in
-the store the connection reaches, and the application service that
-calls `run` owns the transaction.
+`"completed"` is the status text the table stores. What `updateStatus`
+stores is one status column, in the store the connection reaches, in
+the transaction the application service that calls `run` opens.
 
 After:
 
@@ -182,8 +181,8 @@ role, and `find` keeps the name
 [deciding object or data](../oo-deciding-object-or-data/SKILL.md) sends
 to its `AppointmentRepository`. The store finds and saves an appointment
 by the `AppointmentId` it carries, which `notation.md`'s sketch of
-`Appointment` leaves out. The example takes the explicit `save` of rule
-5, so the application service that calls `run` opens the transaction
+`Appointment` leaves out. The example takes the explicit `save` of
+rule 5, so the application service that calls `run` opens the transaction
 and `save` writes the appointment before that service ends it. What is
 stored is the whole appointment, in the `Appointments` store, in that
 transaction. `complete()` is the lifecycles skill's transition, and it
