@@ -219,12 +219,12 @@ class ConsultationScreen
 After, `Appointment` has no `setStatus`. `start` accepts only
 `Scheduled`, `complete` only `InProgress`, and `cancel` only
 `Scheduled`; each raises the error named for it in every other state.
-`book` is still the only way to make an appointment, because the
-constructor is private. `ConsultationScreen.begin` sends `start()`, and
-`finish` sends `complete()`, so the screen never reads the status and a
-cancelled or completed appointment refuses both. Each transition
-changes the status once, `book` reserves the slot once, and `cancel`
-releases it once.
+In this fence, `book` is still the only way to make an appointment,
+because the constructor is private. `ConsultationScreen.begin` sends
+`start()`, and `finish` sends `complete()`, so the screen never reads
+the status and a cancelled or completed appointment refuses both. Each
+transition changes the status once, `book` reserves the slot once, and
+`cancel` releases it once.
 
 ## Red flags
 

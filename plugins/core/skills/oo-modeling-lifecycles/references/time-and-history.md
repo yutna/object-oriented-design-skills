@@ -7,8 +7,8 @@
 Two kinds of change are easy to leave out of a lifecycle: the ones the
 clock causes, and the record of what already happened. This reference
 keeps both. A rule about time stays in the object that owns the state,
-and the record of changes lives beside it when the business asks for
-the history.
+and the record of changes lives in that object's aggregate when the
+business asks for the history.
 
 ## A transition the clock causes
 
@@ -86,12 +86,14 @@ uses, so a missed visit has a state of its own. `slot.hasEndedBy(now)`
 is taken to mean that the slot's end, its start plus the length the
 clinic gives it, is at or before `now`. `appointments.due(now)` returns
 the appointments whose slot has ended by `now` and whose status is
-still `Scheduled`; `due.recordNoShow(now)` is taken to send
-`recordNoShow(now)` to each of them once. `recordNoShow` checks the
-status and the slot again, so a direct call on any other state, or on
-one whose slot has not ended, raises `AppointmentNoShowNotRecordable`
+still `Scheduled`; `appointments.due(now).recordNoShow(now)` is taken
+to send `recordNoShow(now)` to each of them once. `recordNoShow` checks
+the status and the slot again, so a direct call on any other state, or
+on one whose slot has not ended, raises `AppointmentNoShowNotRecordable`
 and changes nothing. The job holds the port, not the database, and
-passes the time it was given, so a test can pass any moment.
+passes the time it was given, so a test can pass any moment. This fence
+leaves out the store, and each appointment's change is stored in its
+own transaction, as rule 4 of `oo-designing-aggregates` asks.
 
 ## A history the business can read
 
@@ -103,7 +105,7 @@ also says why. The list is read-only from outside, so a report cannot
 edit the history it reads.
 
 ```text
-value BookingChange
+value AppointmentChange
   - status: AppointmentStatus
   - at: DateTime
   - by: ClinicianId?
@@ -111,27 +113,29 @@ value BookingChange
   + new(status: AppointmentStatus, at: DateTime,
       by: ClinicianId?, reason: CancellationReason?)
 
-class BookingHistory
-  - changes: List<BookingChange>
+class AppointmentHistory
+  - changes: List<AppointmentChange>
   + new()
-    changes := new List<BookingChange>()
-  + record(change: BookingChange): void
+    changes := new List<AppointmentChange>()
+  + record(change: AppointmentChange): void
     changes.add(change)
     return
-  + changes(): ReadOnlyList<BookingChange>
+  + changes(): ReadOnlyList<AppointmentChange>
     return changes.readOnlyView()
 ```
 
-`new List<BookingChange>()` is taken to mean an empty list the history
-owns. `record` appends one entry once, and `changes` returns a read-only
-view, so every reader sees the same list and no reader changes it. The
-entry for a cancellation carries the `CancellationReason` and the
-moment, so the answer to why survives after the status has moved on.
-The entry also names the clinician who made the change when a clinician
-did; a change the clock made leaves it null, and the time still says
-when. `Appointment` keeps the notation's three fields, so its history
-lives beside it: the use case that cancels an appointment, or the job
-that records a no-show, writes the change and its entry together. A
+`new List<AppointmentChange>()` is taken to mean an empty list the
+history owns. `record` appends one entry once, and `changes` returns a
+read-only view, so every reader sees the same list and no reader
+changes it. The entry for a cancellation carries the
+`CancellationReason` and the moment, so the answer to why survives
+after the status has moved on. The entry also names the clinician who
+made the change when a clinician did; a change the clock made leaves it
+null, and the time still says when. `Appointment` keeps the notation's
+three fields, so this fence shows the history alone: the history
+belongs to the appointment's aggregate, and a caller reaches it through
+the root. A use case that cancels an appointment, or a job that keeps
+history, writes the entry in the same transaction as the change. A
 change without its entry is history the business asked for and did not
 get. When nobody asks when or why, the current state is enough, and the
 list is cost without a reader.
