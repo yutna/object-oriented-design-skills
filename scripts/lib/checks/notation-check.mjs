@@ -4,6 +4,7 @@ import { MarkdownDocument } from '../markdown-document.mjs'
 export class NotationCheck extends Check {
   static #COMMENT = /--.*$/
   static #OPERATOR = /(?<= )(<=|>=|!=|<>|==|<|>)(?= )/g
+  static #ARITHMETIC = /(?<=\S)[ \t]+([+\-*/])[ \t]+(?=\S)/g
   static #LOOP = /^\s*(for|while)\b/
   static #CONSTRUCTION =
     /\bnew\s+[A-Za-z_][A-Za-z0-9_]*(?:<[^()]*>)?(?![<\w])(?!\s*\()/g
@@ -54,22 +55,73 @@ export class NotationCheck extends Check {
     // A comment is prose for a reader, not syntax to check.
     const lines = fence.body.split('\n')
       .map((line) => line.replace(NotationCheck.#COMMENT, ''))
+    const body = this.#bodyLines(lines)
     for (let index = 0; index < lines.length; index += 1) {
       this.#inspectLine(
         path,
         fence.startLine + index + 1,
         lines[index],
+        body.has(index),
         report)
     }
     this.#inspectRaises(path, fence.startLine, lines, report)
   }
 
-  #inspectLine(path, number, line, report) {
+  #bodyLines(lines) {
+    // A body line sits under a completed member signature. A signature
+    // that left a parenthesis open continues on the next line.
+    const body = new Set()
+    let underMember = false
+    let open = 0
+    for (let index = 0; index < lines.length; index += 1) {
+      const line = lines[index]
+      if (NotationCheck.#DECLARATION.test(line)) {
+        underMember = false
+        open = 0
+        continue
+      }
+      if (NotationCheck.#MEMBER.test(line)) {
+        underMember = true
+        open = NotationCheck.#parenBalance(line)
+        continue
+      }
+      if (!underMember) continue
+      if (open > 0) {
+        open += NotationCheck.#parenBalance(line)
+        continue
+      }
+      body.add(index)
+    }
+    return body
+  }
+
+  static #parenBalance(line) {
+    let balance = 0
+    for (const character of line) {
+      if (character === '(') balance += 1
+      if (character === ')') balance -= 1
+    }
+    return balance
+  }
+
+  #inspectLine(path, number, line, inBody, report) {
     this.#inspectOperators(path, number, line, report)
+    if (inBody) this.#inspectArithmetic(path, number, line, report)
     this.#inspectLoops(path, number, line, report)
     this.#inspectConstructions(path, number, line, report)
     this.#inspectSelf(path, number, line, report)
     this.#inspectSemicolons(path, number, line, report)
+  }
+
+  #inspectArithmetic(path, number, line, report) {
+    // An infix operation has no meaning here; a message send carries it.
+    for (const match of line.matchAll(NotationCheck.#ARITHMETIC)) {
+      this.#report(
+        report,
+        path,
+        number,
+        `notation: operator "${match[1]}" is not defined`)
+    }
   }
 
   #inspectOperators(path, number, line, report) {
