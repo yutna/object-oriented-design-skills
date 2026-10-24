@@ -18,7 +18,7 @@ returns, and each section then shows one booking example.
 |Kind|Holds|May know|Returns|Example|
 |---|---|---|---|---|
 |Application|Ports|Repositories, ports, transaction|Reply or none|BookVisit|
-|Domain|Nothing|Given values, a port|Decision or value|VisitPricing|
+|Domain|No state|Given values, a port|Decision or value|VisitPricing|
 |Entity|Fields|Own fields, parameters|Nothing or raises|Slot.reserve|
 
 The application service holds the ports one use case needs and may know
