@@ -74,7 +74,7 @@ class Slot
 A constructor is written as `+ new(parameter: Type)` and has no return
 type. A constructor parameter with the same name as a field sets that
 field. A constructor written as `- new(...)` is private: only the
-class's own `static` methods may call it.
+class's own methods, `static` or not, may call it.
 
 ```text
 class Appointment
@@ -83,16 +83,26 @@ class Appointment
 
 ## Extension
 
-`extends` and `implements` sit on the declaration line.
+`extends` and `implements` sit on the declaration line. A message sent
+with no receiver goes to the object itself. A subclass method with the
+same signature as a parent method overrides it; inside it,
+`super.name(args)` sends the message to the parent's version.
 
 ```text
 class Appointment extends Booking implements Cancellable
+  + confirm(): void
+    super.confirm()
+    remindPatient()
+  - remindPatient(): void
 ```
 
 ## Errors
 
 A method that can fail puts `raises Name` on the line under its
-signature.
+signature. `raises` names each error the method raises itself with
+`raise`; two or more are written `raises A, B`. An error raised by a
+message the method sends passes on to its caller. The method may name
+it in `raises` too, when its callers must handle it.
 
 ```text
 class Slot
@@ -111,6 +121,7 @@ nothing. A bare `return` ends a `void` method.
 ```text
 class Appointment
   + cancel(reason: CancellationReason): void
+    raises AppointmentNotCancellable
     if status = Scheduled then
       status := Cancelled
       slot.release(patient)
@@ -125,7 +136,10 @@ class Appointment
 ## Comments and types
 
 `--` starts a comment. A `Type?` may be absent. `List<Type>` is a
-collection.
+collection. `add(x)` appends `x` to the list in place, `contains(x)`
+is true when the list holds an item equal to `x`, `copy()` returns a
+new list with the same items, and `readOnlyView()` returns a
+`ReadOnlyList<Type>` that shows the list but cannot change it.
 
 ```text
 value CancellationReason
@@ -150,6 +164,7 @@ class Appointment
       status: AppointmentStatus): Appointment
     return new Appointment(slot, patient, status)
   + cancel(reason: CancellationReason): void
+    raises AppointmentNotCancellable
     if status = Scheduled then
       status := Cancelled
       slot.release(patient)
@@ -162,6 +177,7 @@ class Slot
   - startsAt: DateTime
   - patient: PatientId?
   + reserve(patientId: PatientId): void
+    raises SlotTaken
     if patient = null then
       patient := patientId
     else
