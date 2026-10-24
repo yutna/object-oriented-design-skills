@@ -35,10 +35,10 @@ objects need.
 
 A service locator hides the graph behind a lookup. A domain class asks
 the locator for its collaborators when a message runs, so its constructor
-lists nothing and the object builds without them. The failure moves from
-start-up to the first booking, and every test must fill the locator
-before it can run the rule. That is the locator in domain code the skill
-forbids.
+names only the locator, not the collaborators it uses, and the object
+builds without them. The failure moves from start-up to the first
+booking, and every test must fill the locator before it can run the rule.
+That is the locator in domain code the skill forbids.
 
 ```text
 class ServiceLocator
