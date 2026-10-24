@@ -76,7 +76,7 @@ export class ModelRouting extends Check {
         for (let run = 0; run < runs; run += 1) {
           const output = this.#run(copy.path, routingCase)
           ModelRouting.#requireListing(output, skills)
-          const answer = ModelRouting.#answer(output)
+          const answer = ModelRouting.#answer(output, skills)
           answers.push(answer)
           results.push({
             symptom: routingCase.symptom,
@@ -272,10 +272,10 @@ export class ModelRouting extends Check {
     }
   }
 
-  static #answer(output) {
+  static #answer(output, skills) {
     const events = ModelRouting.#events(output)
     const skill = ModelRouting.#skillAnswer(events)
-    if (skill !== null) return skill
+    if (skill !== null) return ModelRouting.#named(skill, skills)
     const result = events
       .filter((event) => event?.type === 'result').at(-1)
     const text = typeof result?.result === 'string'
@@ -284,9 +284,17 @@ export class ModelRouting extends Check {
     if (text === '') return 'none'
     const match = text.match(ModelRouting.#ANSWER)
     // A session that named no skill of ours still answered in its own words.
-    return match === null
-      ? ModelRouting.#withoutPlugin(text)
-      : ModelRouting.#withoutPlugin(match[0])
+    return ModelRouting.#named(match === null ? text : match[0], skills)
+  }
+
+  static #named(answer, skills) {
+    const name = ModelRouting.#withoutPlugin(answer)
+    const prefixed = `oo-${name}`
+    // A model may name a pack skill without the prefix the pack requires.
+    if (!skills.includes(name) && skills.includes(prefixed)) {
+      return prefixed
+    }
+    return name
   }
 
   static #skillAnswer(events) {

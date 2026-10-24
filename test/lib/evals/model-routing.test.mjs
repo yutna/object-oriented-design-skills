@@ -374,6 +374,54 @@ test('ModelRouting reads the real text answer and strips its prefix',
     }
   })
 
+test('ModelRouting counts a skill named without its oo- prefix',
+  async () => {
+    const fixture = await TempRepository.of()
+    try {
+      const runner = new FakeRunner(RouteStream.text(
+        'assigning-responsibilities'))
+      const report = fixture.inspect({ argv: ['--runs', '1'], runner })
+      assert.deepEqual(report.lines(), [
+        'hits: 1/2',
+        '0/1 we are sizing this appointment design work ' +
+          '-> expected oo-design; ' +
+          'answered oo-assigning-responsibilities',
+        'ok 2 routed case(s)'
+      ])
+      const [directory] = fixture.results()
+      const answers = await fixture.answers(directory)
+      assert.deepEqual(
+        answers.results.map(({ answer }) => answer),
+        ['oo-assigning-responsibilities', 'oo-assigning-responsibilities'])
+    } finally {
+      await fixture.close()
+    }
+  })
+
+test('ModelRouting keeps an answer that names no skill a miss',
+  async () => {
+    const fixture = await TempRepository.of()
+    try {
+      const runner = new FakeRunner(RouteStream.text('scheduling'))
+      const report = fixture.inspect({ argv: ['--runs', '1'], runner })
+      assert.deepEqual(report.lines(), [
+        'hits: 0/2',
+        '0/1 we are sizing this appointment design work ' +
+          '-> expected oo-design; answered scheduling',
+        '0/1 which class owns the appointment reminder ' +
+          '-> expected oo-assigning-responsibilities; answered scheduling',
+        'ok 2 routed case(s)'
+      ])
+      const [directory] = fixture.results()
+      const answers = await fixture.answers(directory)
+      assert.deepEqual(
+        answers.results.map(({ answer }) => answer),
+        ['scheduling', 'scheduling'])
+    } finally {
+      await fixture.close()
+    }
+  })
+
 test('ModelRouting answers none when no Skill call or skill name appears',
   async () => {
     const fixture = await TempRepository.of()
