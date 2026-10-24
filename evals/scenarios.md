@@ -169,3 +169,18 @@ symptom, not the fix; either `Slot`'s contract changes for every slot,
 with every caller updated, or `GroupSession` stops extending `Slot`.
 
 Should reach `oo-honouring-substitutability`.
+
+## 12. Five methods, one status ladder
+
+> `Appointment` has a `status` field with five values. `reschedule`,
+> `cancel`, `checkIn`, `markNoShow` and `invoice` each start with the
+> same chain of `if status == ...` branches. Adding `Tentative` last
+> month meant editing all five, we missed `invoice`, and a tentative
+> appointment was billed. How should we structure this?
+
+Must contain: one object per status that answers the actions for that
+status, or a closed set of statuses whose every action the compiler
+checks; the appointment delegating to its current status; a new status
+added in one place, with nothing left for a missed branch.
+
+Should reach `oo-replacing-conditionals-with-polymorphism`.

@@ -84,9 +84,13 @@ test('--dry-run installs nothing and prints the block', () => {
     `would copy oo-modeling-values-and-entities -> ${
       join('/home', '.claude', 'skills', 'oo-modeling-values-and-entities')}`))
   assert.ok(lines.includes(
+    `would copy oo-replacing-conditionals-with-polymorphism -> ${
+      join('/home', '.claude', 'skills',
+        'oo-replacing-conditionals-with-polymorphism')}`))
+  assert.ok(lines.includes(
     "add this block to the project's CLAUDE.md:"))
   assert.ok(lines.includes('## Object-oriented design skills'))
-  assert.equal(lines.at(-1), 'ok 10 skill(s) considered')
+  assert.equal(lines.at(-1), 'ok 11 skill(s) considered')
 })
 
 test('Installer copies every core skill, then skips them', async () => {
@@ -129,7 +133,11 @@ test('Installer copies every core skill, then skips them', async () => {
     assert.ok(first.lines().includes(
       'copied oo-modeling-values-and-entities -> ' +
       join(home, '.claude', 'skills', 'oo-modeling-values-and-entities')))
-    assert.equal(first.lines().at(-1), 'ok 10 skill(s) considered')
+    assert.ok(first.lines().includes(
+      'copied oo-replacing-conditionals-with-polymorphism -> ' +
+      join(home, '.claude', 'skills',
+        'oo-replacing-conditionals-with-polymorphism')))
+    assert.equal(first.lines().at(-1), 'ok 11 skill(s) considered')
     const installed = join(home, '.claude', 'skills', 'oo-design', 'SKILL.md')
     assert.equal(existsSync(installed), true)
     const text = readFileSync(installed, 'utf8')
@@ -167,7 +175,10 @@ test('Installer copies every core skill, then skips them', async () => {
     assert.ok(second.lines().includes(
       'skipped oo-modeling-values-and-entities ' +
       '(already installed; --force replaces it)'))
-    assert.equal(second.lines().at(-1), 'ok 10 skill(s) considered')
+    assert.ok(second.lines().includes(
+      'skipped oo-replacing-conditionals-with-polymorphism ' +
+      '(already installed; --force replaces it)'))
+    assert.equal(second.lines().at(-1), 'ok 11 skill(s) considered')
     assert.equal(readFileSync(installed, 'utf8'), text)
   } finally {
     await rm(home, { recursive: true, force: true })

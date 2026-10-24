@@ -98,7 +98,7 @@ test('a valid repository with one plugin and two skills', async () => {
   }
 })
 
-test('Repository.at on this repository finds the ten skills and the package version', async () => {
+test('Repository.at on this repository finds the eleven skills and the package version', async () => {
   const root = process.cwd()
   const repository = Repository.at(root)
   const packageData = JSON.parse(
@@ -116,7 +116,8 @@ test('Repository.at on this repository finds the ten skills and the package vers
       'oo-encapsulating-state-and-behaviour',
       'oo-encapsulating-what-varies',
       'oo-honouring-substitutability',
-      'oo-modeling-values-and-entities'
+      'oo-modeling-values-and-entities',
+      'oo-replacing-conditionals-with-polymorphism'
     ])
   const markdownPaths = repository.markdownFiles()
     .map((file) => file.path)
