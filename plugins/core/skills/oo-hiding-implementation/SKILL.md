@@ -3,7 +3,7 @@ name: oo-hiding-implementation
 description: Use when many classes know how another stores or formats data, when callers must handle its internal errors, or must call its steps in order.
 license: MIT
 metadata:
-  version: 0.9.0
+  version: 0.10.0
   pack: object-oriented-design-skills
 ---
 
