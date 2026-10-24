@@ -134,7 +134,7 @@ class StockRun
     record()
     return
   + checkAvailability(): void
-    -- an override keeps: raises when the slot has no free dose
+    -- an override keeps: refuses the slot when it has no free dose
   + take(): void
     -- an override keeps: reserves one dose for the slot
   + record(): void
