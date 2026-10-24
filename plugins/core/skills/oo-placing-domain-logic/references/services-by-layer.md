@@ -56,7 +56,9 @@ whole slot, and `save` to store one whole slot. `Appointments` is the
 port the inverting skill declares and the repositories skill extends;
 this fence sends it `add` alone, which stores one appointment once.
 `Appointment.book` is the notation's factory: it reserves the slot once
-and builds the appointment that holds it.
+and builds the appointment that holds it. The aggregates skill decides
+whether that appointment holds the slot or the slot's identity; this
+reference shows the use-case coordination, not that boundary.
 
 `BookVisit.run` opens the transaction before `slots.find` and ends it
 after `appointments.add`; the fence leaves those boundaries out. What is
