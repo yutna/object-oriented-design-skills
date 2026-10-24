@@ -79,8 +79,7 @@ subtype or a parent type.
    it sends, so prefer the interface unless the code would otherwise be
    repeated. A base class that stays open writes down which methods an
    override may replace and which of its own methods send them; the
-   composition skill's third rule warns against the second kind of
-   dependence.
+   written self-use is what makes the dependence safe.
 
 5. Default. **Name the role a type plays and declare which types play
    it, even where a language matches types by their shape.** Two
