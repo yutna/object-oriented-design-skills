@@ -288,8 +288,13 @@ export class ModelRouting extends Check {
   }
 
   static #named(answer, skills) {
-    // The stub strips the plugin prefix; the prefix-less test is red.
-    return ModelRouting.#withoutPlugin(answer)
+    const name = ModelRouting.#withoutPlugin(answer)
+    const prefixed = `oo-${name}`
+    // A model may name a pack skill without the prefix the pack requires.
+    if (!skills.includes(name) && skills.includes(prefixed)) {
+      return prefixed
+    }
+    return name
   }
 
   static #skillAnswer(events) {
