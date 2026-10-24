@@ -40,7 +40,7 @@ class ReminderSender
 
 class SignedReminderSender extends ReminderSender
   + format(reminder: Reminder): String
-    return super.format(reminder) + signature()
+    return super.format(reminder).followedBy(signature())
   - signature(): String
     return "the clinic"
 
@@ -52,8 +52,8 @@ class ChannelReminderSender extends SignedReminderSender
     return
 ```
 
-`super.format(reminder) + signature()` is taken to mean the parent's text
-followed by the clinic's signature, and `"the clinic"` is taken to mean
+`followedBy` is taken to mean the text of the receiver followed by
+the text of its argument, and `"the clinic"` is taken to mean
 that signature text. The top `deliver` has an empty body, so the top and
 middle classes cannot deliver on their own; only the bottom class gives
 that step a body. `channel` is set by the bottom class's constructor
@@ -64,9 +64,12 @@ delivers once.
 The base class is fragile because `send` decides which of its own methods
 run. If the top's author replaces `format(reminder)` with
 `reminder.text()` to save a call, `SignedReminderSender.format` never
-runs and every signature disappears. No subclass changes, and no test in
-the subclasses would fail. The subclasses depended on an internal send,
-which is the coupling this skill warns about.
+runs and every signature disappears. No subclass code changes, and a
+test that sends only a subclass's `format` still passes. A test that
+sends `send` to a subclass and checks the signature fails, and that
+failing test is the evidence the red flags ask for. The subclasses
+depended on an internal send, which is the coupling this skill warns
+about.
 
 ## The yo-yo
 
