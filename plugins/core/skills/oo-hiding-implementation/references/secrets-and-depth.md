@@ -64,11 +64,11 @@ are the steps.
 ## Deep or shallow
 
 The Pattern's before `DayPlan` is shallow: three public messages about
-blocks, and a caller must know that a day is a list of fifteen-minute
-entries to use them. After, `DayPlan` is deep: `reserve` and `isFree`
-are two messages over the same list, and the block layout and its index
-stay inside. The shallow class asks callers to know as much as its code
-does; the deep class asks only what a caller may want to do.
+blocks, and a caller must handle a day's blocks by index. After,
+`DayPlan` is deep: `reserve` and `isFree` are two messages over the same
+list, and the block layout and its index stay inside. The shallow class
+asks callers to know as much as its code does; the deep class asks only
+what a caller may want to do.
 
 A class is not deep just because it is small. A wrapper that repeats an
 outside library one method for one method has the outside interface plus
