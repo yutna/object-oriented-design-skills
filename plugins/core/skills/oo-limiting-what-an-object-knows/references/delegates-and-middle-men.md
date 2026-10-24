@@ -35,22 +35,32 @@ class CheckInDesk
 
 class Appointment
   - slot: Slot
-  + new(slot: Slot)
+  - patient: PatientId
+  - kind: AppointmentKind
+  - status: AppointmentStatus
+  - new(slot: Slot, patient: PatientId, kind: AppointmentKind,
+      status: AppointmentStatus)
   + roomName(): RoomName
     return slot.roomName()
 
 class Slot
+  - clinician: Clinician
+  - startsAt: DateTime
+  - length: Duration
+  - patient: PatientId?
   - room: Room
-  + new(room: Room)
+  - new(clinician: Clinician, startsAt: DateTime,
+      length: Duration, patient: PatientId?, room: Room)
   + roomName(): RoomName
     return room.name()
 ```
 
-`RoomName` is taken to be the value a room answers for its name. Each
-object talks only to its own field, and each forward hides one step
-rather than replacing the object underneath. The cost is visible: every
-new question about a room adds a method to two classes. Hiding a
-delegate contains change, and the forwards are what it costs.
+`RoomName` is taken to be the value a room answers for its name. `Slot`
+in this section also holds the `Room` it is in, and the fence declares
+that field. Each object talks only to its own field, and each forward
+hides one step rather than replacing the object underneath. The cost is
+visible: every new question about a room adds a method to two classes.
+Hiding a delegate contains change, and the forwards are what it costs.
 
 ## Removing a middle man
 
@@ -104,21 +114,25 @@ to the slot it was given.
 
 ```text
 class BookingDesk
+  - calendar: Calendar
+  + new(calendar: Calendar)
   + describe(slot: Slot): SlotSummary
     return new SlotSummary(slot.clinician(), slot.startsAt(),
       slot.length())
 ```
 
-The desk holds no fields, so the method reads none of its own data. It
-belongs on `Slot`, where the start time, the length and the clinician
-live.
+`describe` reads none of the desk's own fields, so it uses none of its
+own data. It belongs on `Slot`, where the start time, the length and the
+clinician live.
 
 ```text
 class Slot
   - clinician: Clinician
   - startsAt: DateTime
   - length: Duration
-  + new(clinician: Clinician, startsAt: DateTime, length: Duration)
+  - patient: PatientId?
+  - new(clinician: Clinician, startsAt: DateTime,
+      length: Duration, patient: PatientId?)
   + describe(): SlotSummary
     return new SlotSummary(clinician, startsAt, length)
 ```
