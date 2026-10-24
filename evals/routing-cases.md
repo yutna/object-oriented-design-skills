@@ -36,6 +36,9 @@ two patient records with the same id do not compare equal -> oo-modeling-values-
 every clinic subclass breaks when the base visit class changes -> oo-choosing-composition-over-inheritance
 should telehealth visit extend visit or wrap it -> oo-choosing-composition-over-inheritance
 we subclass the reminder sender just to reuse one method -> oo-choosing-composition-over-inheritance
+the subclass throws where the parent class did not -> oo-honouring-substitutability
+a subclass refuses a method its parent promises -> oo-honouring-substitutability
+code checks which subtype of slot it got before calling it -> oo-honouring-substitutability
 ```
 
 ## Known misses

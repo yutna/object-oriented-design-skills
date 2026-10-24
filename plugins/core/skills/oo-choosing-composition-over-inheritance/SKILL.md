@@ -191,6 +191,7 @@ evidence: a measurement, a reproducible bug, or a failing test.
 - [oo-encapsulating-what-varies](../oo-encapsulating-what-varies/SKILL.md)
   isolates the part that changes behind an interface, which is how a held
   collaborator is chosen.
+- [oo-honouring-substitutability](../oo-honouring-substitutability/SKILL.md)
 
 ## Further reading
 
