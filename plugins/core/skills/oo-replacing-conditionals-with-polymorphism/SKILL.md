@@ -135,7 +135,7 @@ class Visit
       else
         return
     return
-  + canBookOnline(patient: PatientId): Boolean
+  + canBookOnline(patient: Patient): Boolean
     if kind = Consultation then
       return patient.hasPortalAccount()
     else
@@ -160,13 +160,13 @@ interface VisitKind
   + prepare(slot: Slot): void
     -- prepares what the kind needs once, and a kind that needs
     -- nothing may prepare nothing
-  + canBookOnline(patient: PatientId): Boolean
+  + canBookOnline(patient: Patient): Boolean
 
 class Consultation implements VisitKind
   + new()
   + prepare(slot: Slot): void
     return
-  + canBookOnline(patient: PatientId): Boolean
+  + canBookOnline(patient: Patient): Boolean
     return patient.hasPortalAccount()
 
 class Procedure implements VisitKind
@@ -175,7 +175,7 @@ class Procedure implements VisitKind
   + prepare(slot: Slot): void
     roomPlanner.book(slot)
     return
-  + canBookOnline(patient: PatientId): Boolean
+  + canBookOnline(patient: Patient): Boolean
     return patient.hasReferral()
 
 class Vaccination implements VisitKind
@@ -184,7 +184,7 @@ class Vaccination implements VisitKind
   + prepare(slot: Slot): void
     doseStock.reserve(slot)
     return
-  + canBookOnline(patient: PatientId): Boolean
+  + canBookOnline(patient: Patient): Boolean
     return patient.isAdult()
 
 class Visit
@@ -194,7 +194,7 @@ class Visit
   + prepare(): void
     kind.prepare(slot)
     return
-  + canBookOnline(patient: PatientId): Boolean
+  + canBookOnline(patient: Patient): Boolean
     return kind.canBookOnline(patient)
 
 class VisitKinds
