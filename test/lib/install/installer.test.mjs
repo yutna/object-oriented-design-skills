@@ -54,6 +54,9 @@ test('--dry-run installs nothing and prints the block', () => {
     'would copy oo-assigning-responsibilities -> ' +
     join('/home', '.claude', 'skills', 'oo-assigning-responsibilities')))
   assert.ok(lines.includes(
+    `would copy oo-constructing-valid-objects -> ${
+      join('/home', '.claude', 'skills', 'oo-constructing-valid-objects')}`))
+  assert.ok(lines.includes(
     `would copy oo-deciding-object-or-data -> ${
       join('/home', '.claude', 'skills', 'oo-deciding-object-or-data')}`))
   assert.ok(lines.includes(
@@ -72,7 +75,7 @@ test('--dry-run installs nothing and prints the block', () => {
   assert.ok(lines.includes(
     "add this block to the project's CLAUDE.md:"))
   assert.ok(lines.includes('## Object-oriented design skills'))
-  assert.equal(lines.at(-1), 'ok 6 skill(s) considered')
+  assert.equal(lines.at(-1), 'ok 7 skill(s) considered')
 })
 
 test('Installer copies every core skill, then skips them', async () => {
@@ -86,6 +89,9 @@ test('Installer copies every core skill, then skips them', async () => {
     assert.ok(first.lines().includes(
       'copied oo-assigning-responsibilities -> ' +
       join(home, '.claude', 'skills', 'oo-assigning-responsibilities')))
+    assert.ok(first.lines().includes(
+      'copied oo-constructing-valid-objects -> ' +
+      join(home, '.claude', 'skills', 'oo-constructing-valid-objects')))
     assert.ok(first.lines().includes(
       'copied oo-deciding-object-or-data -> ' +
       join(home, '.claude', 'skills', 'oo-deciding-object-or-data')))
@@ -102,7 +108,7 @@ test('Installer copies every core skill, then skips them', async () => {
     assert.ok(first.lines().includes(
       'copied oo-encapsulating-what-varies -> ' +
       join(home, '.claude', 'skills', 'oo-encapsulating-what-varies')))
-    assert.equal(first.lines().at(-1), 'ok 6 skill(s) considered')
+    assert.equal(first.lines().at(-1), 'ok 7 skill(s) considered')
     const installed = join(home, '.claude', 'skills', 'oo-design', 'SKILL.md')
     assert.equal(existsSync(installed), true)
     const text = readFileSync(installed, 'utf8')
@@ -113,6 +119,9 @@ test('Installer copies every core skill, then skips them', async () => {
     assert.equal(second.failed, false)
     assert.ok(second.lines().includes(
       'skipped oo-assigning-responsibilities ' +
+      '(already installed; --force replaces it)'))
+    assert.ok(second.lines().includes(
+      'skipped oo-constructing-valid-objects ' +
       '(already installed; --force replaces it)'))
     assert.ok(second.lines().includes(
       'skipped oo-deciding-object-or-data ' +
@@ -128,7 +137,7 @@ test('Installer copies every core skill, then skips them', async () => {
     assert.ok(second.lines().includes(
       'skipped oo-encapsulating-what-varies ' +
       '(already installed; --force replaces it)'))
-    assert.equal(second.lines().at(-1), 'ok 6 skill(s) considered')
+    assert.equal(second.lines().at(-1), 'ok 7 skill(s) considered')
     assert.equal(readFileSync(installed, 'utf8'), text)
   } finally {
     await rm(home, { recursive: true, force: true })

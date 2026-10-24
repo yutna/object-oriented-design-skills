@@ -193,7 +193,7 @@ class Appointment
   - patient: PatientId
   - status: AppointmentStatus
   - cancellationReason: CancellationReason?
-  + new(slot: Slot, patient: PatientId)
+  - new(slot: Slot, patient: PatientId)
     status := Scheduled
   + static book(slot: Slot, patient: PatientId): Appointment
     slot.reserve(patient)
@@ -214,8 +214,9 @@ class CancelAppointment
 ```
 
 `Appointment.book` reserves the slot, and the constructor sets the
-status. Only `cancel` sets the reason and releases the slot. No field is
-read before it is set, and no step runs twice.
+status. Only `cancel` sets the reason and releases the slot. The
+constructor is private, so `book` is the only way to create an
+appointment. No field is read before it is set, and no step runs twice.
 
 ## Red flags
 
