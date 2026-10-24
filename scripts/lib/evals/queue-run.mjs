@@ -9,7 +9,8 @@ import { QuotaPolicy } from './quota-policy.mjs'
 export class QueueRun extends Check {
   static #USAGE = 'usage: eval-queue.mjs --status | ' +
     '--add <label> -- <script> [args...] | --pause <text> | ' +
-    '--run [--dry-run]'
+    '--run [--dry-run] [--seven-day-start <n>] ' +
+    '[--seven-day-continue <n>]'
   static #RUNS = 'evals/results/runs.jsonl'
   static #PIECES = 'evals/results/pieces'
 
@@ -90,15 +91,7 @@ export class QueueRun extends Check {
   }
 
   #run(queue, report, dryRun) {
-    // Stub for the red tests: the seven-day options are accepted here
-    // and ignored; they do not reach QuotaPolicy yet.
-    if (!this.#argv.every((argument) =>
-      argument === '--run' || argument === '--dry-run' ||
-      argument === '--seven-day-start' ||
-      argument === '--seven-day-continue' ||
-      /^\d+(\.\d+)?$/.test(argument))) {
-      throw new RepoError(QueueRun.#USAGE)
-    }
+    const lines = this.#sevenDayLines()
     const first = queue.peek()
     if (dryRun) {
       // A dry run previews the next entry without reading quota.
@@ -106,7 +99,7 @@ export class QueueRun extends Check {
       report.count('entry(ies) previewed', first === null ? 0 : 1)
       return
     }
-    const policy = QuotaPolicy.DEFAULT
+    const policy = new QuotaPolicy(lines)
     let piecesRun = 0
     let paused = false
     let waiting = 0
@@ -159,6 +152,49 @@ export class QueueRun extends Check {
       if (!policy.mayContinue(after)) break
     }
     this.#count(report, { piecesRun, paused, waiting })
+  }
+
+  #sevenDayLines() {
+    let start
+    let end
+    const argv = this.#argv
+    for (let index = 0; index < argv.length;) {
+      const argument = argv[index]
+      if (argument === '--run' || argument === '--dry-run') {
+        index += 1
+        continue
+      }
+      if (argument === '--seven-day-start') {
+        start = QueueRun.#percentage(argument, argv[index + 1])
+        index += 2
+        continue
+      }
+      if (argument === '--seven-day-continue') {
+        end = QueueRun.#percentage(argument, argv[index + 1])
+        index += 2
+        continue
+      }
+      throw new RepoError(QueueRun.#USAGE)
+    }
+    // A pair is only comparable when the sitting sets both.
+    if (start !== undefined && end !== undefined && start >= end) {
+      throw new RepoError(
+        '--seven-day-start must be below --seven-day-continue', 2)
+    }
+    return Object.freeze({
+      sevenDayStart: start,
+      sevenDayContinue: end
+    })
+  }
+
+  static #percentage(option, value) {
+    const parsed = /^\d+$/.test(value ?? '') ? Number(value) : NaN
+    // A quota line is a whole percent and never reaches either end.
+    if (!Number.isInteger(parsed) || parsed < 1 || parsed > 100) {
+      throw new RepoError(
+        `${option} must be a whole percentage from 1 to 100`, 2)
+    }
+    return parsed
   }
 
   #count(report, { piecesRun, paused, waiting }) {
