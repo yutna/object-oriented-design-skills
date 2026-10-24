@@ -51,10 +51,8 @@ export class ModelRouting extends Check {
       throw new QueueGateError()
     }
     const runs = this.#runs()
-    // The text is read here; keeping the matching cases lands next.
-    this.#case()
-    const cases = RoutingCases.of(
-      this.#repository.file(ModelRouting.#ROUTING))
+    const cases = this.#select(RoutingCases.of(
+      this.#repository.file(ModelRouting.#ROUTING)))
     const copy = PluginCopy.of(this.#repository)
     try {
       if (dryRun) {
@@ -131,6 +129,19 @@ export class ModelRouting extends Check {
       throw new RepoError('--case needs a text', 2)
     }
     return text
+  }
+
+  #select(cases) {
+    const text = this.#case()
+    if (text === null) return cases
+    const kept = cases.filter((routingCase) =>
+      routingCase.symptom.includes(text))
+    // A selection that kept nothing would measure nothing.
+    if (kept.length === 0) {
+      throw new RepoError(
+        `--case "${text}" matches no routing case`, 1)
+    }
+    return Object.freeze(kept)
   }
 
   #run(copyPath, routingCase) {
