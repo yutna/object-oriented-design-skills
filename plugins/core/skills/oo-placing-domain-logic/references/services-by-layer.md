@@ -122,11 +122,12 @@ class Slot
     patient := null
 ```
 
-The fence keeps the notation's three fields for `Slot`; the limiting
-skill adds a `length` field for its fee example, and this fence leaves
-that field and the constructor out. `reserve` reads `patient` once, sets
-it once when it is absent and raises `SlotTaken` once when it is present.
-`release` sets `patient` back to null.
+The fence keeps `notation.md`'s three fields and leaves the constructor
+out; `oo-assigning-responsibilities` shows only `patient` for its
+cancellation rule, and `oo-limiting-what-an-object-knows` gives the slot
+a `Clinician` and a `length` for its fee example. `reserve` reads
+`patient` once, sets it once when it is absent and raises `SlotTaken`
+once when it is present. `release` sets `patient` back to null.
 
 The method knows its own fields and its parameter, and nothing else: no
 repository, no port and no transaction. It changes the slot in memory,
