@@ -3,7 +3,7 @@ name: oo-diagnosing-coupling
 description: Use when a change ripples through many classes, a part is hard to change or test alone, or you need to judge how tightly two parts are tied.
 license: MIT
 metadata:
-  version: 0.8.0
+  version: 0.9.0
   pack: object-oriented-design-skills
 ---
 
