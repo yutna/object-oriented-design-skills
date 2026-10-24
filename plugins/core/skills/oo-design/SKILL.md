@@ -89,12 +89,15 @@ skills land.
 |Changing a base class breaks its subclasses|[Choosing composition over inheritance][composition]|
 |A subclass breaks what its parent promises|[Honouring substitutability][substitutability]|
 |Code checks which subtype it holds|[Honouring substitutability][substitutability]|
+|The same switch on a type keeps coming back|[Replacing conditionals with polymorphism][polymorphism]|
+|Subclasses or pattern matching?|[Replacing conditionals with polymorphism][polymorphism]|
 
 [assigning]: ../oo-assigning-responsibilities/SKILL.md
 [composition]: ../oo-choosing-composition-over-inheritance/SKILL.md
 [constructing]: ../oo-constructing-valid-objects/SKILL.md
 [coupling]: ../oo-diagnosing-coupling/SKILL.md
 [object-or-data]: ../oo-deciding-object-or-data/SKILL.md
+[polymorphism]: ../oo-replacing-conditionals-with-polymorphism/SKILL.md
 [state-and-behaviour]: ../oo-encapsulating-state-and-behaviour/SKILL.md
 [substitutability]: ../oo-honouring-substitutability/SKILL.md
 [values]: ../oo-modeling-values-and-entities/SKILL.md

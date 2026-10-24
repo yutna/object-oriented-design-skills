@@ -39,6 +39,9 @@ we subclass the reminder sender just to reuse one method -> oo-choosing-composit
 the subclass throws where the parent class did not -> oo-honouring-substitutability
 a subclass refuses a method its parent promises -> oo-honouring-substitutability
 code checks which subtype of slot it got before calling it -> oo-honouring-substitutability
+the same switch on visit type appears in six places -> oo-replacing-conditionals-with-polymorphism
+every appointment method branches on its status -> oo-replacing-conditionals-with-polymorphism
+should visit kinds be subclasses or a sealed type with matching -> oo-replacing-conditionals-with-polymorphism
 ```
 
 ## Known misses
