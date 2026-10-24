@@ -308,3 +308,20 @@ aggregates referred to by identity, such as a `ClinicianId`; one
 aggregate changed in one transaction.
 
 Should reach `oo-designing-aggregates`.
+
+## 21. Invoices that come back to life
+
+> An `Invoice` has a `status` string: draft, issued, paid or written
+> off. The billing screen, the payment import and a nightly job each set
+> it. Reports show paid invoices that were edited afterwards, invoices
+> written off and then paid, and drafts that went straight to paid. Each
+> place checks the status in its own way before it changes it. How
+> should the invoice's life be modelled?
+
+Must contain: the invoice's states and the transitions between them
+written down; one method per transition on the invoice, each refusing a
+move its current state does not allow; no code outside the invoice
+setting the status; paid and written off kept final, or undone only by
+a named transition with its own rule.
+
+Should reach `oo-modeling-lifecycles`.

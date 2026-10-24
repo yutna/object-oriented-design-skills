@@ -107,6 +107,8 @@ skills land.
 |One word means different things to two teams|[Speaking the domain language][domain-language]|
 |Which objects must change together?|[Designing aggregates][aggregates]|
 |Saves collide or one load pulls in too much|[Designing aggregates][aggregates]|
+|Which status changes are allowed?|[Modeling lifecycles][lifecycles]|
+|A cancelled or closed object changes again|[Modeling lifecycles][lifecycles]|
 
 [aggregates]: ../oo-designing-aggregates/SKILL.md
 [assigning]: ../oo-assigning-responsibilities/SKILL.md
@@ -119,6 +121,7 @@ skills land.
 [interfaces]: ../oo-designing-interfaces/SKILL.md
 [inverting]: ../oo-inverting-dependencies/SKILL.md
 [knows]: ../oo-limiting-what-an-object-knows/SKILL.md
+[lifecycles]: ../oo-modeling-lifecycles/SKILL.md
 [naming]: ../oo-naming-classes-and-methods/SKILL.md
 [object-or-data]: ../oo-deciding-object-or-data/SKILL.md
 [polymorphism]: ../oo-replacing-conditionals-with-polymorphism/SKILL.md
