@@ -5,10 +5,10 @@
 - [When a framework creates the objects](#when-a-framework-creates-the-objects)
 
 The composition root is the one place that knows the whole object graph.
-It builds each object once, in the order the objects need, and hands each
-one its collaborators. This reference shows a root written by hand, the
-same graph reached through a service locator, and where a framework that
-creates its own objects takes the root's choices.
+It builds each object it creates once, in the order the objects need,
+and hands each one its collaborators. This reference shows a root written
+by hand, the same graph reached through a service locator, and where a
+framework that creates its own objects takes the root's choices.
 
 ## One place, one order
 
