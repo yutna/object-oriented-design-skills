@@ -80,9 +80,10 @@ written, and flattens hierarchies that cost more to read than they save.
 4. Judgement. **Flatten a hierarchy when understanding one behaviour
    means reading up and down several levels.** Each level adds a place
    where a message sent to the object itself can land. What tips the
-   balance is whether one class and its parent explain the behaviour. If
-   a third class is needed to follow it, the hierarchy has stopped paying
-   for itself.
+   balance is whether one class and its parent explain the behaviour.
+   Weigh what the reading costs against what the hierarchy explains; a
+   real kind-of relationship, as rule 1's exception allows, weighs on the
+   side of keeping it.
 
 5. Default. **Share behaviour across unrelated classes with an object
    each one holds, not with a mixin, module or trait that reads or writes
@@ -167,8 +168,8 @@ evidence: a measurement, a reproducible bug, or a failing test.
 - A mixin, module or trait that reads or writes its host's fields.
 - A base class change that forces edits in subclasses nobody asked
   about.
-- A subclass whose constructor cannot set the fields its parent keeps
-  private.
+- A parent setter whose only callers are subclasses filling a field the
+  parent keeps private.
 
 ## Common mistakes
 
@@ -181,8 +182,8 @@ evidence: a measurement, a reproducible bug, or a failing test.
 - Using a mixin to share state between unrelated classes.
 - Keeping a hierarchy because the classes look alike, when only their
   code is shared.
-- Forgetting that a held object's internal sends cannot reach the
-  holder, so no forwarding method is needed for them.
+- Expecting an override to keep running after the switch to holding,
+  when the held object's internal sends no longer reach the holder.
 
 ## Related skills
 
@@ -195,6 +196,8 @@ evidence: a measurement, a reproducible bug, or a failing test.
   isolates the part that changes behind an interface, which is how a held
   collaborator is chosen.
 - [oo-honouring-substitutability](../oo-honouring-substitutability/SKILL.md)
+  states the contract a subclass must keep, which is what rule 3 relies
+  on when the parent is written for extension.
 
 ## Further reading
 

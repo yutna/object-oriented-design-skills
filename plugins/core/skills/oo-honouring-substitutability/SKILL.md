@@ -85,7 +85,7 @@ class should be extended at all.
 6. Default. **When code checks which subtype it holds before sending a
    message, fix the subtype or the hierarchy, not the caller.** The check
    is the visible sign that a subtype breaks its parent's contract, so
-   removing the check from one caller moves the fault without curing it.
+   patching the caller that checks does not cure the subtype.
 
    The exception is a closed set of cases built for exhaustive matching,
    where each match handles every case and the compiler lists a missing

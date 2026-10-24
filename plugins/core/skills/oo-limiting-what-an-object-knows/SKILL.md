@@ -256,7 +256,8 @@ never a bare number. `startsAt.date()` is taken to mean the calendar date
 of that start time, and `priceList.feeFor(kind, length)` is taken to mean the
 fee the price list holds for that kind and length. `Appointment.date` and
 `Slot.date` answer a value along one field each, so they add no structure
-of their own.
+of their own. Neither fence shows how a `Slot` or a `Clinician` is made;
+both leave out the method that calls each private constructor.
 
 ## Red flags
 

@@ -86,21 +86,24 @@ class Booking
 `Booking` adds no rule: every message it answers is the calendar's
 message under the same name. A new calendar feature means a new `Booking`
 method, so the class grows with its collaborator and hides nothing that
-changes. After, the booking desk holds the calendar itself.
+changes. After, the screen that used to call `Booking` holds the calendar
+itself.
 
 ```text
-class BookingDesk
+class SchedulingScreen
   - calendar: Calendar
   + new(calendar: Calendar)
-  + book(appointment: Appointment): void
-    calendar.add(appointment)
+  + reschedule(from: Appointment, to: Appointment): void
+    calendar.remove(from)
+    calendar.add(to)
     return
 ```
 
-The desk keeps the one call it makes itself, and the rest of the code
-holds the calendar for the rest. `Calendar` is a collaborator with
-behaviour, so holding it directly ties the desk no more tightly than
-holding `Booking` did.
+The screen's `reschedule` is its own rule, made of two calendar messages.
+The screen that used to call `Booking` now holds the calendar and sends it
+the messages itself; no forwarding class takes `Booking`'s place.
+`Calendar` is a collaborator with behaviour, so holding it directly ties
+the screen no more tightly than holding `Booking` did.
 
 A class stays when it hides a boundary on purpose: an adapter in front of
 an outside calendar service, or the single entry point a module

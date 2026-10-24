@@ -54,18 +54,23 @@ class ExportReader
   - source: ExportSource
   + new(file: VisitFile, source: ExportSource)
   + next(): Visit
-    return file.visitIn(source.nextLine())
+    line := source.currentLine()
+    visit := file.visitIn(line)
+    source.advance()
+    return visit
 ```
 
 `VisitFile.lineFor` is taken to lay out one visit in the file's field
 order and answer the line, and `VisitFile.visitIn` is taken to read one
 such line back into a visit. `ExportDestination.append(line)` is taken
-to append one line to the destination, and `ExportSource.nextLine()` is
-taken to answer the next line and move the source past it. Each
-constructor sets its fields before its method reads them. A new column
-changes `VisitFile` alone. The format is the secret; the writer owns the
-destination, the reader owns the source, and the format stays in
-`VisitFile`.
+to append one line to the destination. `ExportSource.currentLine()` is
+taken to answer the line the source is at and change nothing, while
+`ExportSource.advance()` moves it past that line. `ExportReader.next()`
+reads the current line, turns it into a visit, and only then advances the
+source. Each constructor sets its fields before its method reads them. A
+new column changes `VisitFile` alone. The format is the secret; the
+writer owns the destination, the reader owns the source, and the format
+stays in `VisitFile`.
 
 ## Deep or shallow
 
