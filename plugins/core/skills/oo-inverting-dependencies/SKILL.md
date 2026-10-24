@@ -69,7 +69,7 @@ constructor, and builds the whole graph once at the program's edge.
    parameter list then says what the object needs, a missing part stops
    the object at construction, and a test can supply a stand-in. A part
    whose lifetime the object owns, such as a schedule's slots, is still
-   created there.
+   created by it.
 
 3. Rule. **Construct and connect the object graph in one place at the
    program's edge: the composition root.** The entry script or the start
