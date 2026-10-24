@@ -42,6 +42,9 @@ code checks which subtype of slot it got before calling it -> oo-honouring-subst
 the same switch on visit type appears in six places -> oo-replacing-conditionals-with-polymorphism
 every appointment method branches on its status -> oo-replacing-conditionals-with-polymorphism
 should visit kinds be subclasses or a sealed type with matching -> oo-replacing-conditionals-with-polymorphism
+the invoice reaches through appointment to slot to clinician -> oo-limiting-what-an-object-knows
+this booking class only forwards calls to the calendar -> oo-limiting-what-an-object-knows
+this method uses the patient's data more than its own -> oo-limiting-what-an-object-knows
 ```
 
 ## Known misses

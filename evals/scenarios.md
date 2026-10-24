@@ -184,3 +184,18 @@ checks; the appointment delegating to its current status; a new status
 added in one place, with nothing left for a missed branch.
 
 Should reach `oo-replacing-conditionals-with-polymorphism`.
+
+## 13. Eleven classes for one move
+
+> `ReminderSender.remind(appointment)` calls
+> `appointment.patient().contactDetails().preferredChannel().send(text)`.
+> When the preferred channel moved from the patient to the contact
+> details, eleven classes that reach through patients this way had to
+> change. How should `remind` get what it needs?
+
+Must contain: `remind` no longer reaches through the appointment to
+the patient's contact details; it is given, or asks one nearby object
+for, what it uses; a change to where the channel lives touches only
+the classes next to it.
+
+Should reach `oo-limiting-what-an-object-knows`.
