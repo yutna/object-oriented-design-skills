@@ -87,11 +87,12 @@ class VisitPricing
 ```
 
 `VisitPricing` holds no field and has no constructor. `quote` takes the
-two values it needs and returns a `Fee`; it sends `rates.feeFor` once,
-and sends `coverage.includes` once and `coverage.patientShareOf` once
-along one branch. `rates.feeFor(kind, length)` is the `Rates` value's own
-message from the limiting skill. `Coverage.includes(kind)` is taken to
-mean that the coverage covers that kind of appointment, and
+kind, the length, the rates and the coverage and returns a `Fee`; it
+sends `rates.feeFor` once, and sends `coverage.includes` once and
+`coverage.patientShareOf` once along one branch.
+`rates.feeFor(kind, length)` is the `Rates` value's own message from
+the limiting skill. `Coverage.includes(kind)` is taken to mean that the
+coverage covers that kind of appointment, and
 `Coverage.patientShareOf(fee)` the part of that fee the patient pays.
 
 The fence changes and stores nothing, so it opens no transaction. A
