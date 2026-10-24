@@ -59,10 +59,12 @@ quota, in sittings over several five-hour windows.
   code, and never spends quota.
 - `node scripts/eval-queue.mjs --run` takes the oldest entry, and
   `--dry-run` previews it. A piece that needs a model refuses to start
-  outside the queue. The `--seven-day-start <n>` and
-  `--seven-day-continue <n>` options set the two seven-day lines for one
-  sitting (whole percentages from 1 to 100; the start below the continue
-  when both are given), and without them the defaults above stand.
+  outside the queue. The `--five-hour-start <n>`,
+  `--five-hour-continue <n>`, `--seven-day-start <n>` and
+  `--seven-day-continue <n>` options set the two five-hour and two
+  seven-day lines for one sitting (whole percentages from 1 to 100; the
+  start below the continue when both of a pair are given), and without
+  them the defaults above stand.
 - A new piece starts only when the five-hour window is under 50% used
   and the seven-day window is under 75% used.
 - A batch stops before its next piece when the five-hour window reaches
