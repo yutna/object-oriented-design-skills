@@ -48,8 +48,8 @@ class CarePlan
 approved more sessions than the list already holds. The constructor sets
 all three lists before any method reads them; each method appends once;
 `book` raises without appending when the approval is used up. The plan
-keeps the whole `TherapySession` object, so a session's notes load with
-the plan and a change to either has to save both.
+keeps the whole `TherapySession` object, so a load of the plan loads
+every session, and a change to one session saves the whole plan.
 
 ## Split by the rules
 
@@ -59,10 +59,13 @@ Three rules decide the boundary:
   reads the approval and the booked session ids together, so those stay
   in the plan. If they split, two bookings could both see the last place
   free.
-- "Every goal that is met has a review." Goals and reviews are read
-  together, so they stay in the plan too.
-- "A session records who attended and what was discussed." This reads
-  and changes one session, so the session becomes its own aggregate.
+- "A session records who attended it and whether it happened." This
+  reads and changes one session, so the session becomes its own
+  aggregate.
+- "Every attended session has a review in the plan." This reads a
+  session and the plan's reviews together, but it can be true a moment
+  after the attendance commits, so the review arrives from a later step
+  (rule 4) rather than in the same transaction.
 
 After:
 
@@ -127,8 +130,8 @@ the list already holds as many session ids as the referral approved. The
 referral's approval is copied into the plan as an `ApprovedSessions`
 value when the plan is opened, so the plan no longer holds the referral
 aggregate itself. The plan now holds the session's identity, not the
-session itself, so a load of the plan no longer loads every session's
-notes. The session holds the plan's identity for the same reason. The
+session itself, so a load of the plan no longer loads every session. The
+session holds the plan's identity for the same reason. The
 constructor sets every field before a method reads it; `recordSession`
 appends one id only when the approval is not used up; a session records
 its attendance once, and a second record raises instead of overwriting
@@ -138,9 +141,10 @@ it.
 
 Recording a session's attendance and adding its review do not happen in
 one transaction. The session is its own aggregate and commits alone. A
-later step reads the completed session and sends `CarePlan.addReview`;
-when that step fails, it is retried, and a check reports any completed
-session whose plan has no review. That is rule 4's later step: the
+later step reads the session whose status is `Attended` and sends
+`CarePlan.addReview`; when that step fails, it is retried, and a check
+reports any `Attended` session whose plan has no review. A review is
+taken to name the session it covers. That is rule 4's later step: the
 review rule is brought true soon after the session change, not in the
 same transaction. Booking is the other case: creating the session
 aggregate and recording its id in the plan can happen in one transaction
