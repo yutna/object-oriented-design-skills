@@ -19,6 +19,7 @@ export class ModelRouting extends Check {
   static #PREFIX = /^[\w-]+:/
   static #RUNS = '--runs'
   static #DEFAULT_RUNS = 3
+  static #CASE = '--case'
 
   #repository
   #argv
@@ -50,8 +51,8 @@ export class ModelRouting extends Check {
       throw new QueueGateError()
     }
     const runs = this.#runs()
-    const cases = RoutingCases.of(
-      this.#repository.file(ModelRouting.#ROUTING))
+    const cases = this.#select(RoutingCases.of(
+      this.#repository.file(ModelRouting.#ROUTING)))
     const copy = PluginCopy.of(this.#repository)
     try {
       if (dryRun) {
@@ -117,6 +118,30 @@ export class ModelRouting extends Check {
         `--runs must be a whole number, 1 or more, not "${value}"`, 2)
     }
     return runs
+  }
+
+  #case() {
+    const at = this.#argv.indexOf(ModelRouting.#CASE)
+    if (at === -1) return null
+    const text = this.#argv[at + 1]
+    // A flag without its text names nothing to keep.
+    if (text === undefined) {
+      throw new RepoError('--case needs a text', 2)
+    }
+    return text
+  }
+
+  #select(cases) {
+    const text = this.#case()
+    if (text === null) return cases
+    const kept = cases.filter((routingCase) =>
+      routingCase.symptom.includes(text))
+    // A selection that kept nothing would measure nothing.
+    if (kept.length === 0) {
+      throw new RepoError(
+        `--case "${text}" matches no routing case`, 1)
+    }
+    return Object.freeze(kept)
   }
 
   #run(copyPath, routingCase) {

@@ -395,6 +395,102 @@ test('--selftest runs every case against a fake runner', async () => {
   }
 })
 
+test('--case keeps only the routing cases whose symptom contains it',
+  async () => {
+    const fixture = await TempRepository.of()
+    try {
+      const runner = new FakeRunner('must not run')
+      const report = fixture.inspect({
+        argv: ['--dry-run', '--case', 'appointment reminder', '--runs', '2'],
+        runner,
+        environment: {}
+      })
+      assert.equal(runner.calls.length, 0)
+      assert.equal(report.failed, false)
+      const lines = report.lines()
+      assert.equal(lines.length, 3)
+      assert.match(lines[0], /which class owns the appointment reminder/)
+      assert.equal(lines[1], lines[0])
+      assert.equal(lines.at(-1), 'ok 1 routed case(s)')
+      assert.deepEqual(fixture.results(), [])
+    } finally {
+      await fixture.close()
+    }
+  })
+
+test('--case with --runs repeats only the matching case', async () => {
+  const fixture = await TempRepository.of()
+  try {
+    const runner = new FakeRunner(RouteStream.text(
+      'object-oriented-design-skills:oo-design'))
+    const report = fixture.inspect({
+      argv: ['--case', 'sizing this appointment', '--runs', '2'],
+      runner
+    })
+    assert.equal(runner.calls.length, 2)
+    assert.deepEqual(report.lines(), [
+      'hits: 2/2',
+      'ok 1 routed case(s)'
+    ])
+    for (const { args } of runner.calls) {
+      assert.match(args.at(-1), /^we are sizing this appointment/)
+    }
+    const [directory] = fixture.results()
+    const answers = await fixture.answers(directory)
+    assert.equal(answers.runs, 2)
+    assert.equal(answers.cases, 1)
+    assert.deepEqual(
+      answers.results.map(({ symptom }) => symptom),
+      [
+        'we are sizing this appointment design work',
+        'we are sizing this appointment design work'
+      ])
+  } finally {
+    await fixture.close()
+  }
+})
+
+test('--case that matches no routing case fails as a measurement',
+  async () => {
+    const fixture = await TempRepository.of()
+    try {
+      const runner = new FakeRunner('must not run')
+      assert.throws(
+        () => fixture.inspect({
+          argv: ['--dry-run', '--case', 'no such case'],
+          runner,
+          environment: {}
+        }),
+        (error) => error instanceof RepoError &&
+          error.exitCode === 1 &&
+          error.message ===
+            '--case "no such case" matches no routing case')
+      assert.equal(runner.calls.length, 0)
+    } finally {
+      await fixture.close()
+    }
+  })
+
+test('--selftest honours --case', async () => {
+  const fixture = await TempRepository.of()
+  try {
+    const runner = new SelftestRunner()
+    const report = fixture.inspect({
+      argv: ['--selftest', '--case', 'appointment reminder'],
+      runner,
+      environment: {}
+    })
+    assert.equal(report.failed, false)
+    assert.deepEqual(report.lines(), [
+      'hits: 3/3',
+      'ok 1 routed case(s)'
+    ])
+    assert.equal(runner.calls, 3)
+  } finally {
+    await fixture.close()
+  }
+})
+
 test('ModelRouting counts hits per case across three runs', async () => {
   const fixture = await TempRepository.of({
     cases: ['we are sizing this appointment design work -> oo-design']
