@@ -55,12 +55,11 @@ value StartableByReception implements AppointmentSpecification
 
 `cutoff` is the latest slot start for which reception may start a
 visit now, and it is built once from the current time plus the clinic's
-hour.
-`appointment.startsBy(cutoff)` is taken to answer that the appointment
-is `Scheduled` and its slot starts at or before `cutoff`, and
-`cutoff()` hands the same moment to a store that translates the rule
-into its own query. The constructor sets `cutoff` before either method
-reads it, and neither method changes anything.
+hour. `appointment.startsBy(cutoff)` is taken to answer that the
+appointment is `Scheduled` and its slot starts at or before `cutoff`,
+and `cutoff()` hands the same moment to a store that translates the
+rule into its own query. The constructor sets `cutoff` before either
+method reads it, and neither method changes anything.
 
 One appointment is checked when reception starts it:
 
