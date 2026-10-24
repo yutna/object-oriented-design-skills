@@ -64,10 +64,10 @@ its form.
 2. Default. **When the staff talk about something the code has no class
    or method for, give it one.** A *recall* that lives only as a flag, a
    date field and a comment becomes a type or a method with that name,
-   holding its own rule; a *double booking* treated the same way gets the
-   same treatment. The staff use the word because they decide something
-   with it, and code that stores the pieces without the concept leaves
-   that decision scattered.
+   holding its own rule; a *double booking* stored the same way becomes
+   the operation that refuses the second booking. The staff use the word
+   because they decide something with it, and code that stores the
+   pieces without the concept leaves that decision scattered.
 
    The exception is a word that names nothing the code decides on, such
    as a label printed on a report: it stays data.
