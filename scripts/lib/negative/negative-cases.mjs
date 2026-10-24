@@ -83,6 +83,10 @@ export class NegativeCases {
     'oo-encapsulating-state-and-behaviour/SKILL.md'
   static #RAISES_FIND = '    raises SlotsOverlap\n'
   static #RAISES_REPLACE = ''
+  static #ARITHMETIC_SKILL = 'plugins/core/skills/' +
+    'oo-modeling-values-and-entities/SKILL.md'
+  static #ARITHMETIC_FIND = '    return new Referral(patient, clinician)'
+  static #ARITHMETIC_REPLACE = '    return new Referral(patient + clinician)'
 
   static ALL = Object.freeze([
     new NegativeCase(
@@ -336,6 +340,14 @@ export class NegativeCases {
         NegativeCases.#RAISES_REPLACE),
       'notation: raise "SlotsOverlap" needs a "raises SlotsOverlap" ' +
       'line under the signature'),
+    new NegativeCase(
+      'prose rejects infix arithmetic in a fence body',
+      NegativeCases.#PROSE,
+      new ReplaceText(
+        NegativeCases.#ARITHMETIC_SKILL,
+        NegativeCases.#ARITHMETIC_FIND,
+        NegativeCases.#ARITHMETIC_REPLACE),
+      'notation: operator "+" is not defined'),
     new NegativeCase(
       'counts rejects a stale label count',
       NegativeCases.#COUNTS,

@@ -96,6 +96,34 @@ test('NotationCheck rejects every spaced comparison operator', () => {
   ])
 })
 
+test('NotationCheck rejects infix arithmetic on a body line', () => {
+  const report = CheckRun.of(SkillText.of(
+    'class Appointment',
+    '  + total(base: Fee, tax: Fee): Fee',
+    '    subtotal := base + tax',
+    '    discountValue := subtotal - discount',
+    '    scaled := discountValue * factor',
+    '    share := scaled / count'))
+  assert.deepEqual(report.lines(), [
+    `error ${PATH} line 6: notation: operator "+" is not defined`,
+    `error ${PATH} line 7: notation: operator "-" is not defined`,
+    `error ${PATH} line 8: notation: operator "*" is not defined`,
+    `error ${PATH} line 9: notation: operator "/" is not defined`,
+    'failed: 4 error(s)'
+  ])
+})
+
+test('NotationCheck passes markers, comments and continued signatures', () => {
+  const report = CheckRun.of(SkillText.of(
+    'class Appointment',
+    '  - total: Fee',
+    '  + static followUp(patient: PatientId, previous: Appointment,',
+    '      slot: Slot): Appointment',
+    '    -- the fee is base + tax; never a - b, c * d or e / f',
+    '    return new Appointment(patient, slot)'))
+  assert.deepEqual(report.lines(), ['ok 1 fence(s)'])
+})
+
 test('NotationCheck rejects a for loop and a while loop', () => {
   const report = CheckRun.of(SkillText.of(
     'class Scheduler',
