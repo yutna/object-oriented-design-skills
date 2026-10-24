@@ -254,6 +254,9 @@ metadata:
   it uses only keywords `notation.md` defines, every field is set
   before it is read, no side effect happens twice, and the skill's
   files agree with each other.
+  A class that a fence shares by name with `notation.md` or a shipped
+  skill has the same fields and constructor there, or one sentence beside
+  the fence says how this example differs.
 - `## Red flags` are places to look, not verdicts. A red flag becomes a
   finding only with evidence: a measurement, a reproducible bug, or a
   failing test.
