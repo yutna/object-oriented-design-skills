@@ -214,3 +214,18 @@ manager have no single honest name, so their jobs are split first; each
 new name says what its class is or what its method does.
 
 Should reach `oo-naming-classes-and-methods`.
+
+## 15. Twenty-two methods for one lookup
+
+> `ClinicCalendar` is an interface with twenty-two methods. The check-in
+> kiosk only asks for a patient's next appointment, yet every change to
+> the calendar's billing methods makes the kiosk team rebuild and
+> retest, and their test stand-in has to answer all twenty-two. How
+> should we change this?
+
+Must contain: split the interface by its callers' roles, so the kiosk
+depends only on a next-appointment query; the class behind it may keep
+implementing every role; each test stand-in then answers only the role
+it replaces.
+
+Should reach `oo-designing-interfaces`.
