@@ -87,6 +87,11 @@ export class NegativeCases {
     'oo-modeling-values-and-entities/SKILL.md'
   static #ARITHMETIC_FIND = '    return new Referral(patient, clinician)'
   static #ARITHMETIC_REPLACE = '    return new Referral(patient + clinician)'
+  static #RAISES_CONTRACT = 'plugins/core/skills/' +
+    'oo-crossing-system-boundaries/references/wrapping-an-outside-api.md'
+  static #RAISES_CONTRACT_FIND =
+    '    raises RegisterRecordIncomplete, RegisterUnavailable'
+  static #RAISES_CONTRACT_REPLACE = '    raises RegisterUnavailable'
 
   static ALL = Object.freeze([
     new NegativeCase(
@@ -348,6 +353,16 @@ export class NegativeCases {
         NegativeCases.#ARITHMETIC_FIND,
         NegativeCases.#ARITHMETIC_REPLACE),
       'notation: operator "+" is not defined'),
+    new NegativeCase(
+      'prose rejects a raise the interface does not declare',
+      NegativeCases.#PROSE,
+      new ReplaceText(
+        NegativeCases.#RAISES_CONTRACT,
+        NegativeCases.#RAISES_CONTRACT_FIND,
+        NegativeCases.#RAISES_CONTRACT_REPLACE),
+      'raises: "RegisterAdapter.detailsFor" raises ' +
+      '"RegisterRecordIncomplete", which ' +
+      '"RegionalRegister.detailsFor" does not declare'),
     new NegativeCase(
       'counts rejects a stale label count',
       NegativeCases.#COUNTS,
