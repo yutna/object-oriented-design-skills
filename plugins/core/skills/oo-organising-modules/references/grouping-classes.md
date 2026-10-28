@@ -1,5 +1,11 @@
 # Grouping classes
 
+- [The three pulls](#the-three-pulls)
+- [How a module drifts](#how-a-module-drifts)
+- [One app, two arrangements](#one-app-two-arrangements)
+- [The public interface](#the-public-interface)
+- [A build check](#a-build-check)
+
 A module is a group of classes that share one public interface. What
 belongs inside it is decided by three pulls, and they rarely agree. The
 work is to see which one the code and the team need now, and to move
@@ -10,7 +16,7 @@ when the answer changes.
 |Pull|Example|Cost of ignoring it|
 |---|---|---|
 |Change together|A new rule for opening a slot|One change edits two modules|
-|Used together|Booking a slot|Booking rebuilds classes it never uses|
+|Used together|Booking an appointment|Booking rebuilds a report it never uses|
 |Released together|A reused appointment finder|Callers cannot match versions|
 
 Classes that change together belong together because one request edits
@@ -19,11 +25,13 @@ not in a module for forms. When those classes part, one request opens
 two modules, and every reviewer must know both.
 
 Classes that are used together belong together because one job sends
-messages to both. Booking a slot asks `SlotOpener` to open it and
-`Appointments` to save the appointment. The two share a module, while
-the classes of other scheduling jobs stay in another. When they part,
-the booking flow names two modules, each with classes booking never
-uses, so every caller depends on, rebuilds and retests them all.
+messages to both, and a class that job never uses belongs elsewhere.
+Booking an appointment reserves a slot and stores the appointment, so
+`Slot` and the `Appointments` port serve one job and share a module.
+Last month's no-show report reads appointments, but booking never
+calls it, so it sits in a module of its own. When the report shares
+booking's module, every change to the report makes booking depend on,
+rebuild and retest a class it never uses.
 
 Classes released together belong together because other teams take them as one
 version. A module another team reuses through versioned releases is a product:
