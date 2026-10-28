@@ -62,7 +62,9 @@ data, and reaches another module only through that module's interface
 or an event. The modules share one build, one release and one process,
 so a call between them is a plain message with no network in between.
 A change that must be true with a change in another module can still
-happen in one transaction when the two modules share a store.
+happen in one transaction when the two modules share a store; one
+aggregate per transaction stays the default, as rule 4 of designing
+aggregates says.
 
 The signs that one module should become a service are specific: it
 must be deployed on a schedule of its own, it must be scaled on its own

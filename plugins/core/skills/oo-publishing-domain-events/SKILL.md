@@ -137,18 +137,18 @@ class CancelAppointment
 The Before's `Appointment` is the After's class without `events` and
 `recordedEvents`. `CancelAppointment` carries the name the assigning
 responsibilities skill gives this use case; that fence passes the whole
-appointment and shows the delegation, while this one takes the
-appointment's identity and the ports it calls, because it opens the
-transaction and stores the change. `CancelAppointment.run` changes two
-aggregates in one transaction: `appointments.save` stores the changed
-appointment under its `AppointmentId` and `slots.save` stores the
-changed slot under its `SlotId`, both in the clinic's database, in the
-transaction `run` opens, and the letter goes out before either is
-stored. Every new reaction edits `run`. `Appointments.find` raises
-`AppointmentNotFound` when no appointment has that identity, and
-`Slots.find` raises `SlotNotFound` when no slot has that identity.
-`Letters.sendCancellation` is taken to send one letter and change
-nothing in the aggregates.
+appointment and shows the delegation, while this one takes the appointment's
+identity and the ports it calls, because it opens the transaction and stores the
+change. `CancelAppointment.run` changes two aggregates in one transaction:
+`appointments.save` stores the changed appointment under its `AppointmentId` and
+`slots.save` stores the changed slot under its `SlotId`, both in the clinic's
+database, in the transaction `run` opens, and the letter goes out before either
+is stored. Every new reaction edits `run`. `Appointments.find` raises
+`AppointmentNotFound` when no appointment has that identity, and `Slots.find`
+raises `SlotNotFound` when no slot has that identity. `Letters.sendCancellation`
+is taken to send one letter and change nothing in the aggregates. `Letters` is
+the clinic's port for a posted letter; it is not the aggregates reference's
+`Notices`, which sends a patient a message.
 
 After:
 

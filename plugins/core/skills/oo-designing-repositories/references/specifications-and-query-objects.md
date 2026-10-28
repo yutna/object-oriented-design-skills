@@ -46,7 +46,7 @@ interface AppointmentSpecification
   -- closed: the clinic's specifications are a closed set
   + isSatisfiedBy(appointment: Appointment): Boolean
 
-value StartableByReception implements AppointmentSpecification
+value StartableNow implements AppointmentSpecification
   - cutoff: DateTime
   + new(cutoff: DateTime)
   + isSatisfiedBy(appointment: Appointment): Boolean
@@ -75,7 +75,7 @@ class StartConsultation
   + run(id: AppointmentId, cutoff: DateTime): void
     raises ConsultationNotStartable
     appointment := appointments.find(id)
-    specification := new StartableByReception(cutoff)
+    specification := new StartableNow(cutoff)
     if specification.isSatisfiedBy(appointment) then
       appointment.start()
       appointments.save(appointment)
@@ -107,14 +107,14 @@ class StartableAppointments
   - appointments: Appointments
   + new(appointments: Appointments)
   + run(cutoff: DateTime): List<Appointment>
-    specification := new StartableByReception(cutoff)
+    specification := new StartableNow(cutoff)
     return appointments.select(specification)
 ```
 
 `run` builds the rule once per call and asks the store for every
 appointment it accepts. Because the specifications are a closed set,
 each implementation handles every member, so a database implementation
-turns `StartableByReception` into one query: the status is `Scheduled`
+turns `StartableNow` into one query: the status is `Scheduled`
 and the slot starts at or before `specification.cutoff()`. An in-memory
 implementation sends `isSatisfiedBy` to each stored appointment and
 answers the same list. The fence changes nothing, so `run` opens no
