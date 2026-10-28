@@ -117,8 +117,10 @@ makes this clinic different.
 ## Pattern
 
 Before, billing's `BillableVisit` holds `Appointment`, scheduling's own
-class. Billing names scheduling's model, so each change to `Appointment`
-reaches billing, and billing could send it `cancel`.
+class. The fence names `Appointment` only as a type; its declaration
+stays in scheduling's model, outside this example. Billing names
+scheduling's model, so each change to `Appointment` reaches billing, and
+billing could send it `cancel`.
 
 Before:
 

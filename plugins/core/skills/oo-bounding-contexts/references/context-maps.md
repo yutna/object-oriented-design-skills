@@ -43,9 +43,9 @@ deliberately does not.
 |---|---|---|---|
 |Scheduling|Clinical records|Conformist|A visit follows its appointment.|
 |Scheduling|Billing|Anti-corruption layer|Billing prices a visit.|
-|Both|Both|Shared kernel|One patient identity.|
+|Both|Both|Shared kernel|Clinical records and billing share one identity.|
 |Pharmacy|Clinical records|Open host with a published language|One language.|
-|Neither|Neither|Separate ways|Nothing crosses.|
+|Neither|Neither|Separate ways|Scheduling and pharmacy exchange nothing.|
 
 The table calls the outside pharmacy's dispensing service Pharmacy. The
 conformist line rests on a visit happening in the appointment scheduling
