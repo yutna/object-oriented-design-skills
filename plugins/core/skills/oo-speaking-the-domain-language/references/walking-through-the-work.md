@@ -29,8 +29,8 @@ refuse it and the name it becomes in the code.
    `Recall` and `Recall.book(appointmentId)`.
 5. *Appointment missed.* The request is "record that this patient did
    not come", made by reception. The rule refuses a record before the
-   appointment time and for an appointment that was checked in. The
-   code name is `Appointment.recordNoShow`.
+   slot has ended and for an appointment that was checked in. The code
+   name is `Appointment.recordNoShow`.
 6. *Patient discharged.* The request is "discharge this patient", made
    by the nurse. The rule refuses a discharge while an observation is
    still waiting. The code name is `Visit.discharge`.

@@ -128,7 +128,9 @@ changes nothing.
 
 A test does not need a database to exercise a use case. The same port
 with a store that keeps its appointments in a collection is enough, and
-it answers with the same aggregates and the same error.
+it answers the same error. `find` answers with the stored object itself,
+not a copy, so a use case that changes an appointment and forgets `save`
+still passes against this store.
 
 ```text
 class InMemoryAppointments implements Appointments

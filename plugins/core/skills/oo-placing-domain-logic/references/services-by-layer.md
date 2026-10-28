@@ -22,10 +22,10 @@ returns, and each section then shows one booking example.
 |Entity|Fields|Own fields, parameters|A decision, a value, or none|Slot.reserve|
 
 The application service holds the ports one use case needs and may know
-repositories, ports and the transaction. The domain service holds no
-field between calls and may know the values and aggregates it is given,
-plus any port it receives through its constructor. The entity method
-holds its own fields and may know only them and its parameters.
+repositories and the transaction. The domain service holds no field
+between calls and may know the values and aggregates it is given, plus
+any port it receives through its constructor. The entity method holds
+its own fields and may know only them and its parameters.
 
 ## The application service
 
