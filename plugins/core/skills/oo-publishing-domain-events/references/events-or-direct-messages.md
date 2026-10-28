@@ -52,12 +52,10 @@ unrelated reactions would repeat all of them when one failed.
 
 ## An event is not the history of transitions
 
-The history that modeling lifecycles, rule 6, keeps inside the aggregate
-answers what happened to one appointment: `AppointmentChange` entries
-with when and why, read by a report long after the change. A domain
-event answers a different question: which other parts must react now,
-after this change commits. The history stays in the aggregate; the event
-is handed to handlers and may arrive more than once.
+An event is not the history that modeling lifecycles, rule 6, keeps
+inside the aggregate: `AppointmentChange` entries record when and why a
+transition happened for a report, while a domain event is handed to
+handlers after the commit and may arrive more than once.
 
 ## A domain event is not a message to another system
 
