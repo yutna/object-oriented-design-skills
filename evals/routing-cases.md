@@ -74,6 +74,9 @@ should the repository offer an updateStatus method -> oo-designing-repositories
 two use cases repeat the same eligibility check -> oo-placing-domain-logic
 should this rule go in a domain service or on the entity -> oo-placing-domain-logic
 a transaction script per request or a domain model for billing -> oo-placing-domain-logic
+a text goes out even when the booking is not saved -> oo-publishing-domain-events
+every new reaction adds another step to the cancel use case -> oo-publishing-domain-events
+billing should react when a visit is completed -> oo-publishing-domain-events
 ```
 
 ## Known misses

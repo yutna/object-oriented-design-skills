@@ -216,6 +216,8 @@ evidence: a measurement, a reproducible bug, or a failing test.
   keeps inner objects behind messages and hands out a read-only view.
 - [oo-speaking-the-domain-language](../oo-speaking-the-domain-language/SKILL.md)
   finds the clinic's words for the rule an aggregate keeps.
+- [oo-publishing-domain-events](../oo-publishing-domain-events/SKILL.md)
+  starts the later step of rule 4 once the change commits.
 
 ## Further reading
 

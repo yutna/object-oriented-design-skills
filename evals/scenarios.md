@@ -362,3 +362,23 @@ domain service named for that activity; the controller and the import
 both calling the same application service, so each rule lives once.
 
 Should reach `oo-placing-domain-logic`.
+
+## 24. Results that wait for the pager
+
+> When a lab result marked abnormal arrives, `ResultIntake.record`
+> saves it, adds it to the patient's chart, pages the on-call clinician
+> and books a follow-up appointment, all inside one transaction. Last
+> week the paging service was down for an hour, and no result could be
+> recorded at all. On other days a page went out and the transaction
+> then rolled back, so clinicians were paged about results that were
+> never saved. What should change?
+
+Must contain: recording the result as one change that records a
+past-tense event, such as an abnormal result received; the page, the
+chart entry and the follow-up each run as their own handler after the
+result commits, each in its own transaction; the event stored with the
+result in one transaction and sent from there afterwards, so no page
+goes out for an unsaved result and none is lost; each handler safe to
+run twice, so a repeated event books no second follow-up.
+
+Should reach `oo-publishing-domain-events`.
