@@ -257,6 +257,12 @@ metadata:
   A class that a fence shares by name with `notation.md` or a shipped
   skill has the same fields and constructor there, or one sentence beside
   the fence says how this example differs.
+- A fence that changes or stores an aggregate says, in one sentence
+  beside it, what is stored, under which identity, where, and in
+  which transaction, or that the fence leaves this out. Each rule a
+  prose sentence claims is kept by a method in a fence, and one word
+  names one concept across the pack: an appointment is a booked slot,
+  a visit is the encounter, and booking is the act.
 - `## Red flags` are places to look, not verdicts. A red flag becomes a
   finding only with evidence: a measurement, a reproducible bug, or a
   failing test.
