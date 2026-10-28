@@ -401,3 +401,22 @@ tool; which parts are core decided by where the clinic differs, with
 the consent tool treated as generic and kept behind a translation.
 
 Should reach `oo-bounding-contexts`.
+
+## 26. Every test starts the web server
+
+> Our booking code lives in classes that extend the web framework's
+> controller base class, and `Appointment` extends the storage
+> library's record class so it can save itself. The automated phone
+> line books by sending a fake web request to reuse that code. Every
+> test starts the web server and a database, and the suite takes forty
+> minutes. A partner now wants to book through an API of its own. How
+> should the code be arranged?
+
+Must contain: dependencies that point inward to a domain free of web and
+storage types, so `Appointment` no longer extends the record class; one
+use-case object per operation that the web controller, the phone line
+and the partner API all call; adapters at the edge for the web, the
+store, the phone line and the partner API, kept humble; the domain and
+the use cases tested with no server and no database.
+
+Should reach `oo-layering-the-system`.
