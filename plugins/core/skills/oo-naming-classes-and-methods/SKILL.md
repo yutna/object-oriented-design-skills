@@ -3,7 +3,7 @@ name: oo-naming-classes-and-methods
 description: Use when choosing what to call a class or method, when names end in Manager, Helper or Util, or when a name no longer says what the code does.
 license: MIT
 metadata:
-  version: 0.10.0
+  version: 0.11.0
   pack: object-oriented-design-skills
 ---
 

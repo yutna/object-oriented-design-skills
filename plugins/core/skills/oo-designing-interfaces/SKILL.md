@@ -3,7 +3,7 @@ name: oo-designing-interfaces
 description: Use when an interface has methods its callers never use, when it copies public members of one type, or when picking interface or abstract base.
 license: MIT
 metadata:
-  version: 0.10.0
+  version: 0.11.0
   pack: object-oriented-design-skills
 ---
 

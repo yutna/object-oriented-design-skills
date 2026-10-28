@@ -3,7 +3,7 @@ name: oo-encapsulating-state-and-behaviour
 description: Use when callers check an object's state to decide for it, when any caller can set it into a broken state, or when a getter leaks a collection.
 license: MIT
 metadata:
-  version: 0.10.0
+  version: 0.11.0
   pack: object-oriented-design-skills
 ---
 
