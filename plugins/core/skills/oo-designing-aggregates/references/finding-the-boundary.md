@@ -53,7 +53,7 @@ every session, and a change to one session saves the whole plan.
 
 ## Split by the rules
 
-Three rules decide the boundary:
+Four rules decide the boundary:
 
 - "A plan never books more sessions than its referral approved." This
   reads the approval and the booked session ids together, so those stay
@@ -66,6 +66,8 @@ Three rules decide the boundary:
   session and the plan's reviews together, but it can be true a moment
   after the attendance commits, so the review arrives from a later step
   (rule 4) rather than in the same transaction.
+- "A goal has no identity of its own and is held only by its plan." No
+  rule reads a goal on its own, so the goal list stays in the plan.
 
 After:
 

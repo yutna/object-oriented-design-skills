@@ -35,8 +35,8 @@ answers a row.
 
 ## A rule that checks one and selects many
 
-Reception may start a consultation only once the appointment's slot is
-near; earlier, the patient waits. The rule is one object, and two
+The clinician may start a consultation only once the appointment's slot
+is near; earlier, the patient waits. The rule is one object, and two
 callers use it: starting a consultation checks one appointment, and a
 list for the reception desk selects every appointment the rule still
 allows.
@@ -58,8 +58,8 @@ value StartableByReception implements AppointmentSpecification
 `AppointmentSpecification` is marked closed: the clinic knows every
 rule, and each implementation handles every member of the set, so a new
 rule adds a case to each of them. `cutoff` is the latest slot start for
-which reception may start a visit now, taken as the current time plus
-the clinic's hour. A caller passes it in each time, so no specification
+which the clinician may start a visit now, taken as the current time
+plus the clinic's hour. A caller passes it in each time, so no specification
 wired in at startup goes stale. `appointment.startsBy(cutoff)` is taken
 to answer that the appointment is `Scheduled` and its slot starts at or
 before `cutoff`, and `cutoff()` hands the same moment to a store that
@@ -91,16 +91,16 @@ once and saves the appointment or raises `ConsultationNotStartable`;
 the two branches never both run. `start()` is the lifecycles skill's
 transition, and it refuses an appointment that is not `Scheduled`.
 Reception checks a patient in as a separate move, and this use case
-starts the consultation. `AppointmentNotFound` from `find` and
-`AppointmentNotStartable` from `start` pass to the caller.
+starts the consultation for the clinician. `AppointmentNotFound` from
+`find` and `AppointmentNotStartable` from `start` pass to the caller.
 `ConsultationNotStartable` means the rule refused this start.
 `StartConsultation.run` opens the transaction and ends it after `save`,
 and the fence leaves those boundaries out. What is stored is the whole
 appointment, in the `Appointments` store, in that transaction, and no
 other aggregate changes.
 
-Many are selected when the reception desk asks which appointments it
-may start now:
+Many are selected when the reception desk asks which appointments the
+clinician may start now:
 
 ```text
 class StartableAppointments
