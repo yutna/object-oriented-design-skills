@@ -14,7 +14,7 @@ Take staff and scheduling. Staff's `LeaveRequests` holds
 `Appointments`, so staff lists scheduling. Scheduling's `SlotOpener`
 holds `Rota`, so scheduling lists staff. Each names the other, and the
 path staff to scheduling to staff is a cycle. A module that appears on
-no such path is a leaf and needs no work.
+no such path is on no cycle and needs no work.
 
 ## Three ways out
 
