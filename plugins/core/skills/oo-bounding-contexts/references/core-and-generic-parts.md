@@ -52,10 +52,12 @@ the work, and the team revises it when the clinic's work changes.
 Sending messages to patients is a common part to move. The core context keeps
 the rule that says when a message must go out and what it must say. It sends the
 message through `Notices`, the port the aggregates skill's reference already
-uses, and the generic context, or the product, answers that port. The move has a
-cost: one more boundary and one more translator or adapter to keep. Do it when
-the generic part changes for its own reasons, such as a new provider or a new
-channel, and leave it in the core when it never varies.
+uses, and the generic context, or the product, answers that port. The core then
+holds one interface and no address book, no delivery schedule and no provider's
+model. The move has a cost: one more boundary and one more translator or
+adapter to keep. Do it when the generic part changes for its own reasons, such
+as a new provider or a new channel, and leave it in the core when it never
+varies.
 
 ## When to merge two contexts back
 
