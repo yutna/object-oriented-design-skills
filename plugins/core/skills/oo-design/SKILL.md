@@ -119,6 +119,8 @@ skills land.
 |Which parts are core, and which can we buy?|[Bounding contexts][contexts]|
 |Which way should the layers depend?|[Layering the system][layering]|
 |A screen or job cannot be tested without its framework|[Layering the system][layering]|
+|Modules depend on each other in a cycle|[Organising modules][modules]|
+|Modular monolith or separate services?|[Organising modules][modules]|
 
 [aggregates]: ../oo-designing-aggregates/SKILL.md
 [assigning]: ../oo-assigning-responsibilities/SKILL.md
@@ -135,6 +137,7 @@ skills land.
 [knows]: ../oo-limiting-what-an-object-knows/SKILL.md
 [layering]: ../oo-layering-the-system/SKILL.md
 [lifecycles]: ../oo-modeling-lifecycles/SKILL.md
+[modules]: ../oo-organising-modules/SKILL.md
 [naming]: ../oo-naming-classes-and-methods/SKILL.md
 [object-or-data]: ../oo-deciding-object-or-data/SKILL.md
 [placing]: ../oo-placing-domain-logic/SKILL.md
