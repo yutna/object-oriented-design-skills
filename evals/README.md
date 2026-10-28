@@ -21,7 +21,7 @@ skill name per routing case. It measures top-1 routing against the
 expected skill and prints each miss with the answer it gave. To rerun
 one case ten times, `--case "<text>"` keeps the cases whose symptom
 contains the text; queue it with
-`node scripts/eval-queue.mjs --add "one routing case" -- node
+`node scripts/eval-queue.mjs --add "one routing case" --
 scripts/eval-route-model.mjs --case "<text>" --runs 10`. A clean run
 does not prove that the skill text helps, that a real session would
 choose the same skill, or that one run would repeat. Measured on Claude
