@@ -18,7 +18,7 @@ metadata:
 
 A clinic's system grows past one model that one team can hold. Reception
 and billing begin with different meanings for an appointment, another
-part speaks of dispensing, and payroll arrives as a product nobody in
+part fills prescriptions, and payroll arrives as a product nobody in
 the clinic wants to build. This skill draws the line between parts that
 keep a model of their own, says how those parts talk and who must be
 asked before a change, places a translator where a part depends on a
