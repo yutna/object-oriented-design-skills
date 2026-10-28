@@ -227,6 +227,9 @@ evidence: a measurement, a reproducible bug, or a failing test.
   the boundary a repository keeps whole.
 - [oo-hiding-implementation](../oo-hiding-implementation/SKILL.md)
   keeps the store's own types and errors from reaching a caller.
+- [oo-taming-persistence](../oo-taming-persistence/SKILL.md) keeps the
+  mapping tool's sessions, identity map and loading in check behind the
+  repository.
 
 ## Further reading
 

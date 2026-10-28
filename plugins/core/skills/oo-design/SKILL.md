@@ -130,6 +130,8 @@ skills land.
 |Modular monolith or separate services?|[Organising modules][modules]|
 |A change to our API breaks the apps that call it|[Crossing system boundaries][boundaries]|
 |How should we version this API or message?|[Crossing system boundaries][boundaries]|
+|The mapping tool shapes our domain classes|[Taming persistence][persistence]|
+|A list runs one query per row|[Taming persistence][persistence]|
 
 [aggregates]: ../oo-designing-aggregates/SKILL.md
 [assigning]: ../oo-assigning-responsibilities/SKILL.md
@@ -150,6 +152,7 @@ skills land.
 [modules]: ../oo-organising-modules/SKILL.md
 [naming]: ../oo-naming-classes-and-methods/SKILL.md
 [object-or-data]: ../oo-deciding-object-or-data/SKILL.md
+[persistence]: ../oo-taming-persistence/SKILL.md
 [placing]: ../oo-placing-domain-logic/SKILL.md
 [polymorphism]: ../oo-replacing-conditionals-with-polymorphism/SKILL.md
 [repositories]: ../oo-designing-repositories/SKILL.md
