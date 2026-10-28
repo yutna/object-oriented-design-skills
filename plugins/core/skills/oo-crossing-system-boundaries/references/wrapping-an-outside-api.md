@@ -15,6 +15,7 @@ health number, used here as a type.
 ```text
 interface RegionalRegister
   + detailsFor(number: HealthNumber): RegisteredDetails?
+    raises RegisterRecordIncomplete, RegisterUnavailable
 
 value RegisteredDetails
   - surname: String
@@ -45,17 +46,19 @@ class RegisterAdapter implements RegionalRegister
 and `dateOfBirth()` answer the fields the clinic reads; the client and
 the record are the provider's types, used only in this adapter.
 `number.text()` is taken to write the health number in the form the
-provider expects. The fence stores nothing.
+provider expects. The fence stores nothing. The adapter turns the
+provider's failures into `RegisterUnavailable`, and this fence leaves
+that translation out because the notation has no way to catch an error.
 
 ## Turning the provider's errors into clinic errors
 
 When `lookup` fails, the provider answers with its own error codes and
 its own error types. The adapter turns each code it understands into a
 clinic error in its place, so no caller outside the adapter names a
-provider code. A code the adapter does not recognise becomes the
-clinic's own register-unavailable error, so an unexpected answer still
-arrives in the clinic's terms. The port declares only clinic errors,
-and every failure a caller can see is one it can handle.
+provider code. A code the adapter does not recognise becomes
+`RegisterUnavailable`, the clinic's own error, so an unexpected answer
+still arrives in the clinic's terms. The port declares only clinic
+errors, and every failure a caller can see is one it can handle.
 
 ## Testing the adapter against the provider's examples
 

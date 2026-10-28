@@ -52,9 +52,10 @@ old version on a schedule.
 - The question is which team's model a boundary separates, and how the
   two teams relate: that is
   [bounding contexts](../oo-bounding-contexts/SKILL.md).
-- The message is a domain event whose handlers all live inside the
-  clinic and no other organisation reads it: that is
+- The question is whether to publish a domain event, whether to record
+  it in the aggregate, or how to deliver it after the commit: that is
   [publishing domain events](../oo-publishing-domain-events/SKILL.md).
+  The stored shape that later code reads stays here, under rule 6.
 
 ## Core rules
 
