@@ -112,10 +112,8 @@ own identity.
 
 ## A handler that changes an aggregate
 
-A handler that changes an aggregate has two safe forms. It stores the
-event's identity in the same transaction as its change, so a repeat
-finds the identity and does nothing; or, like `ReleaseSlot` in the
-Pattern, it makes a change that leaves nothing different when it is
-repeated, so no check is needed. Releasing a slot that is already free
-leaves it free, and booking it again would be a second change, so a
-handler that reserves a slot needs the first form.
+A handler that changes an aggregate stores the event's identity in the
+same transaction as its change, so a repeat finds the identity and does
+nothing; `ReleaseSlot` in the Pattern is this form. The other form
+checks the state of what it changes, and it is enough only when a repeat
+leaves nothing different, whatever happened in between.

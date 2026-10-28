@@ -19,10 +19,13 @@ sends the slot a direct message inside one transaction. That is the
 exception of designing aggregates, rule 4: the appointment is new, and
 a conflict on the slot should refuse the whole change.
 
-Cancelling is complete once the appointment and the slot are stored. The
-letter and the waiting-list offer follow, and each is a handler that
-runs after the commit in a transaction of its own. Neither reaction can
-refuse the cancellation, and a failure in one does not undo it.
+Cancelling is complete once the appointment and its event are stored. The
+letter follows the cancellation, and the slot is released and stored
+later, by a handler of its own. The waiting-list offer reacts to the
+slot's release, not to the cancellation, so a slot is never offered
+while it is still held. Each reaction runs after the commit in a
+transaction of its own, and none can refuse the cancellation; a failure
+in one does not undo it.
 
 A cancellation fee that the reply must state is different. The caller
 cannot finish its work without the number, so the use case asks for it

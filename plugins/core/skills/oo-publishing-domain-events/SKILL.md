@@ -210,11 +210,16 @@ class CancelAppointment
 
 class ReleaseSlot
   - slots: Slots
-  + new(slots: Slots)
+  - handled: HandledEvents
+  + new(slots: Slots, handled: HandledEvents)
   + handle(id: EventId, event: AppointmentCancelled): void
-    slot := slots.find(event.slot())
-    slot.release(event.patient())
-    slots.save(slot)
+    if handled.contains(id) then
+      return
+    else
+      slot := slots.find(event.slot())
+      slot.release(event.patient())
+      slots.save(slot)
+      handled.add(id)
     return
 ```
 
@@ -230,24 +235,31 @@ error, and drops the release of the slot, which `ReleaseSlot` now makes.
 one whole appointment. `Slots` keeps the shape the placing domain logic
 skill gives it: `find(id)` raises `SlotNotFound`, and `save(slot)`
 stores one whole slot. `Slot.release(patientId)` is the notation's,
-which leaves a free slot free.
+unchanged.
 
 What is stored is the cancelled appointment under its `AppointmentId`
 and its event in the outbox, both in the clinic's database, in the
 transaction `run` opens; later, `ReleaseSlot` stores the released slot
-under its `SlotId`, in the handler's own transaction. A relay outside
-this fence hands each stored event, with the `EventId` the outbox gave
-it, to each handler after the commit. `ReleaseSlot` needs no check of
-`id`, because releasing a free slot leaves it free, so a repeated event
-changes nothing: rule 5, by the state of what it changes. The letter
-becomes a second handler of `AppointmentCancelled`, shown in
+under its `SlotId` and the event's identity in `HandledEvents`, both in
+the clinic's database, in the handler's own transaction. `HandledEvents`
+is taken to answer `contains(id)` and to store an identity through
+`add(id)`; it stores the identities of the events this handler has
+handled, in the clinic's database, in the same transaction as the
+released slot. A relay outside this fence hands each stored event, with
+the `EventId` the outbox gave it, to each handler after the commit.
+`ReleaseSlot` checks `id` because the notation's `release` frees the slot
+whoever holds it, so a repeated event after the slot was booked again
+would free the new patient's slot: rule 5, by the identity the outbox
+gave the event. The letter becomes a second handler of
+`AppointmentCancelled`, shown in
 [the outbox reference](references/the-outbox.md).
 
 In the Before, `run` sends `cancel` once and `release` once. In the
 After, `run` sends `cancel` once, and `ReleaseSlot.handle` sends
-`release` once. The constructor sets `events` before `cancel` reads it,
-and every other field arrives from a constructor parameter named for
-it.
+`release` once for the event that first finds its identity. The
+constructor sets `events` before `cancel` reads it, and `handled` before
+`handle` reads it; every other field arrives from a constructor
+parameter named for it.
 
 ## Red flags
 
