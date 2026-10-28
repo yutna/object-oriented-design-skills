@@ -83,6 +83,9 @@ should billing have its own model of a visit or share scheduling's -> oo-boundin
 should the clinic app use hexagonal or clean architecture -> oo-layering-the-system
 our domain layer imports classes from the web layer -> oo-layering-the-system
 the booking screen cannot be tested without starting the UI framework -> oo-layering-the-system
+there is a dependency cycle between the scheduling and billing packages -> oo-organising-modules
+should our packages follow business features or technical kinds -> oo-organising-modules
+should we break the clinic monolith into microservices -> oo-organising-modules
 ```
 
 ## Known misses

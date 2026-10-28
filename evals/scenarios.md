@@ -420,3 +420,22 @@ store, the phone line and the partner API, kept humble; the domain and
 the use cases tested with no server and no database.
 
 Should reach `oo-layering-the-system`.
+
+## 27. Four folders and a tangle
+
+> Our clinic app keeps 400 classes in four folders: `controllers`,
+> `services`, `models` and `utils`. A change to prescriptions touches
+> all four. `models` imports `services` in three places while `services`
+> imports `models` everywhere, so no part can be built or tested alone,
+> and `utils` changes in almost every release. The team wants to split
+> the app into microservices to fix this. What should we do first?
+
+Must contain: modules by business area, such as prescriptions, each
+with a small public interface and the rest internal; the import cycle
+found and broken by moving a class, by an interface the depending
+module owns, or by an event; the much-used `utils` split up or made
+stable; the boundaries checked in the build; a modular monolith before
+any split into services, and a split only for a module that must be
+deployed, scaled or owned apart.
+
+Should reach `oo-organising-modules`.
