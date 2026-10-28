@@ -92,6 +92,12 @@ export class NegativeCases {
   static #RAISES_CONTRACT_FIND =
     '    raises RegisterRecordIncomplete, RegisterUnavailable'
   static #RAISES_CONTRACT_REPLACE = '    raises RegisterUnavailable'
+  static #PACK_SCOPE = 'plugins/core/skills/' +
+    'oo-publishing-domain-events/references/events-or-direct-messages.md'
+  static #PACK_SCOPE_FIND =
+    'outside this skill. A domain event is written'
+  static #PACK_SCOPE_REPLACE =
+    'outside this pack. A domain event is written'
 
   static ALL = Object.freeze([
     new NegativeCase(
@@ -363,6 +369,14 @@ export class NegativeCases {
       'raises: "RegisterAdapter.detailsFor" raises ' +
       '"RegisterRecordIncomplete", which ' +
       '"RegionalRegister.detailsFor" does not declare'),
+    new NegativeCase(
+      'prose rejects an outside-the-pack claim',
+      NegativeCases.#PROSE,
+      new ReplaceText(
+        NegativeCases.#PACK_SCOPE,
+        NegativeCases.#PACK_SCOPE_FIND,
+        NegativeCases.#PACK_SCOPE_REPLACE),
+      'pack scope: say "outside this skill", not "outside this pack"'),
     new NegativeCase(
       'counts rejects a stale label count',
       NegativeCases.#COUNTS,
