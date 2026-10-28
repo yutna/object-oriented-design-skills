@@ -53,7 +53,7 @@ stored under the appointment's id. `AppointmentRecord` is taken to be
 the store's own row for an appointment: its id, slot, patient and
 status as columns. This fence keeps the shape the inverting skill gives
 `ClinicDatabase` and adds the three messages the adapter sends; the
-store's fields and constructor stay outside this pack. The store writes
+store's fields and constructor stay outside this skill. The store writes
 only inside the transaction the adapter's caller opened, so this fence
 leaves the transaction's boundaries out.
 

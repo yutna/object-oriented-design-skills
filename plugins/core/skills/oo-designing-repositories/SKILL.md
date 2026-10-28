@@ -141,7 +141,7 @@ class FinishConsultation
 its rows, `connection.execute(text, ...)` to run one write statement
 once, and the text is a string literal that says what the call asks,
 with the values sent beside it as arguments; the store's own query
-language stays outside this pack. `AppointmentRow` is taken to be the
+language stays outside this skill. `AppointmentRow` is taken to be the
 store's row, not an appointment. `findByClinicianIdAndDate` answers rows
 for one clinician and one day, and `updateStatus` writes one status by
 id, so a caller decides the appointment's next state.
