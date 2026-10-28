@@ -61,10 +61,8 @@ happens to offer.
 Strict layering lets a ring call only the ring directly inside it: an
 adapter calls the application, never the domain. Relaxed layering lets
 any ring call any inner ring, so an adapter may call a use case and,
-where no rule is involved, a domain query. A read that applies no
-business rule may skip the domain and go through a read query that
-returns plain data; that is the one skip worth allowing, because the
-read decides nothing. A change never skips the use case: it loads,
-decides, stores, and sets the transaction. The choice between strict
-and relaxed layering is a judgement, and the read is the only case the
-pack lets past the domain.
+where no rule is involved, a domain query. In this pack, every change
+goes through a use case (rule 2), a read that decides nothing may go to
+a read query instead (rule 6), and no adapter calls a domain object
+directly. A change never skips the use case: it loads, sends the domain
+its commands, stores and sets the transaction.

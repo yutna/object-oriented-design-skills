@@ -41,4 +41,4 @@ are kept humble in the same way. The screen keeps the code that reads
 its widgets and writes its fields; the listener keeps the code that
 reads the message; each sends the decision to an object that a test can
 call without the framework. Presentation patterns are outside this
-pack.
+skill.
