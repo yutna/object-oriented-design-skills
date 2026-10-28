@@ -8,13 +8,15 @@ breaking them.
 
 ## The clinic's contexts
 
-- Scheduling owns slots and appointments. It decides when a clinician
-  can see a patient, and it publishes `AppointmentCompleted` when a
-  visit ends.
+- Scheduling owns slots, appointments and the patient model its bookings
+  refer to. It decides when a clinician can see a patient, publishes the
+  patient's identity and `AppointmentCompleted` when a visit ends.
 - Clinical records owns the patient's chart: the visits, notes and
-  prescriptions that make up the clinic's own record of care.
+  prescriptions that make up the clinic's own record of care. It holds
+  the patient's identity as scheduling publishes it.
 - Billing owns invoices and billable visits. It prices what the clinic
-  did, in billing's own words.
+  did, in billing's own words, and holds the patient's identity as
+  scheduling publishes it.
 - The outside pharmacy's dispensing service owns what happens after a
   prescription leaves the clinic. It is another organisation's system,
   and the clinic does not change its model.
@@ -43,24 +45,32 @@ deliberately does not.
 |---|---|---|---|
 |Scheduling|Clinical records|Conformist|A visit follows its appointment.|
 |Scheduling|Billing|Anti-corruption layer|Billing prices a visit.|
-|Both|Both|Shared kernel|Clinical records and billing share one identity.|
-|Pharmacy|Clinical records|Open host with a published language|One language.|
+|Pharmacy|Clinical records|Conformist|Rule 4's exception, recorded.|
 |Neither|Neither|Separate ways|Scheduling and pharmacy exchange nothing.|
 
 The table calls the outside pharmacy's dispensing service Pharmacy. The
 conformist line rests on a visit happening in the appointment scheduling
-booked, so clinical records takes scheduling's identity and status as
-published. Billing's anti-corruption layer exists because billing prices
-a billable visit, not a booked slot. The shared kernel is the patient
-identity both teams need. The open host is the pharmacy's one dispensing
-interface and one message language, which serve every clinic. Scheduling
-and the pharmacy choose separate ways because a prescription leaves
-clinical records, and scheduling neither knows nor asks what the
-pharmacy dispenses.
+booked, so clinical records takes scheduling's appointment and patient
+identities as published. Billing's anti-corruption layer exists because
+billing prices a billable visit, not a booked slot.
 
-The shared kernel is the one row with no single depended-on side: both
-teams own that small model, and either team's change to it needs the
-other's agreement.
+The patient identity is scheduling's to publish, as the appointment's
+identity is. Clinical records and billing both hold it, and neither owns
+it. The pharmacy publishes one interface and one language for every
+clinic, and clinical records adopts that language as it is: it conforms
+to the published language, and rule 4's exception is recorded in the
+table.
+
+A shared kernel is the one relationship with no honest example among
+these four contexts. Suppose clinical records and billing both needed
+the same short list of visit types and changed it in the same release.
+The two could own the list together, and either team's change to it
+would need the other's agreement, while the rest of each model stayed
+separate. No pair here shares one, so the table has no such row.
+
+Scheduling and the pharmacy choose separate ways because a prescription
+leaves clinical records, and scheduling neither knows nor asks what the
+pharmacy dispenses.
 
 ## How the map changes who must agree
 

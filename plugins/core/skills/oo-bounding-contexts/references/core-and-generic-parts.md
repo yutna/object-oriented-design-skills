@@ -51,8 +51,8 @@ the work, and the team revises it when the clinic's work changes.
 
 Sending messages to patients is a common part to move. The core context
 keeps the rule that says when a message must go out and what it must
-say; it names a port such as `PatientMessages` with `send(message)`, and
-the generic context, or the product, answers it. The core then holds one
+say; it names the port `Notices` with `send(patient, message)`, and the
+generic context, or the product, answers it. The core then holds one
 interface and no address book, no delivery schedule and no provider's
 model. The move has a cost: one more boundary and one more translator or
 adapter to keep. Do it when the generic part changes for its own
