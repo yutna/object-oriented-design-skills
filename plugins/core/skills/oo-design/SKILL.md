@@ -115,11 +115,14 @@ skills land.
 |Domain service, entity method or application service?|[Placing domain logic][placing]|
 |Other parts must react after a change is saved|[Publishing domain events][events]|
 |A message went out for a change that rolled back|[Publishing domain events][events]|
+|Where does one team's model end and another's begin?|[Bounding contexts][contexts]|
+|Which parts are core, and which can we buy?|[Bounding contexts][contexts]|
 
 [aggregates]: ../oo-designing-aggregates/SKILL.md
 [assigning]: ../oo-assigning-responsibilities/SKILL.md
 [composition]: ../oo-choosing-composition-over-inheritance/SKILL.md
 [constructing]: ../oo-constructing-valid-objects/SKILL.md
+[contexts]: ../oo-bounding-contexts/SKILL.md
 [coupling]: ../oo-diagnosing-coupling/SKILL.md
 [domain-language]: ../oo-speaking-the-domain-language/SKILL.md
 [events]: ../oo-publishing-domain-events/SKILL.md

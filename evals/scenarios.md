@@ -382,3 +382,22 @@ goes out for an unsaved result and none is lost; each handler safe to
 run twice, so a repeated event books no second follow-up.
 
 Should reach `oo-publishing-domain-events`.
+
+## 25. Everyone's patient
+
+> Reception, the pharmacy and the research team all use one `Patient`
+> class with 60 fields. Reception needs contact details, the pharmacy
+> needs allergies and a dispensing history, and research needs consent
+> flags and a pseudonymous id. Every release needs all three teams to
+> agree, and last month a research change broke the pharmacy's allergy
+> check. Research also wants to buy an outside consent tool. How should
+> we divide this?
+
+Must contain: a context for each team's meaning of a patient, each with
+its own model and the data it changes, linked by the patient's
+identity; how the contexts relate, written down, with a translation at
+the edge of a context that depends on another's model or on the bought
+tool; which parts are core decided by where the clinic differs, with
+the consent tool treated as generic and kept behind a translation.
+
+Should reach `oo-bounding-contexts`.

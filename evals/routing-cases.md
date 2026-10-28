@@ -77,6 +77,9 @@ a transaction script per request or a domain model for billing -> oo-placing-dom
 a text goes out even when the booking is not saved -> oo-publishing-domain-events
 every new reaction adds another step to the cancel use case -> oo-publishing-domain-events
 billing should react when a visit is completed -> oo-publishing-domain-events
+how should we split the clinic system into bounded contexts -> oo-bounding-contexts
+which parts of the clinic system are worth building ourselves -> oo-bounding-contexts
+should billing have its own model of a visit or share scheduling's -> oo-bounding-contexts
 ```
 
 ## Known misses

@@ -83,6 +83,9 @@ the chosen words honest and consistent.
    different words for different concepts.** If one class says `cancel`,
    no sibling says `revoke` for the same act, and `slot` never also
    means a room. A reader who learns a word once can trust it everywhere.
+   The rule holds inside one model; separately owned contexts may each
+   give one word a meaning of their own, as
+   [bounding contexts](../oo-bounding-contexts/SKILL.md) describes.
 
 5. Judgement. **Match a name's length to how far from its declaration it
    is read.** A two-line local may be short, while a public class or
@@ -177,6 +180,8 @@ evidence: a measurement, a reproducible bug, or a failing test.
   finds the class and the job before its name.
 - [oo-encapsulating-state-and-behaviour](../oo-encapsulating-state-and-behaviour/SKILL.md)
   keeps a command and a query apart, and keeps a collection private.
+- [oo-bounding-contexts](../oo-bounding-contexts/SKILL.md) lets
+  separately owned contexts give one word a meaning of their own.
 
 ## Further reading
 
