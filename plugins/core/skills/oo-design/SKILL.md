@@ -117,6 +117,8 @@ skills land.
 |A message went out for a change that rolled back|[Publishing domain events][events]|
 |Where does one team's model end and another's begin?|[Bounding contexts][contexts]|
 |Which parts are core, and which can we buy?|[Bounding contexts][contexts]|
+|Which way should the layers depend?|[Layering the system][layering]|
+|A screen or job cannot be tested without its framework|[Layering the system][layering]|
 
 [aggregates]: ../oo-designing-aggregates/SKILL.md
 [assigning]: ../oo-assigning-responsibilities/SKILL.md
@@ -131,6 +133,7 @@ skills land.
 [interfaces]: ../oo-designing-interfaces/SKILL.md
 [inverting]: ../oo-inverting-dependencies/SKILL.md
 [knows]: ../oo-limiting-what-an-object-knows/SKILL.md
+[layering]: ../oo-layering-the-system/SKILL.md
 [lifecycles]: ../oo-modeling-lifecycles/SKILL.md
 [naming]: ../oo-naming-classes-and-methods/SKILL.md
 [object-or-data]: ../oo-deciding-object-or-data/SKILL.md

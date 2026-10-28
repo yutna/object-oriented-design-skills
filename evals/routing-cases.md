@@ -80,6 +80,9 @@ billing should react when a visit is completed -> oo-publishing-domain-events
 how should we split the clinic system into bounded contexts -> oo-bounding-contexts
 which parts of the clinic system are worth building ourselves -> oo-bounding-contexts
 should billing have its own model of a visit or share scheduling's -> oo-bounding-contexts
+should the clinic app use hexagonal or clean architecture -> oo-layering-the-system
+our domain layer imports classes from the web layer -> oo-layering-the-system
+the booking screen cannot be tested without starting the UI framework -> oo-layering-the-system
 ```
 
 ## Known misses
