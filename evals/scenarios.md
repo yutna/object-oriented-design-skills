@@ -439,3 +439,23 @@ any split into services, and a split only for a module that must be
 deployed, scaled or owned apart.
 
 Should reach `oo-organising-modules`.
+
+## 28. The insurer renamed a field
+
+> We pass the insurer's eligibility response straight into `Coverage`
+> and store it as it comes. In its third version the insurer renamed
+> `planTier` to `tier`, and for a week every coverage check read an
+> empty tier and charged patients in full. Next month our own bookings
+> API, which two partner surgeries call, needs a field that every
+> booking must carry. How should we handle both?
+
+Must contain: the insurer's service wrapped behind a port in the
+clinic's terms, with one adapter that maps its response into clinic
+values and refuses a response missing a field the clinic relies on,
+instead of reading it as empty; tests of that mapping against the
+insurer's documented examples; the bookings API given its own transfer
+types, and the new field either made optional for the partners'
+existing calls or added in a new version served beside the old one
+until both partners have moved.
+
+Should reach `oo-crossing-system-boundaries`.

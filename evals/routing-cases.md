@@ -86,6 +86,9 @@ the booking screen cannot be tested without starting the UI framework -> oo-laye
 there is a dependency cycle between the scheduling and billing packages -> oo-organising-modules
 should our packages follow business features or technical kinds -> oo-organising-modules
 should we break the clinic monolith into microservices -> oo-organising-modules
+the mobile app breaks whenever we rename a field in the API -> oo-crossing-system-boundaries
+should the partner's message format be mapped to our own types -> oo-crossing-system-boundaries
+how do we version the appointments API without breaking partners -> oo-crossing-system-boundaries
 ```
 
 ## Known misses

@@ -121,9 +121,12 @@ skills land.
 |A screen or job cannot be tested without its framework|[Layering the system][layering]|
 |Modules depend on each other in a cycle|[Organising modules][modules]|
 |Modular monolith or separate services?|[Organising modules][modules]|
+|A change to our API breaks the apps that call it|[Crossing system boundaries][boundaries]|
+|How should we version this API or message?|[Crossing system boundaries][boundaries]|
 
 [aggregates]: ../oo-designing-aggregates/SKILL.md
 [assigning]: ../oo-assigning-responsibilities/SKILL.md
+[boundaries]: ../oo-crossing-system-boundaries/SKILL.md
 [composition]: ../oo-choosing-composition-over-inheritance/SKILL.md
 [constructing]: ../oo-constructing-valid-objects/SKILL.md
 [contexts]: ../oo-bounding-contexts/SKILL.md
