@@ -89,8 +89,8 @@ its form.
    booked slot, while to billing it is a billable visit. Where the two
    meanings share code, each gets its own word, as rule 4 of naming
    classes and methods describes. Where each group's code is already
-   separate, where the line between them runs is a question of context
-   boundaries, outside this skill.
+   separate, [bounding contexts](../oo-bounding-contexts/SKILL.md) draws
+   the line between them.
 
 5. Default. **When the code's word for a thing differs from the staff's,
    change the code to the staff's word in the change that finds the
@@ -194,6 +194,8 @@ evidence: a measurement, a reproducible bug, or a failing test.
   chooses the grammar of a name and keeps one word for one concept.
 - [oo-assigning-responsibilities](../oo-assigning-responsibilities/SKILL.md)
   finds the owner of a concept once the concept has a name.
+- [oo-bounding-contexts](../oo-bounding-contexts/SKILL.md) draws the
+  line between separately owned models.
 
 ## Further reading
 
