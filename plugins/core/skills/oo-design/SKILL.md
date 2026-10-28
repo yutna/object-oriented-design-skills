@@ -38,19 +38,26 @@ missing is not design, and this pack cannot supply it.
 
 ## The design loop
 
-1. Say what the software must do in the domain's words, and find the
-   object that knows what each behaviour needs
+1. Say what the software must do in the domain's words
+   ([speaking the domain language](../oo-speaking-the-domain-language/SKILL.md)),
+   and find the object that knows what each behaviour needs
    ([assigning responsibilities](../oo-assigning-responsibilities/SKILL.md)).
 2. Find the consistency boundary: what must be true together in one
-   transaction.
+   transaction
+   ([designing aggregates](../oo-designing-aggregates/SKILL.md)).
 3. Decide where each rule lives: an entity, a value object, or a domain
-   service.
-4. Design the messages each object answers, and make illegal states
-   impossible to construct.
+   service ([placing domain logic](../oo-placing-domain-logic/SKILL.md)).
+4. Design the messages each object answers
+   ([encapsulating state and behaviour](../oo-encapsulating-state-and-behaviour/SKILL.md)),
+   and make illegal states impossible to construct
+   ([making illegal states impossible](../oo-making-illegal-states-impossible/SKILL.md)).
 5. Invert dependencies so the domain knows nothing of the database or
-   the framework.
+   the framework
+   ([inverting dependencies](../oo-inverting-dependencies/SKILL.md),
+   [layering the system](../oo-layering-the-system/SKILL.md)).
 6. Name things in the domain's words, and comment only what the code
-   cannot say.
+   cannot say
+   ([naming classes and methods](../oo-naming-classes-and-methods/SKILL.md)).
 7. Check the result against the red flags below.
 
 ## How strictly a rule is meant
