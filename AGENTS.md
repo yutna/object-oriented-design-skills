@@ -270,6 +270,11 @@ metadata:
   `../oo-<name>/SKILL.md`. A skill in a language plugin names a core
   skill in backticks and never links it by path, because plugins
   install to different directories.
+- A skill never says a subject is outside this pack when a planned
+  skill covers it. It says "outside this skill", and links the other
+  skill only once that skill has shipped.
+- A port declares every error its implementations raise, and an
+  implementation raises nothing its port does not declare.
 - `## Further reading` links every file in the skill's `references/`.
   References are one level deep. A reference over 100 lines with three
   or more sections starts with a contents list.
