@@ -6,7 +6,7 @@ import { MarkdownDocument } from '../markdown-document.mjs'
 export class PackScopeCheck extends Check {
   // A planned skill covers the subject, so "outside this skill" is the
   // honest wording; "outside this pack" sends the reader away from it.
-  static #PHRASE = /outside (?:this|the) pack/gi
+  static #PHRASE = /\boutside (?:this|the) pack\b/gi
 
   #repository
 

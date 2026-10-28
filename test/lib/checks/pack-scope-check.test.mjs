@@ -81,6 +81,12 @@ test('PackScopeCheck ignores the phrase inside inline code', () => {
   assert.deepEqual(report.lines(), ['ok 1 prose file(s)'])
 })
 
+test('PackScopeCheck ignores "outside this package"', () => {
+  const report = CheckRun.of(
+    'The dependency stays outside this package.')
+  assert.deepEqual(report.lines(), ['ok 1 prose file(s)'])
+})
+
 test('PackScopeCheck fails when it reads no prose file', () => {
   const report = CheckRun.withNoFiles()
   assert.deepEqual(report.lines(), [
