@@ -134,6 +134,8 @@ skills land.
 |A list runs one query per row|[Taming persistence][persistence]|
 |Screens need data shaped unlike the model|[Separating reads from writes][reads]|
 |Read model, projection or event sourcing?|[Separating reads from writes][reads]|
+|MVC, MVP or MVVM for this screen?|[Separating presentation from domain][presentation]|
+|A screen edits domain objects directly|[Separating presentation from domain][presentation]|
 
 [aggregates]: ../oo-designing-aggregates/SKILL.md
 [assigning]: ../oo-assigning-responsibilities/SKILL.md
@@ -157,6 +159,7 @@ skills land.
 [persistence]: ../oo-taming-persistence/SKILL.md
 [placing]: ../oo-placing-domain-logic/SKILL.md
 [polymorphism]: ../oo-replacing-conditionals-with-polymorphism/SKILL.md
+[presentation]: ../oo-separating-presentation-from-domain/SKILL.md
 [reads]: ../oo-separating-reads-from-writes/SKILL.md
 [repositories]: ../oo-designing-repositories/SKILL.md
 [state-and-behaviour]: ../oo-encapsulating-state-and-behaviour/SKILL.md

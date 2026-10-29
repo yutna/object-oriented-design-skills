@@ -95,6 +95,9 @@ the patient's address loads lazily and fails after the request ends -> oo-taming
 the dashboard query joins eight tables and slows down booking -> oo-separating-reads-from-writes
 should we use event sourcing for appointments -> oo-separating-reads-from-writes
 should the clinic dashboard have its own read tables -> oo-separating-reads-from-writes
+should the booking screen use MVP or MVVM -> oo-separating-presentation-from-domain
+the appointment screen changes the domain object as the user types -> oo-separating-presentation-from-domain
+the screen freezes while the slot search runs -> oo-separating-presentation-from-domain
 ```
 
 ## Known misses

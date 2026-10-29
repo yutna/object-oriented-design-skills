@@ -496,3 +496,21 @@ adopted for the system as a whole without a need to rebuild every past
 state.
 
 Should reach `oo-separating-reads-from-writes`.
+
+## 31. The form that saves half an edit
+
+> The edit form for an appointment binds its fields straight to an
+> `Appointment` loaded from the store. A receptionist changed the time,
+> then closed the form without saving, and the half-edited appointment
+> was saved with the next change anyway. The form's handler also checks
+> whether the clinician works that day, and while it looks for another
+> free time the whole screen freezes. How should the form be built?
+
+Must contain: the form's state held as values in a presentation object
+shaped for the screen, not as the domain object; the working-day check
+moved into the domain behind a use case; a view that sends the user's
+intent and redraws from the presentation state; the search for a free
+time run off the user-interface thread, with its result handed back to
+it.
+
+Should reach `oo-separating-presentation-from-domain`.
