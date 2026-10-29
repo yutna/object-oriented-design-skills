@@ -42,11 +42,6 @@ running whatever tests exist.
   tests. The static call remains in the new object, where a test can
   replace the whole object instead of the call.
 
-A constructor that starts a thread uses the same first edit: take the
-object that does the work as a parameter and let the composition root
-build it. The edit still moves no logic, and the constructor still
-refuses to start without its collaborator.
-
 If an edit begins to rename a method, move a branch or change a return
 value, stop. That is logic moving, and rule 2 does not allow it until a
 test covers the class. Put the tempting cleanup in a note and return to
