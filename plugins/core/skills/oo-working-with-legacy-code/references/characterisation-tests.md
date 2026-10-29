@@ -52,18 +52,18 @@ changes: a reader can no longer tell which edit changed the pinned
 answer, and the fix has no test of its own.
 
 Rule 1 puts the fix in a separate change after the record exists. That
-later change starts from a test that states the answer the clinic
-wants, sees it fail, and then edits the code. The characterisation
-test that recorded the old answer is renamed or removed when the new
-test takes over the same behaviour.
+later change states the answer the clinic wants, and the
+characterisation test that recorded the old answer is renamed or
+removed when a test for the new answer takes over the same behaviour.
 
 ## How many are enough
 
-One input for each path the change could alter is enough. Count the
-paths from the planned edit: a branch the new value reaches, a boundary
-the new rule reads, an empty collection the new step must survive.
-Three or four inputs often cover a small change. A large route through
-old code needs more, and a route the change never reaches needs none.
+One input for each path the change could alter is a practical count.
+Count the paths from the planned edit: a branch the new value reaches,
+a boundary the new rule reads, an empty collection the new step must
+survive. Three or four inputs often cover a small change. A large route
+through old code needs more, and a route the change never reaches needs
+none.
 
 More inputs than that add cost to every later edit without making the
 pin stronger. The test suite for old code is a temporary guard, not a
