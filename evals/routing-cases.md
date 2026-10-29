@@ -116,6 +116,9 @@ how do we undo earlier steps when the last step of a transfer fails -> oo-making
 what belongs in a log line and what in a metric -> oo-designing-what-to-record
 we cannot tell from the logs why a reminder was never sent -> oo-designing-what-to-record
 do we need an audit trail for staff edits -> oo-designing-what-to-record
+is this a god class -> oo-recognising-antipatterns
+the code is full of lava flow nobody dares delete -> oo-recognising-antipatterns
+which of these code smells should we fix first -> oo-recognising-antipatterns
 ```
 
 ## Known misses
