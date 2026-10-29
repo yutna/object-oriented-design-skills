@@ -41,8 +41,8 @@ first, one at a time behind passing tests.
   responsibilities for a class that does too much.
 - A smell has no evidence behind it yet, such as a long class that
   nobody changes: leave it and look again when a change reaches it.
-- The question is the steps of a safe refactoring: that is outside this
-  skill.
+- The question is the steps of a safe refactoring: that is
+  [refactoring toward object design](../oo-refactoring-toward-object-design/SKILL.md).
 - The question is whether one pattern pays its way: that is choosing a
   pattern.
 
@@ -86,8 +86,8 @@ first, one at a time behind passing tests.
    class that no request touches costs nothing until one does.
 
 6. Rule. **Change one antipattern at a time, in steps that each leave the
-   tests passing.** The steps of a safe refactoring are outside this
-   skill.
+   tests passing.** The steps of a safe refactoring are in
+   [refactoring toward object design](../oo-refactoring-toward-object-design/SKILL.md).
 
 ## Pattern
 
@@ -176,6 +176,8 @@ evidence: a measurement, a reproducible bug, or a failing test.
   one decision in one module once the tie is named.
 - [oo-limiting-what-an-object-knows](../oo-limiting-what-an-object-knows/SKILL.md)
   removes a middle man that only forwards.
+- [oo-refactoring-toward-object-design](../oo-refactoring-toward-object-design/SKILL.md)
+  takes each change in small steps that keep the tests passing.
 
 ## Further reading
 

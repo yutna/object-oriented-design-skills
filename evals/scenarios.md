@@ -680,3 +680,21 @@ and method removed, with the test checking what callers can see or what
 is sent through a port.
 
 Should reach `oo-designing-for-testability`.
+
+## 41. The restructuring that never merged
+
+> A developer spent three weeks restructuring `ImmunisationSchedule`.
+> Its six-hundred-line method became eleven classes, with a strategy for
+> each vaccine, and half of the tests were rewritten in the same branch.
+> Two bugs got in that no test caught, and the branch can no longer be
+> merged. Next time, how should a restructuring like this go?
+
+Must contain: structure changed in steps that each keep the tests
+passing, with behaviour changes made as separate steps; the tests in
+place and passing before the first step, with what they check left
+unchanged during it; small named moves, such as extracting a method or
+moving a method, with the tests run after each; a strategy added only
+for vaccines whose rules have shown that they differ; a step that
+breaks a test undone, not fixed forward.
+
+Should reach `oo-refactoring-toward-object-design`.
