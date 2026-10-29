@@ -154,6 +154,8 @@ skills land.
 |Mock, stub or fake for this collaborator?|[Testing object-oriented code][testing]|
 |Tests depend on the time or random values|[Designing for testability][testability]|
 |Code is made public only so tests can reach it|[Designing for testability][testability]|
+|How do we restructure this code safely?|[Refactoring toward object design][refactoring]|
+|A refactoring grew too big to finish|[Refactoring toward object design][refactoring]|
 
 [aggregates]: ../oo-designing-aggregates/SKILL.md
 [antipatterns]: ../oo-recognising-antipatterns/SKILL.md
@@ -184,6 +186,7 @@ skills land.
 [presentation]: ../oo-separating-presentation-from-domain/SKILL.md
 [reads]: ../oo-separating-reads-from-writes/SKILL.md
 [records]: ../oo-designing-what-to-record/SKILL.md
+[refactoring]: ../oo-refactoring-toward-object-design/SKILL.md
 [reliable]: ../oo-making-work-reliable/SKILL.md
 [repositories]: ../oo-designing-repositories/SKILL.md
 [shared-state]: ../oo-managing-shared-state/SKILL.md
