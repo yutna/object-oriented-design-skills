@@ -101,6 +101,9 @@ the screen freezes while the slot search runs -> oo-separating-presentation-from
 which design pattern fits our referral approval steps -> oo-choosing-a-pattern
 we added design patterns everywhere before we needed them -> oo-choosing-a-pattern
 is a design pattern worth it for three reminder channels -> oo-choosing-a-pattern
+should these one-method strategy classes just be functions -> oo-patterns-the-language-provides
+do we still need the visitor now that the language has sealed types -> oo-patterns-the-language-provides
+should we write our own iterator for the waiting list -> oo-patterns-the-language-provides
 ```
 
 ## Known misses

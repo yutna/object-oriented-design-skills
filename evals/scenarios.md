@@ -534,3 +534,22 @@ message; the referral's acceptance in one place a reader can find; a
 pattern brought back when its force appears, with the evidence named.
 
 Should reach `oo-choosing-a-pattern`.
+
+## 33. Fifteen classes with one method
+
+> Our billing code has fifteen `TariffRule` classes, each with one
+> method, `apply(fee)`, and no fields; a `TariffRuleFactory` with a
+> switch on a tariff code; a `VisitVisitor` for the three kinds of
+> visit; and a hand-written `InvoiceLineIterator`. Our language has
+> function values, sealed types with exhaustive matching and built-in
+> iteration. Which of these do we still need?
+
+Must contain: the one-method rules with no state turned into function
+values, unless the staff name a rule and discuss it as such; the
+factory's switch replaced by a lookup of functions or by wiring at the
+composition root; the visitor replaced by a closed set of visit kinds
+with exhaustive matching, if new operations arrive more often than new
+kinds; the iterator replaced by the language's iteration over a
+read-only view; the module's idiom followed.
+
+Should reach `oo-patterns-the-language-provides`.
