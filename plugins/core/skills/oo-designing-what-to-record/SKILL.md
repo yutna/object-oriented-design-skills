@@ -158,13 +158,13 @@ class RecordAllergy
 ```
 
 `Patient`, its `record` command and the `AllergyAlreadyRecorded` error
-are the encapsulating state and behaviour skill's, in its guarding
-collections reference; `patient.fullName()` is taken to answer the
-patient's name. `Patients` is taken to be the patients' repository,
-whose `find` answers the stored patient and whose `save` stores it.
-`Log.write` is taken to write one log line. `Clock` is the inverting
-dependencies skill's port, whose `now()` answers the current time. The
-audit entry is an audit record, not a domain event.
+are the encapsulating state and behaviour skill's, in its
+`guarding-collections.md` reference; `patient.fullName()` is taken to
+answer the patient's name. `Patients` is taken to be the patients'
+repository, whose `find` answers the stored patient and whose `save`
+stores it. `Log.write` is taken to write one log line. `Clock` is the
+inverting dependencies skill's port, whose `now()` answers the current
+time. The audit entry is an audit record, not a domain event.
 
 The Before's log line has no place in the After: a failure is logged
 once at the edge, as rule 4 says, and the audit entry answers the
