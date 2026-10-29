@@ -137,8 +137,8 @@ class ChargeDeposit
     return payments.charge(patient, amount)
 ```
 
-`Payments` declares `CardDeclined` on `charge`; no implementation of it
-appears in the fence. `Money` is taken to be an amount of money,
+`Payments` declares `CardDeclined` on `charge`; no class implements
+`Payments` in the fence. `Money` is taken to be an amount of money,
 `PatientId` a patient's identity and `PaymentId` the provider's identity
 for one charge. Each run sends one charge and stores nothing.
 
