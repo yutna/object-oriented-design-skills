@@ -38,17 +38,17 @@ that reads the second error learns nothing the first did not say.
 
 ## Check before the first change
 
-A cancellation method assigned `Cancelled` to the appointment and then
-looked for the slot it had to release. The slot was gone, which broke an
-invariant, and the method failed after the assignment. The appointment
-stayed cancelled with its slot still held, and no caller could see the
-half-change. The same method now looks for the slot first and raises
-before it assigns the status, so a refused call leaves the appointment
+A method that approves a clinician's leave set the request to approved
+and only then checked whether the days overlapped a day the clinician is
+on call. When they did, it raised `LeaveOverlapsOnCall`, but the request
+it refused already said approved, and the next reader of that object saw
+leave that nobody had granted. The same method now checks the overlap
+first and raises before it changes anything, so a refused request stays
 exactly as it was.
 
 ## Declared errors in some languages
 
-Where a language makes its callers declare every error that may pass,
-the refusals are declared on the signatures that answer them, and a
-fault is declared on the way up or carried in one general error at the
-edge, which is that language's way of passing it on undeclared.
+A language that makes callers declare some errors carries the refusals
+as the errors it checks, so each caller handles or declares them, and
+the faults as the errors it does not check, so they pass up to the
+handler at the edge with no caller above declaring them.
