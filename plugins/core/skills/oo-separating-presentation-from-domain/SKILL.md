@@ -33,7 +33,7 @@ user-interface thread.
 - A background task updates a screen, or a slow call freezes it.
 - Screen logic, such as which buttons are enabled, can only be reached
   by a test that runs the toolkit.
-- A view and a model each update the other.
+- A view and a domain object each update the other.
 
 ## When not to use
 
@@ -122,12 +122,18 @@ class BookingScreen extends FrameworkScreen
       bookButton.disable()
     else
       bookButton.enable()
+  + onPatientChosen(patient: PatientId): void
+    chosenPatient := patient
+    if chosenSlot = null then
+      bookButton.disable()
+    else
+      bookButton.enable()
 ```
 
 `bookButton.disable()` and `bookButton.enable()` are taken to disable
 and enable the toolkit's button once each. The constructor sets
-`bookButton`, `chosenSlot` and `chosenPatient` before `onSlotChosen`
-reads one, and each call sets `chosenSlot` once and sends `disable` or
+`bookButton`, `chosenSlot` and `chosenPatient` before the handlers read
+one, and each handler sets one choice once and sends `disable` or
 `enable` once. The fence changes and stores nothing in the domain.
 
 After, `BookingPresenter` holds the choices and the rule, and tells a
@@ -187,7 +193,7 @@ evidence: a measurement, a reproducible bug, or a failing test.
 - A form whose fields are bound straight to a domain object.
 - Screen logic, such as which buttons are enabled, that a test can reach
   only by running the toolkit.
-- A view and a model that update each other.
+- A view and a domain object that update each other.
 - A slow call made on the user-interface thread.
 - A widget written from a background thread.
 

@@ -62,15 +62,16 @@ model without the toolkit.
 |Pattern|State held by|Widgets set by|A test drives|
 |---|---|---|---|
 |Model-view-controller|the model|the view|the model and controller|
-|Web model-view-controller|the model|the view, per request|the controller and model|
+|Web model-view-controller|the request and store|the view|controller and model|
 |Presenter, passive view|the presenter|the presenter|the presenter|
 |Presenter, supervising|the presenter|the view and presenter|the presenter|
 |Presentation model|the presentation model|the view|the presentation model|
 |View model|the view model|the toolkit binding|the view model|
 
-Read the table one column at a time. The first says what a test must
-build. The second says what a test without the toolkit cannot see. The
-last says what the test can still check.
+Read the table one column at a time. The second says what a test builds
+to hold the screen's state. The third says who writes the widgets, and
+whatever the view or the toolkit binding writes is what a test without
+the toolkit cannot reach. The last says what the test can still check.
 
 ## Telling which one a codebase uses
 

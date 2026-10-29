@@ -28,11 +28,12 @@ domain.
 
 ## A slow lookup off the user-interface thread
 
-A receptionist types a health number, and the screen looks the patient
-up in the regional patient register. The lookup goes behind a port
-declared beside the domain, and one adapter at the edge keeps the
-register's client and maps its reply into the clinic's values. The call
-may take a second or more.
+A receptionist types a health number, and the screen needs the patient
+looked up in the regional patient register. The presenter asks a use case
+for the lookup, and the use case sends the register's port, declared
+beside the domain. One adapter at the edge keeps the register's client
+and maps its reply into the clinic's values. The call may take a second
+or more.
 
 Start the lookup on a background task, not on the user-interface thread,
 and give it a reply that returns to that thread. The reply updates the
