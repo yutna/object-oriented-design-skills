@@ -107,6 +107,9 @@ should we write our own iterator for the waiting list -> oo-patterns-the-languag
 the patient lookup returns null when nobody matches -> oo-designing-failure-behaviour
 callers keep forgetting to check for null -> oo-designing-failure-behaviour
 should refusing a booking raise an exception or return an error code -> oo-designing-failure-behaviour
+two threads update the same slot cache and lose changes -> oo-managing-shared-state
+the appointment counter is wrong under load -> oo-managing-shared-state
+should this cache use a lock or a single owner thread -> oo-managing-shared-state
 ```
 
 ## Known misses

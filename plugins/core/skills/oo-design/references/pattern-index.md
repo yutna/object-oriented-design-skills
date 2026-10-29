@@ -9,6 +9,9 @@ patterns by problem.
 
 - **Abstract Factory.** Answers several products that vary together
   and must come from one family. [Choosing a pattern][choosing-pattern]
+- **Active Object.** Answers changing state that callers must not wait
+  on, with one owner that takes requests from a queue and answers each
+  later. [Managing shared state][shared-state]
 - **Active Record.** Answers a module whose classes mirror its tables
   and hold few rules, with an object that is one table row and saves
   itself. [Taming persistence][persistence]
@@ -134,6 +137,9 @@ patterns by problem.
   between the view and the model, holding the screen's state and
   telling the view what to show.
   [Separating presentation from domain][presentation]
+- **Monitor Object.** Answers changing state that several threads use,
+  by holding one lock for the whole of each method, so a check and its
+  change are one step. [Managing shared state][shared-state]
 - **Null Object.** Answers a collaborator that may be absent where
   doing nothing is right for every caller, with an object of the same
   type that does nothing. [Designing failure behaviour][failure]
@@ -257,5 +263,6 @@ patterns by problem.
 [presentation]: ../../oo-separating-presentation-from-domain/SKILL.md
 [reads]: ../../oo-separating-reads-from-writes/SKILL.md
 [repositories]: ../../oo-designing-repositories/SKILL.md
+[shared-state]: ../../oo-managing-shared-state/SKILL.md
 [state-and-behaviour]: ../../oo-encapsulating-state-and-behaviour/SKILL.md
 [values]: ../../oo-modeling-values-and-entities/SKILL.md
