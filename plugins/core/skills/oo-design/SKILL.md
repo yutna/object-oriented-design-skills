@@ -156,6 +156,8 @@ skills land.
 |Code is made public only so tests can reach it|[Designing for testability][testability]|
 |How do we restructure this code safely?|[Refactoring toward object design][refactoring]|
 |A refactoring grew too big to finish|[Refactoring toward object design][refactoring]|
+|We must change code that has no tests|[Working with legacy code][legacy]|
+|Replace an old system piece by piece|[Working with legacy code][legacy]|
 
 [aggregates]: ../oo-designing-aggregates/SKILL.md
 [antipatterns]: ../oo-recognising-antipatterns/SKILL.md
@@ -176,6 +178,7 @@ skills land.
 [knows]: ../oo-limiting-what-an-object-knows/SKILL.md
 [language-patterns]: ../oo-patterns-the-language-provides/SKILL.md
 [layering]: ../oo-layering-the-system/SKILL.md
+[legacy]: ../oo-working-with-legacy-code/SKILL.md
 [lifecycles]: ../oo-modeling-lifecycles/SKILL.md
 [modules]: ../oo-organising-modules/SKILL.md
 [naming]: ../oo-naming-classes-and-methods/SKILL.md

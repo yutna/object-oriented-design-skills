@@ -229,6 +229,9 @@ patterns by problem.
 - **State.** Answers behaviour that changes with an object's own
   status, with one object per status that the object replaces as its
   status changes. [Replacing conditionals with polymorphism][polymorphism]
+- **Strangler Fig.** Answers an old part too large to replace at once,
+  by routing its callers to new code one capability at a time until
+  nothing reaches the old part. [Working with legacy code][legacy]
 - **Strategy.** Answers a policy chosen from outside and fixed for
   the object's life, arriving through the constructor.
   [Replacing conditionals with polymorphism][polymorphism]
@@ -278,6 +281,7 @@ patterns by problem.
 [inverting]: ../../oo-inverting-dependencies/SKILL.md
 [language-patterns]: ../../oo-patterns-the-language-provides/SKILL.md
 [layering]: ../../oo-layering-the-system/SKILL.md
+[legacy]: ../../oo-working-with-legacy-code/SKILL.md
 [object-or-data]: ../../oo-deciding-object-or-data/SKILL.md
 [persistence]: ../../oo-taming-persistence/SKILL.md
 [placing]: ../../oo-placing-domain-logic/SKILL.md
