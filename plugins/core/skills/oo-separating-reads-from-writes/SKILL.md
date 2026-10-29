@@ -176,9 +176,10 @@ which adds a row, is left out of the fence.
 
 `TodayBoardProjection`'s constructor sets `rows` and `handled` before
 `handle` reads them, and `TodayBoard`'s sets `rows` before `rowsFor`
-reads it. For a new event, `handle` sends `markCancelled` once and `add`
-once; for a repeated one, it returns before either. No other step runs
-twice, and the fence uses only keywords the notation defines.
+reads it. For a new event, `handle` sends `markCancelled` once, marking
+the appointment's one row, and sends `add` once; for a repeated one, it
+returns before either. No other step runs twice, and the fence uses only
+keywords the notation defines.
 
 ## Red flags
 
