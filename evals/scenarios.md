@@ -478,3 +478,21 @@ where a use case needs one; every load inside the transaction its use
 case opens, so nothing loads after the session has closed.
 
 Should reach `oo-taming-persistence`.
+
+## 30. The site board that slows down booking
+
+> Managers watch a board with each site's waiting time, today's
+> no-shows and the number of patients each clinician has seen. Every
+> refresh runs a query that joins eight tables, and at nine in the
+> morning booking slows down while the board refreshes. One developer
+> wants to move the whole clinic system to event sourcing to fix it.
+> What should we do?
+
+Must contain: the board served from read rows shaped for it, kept by
+projections that handle the domain events after each change commits
+and that can be rebuilt; the board saying when it was last brought up
+to date; booking unchanged on the write side; event sourcing not
+adopted for the system as a whole without a need to rebuild every past
+state.
+
+Should reach `oo-separating-reads-from-writes`.
