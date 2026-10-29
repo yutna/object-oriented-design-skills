@@ -168,12 +168,14 @@ class ReorderRun
     return
 ```
 
-`ControlledItemCheck` is new and written test first, with a stand-in
-for `OrderApprovals` and one controlled and one ordinary item (rule 4).
-`ReorderRun` gains one field, one constructor parameter and the one
-call whose answer guards the send, while the rule about controlled
-items lives in `ControlledItemCheck` (rules 2 and 4); the one place that
-builds `ReorderRun` at start-up now also builds the check.
+`ControlledItemCheck` is new and written test first: the test builds it
+with a stand-in for `OrderApprovals` and one controlled and one ordinary
+item, sends `mayOrder` for both, and checks that the controlled item
+follows the stand-in's answer while the ordinary item answers `true`
+(rule 4). `ReorderRun` gains one field, one constructor parameter and
+the one call whose answer guards the send, while the rule about
+controlled items lives in `ControlledItemCheck` (rules 2 and 4); the one
+place that builds `ReorderRun` at start-up now also builds the check.
 `StockItem.isControlled()` is taken to answer whether the item is a
 controlled drug, and `Supplier.order` is taken to send one order to the
 supplier. `true` is the Boolean value. A controlled item without
