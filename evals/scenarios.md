@@ -514,3 +514,23 @@ time run off the user-interface thread, with its result handed back to
 it.
 
 Should reach `oo-separating-presentation-from-domain`.
+
+## 32. Ready for anything
+
+> The referral module has one kind of referral and one reaction when a
+> referral is accepted. A new developer added an
+> `AbstractReferralFactory`, a `ReferralVisitor` with one visit method
+> and an event bus with one listener, "so it is ready to grow". Reviews
+> now take twice as long, and nobody can find where a referral is
+> accepted. What should we keep?
+
+Must contain: each pattern checked for a force present in the code now
+or named by the business with a reason, such as a second kind of
+referral or a second reaction; the factory and the visitor removed
+while their force is absent, in favour of direct construction and a
+method on the referral; the bus kept only if its one reaction runs
+after the acceptance commits, and otherwise replaced by a direct
+message; the referral's acceptance in one place a reader can find; a
+pattern brought back when its force appears, with the evidence named.
+
+Should reach `oo-choosing-a-pattern`.

@@ -98,6 +98,9 @@ should the clinic dashboard have its own read tables -> oo-separating-reads-from
 should the booking screen use MVP or MVVM -> oo-separating-presentation-from-domain
 the appointment screen changes the domain object as the user types -> oo-separating-presentation-from-domain
 the screen freezes while the slot search runs -> oo-separating-presentation-from-domain
+which design pattern fits our referral approval steps -> oo-choosing-a-pattern
+we added design patterns everywhere before we needed them -> oo-choosing-a-pattern
+is a design pattern worth it for three reminder channels -> oo-choosing-a-pattern
 ```
 
 ## Known misses
