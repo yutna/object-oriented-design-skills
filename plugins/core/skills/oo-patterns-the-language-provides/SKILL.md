@@ -63,8 +63,8 @@ replace them where it does the same job.
    the strategy.** There is no interface to implement and no class per
    case, and the call sits where the choice is made. The exception is a
    strategy with several operations, state of its own, or a name in the
-   clinic's language, such as a reminder rule the staff discuss: it
-   keeps its interface and classes, as replacing conditionals with
+   clinic's language, such as the late-cancellation rule the staff discuss:
+   it keeps its interface and classes, as replacing conditionals with
    polymorphism, rule 5, chooses a strategy.
 
 2. Default. **Pass a function value for an action that is only ever run
@@ -169,7 +169,10 @@ each held one operation, no state and no name the staff use. Both
 fences store nothing, and each version answers one due time per call:
 the Before sends one `dueAt` to its timing, and the After calls its
 function value once inside `ReminderPlanner.dueAt`. Every method
-answers a value and raises nothing.
+answers a value and raises nothing. A second method,
+`twoHoursBefore()`, passes
+`(appointment: Appointment) -> appointment.startsAt().minusHours(2)`
+the same way and is left out of the fence.
 
 ## Red flags
 

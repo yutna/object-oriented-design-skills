@@ -26,9 +26,11 @@ match over the set, naming every kind in its own branch. Exhaustive
 matching means the compiler checks that each match handles every case.
 
 When the clinic adds an imaging room, the compiler lists every match
-that lacks the new kind, and no match can pass unnoticed. With one
-visitor per operation, the new kind instead edits every visitor class.
-That is the cost on the other side.
+that lacks the new kind, and no match can pass unnoticed. A visitor
+pays the same when a kind is added: every visitor gains a method for
+it, and the new kind needs an accept method of its own. What the closed
+set saves is that machinery: no visitor interface and no accept
+methods, while the compiler lists every match to change.
 
 The balance is the side that grows. If new operations arrive more
 often, the closed set keeps each change to one match, as replacing
