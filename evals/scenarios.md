@@ -698,3 +698,23 @@ for vaccines whose rules have shown that they differ; a step that
 breaks a test undone, not fixed forward.
 
 Should reach `oo-refactoring-toward-object-design`.
+
+## 42. The booking module nobody dares change
+
+> Our booking module was written years ago and has no tests.
+> `BookingEngine`'s constructor reads a settings file and opens a
+> database connection, so no test can even build it, and it sends text
+> messages through a static `SmsSender.send` call. This week we must add
+> one rule: patients under sixteen cannot be booked into evening slots.
+> Later the clinic wants booking moved to a new service. Where do we
+> start?
+
+Must contain: what the code around the change does today pinned with
+characterisation tests first; the file, the connection and the static
+send broken with small mechanical edits, so a test can build the class;
+the new rule written test first as new code the old class calls, not
+edited into its long methods; booking moved to the new service one
+capability at a time behind the interface its callers already use, with
+each old piece deleted once nothing reaches it.
+
+Should reach `oo-working-with-legacy-code`.

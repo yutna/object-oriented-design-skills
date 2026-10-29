@@ -1,0 +1,52 @@
+# Breaking dependencies
+
+Rule 2 allows three small edits that remove what stands between a test
+and a class. None of them moves logic, and none of them introduces a
+subclass only so a test can replace a method. Take one edit at a time,
+and check each one by reading the change, building the program and
+running whatever tests exist.
+
+- **Passing a collaborator into the constructor.** This fits when the
+  constructor builds a concrete collaborator that a test cannot
+  control, such as `StatementRun` building its own `StatementPrinter`.
+  Add a constructor parameter for the collaborator, assign it to the
+  field and delete the construction inside. Read the diff to confirm
+  that the body keeps every line it had and only the source of the
+  collaborator changed; build the program and run the tests. Where
+  every caller cannot change in the same edit, keep the old way of
+  building the class in one named factory that passes the real
+  collaborator. That factory holds a break that already existed in one
+  place, adds none, and goes once every caller builds the class at the
+  composition root, as inverting dependencies, rule 3, asks. It is a
+  place to stand for a time, not a pattern to copy.
+
+- **Pulling an interface the class owns out of a concrete class.** This
+  fits when the class sends messages to a concrete class whose answers
+  a test cannot choose, such as `FeeSchedule` asking a `FeeTable` for
+  rates. Declare an interface for only the messages the class sends,
+  let the concrete class implement it without changing its body, and
+  hold the interface in the field. Read the interface and list every
+  message against the class's sends; build the program and run the
+  tests. No method body moves, and the concrete class keeps its
+  behaviour.
+
+- **Moving a static call behind a method of an object the class
+  receives.** This fits when code reaches an outside system through a
+  static call, such as `DoseLabel` sending a line to
+  `LabelPrinter.print(line)`. Add a small object whose method sends the
+  same static call once, pass that object into the constructor, and
+  replace the static call in the class with a message to the new
+  object. Read the change to confirm that the argument and the answer
+  are untouched; build the program and run the tests. The static call
+  remains in the new object, where a test can replace the whole object
+  instead of the call.
+
+A constructor that starts a thread uses the same first edit: take the
+object that does the work as a parameter and let the composition root
+build it. The edit still moves no logic, and the constructor still
+refuses to start without its collaborator.
+
+If an edit begins to rename a method, move a branch or change a return
+value, stop. That is logic moving, and rule 2 does not allow it until a
+test covers the class. Put the tempting cleanup in a note and return to
+the dependency.

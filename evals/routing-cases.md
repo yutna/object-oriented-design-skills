@@ -128,6 +128,9 @@ we made a method public only so a test can reach it -> oo-designing-for-testabil
 how do I refactor this long function without breaking it -> oo-refactoring-toward-object-design
 this refactoring branch has grown for three weeks and still is not done -> oo-refactoring-toward-object-design
 refactor these if-else branches toward a strategy in small steps -> oo-refactoring-toward-object-design
+nobody wrote tests for this old class and we must change it this week -> oo-working-with-legacy-code
+how do we get this old class into a test harness -> oo-working-with-legacy-code
+swap out the old billing system gradually while it keeps running -> oo-working-with-legacy-code
 ```
 
 ## Known misses
