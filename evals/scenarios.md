@@ -661,3 +661,22 @@ port the clinic owns, with a stand-in for that port in these tests and
 the adapter checked against the real pharmacy service on its own.
 
 Should reach `oo-testing-object-oriented-code`.
+
+## 40. The fee test that fails at month end
+
+> `LateCancellationFee` decides whether a patient pays for cancelling
+> late. It asks the machine for the current time, picks one patient in
+> twenty at random for a feedback survey, and works out the fee in the
+> same method that writes the charge to the billing system. To test it, a
+> developer added a public `lastFeeForTesting` field and a
+> `setNowForTesting` method. The test still fails at the end of each
+> month and on the day the clocks change. How should the class change?
+
+Must contain: the current time and the random draw received through
+collaborators passed in, or the time passed in as a value, so a test
+chooses them; the fee decision split from writing the charge, so a test
+checks it with plain values and no billing system; the test-only field
+and method removed, with the test checking what callers can see or what
+is sent through a port.
+
+Should reach `oo-designing-for-testability`.
