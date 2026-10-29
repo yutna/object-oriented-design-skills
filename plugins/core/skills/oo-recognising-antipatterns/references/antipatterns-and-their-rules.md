@@ -60,8 +60,8 @@ the rule it breaks.
 - **Shotgun surgery.** One business change edits many modules, and the
   next change to the same rule edits the same scattered files again. The
   evidence is the change history: one request touching the same set of
-  files each time it comes. [Diagnosing
-  coupling](../../oo-diagnosing-coupling/SKILL.md), rule 1, names the
-  tie first, and then [hiding
+  files each time it comes. It breaks [diagnosing
+  coupling](../../oo-diagnosing-coupling/SKILL.md), rule 1, which names
+  the tie first, and then [hiding
   implementation](../../oo-hiding-implementation/SKILL.md), rule 5,
-  keeps the decision in one module.
+  which keeps the decision in one module.
