@@ -12,8 +12,7 @@ export class NumberWords {
   static toNumber(text) {
     const word = String(text).trim().toLowerCase()
     if (/^\d+$/.test(word)) {
-      const number = Number(word)
-      return number <= 99 ? number : null
+      return Number(word)
     }
     const ones = NumberWords.#ONES.indexOf(word)
     if (ones !== -1) return ones

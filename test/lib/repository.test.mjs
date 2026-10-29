@@ -98,7 +98,7 @@ test('a valid repository with one plugin and two skills', async () => {
   }
 })
 
-test('Repository.at on this repository finds the thirty-two skills and the package version', async () => {
+test('Repository.at on this repository finds the thirty-three skills and the package version', async () => {
   const root = process.cwd()
   const repository = Repository.at(root)
   const packageData = JSON.parse(
@@ -116,6 +116,7 @@ test('Repository.at on this repository finds the thirty-two skills and the packa
       'oo-deciding-object-or-data',
       'oo-design',
       'oo-designing-aggregates',
+      'oo-designing-failure-behaviour',
       'oo-designing-interfaces',
       'oo-designing-repositories',
       'oo-diagnosing-coupling',

@@ -140,6 +140,8 @@ skills land.
 |A pattern was added before its problem|[Choosing a pattern][choosing-pattern]|
 |These pattern classes could be a function|[Patterns the language provides][language-patterns]|
 |Visitor, or a closed set with matching?|[Patterns the language provides][language-patterns]|
+|A method returns null when it finds nothing|[Designing failure behaviour][failure]|
+|Refusals come back as codes callers ignore|[Designing failure behaviour][failure]|
 
 [aggregates]: ../oo-designing-aggregates/SKILL.md
 [assigning]: ../oo-assigning-responsibilities/SKILL.md
@@ -151,6 +153,7 @@ skills land.
 [coupling]: ../oo-diagnosing-coupling/SKILL.md
 [domain-language]: ../oo-speaking-the-domain-language/SKILL.md
 [events]: ../oo-publishing-domain-events/SKILL.md
+[failure]: ../oo-designing-failure-behaviour/SKILL.md
 [hiding]: ../oo-hiding-implementation/SKILL.md
 [illegal-states]: ../oo-making-illegal-states-impossible/SKILL.md
 [interfaces]: ../oo-designing-interfaces/SKILL.md
