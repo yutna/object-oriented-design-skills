@@ -113,6 +113,9 @@ should this cache use a lock or a single owner thread -> oo-managing-shared-stat
 the insurer call sometimes hangs and blocks booking -> oo-making-work-reliable
 a retry charged the patient's deposit twice -> oo-making-work-reliable
 how do we undo earlier steps when the last step of a transfer fails -> oo-making-work-reliable
+what belongs in a log line and what in a metric -> oo-designing-what-to-record
+we cannot tell from the logs why a reminder was never sent -> oo-designing-what-to-record
+do we need an audit trail for staff edits -> oo-designing-what-to-record
 ```
 
 ## Known misses

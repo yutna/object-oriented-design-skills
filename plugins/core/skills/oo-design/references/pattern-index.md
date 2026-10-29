@@ -68,6 +68,10 @@ patterns by problem.
 - **Context Map.** Answers which context depends on which and how
   they agree, written down for every pair that talks.
   [Bounding contexts][contexts]
+- **Correlation Identifier.** Answers one incident followed across
+  threads and systems, with one identity given to a request where it
+  enters and carried on every record and message it causes.
+  [Designing what to record][records]
 - **Data Mapper.** Answers a class whose fields or rules part from
   its table, with a separate object that moves data between the
   domain and the store. [Taming persistence][persistence]
@@ -270,6 +274,7 @@ patterns by problem.
 [polymorphism]: ../../oo-replacing-conditionals-with-polymorphism/SKILL.md
 [presentation]: ../../oo-separating-presentation-from-domain/SKILL.md
 [reads]: ../../oo-separating-reads-from-writes/SKILL.md
+[records]: ../../oo-designing-what-to-record/SKILL.md
 [reliable]: ../../oo-making-work-reliable/SKILL.md
 [repositories]: ../../oo-designing-repositories/SKILL.md
 [shared-state]: ../../oo-managing-shared-state/SKILL.md
