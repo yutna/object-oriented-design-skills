@@ -3,7 +3,7 @@ name: oo-designing-repositories
 description: Use when designing a repository, when it grows a find method per screen, returns rows instead of objects, or updates single fields.
 license: MIT
 metadata:
-  version: 0.11.0
+  version: 0.12.0
   pack: object-oriented-design-skills
 ---
 

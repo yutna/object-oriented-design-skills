@@ -3,7 +3,7 @@ name: oo-limiting-what-an-object-knows
 description: Use when code reaches through a chain of objects, when a method works mostly on another object's data, or when a class only forwards calls.
 license: MIT
 metadata:
-  version: 0.11.0
+  version: 0.12.0
   pack: object-oriented-design-skills
 ---
 

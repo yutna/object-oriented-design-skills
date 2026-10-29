@@ -3,7 +3,7 @@ name: oo-separating-presentation-from-domain
 description: Use when choosing MVC, MVP or MVVM for a screen, when a screen binds straight to domain objects, or when a background task updates a screen.
 license: MIT
 metadata:
-  version: 0.11.0
+  version: 0.12.0
   pack: object-oriented-design-skills
 ---
 
