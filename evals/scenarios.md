@@ -459,3 +459,22 @@ existing calls or added in a new version served beside the old one
 until both partners have moved.
 
 Should reach `oo-crossing-system-boundaries`.
+
+## 29. The statement run that takes forty minutes
+
+> Our monthly statement run lists every invoice with the patient's
+> name and address. It now takes forty minutes, and the store's log
+> shows a separate query for each invoice's patient. Last week we moved
+> the run to a background job, and it now fails with "session closed"
+> when it reads a patient's address from an invoice. Our classes are
+> mapped by an ORM, and `Invoice` holds a `Patient` that the ORM loads
+> on first use. What should change?
+
+Must contain: the statement lines read by one query that returns the
+rows the run prints, not by touching each invoice's patient; a test
+that counts the queries the run makes; the invoice holding the
+patient's identity, with a patient loaded through its own repository
+where a use case needs one; every load inside the transaction its use
+case opens, so nothing loads after the session has closed.
+
+Should reach `oo-taming-persistence`.

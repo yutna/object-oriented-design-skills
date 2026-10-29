@@ -89,6 +89,9 @@ should we break the clinic monolith into microservices -> oo-organising-modules
 the mobile app breaks whenever we rename a field in the API -> oo-crossing-system-boundaries
 should the partner's message format be mapped to our own types -> oo-crossing-system-boundaries
 how do we version the appointments API without breaking partners -> oo-crossing-system-boundaries
+the appointment list runs one query per patient name -> oo-taming-persistence
+should billing use active record or a data mapper -> oo-taming-persistence
+the patient's address loads lazily and fails after the request ends -> oo-taming-persistence
 ```
 
 ## Known misses
