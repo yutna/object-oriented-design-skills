@@ -142,8 +142,7 @@ class EmailChannel implements ReminderChannel
   - cancelLine: String
   + new(mailer: Mailer, cancelLine: String)
   + send(reminder: Reminder): void
-    lined := reminder.withFooter(cancelLine)
-    mailer.send(reminder.patient(), lined.text())
+    mailer.send(reminder.patient(), reminder.withFooter(cancelLine).text())
     return
 
 class TextChannel implements ReminderChannel
@@ -151,8 +150,7 @@ class TextChannel implements ReminderChannel
   - cancelLine: String
   + new(gateway: TextGateway, cancelLine: String)
   + send(reminder: Reminder): void
-    lined := reminder.withFooter(cancelLine)
-    gateway.sendText(reminder.patient(), lined.text())
+    gateway.sendText(reminder.patient(), reminder.withFooter(cancelLine).text())
     return
 ```
 
