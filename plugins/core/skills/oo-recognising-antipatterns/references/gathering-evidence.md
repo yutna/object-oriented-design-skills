@@ -10,8 +10,8 @@ often clear another.
   change together, confirms a god class when one class is edited by most
   requests, for unrelated reasons, and confirms shotgun surgery when one
   request touches the same scattered files each time. It clears an
-  anemic model when no outside code reads the class's fields and no
-  request changes a rule away from it.
+  anemic model when no outside code reads the class's fields to decide
+  with them, so no rule is left without a home.
 - **Who calls what.** The call graph confirms lava flow when nothing
   calls the code, and clears it when a caller still sends the message.
   It confirms a poltergeist when one caller creates the class for a
@@ -31,12 +31,12 @@ The reminders module came back from a review with a list of smells:
 `ReminderJob`, a class that builds a reminder, chooses its words, sends
 it and retries; `PatientFile`, a long class of fields with getters and
 setters; `ReminderClock`, read from a static field in fourteen classes;
-`ReminderDispatch`, created inside `ReminderJob.run` to send one
-message; `FaxSender`, kept after the clinic stopped sending faxes; a
-reminders module and a patient-file module that import each other; and
-`FormatterFactory`, which now builds one formatter. The review also
-listed the copy changes, which keep editing `ReminderText`, `PatientFile`
-and the gateway adapter together.
+`ReminderDispatch`, created inside `ReminderJob.run` to send one message
+to `TextFormatter`; `FaxSender`, kept after the clinic stopped sending
+faxes; a reminders module and a patient-file module that import each
+other; and `FormatterFactory`, which now builds one formatter. The
+review also listed the copy changes, which keep editing `ReminderText`,
+`PatientFile` and the gateway adapter together.
 
 The change history covered sixty requests in a year. `ReminderJob`
 changed in forty-one of them, for four unrelated reasons. That is a
