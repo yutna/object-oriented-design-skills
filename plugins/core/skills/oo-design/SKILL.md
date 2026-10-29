@@ -132,6 +132,8 @@ skills land.
 |How should we version this API or message?|[Crossing system boundaries][boundaries]|
 |The mapping tool shapes our domain classes|[Taming persistence][persistence]|
 |A list runs one query per row|[Taming persistence][persistence]|
+|Screens need data shaped unlike the model|[Separating reads from writes][reads]|
+|Read model, projection or event sourcing?|[Separating reads from writes][reads]|
 
 [aggregates]: ../oo-designing-aggregates/SKILL.md
 [assigning]: ../oo-assigning-responsibilities/SKILL.md
@@ -155,6 +157,7 @@ skills land.
 [persistence]: ../oo-taming-persistence/SKILL.md
 [placing]: ../oo-placing-domain-logic/SKILL.md
 [polymorphism]: ../oo-replacing-conditionals-with-polymorphism/SKILL.md
+[reads]: ../oo-separating-reads-from-writes/SKILL.md
 [repositories]: ../oo-designing-repositories/SKILL.md
 [state-and-behaviour]: ../oo-encapsulating-state-and-behaviour/SKILL.md
 [substitutability]: ../oo-honouring-substitutability/SKILL.md

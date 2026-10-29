@@ -46,7 +46,8 @@ reaction's outcome to finish, the skill keeps a direct message instead.
 - The caller needs the reaction's outcome to finish, such as booking,
   which reserves the slot before the appointment exists.
 - The question is storing an aggregate as the list of its past events,
-  or building read-only views from events.
+  or building read-only views from events: that is
+  [separating reads from writes](../oo-separating-reads-from-writes/SKILL.md).
 - The question is the shape or the version of a message that another
   organisation's system reads.
 
@@ -302,6 +303,9 @@ evidence: a measurement, a reproducible bug, or a failing test.
   the history of transitions inside the aggregate.
 - [oo-speaking-the-domain-language](../oo-speaking-the-domain-language/SKILL.md)
   finds the staff's words for the event.
+- [oo-separating-reads-from-writes](../oo-separating-reads-from-writes/SKILL.md)
+  keeps read models current from events and decides when event sourcing
+  earns its cost.
 
 ## Further reading
 
