@@ -68,8 +68,8 @@ day it runs.
    identifier, a setting read from the environment.** These are outside
    systems like any other, as
    [inverting dependencies](../oo-inverting-dependencies/SKILL.md) rules
-   1 and 2 ask. A test then passes a stand-in that answers the value it
-   chose.
+   1 and 2 ask. A test then passes a stand-in, an object it puts in a
+   real collaborator's place, that answers the value it chose.
 
 3. Default. **Pass the value, not its source, to a domain object that
    needs only the value: an aggregate's method takes the time as a
@@ -106,11 +106,11 @@ day it runs.
    would otherwise need a slow or uncontrollable collaborator in an
    object that takes plain values and answers plain values, and keep the
    code that touches the collaborator so small that it needs no test of
-   its own.** This is the humble object that
-   [layering the system](../oo-layering-the-system/SKILL.md) rule 4
-   asks of each edge, used inside any class. The exception is code with
-   nothing to decide, such as a method that passes a value straight to
-   its port.
+   its own.** A humble object keeps only the code that needs the hard
+   edge and sends the rest inward; this is the humble object that
+   [layering the system](../oo-layering-the-system/SKILL.md) rule 4 asks
+   of each edge, used inside any class. The exception is code with
+   nothing to decide, such as a method that passes a value to its port.
 
 7. Judgement. **Add a seam for a test only where the collaborator is
    slow, has effects or gives answers the test cannot choose, and use a
