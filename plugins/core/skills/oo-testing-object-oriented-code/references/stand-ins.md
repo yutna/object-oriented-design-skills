@@ -5,9 +5,9 @@ test hands a collaborator's place to. The five kinds differ in what the
 test gives them and what it reads back from them afterwards.
 
 - **Dummy.** The test hands it nothing and reads nothing back; its only
-  job is to fill a parameter the test never uses. A test of a use case
-  that sends no notice passes a dummy for the notices port, so the
-  constructor receives every collaborator it asks for.
+  job is to fill a parameter the test never uses. A test of a refused
+  booking, on which the use case sends no notice, passes a dummy for the
+  notices port, so the constructor still receives every collaborator.
 - **Stub.** The test hands it one answer it chose, and reads nothing
   back. A test of a reminder rule gives the clock port a stub that
   answers a fixed time, so the rule fires when the test intends.
@@ -16,9 +16,9 @@ test gives them and what it reads back from them afterwards.
   the notices port and checks which patient it was asked to tell.
 - **Mock.** The test hands it the commands it expects before the act,
   and reads nothing back; the mock fails the test itself at the moment
-  a different command arrives. A test of a use case tells a mock
-  repository that one `add` should arrive, and the mock fails the test
-  when it does not.
+  a different command arrives. A test of the freed-time step tells a
+  mock for the notices port to expect one `send` for the patient, and
+  the mock fails the test when it does not arrive.
 - **Fake.** The test hands it the data it works on and reads through it
   as a caller would. A repository fake keeps the aggregates in memory,
   so a use case can add and find one without a database.
