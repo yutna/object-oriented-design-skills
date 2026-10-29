@@ -572,20 +572,20 @@ edge rather than caught and ignored in every controller.
 
 Should reach `oo-designing-failure-behaviour`.
 
-## 35. The waiting-room board that drifts
+## 35. Two samples with one label
 
-> The waiting-room board shows how many patients are waiting. A
-> `WaitingCount` object holds a number that each check-in thread reads,
-> adds one to and writes back, and each call-in thread lowers the same
-> way; by lunchtime the board is off by three or four. A background job
-> also rebuilds the map of today's rooms in place while requests read
-> it. What should change?
+> Lab samples sometimes leave with the same label number. A
+> `LabelSequence` object holds the next number, which each printing
+> thread reads, adds one to and writes back. A background job also
+> rebuilds the list of interpreters available today in place while
+> requests read it, and a request sometimes finds the list empty.
+> What should change?
 
-Must contain: the count read and changed in one step that no other
-thread can split, by one owner or under one lock held for the whole
-change; the rooms built as a new immutable value and put in place
-whole, not rebuilt in place while read; a written note of which thread
-or lock guards each shared field.
+Must contain: the next number read and changed in one step that no
+other thread can split, by one owner or under one lock held for the
+whole change; the interpreters' list built as a new immutable value
+and put in place whole, not rebuilt in place while read; a written
+note of which thread or lock guards each shared field.
 
 Should reach `oo-managing-shared-state`.
 
