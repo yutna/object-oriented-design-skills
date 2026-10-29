@@ -2,6 +2,7 @@ import { relative, sep } from 'node:path'
 
 import { Check } from '../check.mjs'
 import { RepoError } from '../errors.mjs'
+import { PatternName } from './pattern-name.mjs'
 
 export class PatternIndexCheck extends Check {
   static #INDEX_PATH =
@@ -87,8 +88,8 @@ export class PatternIndexCheck extends Check {
           path !== PatternIndexCheck.#INDEX_PATH
       })
     for (const item of items) {
-      const pattern = this.#patternFor(item.name)
-      if (files.some((file) => pattern.test(file.text))) continue
+      const pattern = new PatternName(item.name)
+      if (files.some((file) => pattern.foundIn(file.text))) continue
       // Any Markdown text names a pattern, a code fence included.
       this.#error(
         report,
@@ -149,19 +150,6 @@ export class PatternIndexCheck extends Check {
       if (target !== undefined && targets.has(target)) return true
     }
     return false
-  }
-
-  #patternFor(name) {
-    const escaped = [...name].map((character) => {
-      if (character === ' ' || character === '-') return '[ -]'
-      return character.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-    }).join('')
-    const variants = [escaped, `${escaped}s`, `${escaped}es`]
-    if (name.toLowerCase().endsWith('y')) {
-      variants.push(`${escaped.slice(0, -1)}ies`)
-    }
-    // Whole words only, and case does not decide whether the pack names it.
-    return new RegExp(`\\b(?:${variants.join('|')})\\b`, 'iu')
   }
 
   #error(report, item, message) {
