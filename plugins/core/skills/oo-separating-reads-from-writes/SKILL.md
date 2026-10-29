@@ -130,6 +130,7 @@ class TodayBoard
     return database.appointmentsJoined(date)
 ```
 
+`ClinicDatabase` is the inverting dependencies skill's type.
 `database.appointmentsJoined(date)` is taken to run one query joining
 appointments, patients, clinicians and rooms on every read, against the
 tables booking writes.
@@ -167,11 +168,11 @@ board. The projection records only what the event states, that this
 appointment was cancelled, and never marks its slot free, because that
 skill's `ReleaseSlot` frees the slot later, in its own transaction. The
 projection holds its own `HandledEvents`, so it and `ReleaseSlot` never
-share one. What is stored is one row marked
-cancelled and the event's identity, in the read tables of the clinic's
-database, in the projection's own transaction after the cancellation
-commits. The handler for the event that booking records, which adds a
-row, is left out of the fence.
+share one. What is stored is one row marked cancelled and the event's
+identity, in the read tables of the clinic's database, in the
+projection's own transaction after the cancellation commits. The handler
+for the event that booking records, which adds a row, is left out of the
+fence.
 
 `TodayBoardProjection`'s constructor sets `rows` and `handled` before
 `handle` reads them, and `TodayBoard`'s sets `rows` before `rowsFor`
