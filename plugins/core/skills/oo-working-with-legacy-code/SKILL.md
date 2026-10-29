@@ -30,8 +30,8 @@ only where the task needs it.
 
 - A class or routine must change and nothing tests the area the change
   touches.
-- A constructor reads a file or opens a connection, so a test cannot
-  build the class.
+- A constructor does work a test cannot repeat, so a test cannot build
+  the class.
 - Code reaches an outside system through a static call, and a test has
   no place to put a stand-in.
 - A new rule belongs in the middle of a long method that no test covers.
