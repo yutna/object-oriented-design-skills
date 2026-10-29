@@ -22,14 +22,14 @@ running whatever tests exist.
 
 - **Pulling an interface the class owns out of a concrete class.** This
   fits when the class sends messages to a concrete class whose answers
-  a test cannot choose, such as `FeeSchedule` asking a `FeeTable` for
-  rates. Declare an interface for only the messages the class sends,
-  let the concrete class implement it without changing its body, and
-  hold the interface in a field the constructor sets, with the named
-  factory of the first edit where callers cannot all change. Read the
-  interface and list every message against the class's sends; build the
-  program and run the tests. No method body moves, and the concrete
-  class keeps its behaviour.
+  a test cannot choose, such as `PermitIssuer` asking a
+  `CarParkRegister` for free spaces. Declare an interface for only the
+  messages the class sends, let the concrete class implement it without
+  changing its body, and hold the interface in a field the constructor
+  sets, with the named factory of the first edit where callers cannot
+  all change. Read the interface and list every message against the
+  class's sends; build the program and run the tests. No method body
+  moves, and the concrete class keeps its behaviour.
 
 - **Moving a static call behind a method of an object the class
   receives.** This fits when code reaches an outside system through a
@@ -42,7 +42,6 @@ running whatever tests exist.
   tests. The static call remains in the new object, where a test can
   replace the whole object instead of the call.
 
-If an edit begins to rename a method, move a branch or change a return
-value, stop. That is logic moving, and rule 2 does not allow it until a
-test covers the class. Put the tempting cleanup in a note and return to
-the dependency.
+If an edit begins to move a branch or change a return value, stop. That
+is logic moving, and rule 2 does not allow it until a test covers the
+class. Put the tempting cleanup in a note and return to the dependency.

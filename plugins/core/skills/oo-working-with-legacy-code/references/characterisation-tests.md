@@ -71,8 +71,8 @@ complete specification.
 
 ## Renaming or replacing them later
 
-A characterisation test is named for the old routine and the input it
-pins, such as "a quiet month answers one empty summary line". Once
+A characterisation test is named for the input it pins and the answer
+it records, such as "a quiet month answers one empty summary line". Once
 tests written in the clinic's words cover the same behaviour, the
 characterisation test has done its work. Rename it to the rule it now
 guards, or delete it if a better test checks the same answer.
