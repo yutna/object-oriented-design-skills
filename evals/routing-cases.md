@@ -122,6 +122,9 @@ which of these code smells should we fix first -> oo-recognising-antipatterns
 every small cleanup turns half our unit tests red -> oo-testing-object-oriented-code
 is it fine to mock the http client library in our tests -> oo-testing-object-oriented-code
 what should each unit test be called -> oo-testing-object-oriented-code
+how do I test code that picks a random number -> oo-designing-for-testability
+our tests pass or fail depending on what day they run -> oo-designing-for-testability
+we made a method public only so a test can reach it -> oo-designing-for-testability
 ```
 
 ## Known misses

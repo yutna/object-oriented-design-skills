@@ -152,6 +152,8 @@ skills land.
 |Which antipattern should we fix first?|[Recognising antipatterns][antipatterns]|
 |Tests break although behaviour did not change|[Testing object-oriented code][testing]|
 |Mock, stub or fake for this collaborator?|[Testing object-oriented code][testing]|
+|Tests depend on the time or random values|[Designing for testability][testability]|
+|Code is made public only so tests can reach it|[Designing for testability][testability]|
 
 [aggregates]: ../oo-designing-aggregates/SKILL.md
 [antipatterns]: ../oo-recognising-antipatterns/SKILL.md
@@ -187,6 +189,7 @@ skills land.
 [shared-state]: ../oo-managing-shared-state/SKILL.md
 [state-and-behaviour]: ../oo-encapsulating-state-and-behaviour/SKILL.md
 [substitutability]: ../oo-honouring-substitutability/SKILL.md
+[testability]: ../oo-designing-for-testability/SKILL.md
 [testing]: ../oo-testing-object-oriented-code/SKILL.md
 [values]: ../oo-modeling-values-and-entities/SKILL.md
 [what-varies]: ../oo-encapsulating-what-varies/SKILL.md
