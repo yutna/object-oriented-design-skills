@@ -277,8 +277,9 @@ metadata:
   implementation raises nothing its port does not declare.
 - A pattern a skill names has an item in
   `oo-design/references/pattern-index.md`. `npm run validate:patterns`
-  checks that every index item is named in the pack and that every
-  catalogue item has an index item; the reviewer checks the rest.
+  checks that every index item is named in the pack, that every
+  catalogue item has an index item, and that every name of its
+  vocabulary the pack uses has one; the reviewer checks the rest.
 - `## Further reading` links every file in the skill's `references/`.
   References are one level deep. A reference over 100 lines with three
   or more sections starts with a contents list.

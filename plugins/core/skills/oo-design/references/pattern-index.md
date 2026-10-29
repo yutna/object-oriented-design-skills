@@ -132,6 +132,10 @@ patterns by problem.
 - **Memento.** Answers an object's state captured and restored
   without exposing its fields to the capturer.
   [Choosing a pattern][choosing-pattern]
+- **Message Bus.** Answers systems that exchange messages through one
+  shared channel and one message format they all use, so none connects
+  to each of the others; a domain object never holds one.
+  [Publishing domain events][events]
 - **Message Translator.** Answers a partner's encounter becoming
   the clinic's visit. [Choosing a pattern][choosing-pattern]
 - **Model-view-controller.** Answers a screen split into a model, a
@@ -140,6 +144,9 @@ patterns by problem.
 - **Model-view-presenter.** Answers a screen with a presenter
   between the view and the model, holding the screen's state and
   telling the view what to show.
+  [Separating presentation from domain][presentation]
+- **Model-view-viewmodel.** Answers a screen whose view binds to a view
+  model that the toolkit keeps in step with it.
   [Separating presentation from domain][presentation]
 - **Monitor Object.** Answers changing state that several threads use,
   by holding one lock for the whole of each method, so a check and its

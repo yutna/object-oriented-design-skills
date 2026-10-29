@@ -18,6 +18,8 @@ export class NegativeCases {
     'plugins/core/skills/oo-design/references/pattern-index.md'
   static #MEMENTO_FIND = '- **Memento.**'
   static #MEMENTO_REPLACE = '- **Mementos kept.**'
+  static #BULKHEAD_FIND = '- **Bulkhead.**'
+  static #BULKHEAD_REPLACE = '- **Bulkhead pool.**'
   static #README = 'evals/README.md'
   static #ROUTING = 'evals/routing-cases.md'
   static #SCENARIOS = 'evals/scenarios.md'
@@ -430,6 +432,14 @@ export class NegativeCases {
         NegativeCases.#PATTERN_INDEX,
         NegativeCases.#MEMENTO_FIND,
         NegativeCases.#MEMENTO_REPLACE),
-      'pattern index: "Memento" from the catalogue has no entry')
+      'pattern index: "Memento" from the catalogue has no entry'),
+    new NegativeCase(
+      'patterns reject a used name with no index entry',
+      NegativeCases.#PATTERNS,
+      new ReplaceText(
+        NegativeCases.#PATTERN_INDEX,
+        NegativeCases.#BULKHEAD_FIND,
+        NegativeCases.#BULKHEAD_REPLACE),
+      'pattern index: "Bulkhead" is named in the pack but has no entry')
   ])
 }
