@@ -85,8 +85,9 @@ Never take an issue from `Backlog` or one without a milestone.
    every criterion from the issue, tick it, and put the evidence beside
    it. Evidence is a command with the last lines of its output, a file
    path, or a link to a CI run.
-6. Mark the pull request ready with `gh pr ready`. That finishes the
-   issue.
+6. Mark the pull request ready with `gh pr ready`, then confirm that
+   `git ls-remote origin` shows your last commit on the branch. That
+   finishes the issue.
 
 Do not merge. Do not close milestones, edit issue bodies, or change any
 label except `blocked`. Do not push to `main`. Commits are signed by
@@ -283,6 +284,8 @@ metadata:
 - `## Further reading` links every file in the skill's `references/`.
   References are one level deep. A reference over 100 lines with three
   or more sections starts with a contents list.
+- A reference adds no rule its `SKILL.md` lacks, and says nothing about
+  a shipped class or method beyond what that class's fence shows.
 - `SKILL.md` stays under about 500 lines.
 
 The index skill `oo-design` has its own shape, given in its issue.
