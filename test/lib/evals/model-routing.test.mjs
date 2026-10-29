@@ -497,6 +497,9 @@ test('--dry-run prints one command per case and calls nothing', async () => {
       /^claude -p --model claude-haiku-5-5 --setting-sources "" /)
     assert.match(
       lines[0],
+      / --setting-sources "" --strict-mcp-config /)
+    assert.match(
+      lines[0],
       / --plugin-dir \S+ --tools Skill --max-turns 1 /)
     assert.match(
       lines[0],
