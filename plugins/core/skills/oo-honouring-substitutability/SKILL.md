@@ -1,6 +1,6 @@
 ---
 name: oo-honouring-substitutability
-description: Use when a subclass breaks what its parent promises, when callers check which subtype they hold, or when deciding if a class may be extended.
+description: Use when a subclass throws or breaks its parent's promise, when callers check which subtype they hold, or when deciding if a class may be extended.
 license: MIT
 metadata:
   version: 0.12.0
