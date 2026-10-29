@@ -9,9 +9,9 @@ through a port, and each port is answered by a stand-in in the test.
 - **The current time.** The port is `Clock`, with `now(): DateTime`,
   the shape the inverting dependencies reference gives it. The test's
   stand-in answers the moment the test chose. A clinic example is
-  `SendVisitReminders`, which holds a `Clock`; it sends `clock.now()` to
-  `ReminderWindow` as a `DateTime`, and the window decides from that
-  value whether a visit is close enough for a reminder.
+  `CheckInstrumentTrays`, which holds a `Clock`; it passes the answer of
+  `clock.now()` to `TrayExpiry` as a `DateTime`, and the expiry decides
+  from that value whether a sterilised tray is past its shelf life.
 - **A random draw.** The port is `RoomDraws`, with
   `nextRoom(): RoomId`. The test's stand-in answers the room it chose,
   so the test knows where a walk-in lands. `WalkInDesk` holds the port
@@ -22,14 +22,14 @@ through a port, and each port is answered by a stand-in in the test.
   chose, so the test can find the visit it queued. `WalkInQueue` holds
   the port and gives each queued visit the number it receives.
 - **A setting read from the environment.** The port is
-  `ClinicSettings`, with `reminderLead(): Duration`. The test's
-  stand-in answers the lead it chose, such as one day.
-  `SendVisitReminders` holds the port and passes the lead to
-  `ReminderWindow` as a value, so the test knows which visits are due.
+  `ClinicSettings`, with `trayShelfLife(): Duration`. The test's
+  stand-in answers the shelf life it chose, such as seven days.
+  `CheckInstrumentTrays` holds the port and passes the shelf life to
+  `TrayExpiry` as a value, so the test knows which trays have expired.
 
 A domain object that needs only a value should receive the value.
-`ReminderWindow.isDue(visit, now, lead)` takes the time and the lead as
-parameters, and
+`TrayExpiry.hasExpired(tray, now, shelfLife)` takes the time and the
+shelf life as parameters, and
 [modeling lifecycles](../../oo-modeling-lifecycles/SKILL.md) rule 5
 gives the same shape to `recordNoShow(now)`. The use-case object asks
 the port once and passes the answer on. The exception is an object that

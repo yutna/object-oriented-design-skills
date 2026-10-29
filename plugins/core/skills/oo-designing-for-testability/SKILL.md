@@ -137,8 +137,8 @@ day it runs.
 
 Before, `OpenTreatmentCourse` draws a course number with a static call
 inside `run`. `CourseNumber.random()` is a static method taken to draw a
-new random number on each call, so no test can know the number `run`
-answers or find the course it stored (rules 2 and 5).
+new random number on each call, so a test cannot choose the number `run`
+answers, nor get the same one on a second run (rules 2 and 5).
 
 Before:
 
