@@ -1,9 +1,9 @@
 # Toward and away from a pattern
 
 Rule 5 gives a pattern two directions. This reference walks one clinic
-object toward one object per status, and folds a strategy with one
-implementation back into its caller. Each walk lists its moves in order,
-and the tests run after every move.
+object toward one object per status, and turns a strategy with one
+implementation back into a direct construction. Each walk lists its
+moves in order, and the tests run after every move.
 
 ## Toward one object per status
 
@@ -51,15 +51,13 @@ named, and no change that keeps coming back.
 The moves, in order, are:
 
 1. Run the tests of `CancellationDesk` and see them pass.
-2. Move the body of `StandardCancellation.feeFor` into a method
-   `feeFor` on `CancellationDesk`, and let the desk answer it directly;
-   run the tests.
-3. Delete the constructor parameter and the field that held the policy,
-   and update the place that built `StandardCancellation`; run the
+2. Change the type of the desk's field and constructor parameter from
+   `CancellationPolicy` to `StandardCancellation`; the composition root
+   still builds one `StandardCancellation` and passes it in; run the
    tests.
-4. Delete `CancellationPolicy` and `StandardCancellation`; run the
-   tests.
+3. Delete `CancellationPolicy` and the `implements` on
+   `StandardCancellation`; run the tests.
 
-The force has gone when no code names the policy and the desk answers
-the fee itself. Stop there, as [choosing a
-pattern](../../oo-choosing-a-pattern/SKILL.md) rule 6 asks.
+The force is resolved when no code names the interface and the one
+implementation is built and passed in directly. Stop there, as
+[choosing a pattern](../../oo-choosing-a-pattern/SKILL.md) rule 6 asks.

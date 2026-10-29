@@ -38,11 +38,12 @@ asks.
 - **A chain of messages through other objects.** `WardBoard.contact`
   sends `tray.mealOrder().bedStay().ward().phoneNumber()` and hands the
   answer back, so it depends on a structure three objects away. The
-  moves, in order, are: extract the chain into one method on `WardBoard`,
-  move that method to the nearest object that can answer it, here
-  `MealTray`, and inline the old method so `WardBoard` sends one message
-  to the tray. The caller then talks only to its neighbour, which is
-  [limiting what an object
+  moves, in order, are: give `MealTray` a message `wardPhone()` that
+  answers what `WardBoard` wants, and let `WardBoard` send it; then let
+  each object on the way answer the next step itself, the meal order
+  asking its bed stay and the bed stay asking its ward, until no object
+  sends a message to an answer it did not hold. Each object then talks
+  only to its neighbours, which is [limiting what an object
   knows](../../oo-limiting-what-an-object-knows/SKILL.md) rule 2.
 
 - **A class changed for two kinds of request.** `SterilisationBatch`
@@ -55,14 +56,14 @@ asks.
   responsibilities](../../oo-assigning-responsibilities/SKILL.md) rules 7
   and 8.
 
-- **A subclass that refuses its parent's messages.**
-  `FollowUpEncounter` extends `Encounter` and raises `MoveRefused` when
-  it receives `moveTo`, which every `Encounter` promises to answer. The
+- **A subclass that refuses its parent's messages.** `ShortLoan`
+  extends `EquipmentLoan` and raises `LoanNotExtendable` when it
+  receives `extend`, which every `EquipmentLoan` promises to answer. The
   moves, in order, are: decide whether every caller must handle the
-  refusal; if they need not, hold an `Encounter` inside
-  `FollowUpEncounter` and keep `moveTo` off the type the callers see; if
-  they must, widen `Encounter`'s contract and update its callers. Either
-  way the code stops promising what it cannot keep, as [honouring
+  refusal; if they need not, hold an `EquipmentLoan` inside `ShortLoan`
+  and keep `extend` off the type the callers see; if they must, widen
+  `EquipmentLoan`'s contract and update its callers. Either way the code
+  stops promising what it cannot keep, as [honouring
   substitutability](../../oo-honouring-substitutability/SKILL.md) rule 7
   decides.
 
