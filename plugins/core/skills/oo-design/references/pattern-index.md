@@ -208,8 +208,8 @@ patterns by problem.
   with one class per table that acts on all its rows.
   [Placing domain logic][placing]
 - **Template Method.** Answers several jobs that run the same steps
-  in order with one step varying, by passing that step in rather than
-  extending a base class.
+  in order with one step varying, by leaving that step to a
+  subclass; where it can, the pack passes the step in instead.
   [Patterns the language provides][language-patterns]
 - **Timeout.** Answers a wait for an answer, by bounding how long it
   may take. [Choosing a pattern][choosing-pattern]
