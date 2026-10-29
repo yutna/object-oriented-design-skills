@@ -3,7 +3,7 @@ name: oo-layering-the-system
 description: Use when choosing layered, hexagonal or clean architecture, when an inner layer imports an outer one, or a screen needs its framework in tests.
 license: MIT
 metadata:
-  version: 0.12.0
+  version: 0.13.0
   pack: object-oriented-design-skills
 ---
 
