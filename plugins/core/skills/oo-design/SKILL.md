@@ -136,10 +136,13 @@ skills land.
 |Read model, projection or event sourcing?|[Separating reads from writes][reads]|
 |MVC, MVP or MVVM for this screen?|[Separating presentation from domain][presentation]|
 |A screen edits domain objects directly|[Separating presentation from domain][presentation]|
+|Which design pattern fits this problem?|[Choosing a pattern][choosing-pattern]|
+|A pattern was added before its problem|[Choosing a pattern][choosing-pattern]|
 
 [aggregates]: ../oo-designing-aggregates/SKILL.md
 [assigning]: ../oo-assigning-responsibilities/SKILL.md
 [boundaries]: ../oo-crossing-system-boundaries/SKILL.md
+[choosing-pattern]: ../oo-choosing-a-pattern/SKILL.md
 [composition]: ../oo-choosing-composition-over-inheritance/SKILL.md
 [constructing]: ../oo-constructing-valid-objects/SKILL.md
 [contexts]: ../oo-bounding-contexts/SKILL.md
