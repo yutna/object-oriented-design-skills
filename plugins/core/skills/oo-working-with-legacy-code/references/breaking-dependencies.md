@@ -11,14 +11,14 @@ running whatever tests exist.
   control, such as `StatementRun` building its own `StatementPrinter`.
   Add a constructor parameter for the collaborator, assign it to the
   field and delete the construction inside. Read the diff to confirm
-  that the body keeps every line it had and only the source of the
-  collaborator changed; build the program and run the tests. Where
-  every caller cannot change in the same edit, keep the old way of
-  building the class in one named factory that passes the real
-  collaborator. That factory holds a break that already existed in one
-  place, adds none, and goes once every caller builds the class at the
-  composition root, as inverting dependencies, rule 3, asks. It is a
-  place to stand for a time, not a pattern to copy.
+  that no other method body changes and that the constructor only stops
+  building the collaborator it now receives; build the program and run
+  the tests. Where every caller cannot change in the same edit, keep
+  the old way of building the class in one named factory that passes
+  the real collaborator. That factory holds a break that already
+  existed in one place, adds none, and goes once every caller builds
+  the class at the composition root, as inverting dependencies, rule 3,
+  asks. It is a place to stand for a time, not a pattern to copy.
 
 - **Pulling an interface the class owns out of a concrete class.** This
   fits when the class sends messages to a concrete class whose answers
