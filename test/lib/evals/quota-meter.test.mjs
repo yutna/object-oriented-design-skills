@@ -46,6 +46,11 @@ test('QuotaMeter runs the pinned command in a fresh folder', () => {
   assert.equal(runner.calls.length, 1)
   const [call] = runner.calls
   assert.equal(call.command, 'claude')
+  assert.deepEqual(call.args.slice(5, 8), [
+    '--setting-sources',
+    '',
+    '--strict-mcp-config'
+  ])
   assert.deepEqual(call.args, [
     '-p',
     '--model',
@@ -54,6 +59,7 @@ test('QuotaMeter runs the pinned command in a fresh folder', () => {
     '',
     '--setting-sources',
     '',
+    '--strict-mcp-config',
     '--disable-slash-commands',
     '--system-prompt',
     'Reply with one word.',

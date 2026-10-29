@@ -14,6 +14,7 @@ export class QuotaMeter {
     '',
     '--setting-sources',
     '',
+    '--strict-mcp-config',
     '--disable-slash-commands',
     '--system-prompt',
     'Reply with one word.',
