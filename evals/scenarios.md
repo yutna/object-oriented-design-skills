@@ -625,3 +625,20 @@ logs; a counter of reminders sent and failed for the weekly question,
 rather than counting log lines.
 
 Should reach `oo-designing-what-to-record`.
+
+## 38. The review that found everything
+
+> A review of our scheduling code came back with a list: `ClinicManager`
+> is a god class of three thousand lines, `Registry.get` is called from
+> forty places, a folder of old billing code is never called, and we
+> have a `SchedulerFactoryFactory`. We cannot fix all of it this
+> quarter. Where do we start, and how?
+
+Must contain: each item confirmed with evidence from the code or its
+history before it is called an antipattern; each handed to the rule it
+breaks (responsibilities split by the kind of change, collaborators
+passed in rather than looked up, unused code deleted once shown not to
+run, a factory with no force removed); the order set by where changes
+happen most, one antipattern at a time behind passing tests.
+
+Should reach `oo-recognising-antipatterns`.

@@ -148,8 +148,11 @@ skills land.
 |A retry did the work twice|[Making work reliable][reliable]|
 |We cannot explain an incident from our records|[Designing what to record][records]|
 |What should we log, count or audit?|[Designing what to record][records]|
+|A review found a god class or lava flow|[Recognising antipatterns][antipatterns]|
+|Which antipattern should we fix first?|[Recognising antipatterns][antipatterns]|
 
 [aggregates]: ../oo-designing-aggregates/SKILL.md
+[antipatterns]: ../oo-recognising-antipatterns/SKILL.md
 [assigning]: ../oo-assigning-responsibilities/SKILL.md
 [boundaries]: ../oo-crossing-system-boundaries/SKILL.md
 [choosing-pattern]: ../oo-choosing-a-pattern/SKILL.md
