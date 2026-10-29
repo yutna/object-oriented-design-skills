@@ -8,22 +8,25 @@ and when a module is better served by an active record.
 
 ## One appointment reached twice
 
-A reception use case moves an appointment to a new status and also
-prints the clinician's day. It reaches the appointment twice: once by
-its identity, through `Appointments.find`, and once in the list that
-`forClinicianOn` answers for that clinician and day.
+A reception use case moves an appointment to a new time, and first
+checks the clinician's other appointments that day, because the move
+must not put two appointments in one slot. It reaches the appointment
+twice: once by its identity, through `Appointments.find`, and once in
+the list that `forClinicianOn` answers for that clinician and day. The
+second reach decides the move, so it needs the whole appointments
+rather than a read of a few fields.
 
 Without an identity map, each read builds its own appointment from the
-same row. The use case changes the status on the appointment it found by
-identity, and the list's copy still holds the old status. If the use
-case saves the list's copy, the first change is lost; if it saves both,
-the second save overwrites the first. Either way one change disappears
-without an error.
+same row. The use case changes the appointment it found by identity,
+and the list's copy still holds the old slot. If the use case saves the
+list's copy, the first change is lost; if it saves both, the second
+save overwrites the first. Either way one change disappears without an
+error.
 
 With an identity map, the session keeps the object it built for that
 identity and answers it again when the list reaches the same
-appointment. Both paths hold one object, the status changes once, and
-one save stores it. What is stored is the appointment under its
+appointment. Both paths hold one object, the move happens once, and one
+save stores it. What is stored is the appointment under its
 `AppointmentId`, in the clinic's database, in the transaction the use
 case opened.
 
@@ -47,13 +50,14 @@ loaded.
 Rule 5 of designing repositories chooses between a repository that
 tracks the aggregates it handed out and writes their changes when the
 transaction ends, and one with an explicit `save` that the caller sends
-after each change. Tracking writes at commit; an
-explicit save writes when it is sent. One use case must not mix the two:
-when some changes ride the commit and others wait for a save, a reader
-cannot tell which are stored, and a missing save leaves a change behind
-while the session still answers the changed object. The identity map
-serves either choice, because it answers objects and leaves the timing
-of the writes to the repository.
+after each change. What differs is who names what is written: under
+tracking the session finds every changed object it tracks, while under
+an explicit save the caller names each aggregate. Either way the writes
+commit when the application service ends the transaction. One use case
+must not mix the two, because a forgotten save then means two things:
+under tracking the change is written anyway, and under an explicit save
+it is lost. The identity map serves either choice, because it answers
+objects and leaves the timing of the writes to the repository.
 
 ## When an active record is still plainer
 

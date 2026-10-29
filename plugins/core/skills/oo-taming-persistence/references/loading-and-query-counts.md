@@ -13,8 +13,8 @@ why a lazy reference cannot survive the session that loaded it.
 |---|---|---|
 |With the aggregate|one query|it reads more than the use case needs|
 |On first touch|one query per touch|a list runs one per item|
-|By identity|one query per aggregate|the transaction has closed|
-|A read query|one query|the rows are plain data|
+|By identity|one query per aggregate|a list runs one per item|
+|A read query|one query|it cannot be used to make a change|
 
 The first choice loads an association with the aggregate that holds it,
 so the use case has everything it needs after one read. The second is
