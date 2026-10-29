@@ -9,7 +9,7 @@ at a time to new code behind the messages those callers already send.
 The old patient index answers three capabilities: searching for a
 patient, registering a new one, and merging duplicate records. Its
 callers send the same messages before and after the replacement, so the
-interface they use stays still while the pieces behind it move.
+interface stays still and both sides share one patient store throughout.
 
 Build the new search piece beside the old index. The characterisation
 tests for search, written as rule 1 asks, run against the old index and
