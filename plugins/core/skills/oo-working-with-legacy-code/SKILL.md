@@ -211,7 +211,8 @@ evidence: a measurement, a reproducible bug, or a failing test.
 - [oo-design](../oo-design/SKILL.md) sizes a task and defines the rule
   labels.
 - [oo-testing-object-oriented-code](../oo-testing-object-oriented-code/SKILL.md)
-  writes and names the tests that pin old behaviour and hold new code.
+  writes and names the tests that replace the pin once the rule is
+  clear.
 - [oo-designing-for-testability](../oo-designing-for-testability/SKILL.md)
   shapes a seam in new code so a test can choose its collaborators.
 - [oo-refactoring-toward-object-design](../oo-refactoring-toward-object-design/SKILL.md)
