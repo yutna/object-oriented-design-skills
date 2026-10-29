@@ -56,8 +56,8 @@ an explicit save the caller names each aggregate. Either way the writes
 commit when the application service ends the transaction. One use case
 must not mix the two, because a forgotten save then means two things:
 under tracking the change is written anyway, and under an explicit save
-it is lost. The identity map serves either choice, because it answers
-objects and leaves the timing of the writes to the repository.
+it is lost. The identity map serves either choice: it only answers objects, and
+has no say in when their changes are written.
 
 ## When an active record is still plainer
 
