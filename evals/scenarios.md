@@ -642,3 +642,22 @@ run, a factory with no force removed); the order set by where changes
 happen most, one antipattern at a time behind passing tests.
 
 Should reach `oo-recognising-antipatterns`.
+
+## 39. The tests that break on every tidy-up
+
+> Our tests for repeat prescriptions break whenever someone tidies the
+> code, though the clinic sees no change. They replace `RepeatRequest`,
+> a domain class, with a mock; they check that `isOverdue()` was asked
+> twice; one reads a private field to see the request's status; and they
+> are named `test1` to `test14`. Another test replaces the pharmacy's own
+> client library and checks the exact text of the request it posts. How
+> should these tests be written?
+
+Must contain: tests that send the public messages and check what a
+caller could see, never a private field; the real `RepeatRequest`
+rather than a stand-in for it; no check that a query was asked; names
+that say the situation and the outcome; the pharmacy reached through a
+port the clinic owns, with a stand-in for that port in these tests and
+the adapter checked against the real pharmacy service on its own.
+
+Should reach `oo-testing-object-oriented-code`.

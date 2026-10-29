@@ -242,6 +242,9 @@ patterns by problem.
   in order with one step varying, by leaving that step to a
   subclass; where it can, the pack passes the step in instead.
   [Patterns the language provides][language-patterns]
+- **Test Double.** Answers a collaborator a test cannot use as it is,
+  with a stand-in that answers the same interface: a dummy, a stub, a
+  spy, a mock or a fake. [Testing object-oriented code][testing]
 - **Timeout.** Answers a wait for an answer, by bounding how long it
   may take. [Making work reliable][reliable]
 - **Tolerant Reader.** Answers a reply with fields the clinic does
@@ -286,4 +289,5 @@ patterns by problem.
 [repositories]: ../../oo-designing-repositories/SKILL.md
 [shared-state]: ../../oo-managing-shared-state/SKILL.md
 [state-and-behaviour]: ../../oo-encapsulating-state-and-behaviour/SKILL.md
+[testing]: ../../oo-testing-object-oriented-code/SKILL.md
 [values]: ../../oo-modeling-values-and-entities/SKILL.md

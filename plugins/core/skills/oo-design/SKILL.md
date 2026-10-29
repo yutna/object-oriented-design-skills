@@ -150,6 +150,8 @@ skills land.
 |What should we log, count or audit?|[Designing what to record][records]|
 |A review found a god class or lava flow|[Recognising antipatterns][antipatterns]|
 |Which antipattern should we fix first?|[Recognising antipatterns][antipatterns]|
+|Tests break although behaviour did not change|[Testing object-oriented code][testing]|
+|Mock, stub or fake for this collaborator?|[Testing object-oriented code][testing]|
 
 [aggregates]: ../oo-designing-aggregates/SKILL.md
 [antipatterns]: ../oo-recognising-antipatterns/SKILL.md
@@ -185,6 +187,7 @@ skills land.
 [shared-state]: ../oo-managing-shared-state/SKILL.md
 [state-and-behaviour]: ../oo-encapsulating-state-and-behaviour/SKILL.md
 [substitutability]: ../oo-honouring-substitutability/SKILL.md
+[testing]: ../oo-testing-object-oriented-code/SKILL.md
 [values]: ../oo-modeling-values-and-entities/SKILL.md
 [what-varies]: ../oo-encapsulating-what-varies/SKILL.md
 
