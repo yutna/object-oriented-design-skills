@@ -571,3 +571,20 @@ told from faults no caller can repair, with faults handled once at the
 edge rather than caught and ignored in every controller.
 
 Should reach `oo-designing-failure-behaviour`.
+
+## 35. The waiting-room board that drifts
+
+> The waiting-room board shows how many patients are waiting. A
+> `WaitingCount` object holds a number that each check-in thread reads,
+> adds one to and writes back, and each call-in thread lowers the same
+> way; by lunchtime the board is off by three or four. A background job
+> also rebuilds the map of today's rooms in place while requests read
+> it. What should change?
+
+Must contain: the count read and changed in one step that no other
+thread can split, by one owner or under one lock held for the whole
+change; the rooms built as a new immutable value and put in place
+whole, not rebuilt in place while read; a written note of which thread
+or lock guards each shared field.
+
+Should reach `oo-managing-shared-state`.

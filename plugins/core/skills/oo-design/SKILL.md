@@ -142,6 +142,8 @@ skills land.
 |Visitor, or a closed set with matching?|[Patterns the language provides][language-patterns]|
 |A method returns null when it finds nothing|[Designing failure behaviour][failure]|
 |Refusals come back as codes callers ignore|[Designing failure behaviour][failure]|
+|Threads share an object and lose or mix its changes|[Managing shared state][shared-state]|
+|A lock or a single owner for this state?|[Managing shared state][shared-state]|
 
 [aggregates]: ../oo-designing-aggregates/SKILL.md
 [assigning]: ../oo-assigning-responsibilities/SKILL.md
@@ -171,6 +173,7 @@ skills land.
 [presentation]: ../oo-separating-presentation-from-domain/SKILL.md
 [reads]: ../oo-separating-reads-from-writes/SKILL.md
 [repositories]: ../oo-designing-repositories/SKILL.md
+[shared-state]: ../oo-managing-shared-state/SKILL.md
 [state-and-behaviour]: ../oo-encapsulating-state-and-behaviour/SKILL.md
 [substitutability]: ../oo-honouring-substitutability/SKILL.md
 [values]: ../oo-modeling-values-and-entities/SKILL.md
