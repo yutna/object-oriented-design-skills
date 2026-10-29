@@ -46,8 +46,9 @@ outcome, because each combination of values is a series that the clinic
 stores and reads. A patient's identity as a label makes one series per
 patient: the number of series grows with the patient list, the metric
 costs more to keep, and it now holds a detail about a patient that the
-metric did not need. Count by a small group, then find one patient's
-requests through the correlation identifier in the logs.
+metric did not need. Count by a small group, and find one patient's
+requests by the `PatientId` on their log records, then follow each by
+its correlation identifier.
 
 ## Traces
 
@@ -65,8 +66,7 @@ answers the refusal, and the request's correlation identifier goes with
 it. The practice manager reads the counter of refused bookings and sees
 the total rise by one. The person on call searches the logs for the
 correlation identifier and finds the request, the slot it asked for and
-the refusal it met. The audit trail, when the clinic keeps one for
-bookings, answers who tried to book and when.
+the refusal it met.
 
 Nobody had to read a patient's name, contact details or notes to follow
 the request. The identity on the records is enough to find the file
