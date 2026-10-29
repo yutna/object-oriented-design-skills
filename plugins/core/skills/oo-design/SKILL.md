@@ -138,6 +138,8 @@ skills land.
 |A screen edits domain objects directly|[Separating presentation from domain][presentation]|
 |Which design pattern fits this problem?|[Choosing a pattern][choosing-pattern]|
 |A pattern was added before its problem|[Choosing a pattern][choosing-pattern]|
+|These pattern classes could be a function|[Patterns the language provides][language-patterns]|
+|Visitor, or a closed set with matching?|[Patterns the language provides][language-patterns]|
 
 [aggregates]: ../oo-designing-aggregates/SKILL.md
 [assigning]: ../oo-assigning-responsibilities/SKILL.md
@@ -154,6 +156,7 @@ skills land.
 [interfaces]: ../oo-designing-interfaces/SKILL.md
 [inverting]: ../oo-inverting-dependencies/SKILL.md
 [knows]: ../oo-limiting-what-an-object-knows/SKILL.md
+[language-patterns]: ../oo-patterns-the-language-provides/SKILL.md
 [layering]: ../oo-layering-the-system/SKILL.md
 [lifecycles]: ../oo-modeling-lifecycles/SKILL.md
 [modules]: ../oo-organising-modules/SKILL.md

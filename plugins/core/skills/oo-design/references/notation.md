@@ -10,6 +10,7 @@
 - [Errors](#errors)
 - [Bodies](#bodies)
 - [Comments and types](#comments-and-types)
+- [Functions](#functions)
 - [Complete example](#complete-example)
 
 ## Declarations
@@ -149,6 +150,22 @@ value CancellationReason
   + new(note: String?)
 class Clinician
   + appointments(date: Date): List<Appointment>
+```
+
+## Functions
+
+`(Type) -> Type` is the type of a function value: it takes values of
+the types in the parentheses and answers a value of the type after the
+arrow. `(name: Type) -> expression` writes a function value. A function
+value answers one message, `call(args)`, which runs it and answers its
+result.
+
+```text
+class ReminderCheck
+  - isDue: (Appointment) -> Boolean
+  + new(isDue: (Appointment) -> Boolean)
+  + shouldRemind(appointment: Appointment): Boolean
+    return isDue.call(appointment)
 ```
 
 ## Complete example
