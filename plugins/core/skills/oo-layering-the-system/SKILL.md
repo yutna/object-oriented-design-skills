@@ -260,6 +260,8 @@ evidence: a measurement, a reproducible bug, or a failing test.
   chooses the use-case object and the domain object that owns a rule.
 - [oo-designing-repositories](../oo-designing-repositories/SKILL.md)
   gives the application layer its ports and its read queries.
+- [oo-separating-presentation-from-domain](../oo-separating-presentation-from-domain/SKILL.md)
+  keeps a screen humble with a presentation object.
 
 ## Further reading
 
