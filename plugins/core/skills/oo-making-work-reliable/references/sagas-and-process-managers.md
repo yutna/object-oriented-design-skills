@@ -31,13 +31,19 @@ reserved room. A compensating step undoes the effect of its step, not
 its history: the appointment's record shows that it was made and then
 cancelled, and the patient's statement shows the charge and its refund.
 
-A compensating step must itself be safe to repeat. The process may
-crash after the step runs and before its result is recorded, so the
-same compensation can run twice. Releasing a room twice leaves it free,
-and cancelling an appointment twice leaves it cancelled. A refund is
-given the identity of the deposit's payment request, so a second refund
-with the same identity answers with the first refund instead of paying
-the money again.
+A compensating step must itself be safe to repeat. The process may crash
+after the step runs and before its result is recorded, so the same
+compensation can run twice. Before it acts, the step checks whether the
+process has already run it, as a handler checks for an event it has
+handled in rule 5 of [publishing domain
+events](../../oo-publishing-domain-events/SKILL.md). The release or the
+cancel it sends is not safe to repeat on its own: a second release would
+free a room that another procedure has reserved since, and a second
+cancel is refused, because `Appointment.cancel` raises
+`AppointmentNotCancellable` for an appointment no longer scheduled. A
+refund carries an identity of its own, created once with the step, so a
+second refund with that identity answers with the first refund instead
+of paying the money again.
 
 ## Steps joined by events
 

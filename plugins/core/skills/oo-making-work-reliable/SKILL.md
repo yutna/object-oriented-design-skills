@@ -175,20 +175,20 @@ class ChargeDeposit
     return payments.charge(deposit.paymentRequest())
 ```
 
-`Deposits` is taken to be the deposits' repository, whose `find`
-answers the stored deposit. Booking stores the `Deposit`, with its
+`Deposits` is taken to be the deposits' repository, whose `find` answers
+the stored deposit. Booking stores the `Deposit`, with its
 `PaymentRequest` and a new `PaymentRequestId`, under the `DepositId`, in
-the clinic's store and in the transaction that books the procedure, when
-it asks for the deposit and before any charge; the fence leaves this
-out. The payments adapter sends the request's identity to the provider
-as the key by which the provider answers a repeat with the first
-charge, and reads the request's fields through queries the fence leaves
-out. The retry itself, in the adapter or in the queue that runs `run`
-again, is left out, because the notation has no loop and cannot catch an
-error. Recording that the deposit was taken is left out. `run` stores
-nothing. Every attempt of one `Deposit` reads the same stored
-`PaymentRequest`, so the provider answers every repeat with the first
-charge and takes the deposit once.
+the clinic's store, in a transaction of its own, when it asks for the
+deposit and before any charge; the fence leaves this out. The payments
+adapter sends the request's identity to the provider as the key by which
+the provider answers a repeat with the first charge, and reads the
+request's fields through queries the fence leaves out. The retry itself,
+in the adapter or in the queue that runs `run` again, is left out,
+because the notation has no loop and cannot catch an error. Recording
+that the deposit was taken is left out. `run` stores nothing. Every
+attempt of one `Deposit` reads the same stored `PaymentRequest`, so the
+provider answers every repeat with the first charge and takes the
+deposit once.
 
 ## Red flags
 

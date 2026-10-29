@@ -64,9 +64,7 @@ first charge's `PaymentId` instead of taking the money again.
 
 Where the receiver cannot recognise a repeat, record what was sent and
 check for a repeat afterwards, as the notice log does in the designing
-aggregates reference on consistency across aggregates. The record must
-be written before the call, so a crash between the call and the record
-leaves evidence to check.
+aggregates reference on consistency across aggregates.
 
 ## Circuit breakers and bulkheads
 
