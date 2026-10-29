@@ -58,7 +58,7 @@ removed when a test for the new answer takes over the same behaviour.
 
 ## How many are enough
 
-One input for each path the change could alter is a practical count.
+One input for each path the change could alter is enough in practice.
 Count the paths from the planned edit: a branch the new value reaches,
 a boundary the new rule reads, an empty collection the new step must
 survive. Three or four inputs often cover a small change. A large route
