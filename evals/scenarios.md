@@ -718,3 +718,23 @@ capability at a time behind the interface its callers already use, with
 each old piece deleted once nothing reaches it.
 
 Should reach `oo-working-with-legacy-code`.
+
+## 43. Forty comments on a two-line change
+
+> A pull request adds a `waived` flag to `NoShowFee` and two lines to
+> `ChargeNoShow` that read the flag and skip the charge. The review came
+> back with forty comments: renamings the reviewer prefers, a suggestion
+> to move billing to event sourcing, a request to rewrite the module's
+> old tests, and, among them, one note that `ChargeNoShow` now reads the
+> fee's state and decides for it. The author cannot tell which comments
+> must be fixed before merging. How should this review have been done?
+
+Must contain: the review sized to a two-line change; each finding tied
+to a rule by skill and number, with the lines that break it; the caller
+deciding for the fee (tell, don't ask, a rule labelled `Rule.`)
+blocking, while renamings no rule backs and the event-sourcing idea do
+not block; requests about code the change does not touch, such as the
+old tests, written as separate notes rather than demanded of this
+change.
+
+Should reach `oo-reviewing-object-design`.

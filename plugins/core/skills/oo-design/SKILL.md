@@ -58,7 +58,8 @@ missing is not design, and this pack cannot supply it.
 6. Name things in the domain's words, and comment only what the code
    cannot say
    ([naming classes and methods](../oo-naming-classes-and-methods/SKILL.md)).
-7. Check the result against the red flags below.
+7. Check the result against the red flags below
+   ([reviewing object design](../oo-reviewing-object-design/SKILL.md)).
 
 ## How strictly a rule is meant
 
@@ -158,6 +159,8 @@ skills land.
 |A refactoring grew too big to finish|[Refactoring toward object design][refactoring]|
 |We must change code that has no tests|[Working with legacy code][legacy]|
 |Replace an old system piece by piece|[Working with legacy code][legacy]|
+|What should this review check?|[Reviewing object design][reviewing]|
+|Which review findings block a merge?|[Reviewing object design][reviewing]|
 
 [aggregates]: ../oo-designing-aggregates/SKILL.md
 [antipatterns]: ../oo-recognising-antipatterns/SKILL.md
@@ -192,6 +195,7 @@ skills land.
 [refactoring]: ../oo-refactoring-toward-object-design/SKILL.md
 [reliable]: ../oo-making-work-reliable/SKILL.md
 [repositories]: ../oo-designing-repositories/SKILL.md
+[reviewing]: ../oo-reviewing-object-design/SKILL.md
 [shared-state]: ../oo-managing-shared-state/SKILL.md
 [state-and-behaviour]: ../oo-encapsulating-state-and-behaviour/SKILL.md
 [substitutability]: ../oo-honouring-substitutability/SKILL.md
