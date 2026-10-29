@@ -167,10 +167,10 @@ skill's. `TodayBoardRow` is taken to be a plain row shaped for the
 board. The projection records only what the event states, that this
 appointment was cancelled, and never marks its slot free, because that
 skill's `ReleaseSlot` frees the slot later, in its own transaction.
-Each handler holds its own `HandledEvents`: the projection has one,
-`ReleaseSlot` has another, and the two never share one. What is stored
-is one row marked cancelled and the event's identity, in the read tables
-of the clinic's database, in the projection's own transaction after the
+`HandledEvents` is per handler: the projection holds its own, never
+`ReleaseSlot`'s, so the two never share one. What is stored is one row
+marked cancelled and the event's identity, in the read tables of the
+clinic's database, in the projection's own transaction after the
 cancellation commits. The handler for the event that booking records,
 which adds a row, is left out of the fence.
 
