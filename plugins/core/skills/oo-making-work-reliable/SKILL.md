@@ -95,9 +95,13 @@ fails knowably, and a repeat that cannot take the deposit twice.
    through and closes again if it succeeds. A bulkhead gives one
    dependency its own bounded pool of workers or connections, so a
    slow payment provider cannot take the workers the front desk needs.
-   What tips the balance is how the dependency fails: repeated failures
-   call for a breaker, slow answers for a bulkhead, and a dependency
-   that does both gets both.
+   Each has a cost: an open breaker refuses calls the dependency might
+   have answered, and its limit and its wait need tuning; a bulkhead
+   holds workers idle while its dependency is quiet, and a pool sized
+   too small refuses calls the dependency could take. What tips the
+   balance is how the dependency fails: repeated failures call for a
+   breaker, slow answers for a bulkhead, and a dependency that does both
+   gets both.
 
 6. Judgement. **Run a business process that spans several aggregates
    or systems as a saga: each step commits on its own, one aggregate in

@@ -39,11 +39,10 @@ can collect an answer later.
 
 ## Two monitors that call each other
 
-One monitor object holds the check-in count and another holds the room
-list. If the first calls the second while holding its own lock, and the
-second calls the first while holding its own lock, each waits for the
-lock the other holds. Neither method ever finishes, and both objects
-stop answering.
+One monitor object holds the check-in count and another holds the count of rooms
+in use. If the first calls the second while holding its own lock, and the second
+calls the first while holding its own lock, each waits for the lock the other
+holds. Neither method ever finishes, and both objects stop answering.
 
 The rule that prevents this is the one in rule 6 of
 [the skill](../SKILL.md): never call another system or another locked

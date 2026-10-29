@@ -2,13 +2,13 @@
 
 ## Booking's refusals under one base
 
-A booking is refused in the clinic's words. `SlotTaken` says the slot is
-already held. A clinician who takes no new patients refuses a booking
-with `ClinicianNotTakingPatients`, and a patient who has reached the
-booking limit refuses it with `BookingLimitReached`. The module raises
-all three under one base, `BookingRefused`. The notation declares
-`SlotTaken` alone; this skill groups it under that base, and grouping it
-takes no error away from the method that declares it.
+A booking is refused in the clinic's words. `SlotTaken` says the slot is already
+held. The module refuses a booking with `ClinicianNotTakingPatients` when the
+clinician takes no new patients, and with `BookingLimitReached` when the patient
+has reached the booking limit. The module raises all three under one base,
+`BookingRefused`. The notation declares `SlotTaken` alone; this skill groups it
+under that base, and grouping it takes no error away from the method that
+declares it.
 
 A reception screen handles one refusal by its name and the rest by the
 base. When `SlotTaken` is raised, the screen offers the next free time.
@@ -27,14 +27,14 @@ on the signature it reads.
 
 ## A fault is declared once
 
-A fault is a failure no caller can repair: the store does not answer,
-or an invariant is found broken. Only the method that raises it itself
-declares it, as the notation asks of every `raise`, and the port that
-method implements declares it as well. Every method above passes it on
-undeclared, up to the one handler at the program's edge. That handler
-records the fault and answers a general failure. No layer in between
-catches it, because a catch there can only raise it again, and a caller
-that reads the second error learns nothing the first did not say.
+A fault is a failure no caller can repair: the store does not answer, or an
+invariant is found broken. Only the method that raises it itself declares it, as
+the notation asks of every `raise`, and the port that method implements declares
+it as well. Every method above passes it on undeclared, up to the one handler at
+the program's edge. That handler records the fault and answers a general
+failure. No layer in between catches it: a catch there either hides the fault,
+so nobody records it, or raises it again, and a caller that reads the second
+error learns nothing the first did not say.
 
 ## Check before the first change
 
