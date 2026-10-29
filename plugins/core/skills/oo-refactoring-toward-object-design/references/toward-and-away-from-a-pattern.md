@@ -11,7 +11,10 @@ and the tests run after every move.
 `noticeText`, `canPublish` and `handoverLine`. The status has gained a
 case twice in the past year, and a third case arrives when agency shifts
 start, so the force is present: the same condition on a status repeats
-in several methods and keeps changing.
+in several methods and keeps changing. The walk follows [replacing
+conditionals with
+polymorphism](../../oo-replacing-conditionals-with-polymorphism/SKILL.md)
+rule 4.
 
 The moves, in order, are:
 
