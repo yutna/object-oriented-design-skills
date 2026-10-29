@@ -1,17 +1,17 @@
 # Gathering evidence
 
-A smell is a place to look. Evidence from the code and its history turns
+A smell is a place to look. Evidence from the code or its history turns
 it into a finding, and the same sources that confirm one antipattern
 often clear another.
 
 ## Where evidence comes from
 
 - **The change history.** How often a file changes, and which files
-  change together, confirms a god class when one class is edited by
-  unrelated requests, and confirms shotgun surgery when one request
-  touches the same scattered files each time. It clears an anemic model
-  when no outside code reads the class's fields and no request changes a
-  rule away from it.
+  change together, confirms a god class when one class is edited by most
+  requests, for unrelated reasons, and confirms shotgun surgery when one
+  request touches the same scattered files each time. It clears an
+  anemic model when no outside code reads the class's fields and no
+  request changes a rule away from it.
 - **Who calls what.** The call graph confirms lava flow when nothing
   calls the code, and clears it when a caller still sends the message.
   It confirms a poltergeist when one caller creates the class for a

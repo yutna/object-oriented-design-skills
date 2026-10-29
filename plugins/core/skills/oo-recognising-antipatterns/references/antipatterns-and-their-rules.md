@@ -1,7 +1,7 @@
 # Antipatterns and their rules
 
 An antipattern is a smell that the evidence has confirmed as a finding.
-The evidence comes from the code and its history, and the rule it breaks
+The evidence comes from the code or its history, and the rule it breaks
 decides who fixes it: the skill that owns that rule, not this one. Each
 item below names the smell, the evidence that makes it a finding, and
 the rule it breaks.
@@ -22,7 +22,7 @@ the rule it breaks.
 
 - **A single instance reached from anywhere.** One instance of a class is
   reached through a global or a static field by every caller that needs
-  it. The evidence is a constructor that names none of the collaborators
+  it. The evidence is a constructor that does not name the collaborators
   the object uses, and tests that must reset the instance before each
   one. It breaks [inverting
   dependencies](../../oo-inverting-dependencies/SKILL.md), rules 2 and 3.

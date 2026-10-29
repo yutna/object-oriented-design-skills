@@ -18,7 +18,7 @@ metadata:
 
 A review often comes back with a list of smells: a class that does too
 much, code nobody dares delete, an object every test must reset. A
-smell is a place to look, not a verdict; the evidence in the code and its
+smell is a place to look, not a verdict; the evidence in the code or its
 history decides whether it is an antipattern. This skill names each
 antipattern from that evidence, sends it to the rule it breaks in the
 skill that owns that rule, and fixes the one whose code changes most
@@ -175,7 +175,7 @@ evidence: a measurement, a reproducible bug, or a failing test.
 - [oo-hiding-implementation](../oo-hiding-implementation/SKILL.md) keeps
   one decision in one module once the tie is named.
 - [oo-limiting-what-an-object-knows](../oo-limiting-what-an-object-knows/SKILL.md)
-  removes a class that only forwards.
+  removes a middle man that only forwards.
 
 ## Further reading
 
