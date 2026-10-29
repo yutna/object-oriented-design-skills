@@ -119,6 +119,9 @@ do we need an audit trail for staff edits -> oo-designing-what-to-record
 is this a god class -> oo-recognising-antipatterns
 the code is full of lava flow nobody dares delete -> oo-recognising-antipatterns
 which of these code smells should we fix first -> oo-recognising-antipatterns
+every small cleanup turns half our unit tests red -> oo-testing-object-oriented-code
+is it fine to mock the http client library in our tests -> oo-testing-object-oriented-code
+what should each unit test be called -> oo-testing-object-oriented-code
 ```
 
 ## Known misses
