@@ -12,7 +12,12 @@ export class NegativeCases {
   static #OOP = 'scripts/validate-oop.mjs'
   static #EVAL = 'scripts/eval-routing.mjs'
   static #PROSE = 'scripts/validate-prose.mjs'
+  static #PATTERNS = 'scripts/validate-patterns.mjs'
   static #COUNTS = 'scripts/validate-counts.mjs'
+  static #PATTERN_INDEX =
+    'plugins/core/skills/oo-design/references/pattern-index.md'
+  static #MEMENTO_FIND = '- **Memento.**'
+  static #MEMENTO_REPLACE = '- **Mementos kept.**'
   static #README = 'evals/README.md'
   static #ROUTING = 'evals/routing-cases.md'
   static #SCENARIOS = 'evals/scenarios.md'
@@ -417,6 +422,14 @@ export class NegativeCases {
         NegativeCases.#SCENARIOS,
         NegativeCases.#SCENARIO_DESIGN_FIND,
         ''),
-      'oo-design has no scenario')
+      'oo-design has no scenario'),
+    new NegativeCase(
+      'patterns reject a catalogue item with no index entry',
+      NegativeCases.#PATTERNS,
+      new ReplaceText(
+        NegativeCases.#PATTERN_INDEX,
+        NegativeCases.#MEMENTO_FIND,
+        NegativeCases.#MEMENTO_REPLACE),
+      'pattern index: "Memento" from the catalogue has no entry')
   ])
 }
