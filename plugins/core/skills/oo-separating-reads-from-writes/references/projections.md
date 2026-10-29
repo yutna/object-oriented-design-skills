@@ -11,8 +11,8 @@ writes. A projection keeps read rows shaped for that board instead, and
 A projection can start empty and be built from scratch in either of two
 ways. It can read the write store, take each appointment that falls on a
 day and add its row. Or it can replay the stored events where they are
-kept, applying each in order, which is event sourcing used to fill a
-read model. The outbox is not the store to replay from: it holds an
+kept, as they are for an event-sourced aggregate, applying each in
+order. The outbox is not the store to replay from: it holds an
 event until a relay has sent it, then marks it sent, so a clinic that
 wants a replay keeps its events somewhere that outlives the outbox.
 
@@ -25,8 +25,9 @@ appointments and not free slots. The board's projection holds its own
 a second delivery of the same event changes nothing.
 
 Beside the rows, the board says when it was last brought up to date, as
-the moment of the last event its projection handled. A reader can then
-tell that a cancellation made after that moment has not reached the
+the moment the projection handled its latest event, not the event's own
+time: a shipped `AppointmentCancelled` carries no time. A reader can
+then tell that a cancellation made after that moment has not reached the
 board yet, instead of reading a row that is behind as a row that is
 wrong.
 

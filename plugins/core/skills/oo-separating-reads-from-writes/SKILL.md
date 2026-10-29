@@ -32,8 +32,8 @@ write store cannot serve.
 
 - A screen needs data shaped unlike the domain model, such as a row
   joining several aggregates.
-- Reads slow down writes, or a screen's query grows slower as it shows
-  more rows.
+- Reads slow down writes, or a screen's query joins many aggregates on
+  every refresh.
 - You are weighing a read model, a projection or event sourcing.
 - A screen must say how current the figures it shows are.
 - You are deciding whether reads need a second store.
@@ -139,19 +139,21 @@ After:
 
 ```text
 class TodayBoardProjection
-  - rows: TodayBoardRows
+  - updates: TodayBoardUpdates
   - handled: HandledEvents
-  + new(rows: TodayBoardRows, handled: HandledEvents)
+  + new(updates: TodayBoardUpdates, handled: HandledEvents)
   + handle(id: EventId, event: AppointmentCancelled): void
     if handled.contains(id) then
       return
     else
-      rows.markCancelled(event.appointment())
+      updates.markCancelled(event.appointment())
       handled.add(id)
     return
 
-interface TodayBoardRows
+interface TodayBoardUpdates
   + markCancelled(appointment: AppointmentId): void
+
+interface TodayBoardRows
   + forDate(date: Date): List<TodayBoardRow>
 
 class TodayBoard
@@ -161,25 +163,30 @@ class TodayBoard
     return rows.forDate(date)
 ```
 
-`AppointmentCancelled`, `EventId` and `HandledEvents` are the publishing
-domain events skill's, and the handler form `handle(id, event)` is that
-skill's. `TodayBoardRow` is taken to be a plain row shaped for the
-board. The projection records only what the event states, that this
-appointment was cancelled, and never marks its slot free, because that
-skill's `ReleaseSlot` frees the slot later, in its own transaction.
-`HandledEvents` is per handler: the projection holds its own, never
-`ReleaseSlot`'s, so the two never share one. What is stored is one row
-marked cancelled and the event's identity, in the read tables of the
-clinic's database, in the projection's own transaction after the
-cancellation commits. The handler for the event that booking records,
-which adds a row, is left out of the fence.
+The read side holds only the read port and the projection only the
+write port, as
+[designing interfaces](../oo-designing-interfaces/SKILL.md) rule 2 asks,
+and one adapter may implement both. `AppointmentCancelled`, `EventId`
+and `HandledEvents` are the publishing domain events skill's, and the
+handler form `handle(id, event)` is that skill's. `TodayBoardRow` is
+taken to be a plain row shaped for the board. The projection records
+only what the event states, that this appointment was cancelled, and
+never marks its slot free, because that skill's `ReleaseSlot` frees the
+slot later, in its own transaction. `HandledEvents` is per handler: the
+projection holds its own, never `ReleaseSlot`'s, so the two never share
+one. What is stored is one row marked cancelled and the event's
+identity, in the read tables of the clinic's database, in the
+projection's own transaction after the cancellation commits. The
+handler for the event that booking records, which adds a row, is left
+out of the fence. The fence also leaves out how the board reports when
+it was last brought up to date, which rule 4 requires of the screen.
 
-`TodayBoardProjection`'s constructor sets `rows` and `handled` before
+`TodayBoardProjection`'s constructor sets `updates` and `handled` before
 `handle` reads them, and `TodayBoard`'s sets `rows` before `rowsFor`
-reads it. For a new event, `handle` sends `markCancelled` once, marking
-the appointment's one row, and sends `add` once; for a repeated one, it
-returns before either. No other step runs twice, and the fence uses only
-keywords the notation defines.
+reads it. For a new event, `handle` sends `updates.markCancelled` once,
+marking the appointment's one row, and sends `add` once; for a repeated
+one, it returns before either. No other step runs twice, and the fence
+uses only keywords the notation defines.
 
 ## Red flags
 
