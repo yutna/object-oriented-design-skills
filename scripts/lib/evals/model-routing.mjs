@@ -221,6 +221,7 @@ export class ModelRouting extends Check {
       '-p',
       '--model', ModelRouting.#MODEL,
       '--setting-sources', '',
+      '--strict-mcp-config',
       '--plugin-dir', copyPath,
       '--tools', 'Skill',
       '--max-turns', '1',
