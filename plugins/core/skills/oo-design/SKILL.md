@@ -144,6 +144,8 @@ skills land.
 |Refusals come back as codes callers ignore|[Designing failure behaviour][failure]|
 |Threads share an object and lose or mix its changes|[Managing shared state][shared-state]|
 |A lock or a single owner for this state?|[Managing shared state][shared-state]|
+|A call to another system hangs or fails midway|[Making work reliable][reliable]|
+|A retry did the work twice|[Making work reliable][reliable]|
 
 [aggregates]: ../oo-designing-aggregates/SKILL.md
 [assigning]: ../oo-assigning-responsibilities/SKILL.md
@@ -172,6 +174,7 @@ skills land.
 [polymorphism]: ../oo-replacing-conditionals-with-polymorphism/SKILL.md
 [presentation]: ../oo-separating-presentation-from-domain/SKILL.md
 [reads]: ../oo-separating-reads-from-writes/SKILL.md
+[reliable]: ../oo-making-work-reliable/SKILL.md
 [repositories]: ../oo-designing-repositories/SKILL.md
 [shared-state]: ../oo-managing-shared-state/SKILL.md
 [state-and-behaviour]: ../oo-encapsulating-state-and-behaviour/SKILL.md
