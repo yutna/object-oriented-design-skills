@@ -588,3 +588,22 @@ whole, not rebuilt in place while read; a written note of which thread
 or lock guards each shared field.
 
 Should reach `oo-managing-shared-state`.
+
+## 36. Prescriptions sent twice
+
+> Our clinic sends each prescription to the patient's pharmacy through
+> the pharmacy network's service. At busy times the service takes a
+> minute to answer, and our request threads wait on it until booking
+> stops answering too. Last month we added a retry when the call fails,
+> and now some pharmacies receive the same prescription twice. What
+> should change?
+
+Must contain: a time limit on each call to the pharmacy network, with
+an expired wait treated as an unknown outcome; the pharmacy calls kept
+in their own bounded pool or behind a breaker, so a slow network cannot
+take the threads booking needs; each prescription sent with an identity
+created once and kept with it, so the network recognises a repeat;
+retries limited to failures that may pass, a bounded number of times,
+with growing waits.
+
+Should reach `oo-making-work-reliable`.

@@ -63,4 +63,6 @@ A failing dependency is a different problem. A timeout bounds the wait
 for an answer; retries ask again after a failure that may pass; a
 circuit breaker stops asking a dependency that keeps failing and tries
 again later; a bulkhead keeps one slow dependency from using every
-worker. Those patterns are named once here and left outside this skill.
+worker. Those patterns are outside this skill, and
+[making work reliable](../../oo-making-work-reliable/SKILL.md) treats
+them.

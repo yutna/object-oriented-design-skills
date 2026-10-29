@@ -110,6 +110,9 @@ should refusing a booking raise an exception or return an error code -> oo-desig
 two threads update the same slot cache and lose changes -> oo-managing-shared-state
 the appointment counter is wrong under load -> oo-managing-shared-state
 should this cache use a lock or a single owner thread -> oo-managing-shared-state
+the insurer call sometimes hangs and blocks booking -> oo-making-work-reliable
+a retry charged the patient's deposit twice -> oo-making-work-reliable
+how do we undo earlier steps when the last step of a transfer fails -> oo-making-work-reliable
 ```
 
 ## Known misses

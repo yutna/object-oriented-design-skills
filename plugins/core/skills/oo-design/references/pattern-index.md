@@ -35,7 +35,7 @@ patterns by problem.
   object exists, with the required parts known up front and one step
   that checks the whole. [Constructing valid objects][constructing]
 - **Bulkhead.** Answers one slow dependency that would otherwise
-  use every worker. [Choosing a pattern][choosing-pattern]
+  use every worker. [Making work reliable][reliable]
 - **Chain of Responsibility.** Answers several handlers that may
   take a request in turn, with the set or order that varies.
   [Choosing a pattern][choosing-pattern]
@@ -43,7 +43,7 @@ patterns by problem.
   naming the lab. [Choosing a pattern][choosing-pattern]
 - **Circuit Breaker.** Answers a dependency that keeps failing by
   stopping the calls and trying again later.
-  [Choosing a pattern][choosing-pattern]
+  [Making work reliable][reliable]
 - **Command.** Answers an action that must be queued, stored, logged,
   undone or retried, so it stays an object that carries its data.
   [Patterns the language provides][language-patterns]
@@ -161,6 +161,10 @@ patterns by problem.
 - **Presentation Model.** Answers one screen's state and logic,
   held in an object shaped for the screen rather than the domain.
   [Separating presentation from domain][presentation]
+- **Process Manager.** Answers a process of several steps that
+  branches, waits or must show where it stands, with one stored object
+  that reacts to each step's event and sends the next command.
+  [Making work reliable][reliable]
 - **Projection.** Answers read rows kept current for one screen, by
   a handler of the domain events that can rebuild them from scratch.
   [Separating reads from writes][reads]
@@ -188,7 +192,11 @@ patterns by problem.
 - **Request and Reply.** Answers booking waiting for an insurer's
   answer before it finishes. [Choosing a pattern][choosing-pattern]
 - **Retry.** Answers a failure that may pass, by asking again.
-  [Choosing a pattern][choosing-pattern]
+  [Making work reliable][reliable]
+- **Saga.** Answers a process over several aggregates or systems that
+  cannot share one transaction, by committing each step alone and
+  undoing an earlier step with a compensating step when a later one
+  fails. [Making work reliable][reliable]
 - **Separate Ways.** Answers two contexts whose work is complete
   without the other, by exchanging nothing.
   [Bounding contexts][contexts]
@@ -224,7 +232,7 @@ patterns by problem.
   subclass; where it can, the pack passes the step in instead.
   [Patterns the language provides][language-patterns]
 - **Timeout.** Answers a wait for an answer, by bounding how long it
-  may take. [Choosing a pattern][choosing-pattern]
+  may take. [Making work reliable][reliable]
 - **Tolerant Reader.** Answers a reply with fields the clinic does
   not know, by taking the fields it knows and ignoring the rest.
   [Crossing system boundaries][crossing]
@@ -262,6 +270,7 @@ patterns by problem.
 [polymorphism]: ../../oo-replacing-conditionals-with-polymorphism/SKILL.md
 [presentation]: ../../oo-separating-presentation-from-domain/SKILL.md
 [reads]: ../../oo-separating-reads-from-writes/SKILL.md
+[reliable]: ../../oo-making-work-reliable/SKILL.md
 [repositories]: ../../oo-designing-repositories/SKILL.md
 [shared-state]: ../../oo-managing-shared-state/SKILL.md
 [state-and-behaviour]: ../../oo-encapsulating-state-and-behaviour/SKILL.md
