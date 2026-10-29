@@ -9,15 +9,15 @@ often clear another.
 - **The change history.** How often a file changes, and which files
   change together, confirms a god class when one class is edited by most
   requests, for unrelated reasons, and confirms shotgun surgery when one
-  request touches the same scattered files each time. It clears an
-  anemic model when no outside code reads the class's fields to decide
-  with them, so no rule is left without a home.
+  request touches the same scattered files each time.
 - **Who calls what.** The call graph confirms lava flow when nothing
   calls the code, and clears it when a caller still sends the message.
   It confirms a poltergeist when one caller creates the class for a
   single message and drops it, and clears a poltergeist when the class
   is the use-case object a user interface or an API calls first, which
-  assigning responsibilities, rule 5, asks for.
+  assigning responsibilities, rule 5, asks for. It clears an anemic
+  model when no outside code reads the class's fields to decide with
+  them, so no rule is left without a home.
 - **What runs in production, from counters or traces.** A counter that
   never moves and a trace with no entry confirm lava flow; a counter or
   trace that shows the code reached clears it.
