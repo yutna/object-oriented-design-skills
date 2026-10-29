@@ -134,6 +134,9 @@ patterns by problem.
   between the view and the model, holding the screen's state and
   telling the view what to show.
   [Separating presentation from domain][presentation]
+- **Null Object.** Answers a collaborator that may be absent where
+  doing nothing is right for every caller, with an object of the same
+  type that does nothing. [Designing failure behaviour][failure]
 - **Observer.** Answers one change with several reactions, where
   the changing object must not know each one and the change is
   complete without them. [Publishing domain events][events]
@@ -192,6 +195,9 @@ patterns by problem.
 - **Singleton.** The pack does not use a singleton: the one
   instance is made at the composition root and passed in through
   constructors instead. [Choosing a pattern][choosing-pattern]
+- **Special Case.** Answers an absent or unusual case that every
+  caller would treat alike, with an object of the same type that
+  gives that case's answer. [Designing failure behaviour][failure]
 - **Specification.** Answers one rule used both to check one
   aggregate and to select many, as a domain object that says whether
   an aggregate meets it. [Designing repositories][repositories]
@@ -239,6 +245,7 @@ patterns by problem.
 [contexts]: ../../oo-bounding-contexts/SKILL.md
 [crossing]: ../../oo-crossing-system-boundaries/SKILL.md
 [events]: ../../oo-publishing-domain-events/SKILL.md
+[failure]: ../../oo-designing-failure-behaviour/SKILL.md
 [hiding]: ../../oo-hiding-implementation/SKILL.md
 [inverting]: ../../oo-inverting-dependencies/SKILL.md
 [language-patterns]: ../../oo-patterns-the-language-provides/SKILL.md

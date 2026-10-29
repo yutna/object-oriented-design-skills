@@ -553,3 +553,21 @@ kinds; the iterator replaced by the language's iteration over a
 read-only view; the module's idiom followed.
 
 Should reach `oo-patterns-the-language-provides`.
+
+## 34. Null, minus one and a catch around everything
+
+> Our `PatientFinder.byPhone` returns null when nobody matches, and
+> three screens crash when a receptionist mistypes a number. Booking
+> answers -1 when the slot is taken and 0 when it worked, and one caller
+> never looks at the number. Every controller wraps its call in a catch
+> that writes "error" and carries on. What should these methods do when
+> they cannot do their job?
+
+Must contain: the lookup's result saying in its type that nobody may
+match, or a special case every screen can use, so no caller can forget
+the check; a taken slot raised as an error named for the refusal rather
+than a number the caller may ignore; refusals the caller can act on
+told from faults no caller can repair, with faults handled once at the
+edge rather than caught and ignored in every controller.
+
+Should reach `oo-designing-failure-behaviour`.

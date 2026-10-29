@@ -104,6 +104,9 @@ is a design pattern worth it for three reminder channels -> oo-choosing-a-patter
 should these one-method strategy classes just be functions -> oo-patterns-the-language-provides
 do we still need the visitor now that the language has sealed types -> oo-patterns-the-language-provides
 should we write our own iterator for the waiting list -> oo-patterns-the-language-provides
+the patient lookup returns null when nobody matches -> oo-designing-failure-behaviour
+callers keep forgetting to check for null -> oo-designing-failure-behaviour
+should refusing a booking raise an exception or return an error code -> oo-designing-failure-behaviour
 ```
 
 ## Known misses
