@@ -607,3 +607,21 @@ retries limited to failures that may pass, a bounded number of times,
 with growing waits.
 
 Should reach `oo-making-work-reliable`.
+
+## 37. The reminder nobody can trace
+
+> A patient missed an appointment and says no reminder came. Our logs
+> show "reminder failed" forty times that morning, with no appointment
+> or patient on any line, and the text-message gateway answers with its
+> own message numbers. Another log line prints each patient's name and
+> diagnosis when a reminder goes out. The practice manager also wants
+> to know how many reminders fail each week. What should we record?
+
+Must contain: one identity carried from the reminder job through the
+gateway call and its answer, so this patient's reminder can be followed;
+each failure recorded once, with that identity and the appointment's
+identity, not a bare message; names and diagnoses taken out of the
+logs; a counter of reminders sent and failed for the weekly question,
+rather than counting log lines.
+
+Should reach `oo-designing-what-to-record`.

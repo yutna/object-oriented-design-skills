@@ -146,6 +146,8 @@ skills land.
 |A lock or a single owner for this state?|[Managing shared state][shared-state]|
 |A call to another system hangs or fails midway|[Making work reliable][reliable]|
 |A retry did the work twice|[Making work reliable][reliable]|
+|We cannot explain an incident from our records|[Designing what to record][records]|
+|What should we log, count or audit?|[Designing what to record][records]|
 
 [aggregates]: ../oo-designing-aggregates/SKILL.md
 [assigning]: ../oo-assigning-responsibilities/SKILL.md
@@ -174,6 +176,7 @@ skills land.
 [polymorphism]: ../oo-replacing-conditionals-with-polymorphism/SKILL.md
 [presentation]: ../oo-separating-presentation-from-domain/SKILL.md
 [reads]: ../oo-separating-reads-from-writes/SKILL.md
+[records]: ../oo-designing-what-to-record/SKILL.md
 [reliable]: ../oo-making-work-reliable/SKILL.md
 [repositories]: ../oo-designing-repositories/SKILL.md
 [shared-state]: ../oo-managing-shared-state/SKILL.md
