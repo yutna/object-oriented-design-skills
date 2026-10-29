@@ -11,24 +11,51 @@ systems or keep a system up when a dependency fails.
 
 ## Messages between systems
 
-A channel, publish and subscribe, request and reply, competing
-consumers, an idempotent receiver, a dead-letter channel and a message
-translator each starts from one symptom at the edge of the clinic.
+Each of these seven patterns starts from one symptom at the edge of
+the clinic. Each entry gives the symptom, the force and the cost.
 
-|Pattern|Clinic symptom|
-|---|---|
-|A channel|A lab result leaves without the sender naming the lab.|
-|Publish and subscribe|Billing hears of a cancellation without being named.|
-|Request and reply|Booking waits for an insurer's answer before it finishes.|
-|An idempotent receiver|A repeated message changes nothing the second time.|
-|A dead-letter channel|A message no handler can process is kept for a person.|
-|A message translator|A partner's `encounter` becomes the clinic's visit.|
+- **Channel.** A lab result leaves without the sender naming the lab.
+  The force is a sender that must not know where its receiver lives,
+  and a receiver that may be down when the result is sent. The cost is
+  a broker to run and watch, and a message that can arrive late or
+  twice.
 
-- **Competing consumers.** Several workers take from one reminder
-  queue; each message goes to one of them at a time.
+- **Publish and Subscribe.** Billing hears of a cancellation without
+  being named. The force is one fact with several readers, where a new
+  reader must not change the publisher. The cost is a publisher that
+  cannot see who reacts, so only a subscriber notices its own failure,
+  and a message shape that every reader now relies on.
 
-Each row names the problem once. None of these messages is this skill's
-to decide.
+- **Request and Reply.** Booking waits for an insurer's answer before
+  it finishes. The force is a sender that needs the answer to finish
+  its own work. The cost is a wait that fails when the insurer is slow
+  or down unless it is bounded, and an identity on each reply that
+  matches it to its request.
+
+- **Competing Consumers.** Several workers take from one reminder
+  queue, and each message goes to one of them at a time. The force is
+  more messages than one worker can handle in time. The cost is that
+  two messages may finish in another order than they arrived, so the
+  work must not depend on that order.
+
+- **Idempotent Receiver.** A repeated message changes nothing the
+  second time. The force is a channel that may deliver one message more
+  than once. The cost is a check before every change: the receiver
+  keeps the identity of each message it has handled, or reads the state
+  the message would change.
+
+- **Dead-letter Channel.** A message no handler can process is kept for
+  a person. The force is a message that would otherwise be retried for
+  ever or hold up the messages behind it. The cost is a person who must
+  watch that channel and decide each message, and a message that waits
+  there until they do.
+
+- **Message Translator.** A partner's `encounter` becomes the clinic's
+  visit. The force is two systems that name or shape one thing
+  differently, where neither will change. The cost is one more mapping
+  to keep in step with both sides.
+
+None of these messages is this skill's to decide.
 
 ## When a dependency fails
 
