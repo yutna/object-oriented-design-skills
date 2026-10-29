@@ -2,7 +2,7 @@
 
 ## Booking's refusals under one base
 
-Booking refuses in the clinic's words. `SlotTaken` says the slot is
+A booking is refused in the clinic's words. `SlotTaken` says the slot is
 already held. A clinician who takes no new patients refuses a booking
 with `ClinicianNotTakingPatients`, and a patient who has reached the
 booking limit refuses it with `BookingLimitReached`. The module raises
