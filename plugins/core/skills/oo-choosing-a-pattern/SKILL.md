@@ -19,9 +19,10 @@ metadata:
 A pattern is a named arrangement that answers a problem which returns.
 It earns its place only when the problem is in the code now: a second
 case has arrived, a change keeps coming back, or a duplication has
-already drifted apart. This skill starts from the symptom, checks the
-pattern's force with evidence, weighs its cost against what it removes,
-and takes the pattern out again when the force goes.
+already drifted apart, or when the business has named the variation with
+a reason. This skill starts from the symptom, checks the pattern's force
+with evidence, weighs its cost against what it removes, and takes the
+pattern out again when the force goes.
 
 ## When to use
 
@@ -49,8 +50,8 @@ and takes the pattern out again when the force goes.
 - The question is whether the language already provides the pattern as
   a feature. That is a question about a feature the language offers,
   outside this skill.
-- The question is a pattern's syntax in one programming language. The
-  language packs carry that.
+- The question is a pattern's syntax in one programming language. That
+  is outside this skill.
 
 ## Core rules
 
@@ -95,8 +96,8 @@ and takes the pattern out again when the force goes.
    concept, not the mechanism.
 
    The exception is a class whose job is the mechanism itself, such as
-   an adapter for an outside system or a specification: its pattern
-   word is its meaning, as the exception to naming classes and methods,
+   an adapter for an outside system or a repository: its pattern word
+   is its meaning, as the exception to naming classes and methods,
    rule 3, and [designing
    repositories](../oo-designing-repositories/SKILL.md) rule 1 allow.
 

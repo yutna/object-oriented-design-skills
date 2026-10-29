@@ -20,10 +20,12 @@ translator each starts from one symptom at the edge of the clinic.
 |A channel|A lab result leaves without the sender naming the lab.|
 |Publish and subscribe|Billing hears of a cancellation without being named.|
 |Request and reply|Booking waits for an insurer's answer before it finishes.|
-|Competing consumers|Several senders work one reminder queue, each sent once.|
 |An idempotent receiver|A repeated message changes nothing the second time.|
 |A dead-letter channel|A message no handler can process is kept for a person.|
 |A message translator|A partner's `encounter` becomes the clinic's visit.|
+
+- **Competing consumers.** Several workers take from one reminder
+  queue; each message goes to one of them at a time.
 
 Each row names the problem once. None of these messages is this skill's
 to decide.

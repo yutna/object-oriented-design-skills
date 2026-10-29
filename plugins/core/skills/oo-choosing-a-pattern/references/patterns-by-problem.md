@@ -75,8 +75,8 @@ that takes the pattern further.
   records access. The cost is one class between every caller and the
   real object, plus the rule for when the real object is reached.
 
-- **Facade.** Booking a visit needs a schedule, a room planner, a dose
-  stock and a letter queue, and every screen calls them in its own
+- **Facade.** Booking an appointment needs a schedule, a room planner, a
+  dose stock and a letter queue, and every screen calls them in its own
   order. The force is one request for one clinic job over a complex
   subsystem. The cost is a class that can grow into a god class if it
   takes every request. Rule 2 of [hiding
@@ -93,11 +93,11 @@ that takes the pattern further.
 ## Creating objects varies
 
 - **Factory Method.** A class cannot know which object to create, such
-  as an appointment that may be a first visit or a follow-up, and it
-  leaves one creation step to its subclasses. The force is creation that
-  varies with the subclass while the caller keeps one message. The cost
-  is a subclass per product and a creation method that every subclass
-  must override. A factory method is a creation method that a subclass
+  as an appointment for a first visit or a follow-up, and it leaves one
+  creation step to its subclasses. The force is creation that varies
+  with the subclass while the caller keeps one message. The cost is a
+  subclass per product and a creation method that every subclass must
+  override. A factory method is a creation method that a subclass
   overrides. It is not the static named factory that [constructing valid
   objects](../../oo-constructing-valid-objects/SKILL.md) rule 4 gives,
   and that `notation.md` defines as a `static` method returning
@@ -160,11 +160,11 @@ that takes the pattern further.
 ## Objects are shared rather than made anew
 
 - **Flyweight.** Many appointment rows each hold their own copy of the
-  same clinician, room or slot description, and memory or load time
-  suffers. The force is many objects that share a large immutable part
-  while the varying part is small. The cost is a cache or factory for
-  the shared parts and a split between shared and per-object state, and
-  every reader must know which part is shared.
+  same room description or appointment-kind description, and memory or
+  load time suffers. The force is many objects that share a large
+  immutable part while the varying part is small. The cost is a cache or
+  factory for the shared parts and a split between shared and per-object
+  state, and every reader must know which part is shared.
 
 - **Singleton.** A clinic clock, a configuration or a connection is
   needed from everywhere, and code reaches a global to get it. The force
@@ -178,8 +178,9 @@ that takes the pattern further.
 ## Objects react without knowing each other
 
 - **Observer.** When an appointment is cancelled, several parts must
-  react, such as releasing the slot, sending a letter and telling the
-  waiting list, and the cancelling code grows a step for each reaction.
+  react, such as releasing the slot and sending a letter, and, once the
+  slot is free, offering it to the waiting list, and the cancelling code
+  grows a step for each reaction.
   The force is one change with several reactions, where the changing
   object must not know each one. The cost is a list of listeners, a
   publication step and rules for order and failure; a reaction that must
