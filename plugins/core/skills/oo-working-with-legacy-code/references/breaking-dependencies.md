@@ -25,21 +25,22 @@ running whatever tests exist.
   a test cannot choose, such as `FeeSchedule` asking a `FeeTable` for
   rates. Declare an interface for only the messages the class sends,
   let the concrete class implement it without changing its body, and
-  hold the interface in the field. Read the interface and list every
-  message against the class's sends; build the program and run the
-  tests. No method body moves, and the concrete class keeps its
-  behaviour.
+  hold the interface in a field the constructor sets, with the named
+  factory of the first edit where callers cannot all change. Read the
+  interface and list every message against the class's sends; build the
+  program and run the tests. No method body moves, and the concrete
+  class keeps its behaviour.
 
 - **Moving a static call behind a method of an object the class
   receives.** This fits when code reaches an outside system through a
   static call, such as `DoseLabel` sending a line to
-  `LabelPrinter.print(line)`. Add a small object whose method sends the
-  same static call once, pass that object into the constructor, and
-  replace the static call in the class with a message to the new
-  object. Read the change to confirm that the argument and the answer
-  are untouched; build the program and run the tests. The static call
-  remains in the new object, where a test can replace the whole object
-  instead of the call.
+  `LabelPrinter.print(line)`. Add a small object behind an interface the
+  class owns, whose method sends the same static call once, pass that
+  object into the constructor, and replace the static call in the class
+  with a message to the new object. Read the change to confirm that the
+  argument and the answer are untouched; build the program and run the
+  tests. The static call remains in the new object, where a test can
+  replace the whole object instead of the call.
 
 A constructor that starts a thread uses the same first edit: take the
 object that does the work as a parameter and let the composition root
