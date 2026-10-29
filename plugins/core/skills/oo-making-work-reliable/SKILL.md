@@ -68,8 +68,8 @@ fails knowably, and a repeat that cannot take the deposit twice.
    again. A handler of domain events checks the same way, as rule 5 of
    [publishing domain events](../oo-publishing-domain-events/SKILL.md)
    asks. Where the receiver cannot recognise a repeat, record what was
-   sent and check for repeats afterwards, as the notice log does in
-   [the reference on consistency across aggregates][consistency].
+   sent and check for repeats afterwards, as the notice log does in the
+   [designing aggregates reference on consistency][consistency].
 
 3. Default. **Retry only a failure that may pass, such as an expired
    timeout or a busy reply, a bounded number of times, waiting longer
