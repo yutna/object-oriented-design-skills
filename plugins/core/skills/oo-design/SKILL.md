@@ -217,6 +217,29 @@ skills land.
 [values]: ../oo-modeling-values-and-entities/SKILL.md
 [what-varies]: ../oo-encapsulating-what-varies/SKILL.md
 
+## Language skills
+
+A language skill keeps the core rules in one language and never
+replaces them. A base language skill is for code with no framework.
+
+- `oo-java`, from `object-oriented-design-java`: records, sealed types,
+  `equals` and `hashCode`, checked exceptions, `Optional`, and classes
+  closed to extension.
+- `oo-kotlin`, from `object-oriented-design-kotlin`: data classes,
+  sealed types, nullable types, delegation with `by`, and extension
+  functions.
+- `oo-typescript`, from `object-oriented-design-typescript`: branded
+  identifiers, `#private` state, abstract classes, decorators,
+  discriminated unions, and a composition root.
+- `oo-javascript`, from `object-oriented-design-javascript`: contract
+  tests, `#private` state, frozen values, and classes rather than
+  edited prototypes.
+- A language with no skill of its own reads the nearest shipped one:
+  Scala and Groovy read `oo-java`.
+
+In Claude Code, install a language plugin beside the core one:
+`/plugin install object-oriented-design-java@object-oriented-design-skills`
+
 ## Red flags
 
 Places to look, not verdicts. A red flag becomes a finding only with
