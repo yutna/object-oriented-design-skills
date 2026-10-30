@@ -18,6 +18,18 @@
       "license": "MIT",
       "category": "development",
       "keywords": ["object-oriented-design", "software-design", "domain-driven-design", "refactoring"]
+    },
+    {
+      "name": "object-oriented-design-java",
+      "description": "Object-oriented design rules kept in plain Java, with no framework",
+      "version": "0.15.0",
+      "source": "./plugins/java",
+      "author": { "name": "Yutthana Siphuengchai" },
+      "homepage": "https://github.com/yutna/object-oriented-design-skills",
+      "repository": "https://github.com/yutna/object-oriented-design-skills",
+      "license": "MIT",
+      "category": "development",
+      "keywords": ["object-oriented-design", "java"]
     }
   ]
 }
