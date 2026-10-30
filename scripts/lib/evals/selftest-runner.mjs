@@ -1,7 +1,11 @@
+import { existsSync, readdirSync } from 'node:fs'
+import { join } from 'node:path'
+
 import { Plugin } from '../plugin.mjs'
 
 export class SelftestRunner {
   static #PLUGIN = 'object-oriented-design-skills'
+  static #MANIFEST = join('.claude-plugin', 'plugin.json')
 
   #calls = 0
 
@@ -41,6 +45,12 @@ export class SelftestRunner {
 
   static #pluginDir(args) {
     const index = args.indexOf('--plugin-dir')
-    return args[index + 1]
+    const path = args[index + 1]
+    if (existsSync(join(path, SelftestRunner.#MANIFEST))) return path
+    return readdirSync(path, { withFileTypes: true })
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => join(path, entry.name))
+      .find((directory) =>
+        existsSync(join(directory, SelftestRunner.#MANIFEST)))
   }
 }
