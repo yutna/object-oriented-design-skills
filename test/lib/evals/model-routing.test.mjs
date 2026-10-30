@@ -742,6 +742,9 @@ test('ModelRouting routes a Known-misses line and notes it apart',
       assert.deepEqual(report.lines(), [
         'hits: 3/6',
         'known-miss hits: 3/3',
+        '0/3 we are sizing this appointment design work ' +
+          '-> expected oo-design; answered oo-assigning-responsibilities, ' +
+          'oo-assigning-responsibilities, oo-assigning-responsibilities',
         'ok 3 routed case(s)'
       ])
       assert.equal(runner.calls, 9)
@@ -767,6 +770,8 @@ test('ModelRouting writes each result with its knownMiss flag',
       assert.deepEqual(report.lines(), [
         'hits: 1/2',
         'known-miss hits: 0/1',
+        '0/1 we are sizing this appointment design work ' +
+          '-> expected oo-design; answered oo-assigning-responsibilities',
         'known miss: 0/1 a small clinic change still needs design work ' +
           '-> expected oo-design; answered oo-assigning-responsibilities',
         'ok 3 routed case(s)'
@@ -815,7 +820,7 @@ test('--case that matches only a Known-misses line routes it', async () => {
     assert.deepEqual(report.lines(), [
       'hits: 0/0',
       'known-miss hits: 3/3',
-      'ok 3 routed case(s)'
+      'ok 1 routed case(s)'
     ])
     assert.equal(runner.calls, 3)
   } finally {

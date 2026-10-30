@@ -16,11 +16,13 @@ right thing. It spends no quota, and every pull request passes it.
 **Tier 1, one model call per case.** This tier runs
 `node scripts/eval-route-model.mjs` through the queue, with
 `--dry-run` to print the calls without making them. It shows the
-listing exactly as an agent sees it and asks a small model for one
-skill name per routing case. It measures top-1 routing against the
-expected skill and prints each miss with the answer it gave. To rerun
-one case ten times, `--case "<text>"` keeps the cases whose symptom
-contains the text; queue it with
+listing exactly as an agent sees it, with every plugin loaded, and asks
+a small model for one skill name per routing case and per line under
+Known misses. It measures top-1 routing against the expected skill,
+reports the cases and the known misses apart, and prints each miss with
+the answer it gave. To rerun one line ten times, `--case "<text>"` keeps
+the cases and known misses whose symptom contains the text; queue it
+with
 `node scripts/eval-queue.mjs --add "one routing case" --
 scripts/eval-route-model.mjs --case "<text>" --runs 10`. A clean run
 does not prove that the skill text helps, that a real session would
