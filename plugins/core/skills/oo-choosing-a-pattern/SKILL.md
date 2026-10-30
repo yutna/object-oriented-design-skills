@@ -49,7 +49,8 @@ pattern out again when the force goes.
   objects](../oo-constructing-valid-objects/SKILL.md).
 - The question is whether the language already provides the pattern as
   a feature. That is a question about a feature the language offers,
-  outside this skill.
+  which [patterns the language
+  provides](../oo-patterns-the-language-provides/SKILL.md) decides.
 - The question is a pattern's syntax in one programming language. That
   is outside this skill.
 

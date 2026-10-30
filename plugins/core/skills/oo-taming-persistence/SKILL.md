@@ -47,7 +47,9 @@ with one read query whose count a test checks.
 - The store holds nothing the domain model rebuilds, such as an
   append-only log or a cache of computed figures.
 - The question is giving reads a separate model of their own, kept
-  current from the changes: that is outside this skill.
+  current from the changes: that is
+  [separating reads from writes](../oo-separating-reads-from-writes/SKILL.md),
+  which builds it as a projection of the changes.
 
 ## Core rules
 

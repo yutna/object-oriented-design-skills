@@ -44,7 +44,8 @@ and a caller that does not wait behind another's slow call.
 - No object is reached by more than one thread or task, such as a
   service whose requests share nothing but the store.
 - The question is retrying or timing out a call to another system. That
-  is outside this skill.
+  is [making work reliable](../oo-making-work-reliable/SKILL.md), which
+  chooses the timeout and when a retry is safe.
 
 ## Core rules
 
