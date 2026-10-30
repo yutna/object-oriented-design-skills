@@ -758,3 +758,22 @@ each, dated, and redrawn or deleted when the code moves; no diagram of
 every table and class.
 
 Should reach `oo-documenting-design-decisions`.
+
+## 45. The comments nobody trusts
+
+> Every method in `ConsentRecorder` has a comment that restates its name.
+> A block of old code sits commented out at the bottom, "in case we need
+> it". The comment on `withdraw` says a withdrawal takes effect at the end
+> of the month, while the code applies it at once. One line sends the
+> consent to the regional record twice, and the only comment above it
+> says "do not touch". How should the comments in this class change?
+
+Must contain: the comments that restate method names deleted; the
+commented-out code deleted, since version control keeps it; the
+disagreement about withdrawal settled with the people who own the rule
+and fixed in the change that found it, with a test for the rule; the
+reason for the second send found and written as a comment that says
+why, or the line removed if no reason holds; history kept out of the
+comments.
+
+Should reach `oo-commenting-what-code-cannot`.
