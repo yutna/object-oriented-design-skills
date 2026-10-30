@@ -1,4 +1,5 @@
 import { Check } from '../check.mjs'
+import { FenceSyntaxes } from '../examples/fence-syntaxes.mjs'
 import { MarkdownDocument } from '../markdown-document.mjs'
 
 export class DomainCheck extends Check {
@@ -43,14 +44,14 @@ export class DomainCheck extends Check {
   inspect(report) {
     const fences = []
     for (const skill of this.#repository.skills()) {
-      fences.push(...this.#textFences(skill.path, skill.document))
+      fences.push(...this.#exampleFences(skill.path, skill.document))
       for (const file of skill.referenceFiles()) {
-        fences.push(...this.#textFences(
+        fences.push(...this.#exampleFences(
           file.path,
           new MarkdownDocument(file)))
       }
     }
-    // A run that read no text fence has measured nothing.
+    // A run that read no example fence has measured nothing.
     report.count('fence(s)', fences.length)
     for (const { path, fence } of fences) {
       for (const word of this.#words(fence.body)) {
@@ -62,10 +63,12 @@ export class DomainCheck extends Check {
     }
   }
 
-  #textFences(path, document) {
-    // Only text fences hold examples that can leave the clinic.
+  #exampleFences(path, document) {
+    // A neutral example is text; a language skill's example is its own
+    // tagged syntax.
     return document.fences()
-      .filter((fence) => fence.language === 'text')
+      .filter((fence) => fence.language === 'text' ||
+        FenceSyntaxes.TAGS.includes(fence.language))
       .map((fence) => ({ path, fence }))
   }
 

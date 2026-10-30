@@ -31,8 +31,21 @@ export class SkillShapeCheck extends Check {
     '[rule strictness](../oo-design/SKILL.md#how-strictly-a-rule-is-meant).'
   ].join('\n'))
 
+  static LANGUAGE_BACK_LINK = Object.freeze([
+    '**In this pack:** sizing and rule strictness are set by the core',
+    "plugin's `oo-design` skill; each rule here keeps a core rule in this",
+    'language.'
+  ].join('\n'))
+
+  // A plugin names its own back-link block; every other plugin gets the
+  // language block.
+  static BACK_LINKS = Object.freeze({
+    'object-oriented-design-skills': SkillShapeCheck.BACK_LINK
+  })
+
   static #PLUGIN = 'object-oriented-design-skills'
   static #INDEX = 'oo-design'
+  static #DEFAULT_BACK_LINK = SkillShapeCheck.LANGUAGE_BACK_LINK
   static #LIST_ITEM = /^\s*(?:[-*+]|\d+[.)])\s+\S/
 
   #repository
@@ -48,17 +61,24 @@ export class SkillShapeCheck extends Check {
   }
 
   inspect(report) {
-    const plugin = this.#repository.marketplace()
-      .plugins()
-      .find((candidate) => candidate.name === SkillShapeCheck.#PLUGIN)
-    const skills = plugin === undefined ? [] : plugin.skills()
-    report.count('skill shape(s)', skills.length)
-    for (const skill of skills) {
-      this.#inspectSkill(skill, report)
+    const plugins = this.#repository.marketplace().plugins()
+    let skills = 0
+    for (const plugin of plugins) {
+      const backLink = Object.hasOwn(
+        SkillShapeCheck.BACK_LINKS,
+        plugin.name)
+        ? SkillShapeCheck.BACK_LINKS[plugin.name]
+        : SkillShapeCheck.#DEFAULT_BACK_LINK
+      const core = plugin.name === SkillShapeCheck.#PLUGIN
+      for (const skill of plugin.skills()) {
+        skills += 1
+        this.#inspectSkill(core, skill, backLink, report)
+      }
     }
+    report.count('skill shape(s)', skills)
   }
 
-  #inspectSkill(skill, report) {
+  #inspectSkill(core, skill, backLink, report) {
     const headings = skill.document.headings()
     const levelOne = headings.filter((heading) => heading.level === 1)
     // A skill page needs one title, not two competing ones.
@@ -70,7 +90,7 @@ export class SkillShapeCheck extends Check {
     const levelTwo = headings
       .filter((heading) => heading.level === 2)
       .map((heading) => heading.text)
-    if (skill.name === SkillShapeCheck.#INDEX) {
+    if (core && skill.name === SkillShapeCheck.#INDEX) {
       // The index is the map of the pack, so its own list is fixed.
       if (!this.#same(levelTwo, SkillShapeCheck.INDEX_HEADINGS)) {
         report.error(
@@ -86,7 +106,7 @@ export class SkillShapeCheck extends Check {
         'level-two headings must equal CORE_HEADINGS')
     }
     // A sibling link back to the pack index keeps the skill navigable.
-    if (!this.#hasBackLink(skill, headings)) {
+    if (!this.#hasBackLink(skill, headings, backLink)) {
       report.error(
         skill.path,
         'back-link block must sit between the title and Overview')
@@ -104,7 +124,7 @@ export class SkillShapeCheck extends Check {
     }
   }
 
-  #hasBackLink(skill, headings) {
+  #hasBackLink(skill, headings, backLink) {
     const title = headings.find((heading) => heading.level === 1)
     const overview = headings.find((heading) =>
       heading.level === 2 && heading.text === 'Overview')
@@ -114,7 +134,7 @@ export class SkillShapeCheck extends Check {
       .slice(title.line, overview.line - 1)
       .join('\n')
       .trim()
-    return between === SkillShapeCheck.BACK_LINK
+    return between === backLink
   }
 
   #same(actual, expected) {
