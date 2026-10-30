@@ -154,6 +154,9 @@ here's my plan for the payments module, who should own which data -> oo-assignin
 java Slot vanishes from a HashSet, are my equals and hashCode wrong? -> oo-java
 java booking: checked exception when the slot is taken, or not? -> oo-java
 java: make Appointment final, or let others subclass it? -> oo-java
+kotlin data class Patient: copy() skips my validation, what now? -> oo-kotlin
+!! all over my kotlin code for appointment.clinician, how to fix? -> oo-kotlin
+kotlin extension functions on Visit are hiding real logic, ok? -> oo-kotlin
 ```
 
 ## Known misses
