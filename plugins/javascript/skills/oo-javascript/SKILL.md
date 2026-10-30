@@ -91,7 +91,7 @@ message.
    rule forbids and the method that keeps the rule never runs. The rule
    stays in the method that changes the field, and a caller gets a
    named action or a read-only view, never the collection itself, as
-   rule 5 asks.
+   rule 5 there asks.
 
 4. Default. **Freeze a value's own object and copy what it holds,
    knowing that `Object.freeze` is shallow and leaves `#private` fields
@@ -117,8 +117,8 @@ message.
    check or it fails at run time, and the caller no longer depends on
    the role's messages. If one implementation needs a different
    message, the role's contract is wrong or that implementation does
-   not keep it, and rule 6 says to fix the subtype or the hierarchy,
-   not the caller. The contract test from rule 1 names the
+   not keep it, and rule 6 there says to fix the subtype or the
+   hierarchy, not the caller. The contract test from rule 1 names the
    implementation that breaks the role, because the same test runs for
    each one.
 
