@@ -168,6 +168,8 @@ skills land.
 |Where do we explain why this code looks odd?|[Commenting what code cannot say][commenting]|
 |A framework hook or marker holds a business rule|[Working within a framework][framework]|
 |How far should we go along with the framework?|[Working within a framework][framework]|
+|A calculation also saves, sends or changes its inputs|[Applying functional techniques][functional]|
+|Which functional techniques fit object code?|[Applying functional techniques][functional]|
 
 [aggregates]: ../oo-designing-aggregates/SKILL.md
 [antipatterns]: ../oo-recognising-antipatterns/SKILL.md
@@ -184,6 +186,7 @@ skills land.
 [events]: ../oo-publishing-domain-events/SKILL.md
 [failure]: ../oo-designing-failure-behaviour/SKILL.md
 [framework]: ../oo-working-within-a-framework/SKILL.md
+[functional]: ../oo-applying-functional-techniques/SKILL.md
 [hiding]: ../oo-hiding-implementation/SKILL.md
 [illegal-states]: ../oo-making-illegal-states-impossible/SKILL.md
 [interfaces]: ../oo-designing-interfaces/SKILL.md
