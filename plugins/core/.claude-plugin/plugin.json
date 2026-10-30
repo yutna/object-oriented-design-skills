@@ -1,6 +1,6 @@
 {
   "name": "object-oriented-design-skills",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "description": "Agent Skills carrying design rules for codebases written in an object-oriented style: assigning responsibilities, modelling a domain in objects, inverting dependencies, structuring a system, and refactoring toward all of it",
   "author": {
     "name": "Yutthana Siphuengchai",

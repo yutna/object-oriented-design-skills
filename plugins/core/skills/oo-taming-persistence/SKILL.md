@@ -3,7 +3,7 @@ name: oo-taming-persistence
 description: Use when choosing active record or a data mapper, when a list fires one query per row, or when lazily loaded data fails outside its session.
 license: MIT
 metadata:
-  version: 0.15.0
+  version: 0.16.0
   pack: object-oriented-design-skills
 ---
 

@@ -3,7 +3,7 @@ name: oo-designing-failure-behaviour
 description: Use when a method answers null for nothing found, when callers ignore or catch every exception, or when designing a module's error types.
 license: MIT
 metadata:
-  version: 0.15.0
+  version: 0.16.0
   pack: object-oriented-design-skills
 ---
 

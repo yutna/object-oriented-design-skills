@@ -3,7 +3,7 @@ name: oo-javascript
 description: Use when plain JavaScript (JS), with no framework or types, has no interface for a contract, or needs private state, frozen values or classes, not prototypes.
 license: MIT
 metadata:
-  version: 0.15.0
+  version: 0.16.0
   pack: object-oriented-design-skills
 ---
 

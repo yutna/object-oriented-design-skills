@@ -3,7 +3,7 @@ name: oo-kotlin
 description: Use when plain Kotlin code with no framework needs a data class or a sealed type, a choice of nullable types, delegation with by, or extension functions.
 license: MIT
 metadata:
-  version: 0.15.0
+  version: 0.16.0
   pack: object-oriented-design-skills
 ---
 

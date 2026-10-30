@@ -3,7 +3,7 @@ name: oo-honouring-substitutability
 description: Use when a subclass throws or breaks its parent's promise, when callers check which subtype they hold, or when deciding if a class may be extended.
 license: MIT
 metadata:
-  version: 0.15.0
+  version: 0.16.0
   pack: object-oriented-design-skills
 ---
 

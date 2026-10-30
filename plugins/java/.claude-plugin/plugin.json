@@ -1,6 +1,6 @@
 {
   "name": "object-oriented-design-java",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "description": "Object-oriented design rules kept in plain Java: records, sealed types, equality, checked exceptions and classes closed to extension",
   "author": {
     "name": "Yutthana Siphuengchai",
