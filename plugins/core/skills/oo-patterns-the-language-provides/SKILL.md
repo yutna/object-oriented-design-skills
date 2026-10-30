@@ -3,7 +3,7 @@ name: oo-patterns-the-language-provides
 description: Use when strategy or command classes could be functions, when writing an iterator or visitor by hand, or when the language builds in the pattern.
 license: MIT
 metadata:
-  version: 0.13.0
+  version: 0.14.0
   pack: object-oriented-design-skills
 ---
 
