@@ -328,16 +328,21 @@ test('ModelRouting throws when a non-zero exit ends after a Skill answer',
     }
   })
 
-test('ModelRouting throws when the turn limit ends a run with no Skill call',
+test('ModelRouting counts the turn limit with no Skill call as none',
   async () => {
     const fixture = await TempRepository.of()
     try {
       const runner = new FakeRunner(RouteStream.limited(), 1)
-      assert.throws(
-        () => fixture.inspect({ runner }),
-        (error) => error instanceof RepoError &&
-          error.exitCode === 1 &&
-          error.message.startsWith('route run failed: exit 1: '))
+      const report = fixture.inspect({ runner })
+      assert.equal(report.failed, false)
+      assert.deepEqual(report.lines(), [
+        'hits: 0/6',
+        '0/3 we are sizing this appointment design work ' +
+          '-> expected oo-design; answered none, none, none',
+        '0/3 which class owns the appointment reminder ' +
+          '-> expected oo-assigning-responsibilities; answered none, none, none',
+        'ok 2 routed case(s)'
+      ])
     } finally {
       await fixture.close()
     }

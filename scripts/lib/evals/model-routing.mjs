@@ -153,10 +153,10 @@ export class ModelRouting extends Check {
         'claude',
         ModelRouting.#args(copyPath, routingCase.symptom),
         directory)
-      // A run the turn limit ends still answered when its Skill call came
-      // before the limit.
+      // The turn limit stops the harness, not the model's answer, so a run
+      // it ends keeps its output whatever the exit code says.
       if (exitCode !== 0 &&
-        !ModelRouting.#answeredOnTheTurnLimit(output)) {
+        !ModelRouting.#endedOnTurnLimit(output)) {
         throw new RepoError(
           `route run failed: exit ${exitCode}: ${output.trim()}`)
       }
@@ -166,13 +166,11 @@ export class ModelRouting extends Check {
     }
   }
 
-  static #answeredOnTheTurnLimit(output) {
-    const events = ModelRouting.#events(output)
-    const result = events
+  static #endedOnTurnLimit(output) {
+    const result = ModelRouting.#events(output)
       .filter((event) => event?.type === 'result').at(-1)
     // Only the limit ending the session makes the exit worth keeping.
-    return result?.subtype === ModelRouting.#TURN_LIMIT &&
-      ModelRouting.#skillAnswer(events) !== null
+    return result?.subtype === ModelRouting.#TURN_LIMIT
   }
 
   #write(results, hits, runs, cases) {
@@ -279,6 +277,8 @@ export class ModelRouting extends Check {
     if (skill !== null) return ModelRouting.#named(skill, skills)
     const result = events
       .filter((event) => event?.type === 'result').at(-1)
+    // The limit's own message is the harness talking, not an answer.
+    if (result?.subtype === ModelRouting.#TURN_LIMIT) return 'none'
     const text = typeof result?.result === 'string'
       ? result.result.trim()
       : ''
