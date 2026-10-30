@@ -14,7 +14,10 @@ class TempRepository {
   static async create({
     packageVersion = '1.0.0',
     entryVersion = '1.0.0',
-    pluginVersion = '1.0.0'
+    pluginVersion = '1.0.0',
+    javaDirectory = 'java',
+    javaName = 'object-oriented-design-java',
+    javaSource = `./plugins/${javaDirectory}`
   } = {}) {
     const root = await mkdtemp(join(tmpdir(), 'oo-manifest-'))
     await writeFile(
@@ -27,22 +30,36 @@ class TempRepository {
         name: 'fixture-market',
         plugins: [
           {
-            name: 'fixture-plugin',
+            name: 'object-oriented-design-skills',
             version: entryVersion,
             source: './plugins/core'
+          },
+          {
+            name: javaName,
+            version: entryVersion,
+            source: javaSource
           }
         ]
       }))
-    await mkdir(join(root, 'plugins', 'core', '.claude-plugin'), {
-      recursive: true
-    })
-    await writeFile(
-      join(root, 'plugins', 'core', '.claude-plugin', 'plugin.json'),
-      JSON.stringify({
-        name: 'fixture-plugin',
-        version: pluginVersion
-      }))
+    await this.writePlugin(
+      root,
+      'core',
+      'object-oriented-design-skills',
+      pluginVersion)
+    await this.writePlugin(root, javaDirectory, javaName, pluginVersion)
     return new TempRepository(root)
+  }
+
+  static async writePlugin(root, directory, name, version) {
+    const manifest = join(
+      root,
+      'plugins',
+      directory,
+      '.claude-plugin')
+    await mkdir(manifest, { recursive: true })
+    await writeFile(
+      join(manifest, 'plugin.json'),
+      JSON.stringify({ name, version }))
   }
 
   constructor(root) {
@@ -59,11 +76,11 @@ class TempRepository {
     return join(this.#root, '.claude-plugin', 'marketplace.json')
   }
 
-  pluginPath() {
+  pluginPath(directory = 'core') {
     return join(
       this.#root,
       'plugins',
-      'core',
+      directory,
       '.claude-plugin',
       'plugin.json')
   }
@@ -79,12 +96,12 @@ class TempRepository {
   }
 }
 
-test('a valid marketplace and plugin pass the manifest check', async () => {
+test('a valid marketplace and plugins pass the manifest check', async () => {
   const repository = await TempRepository.create()
   try {
     const report = repository.inspect()
     assert.equal(report.failed, false)
-    assert.deepEqual(report.lines(), ['ok 2 manifest(s)'])
+    assert.deepEqual(report.lines(), ['ok 4 manifest(s)'])
   } finally {
     await repository.close()
   }
@@ -96,8 +113,8 @@ test('a marketplace entry version must equal the package version', async () => {
     const report = repository.inspect()
     assert.ok(report.lines().includes(
       `error ${repository.marketplacePath()}: ` +
-      'marketplace entry fixture-plugin version 0.9.0 does not match ' +
-      'package version 1.0.0'))
+      'marketplace entry object-oriented-design-skills version 0.9.0 ' +
+      'does not match package version 1.0.0'))
   } finally {
     await repository.close()
   }
@@ -109,8 +126,38 @@ test('a plugin version must equal the package version', async () => {
     const report = repository.inspect()
     assert.ok(report.lines().includes(
       `error ${repository.pluginPath()}: ` +
-      'plugin fixture-plugin version 0.9.0 does not match package ' +
-      'version 1.0.0'))
+      'plugin object-oriented-design-skills version 0.9.0 does not match ' +
+      'package version 1.0.0'))
+  } finally {
+    await repository.close()
+  }
+})
+
+test('a language plugin name must equal its directory', async () => {
+  const repository = await TempRepository.create({
+    javaName: 'object-oriented-design-jvm'
+  })
+  try {
+    const report = repository.inspect()
+    assert.ok(report.lines().includes(
+      `error ${repository.marketplacePath()}: ` +
+      'marketplace entry object-oriented-design-jvm must be named ' +
+      'object-oriented-design-java'))
+  } finally {
+    await repository.close()
+  }
+})
+
+test('a language plugin source must equal its directory', async () => {
+  const repository = await TempRepository.create({
+    javaDirectory: 'jvm'
+  })
+  try {
+    const report = repository.inspect()
+    assert.ok(report.lines().includes(
+      `error ${repository.marketplacePath()}: ` +
+      'marketplace entry object-oriented-design-java source ' +
+      './plugins/jvm must be ./plugins/java'))
   } finally {
     await repository.close()
   }

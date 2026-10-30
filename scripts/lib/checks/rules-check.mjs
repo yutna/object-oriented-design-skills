@@ -1,7 +1,6 @@
 import { Check } from '../check.mjs'
 
 export class RulesCheck extends Check {
-  static #PLUGIN = 'object-oriented-design-skills'
   static #INDEX = 'oo-design'
   static #LABELS = Object.freeze([
     'Rule',
@@ -25,13 +24,10 @@ export class RulesCheck extends Check {
   }
 
   inspect(report) {
-    const plugin = this.#repository.marketplace()
+    const skills = this.#repository.marketplace()
       .plugins()
-      .find((candidate) => candidate.name === RulesCheck.#PLUGIN)
-    const skills = plugin === undefined
-      ? []
-      : plugin.skills()
-        .filter((skill) => skill.name !== RulesCheck.#INDEX)
+      .flatMap((plugin) => plugin.skills())
+      .filter((skill) => skill.name !== RulesCheck.#INDEX)
     report.count('skill(s)', skills.length)
     const labels = new Map()
     let rules = 0

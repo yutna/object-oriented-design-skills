@@ -9,6 +9,7 @@ export class SharedParagraphCheck extends Check {
   // These repeats are deliberate, and the rest are corrected in one place.
   static SHARED_ON_PURPOSE = Object.freeze([
     SkillShapeCheck.BACK_LINK,
+    SkillShapeCheck.LANGUAGE_BACK_LINK,
     'Places to look, not verdicts. A red flag becomes a finding only ' +
     'with evidence: a measurement, a reproducible bug, or a failing test.'
   ])

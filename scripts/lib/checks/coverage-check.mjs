@@ -6,6 +6,7 @@ export class CoverageCheck extends Check {
   static MIN_ROUTING_CASES = 2
   static MIN_SCENARIOS = 1
 
+  static #PLUGIN = 'object-oriented-design-skills'
   static #ROUTING = 'evals/routing-cases.md'
   static #SCENARIOS = 'evals/scenarios.md'
 
@@ -23,6 +24,7 @@ export class CoverageCheck extends Check {
 
   inspect(report) {
     const skills = this.#repository.skills()
+    const core = this.#corePaths()
     const routing = this.#routing()
     const scenarios = this.#scenarios()
     let covered = 0
@@ -36,10 +38,14 @@ export class CoverageCheck extends Check {
           `${skill.name} has ${routingCount} routing case(s); ` +
           `at least ${CoverageCheck.MIN_ROUTING_CASES}`)
       }
-      // One scenario proves the skill answers a whole clinic problem.
-      const scenarioCount = scenarios.filter((scenario) =>
-        scenario.skills.includes(skill.name)).length
-      if (scenarioCount < CoverageCheck.MIN_SCENARIOS) {
+      // A language skill answers no whole clinic problem, so it needs
+      // no scenario; a core skill needs one.
+      const scenarioCount = core.has(skill.path)
+        ? scenarios.filter((scenario) =>
+          scenario.skills.includes(skill.name)).length
+        : CoverageCheck.MIN_SCENARIOS
+      if (core.has(skill.path) &&
+        scenarioCount < CoverageCheck.MIN_SCENARIOS) {
         report.error(
           CoverageCheck.#SCENARIOS,
           `${skill.name} has no scenario`)
@@ -51,6 +57,15 @@ export class CoverageCheck extends Check {
     }
     // A skill that meets both minimums is covered by the eval files.
     report.count('skill(s) covered', covered)
+  }
+
+  #corePaths() {
+    const plugin = this.#repository.marketplace()
+      .plugins()
+      .find((candidate) => candidate.name === CoverageCheck.#PLUGIN)
+    return new Set(plugin === undefined
+      ? []
+      : plugin.skills().map((skill) => skill.path))
   }
 
   #routing() {

@@ -13,6 +13,11 @@ const UNIQUE = 'The clinic schedule keeps a slot for each booked ' +
   'appointment and refuses a second patient until the first booking is ' +
   'released and its slot is free again.'
 const SHORT = 'The slot is free.'
+const LANGUAGE_BACK_LINK = [
+  '**In this pack:** sizing and rule strictness are set by the core',
+  "plugin's `oo-design` skill; each rule here keeps a core rule in this",
+  'language.'
+].join('\n')
 
 class FakeSkill {
   #name
@@ -79,6 +84,20 @@ test('SharedParagraphCheck rejects a long paragraph in two skills', () => {
       'paragraph is shared by oo-design and oo-assigning-responsibilities',
     'failed: 1 error(s)'
   ])
+})
+
+test('SharedParagraphCheck allows the language back-link block', () => {
+  const report = CheckRun.of([
+    new FakeSkill(
+      'oo-java',
+      'plugins/java/skills/oo-java/SKILL.md',
+      `# One\n\n${LANGUAGE_BACK_LINK}\n`),
+    new FakeSkill(
+      'oo-kotlin',
+      'plugins/kotlin/skills/oo-kotlin/SKILL.md',
+      `# Two\n\n${LANGUAGE_BACK_LINK}\n`)
+  ])
+  assert.deepEqual(report.lines(), ['ok 2 paragraph(s)'])
 })
 
 test('SharedParagraphCheck passes a short shared line', () => {
