@@ -1,0 +1,14 @@
+{
+  "name": "object-oriented-design-javascript",
+  "version": "0.15.0",
+  "description": "Object-oriented design rules kept in plain JavaScript: contract tests, #private state, frozen values and classes rather than edited prototypes",
+  "author": {
+    "name": "Yutthana Siphuengchai",
+    "url": "https://github.com/yutna"
+  },
+  "homepage": "https://github.com/yutna/object-oriented-design-skills",
+  "repository": "https://github.com/yutna/object-oriented-design-skills",
+  "license": "MIT",
+  "keywords": ["object-oriented-design", "javascript"],
+  "skills": "./skills/"
+}

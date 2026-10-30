@@ -54,6 +54,18 @@
       "license": "MIT",
       "category": "development",
       "keywords": ["object-oriented-design", "typescript"]
+    },
+    {
+      "name": "object-oriented-design-javascript",
+      "description": "Object-oriented design rules kept in plain JavaScript, with no framework",
+      "version": "0.15.0",
+      "source": "./plugins/javascript",
+      "author": { "name": "Yutthana Siphuengchai" },
+      "homepage": "https://github.com/yutna/object-oriented-design-skills",
+      "repository": "https://github.com/yutna/object-oriented-design-skills",
+      "license": "MIT",
+      "category": "development",
+      "keywords": ["object-oriented-design", "javascript"]
     }
   ]
 }
