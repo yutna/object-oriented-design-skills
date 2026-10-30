@@ -105,10 +105,14 @@ message.
    copy. A `#private` field is not a property, so freezing the object
    does not stop `this.#field = ...` inside the class; what keeps a
    value is that no method does that, and every change answers a new
-   value. The exception is a value that holds an entity: the collection
-   is copied and frozen, but the entity inside keeps its identity and
-   is not copied, as `oo-encapsulating-state-and-behaviour` rule 6
-   says.
+   value.
+
+   The exception is a field that holds another value rather than an
+   entity: because a value never changes, the constructor keeps the
+   instance it was given without copying it, as
+   `oo-modeling-values-and-entities` rule 2 says, and a field that needs
+   an entity holds its identifier, as `oo-designing-aggregates` rule 3
+   asks.
 
 5. Rule. **Never ask which class an object is, by `instanceof` or by
    its `constructor`, before sending it a message, as
