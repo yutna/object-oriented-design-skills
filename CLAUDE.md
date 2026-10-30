@@ -18,9 +18,12 @@ Claude is the reviewer here, not the implementer.
   later milestone, linked from the review comment.
 - Skill content: a wrong fact or a missing scope item must be fixed.
   Wording and taste become new issues.
-- At most two change rounds per pull request. A third failure means the
-  issue was specified badly: rewrite or split it, and record why in the
-  ledger.
+- At most two change rounds per pull request. Before a third,
+  diagnose from the spec, the session transcript and the task's size.
+  A spec that is ambiguous, wrong or too big gets rewritten or split.
+  A clear spec gets a different way of working: a fresh session, one
+  item at a time, a failing check that shows the defect. Never the
+  answer text. Record the diagnosis in the ledger.
 - A milestone's scope freezes when its first pull request merges.
 - Merge with `gh pr merge --squash --delete-branch` once CI is green and
   every criterion passes.
