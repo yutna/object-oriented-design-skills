@@ -104,8 +104,8 @@ stand-in for a store, a clock or a sender.
 
 ## Pattern
 
-`Weight` is a value: two readings with the same amount are
-interchangeable. `Weight.averageOf(list)` is taken to be a static method
+`Weight` is a value, so it is immutable and compares by its contents.
+`Weight.averageOf(list)` is taken to be a static method
 that answers the mean of the weights in a list and changes nothing, a
 calculation that uses only its argument, which designing for
 testability, rule 5, allows a static method.
