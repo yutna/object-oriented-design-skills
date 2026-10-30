@@ -3,7 +3,7 @@ name: oo-working-within-a-framework
 description: Use when a framework wants domain classes to extend its base class, offer setters or carry its markers, or deciding how far to go along with it.
 license: MIT
 metadata:
-  version: 0.15.0
+  version: 0.16.0
   pack: object-oriented-design-skills
 ---
 

@@ -1,6 +1,6 @@
 {
   "name": "object-oriented-design-kotlin",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "description": "Object-oriented design rules kept in plain Kotlin: data classes, sealed types, null safety, delegation and extension functions",
   "author": {
     "name": "Yutthana Siphuengchai",

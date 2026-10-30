@@ -3,7 +3,7 @@ name: oo-working-with-legacy-code
 description: Use when changing software that has no tests, when an old class must change before it can be tested, or replacing an old system piece by piece.
 license: MIT
 metadata:
-  version: 0.15.0
+  version: 0.16.0
   pack: object-oriented-design-skills
 ---
 
