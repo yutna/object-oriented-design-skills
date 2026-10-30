@@ -127,7 +127,6 @@ our tests pass or fail depending on what day they run -> oo-designing-for-testab
 we made a method public only so a test can reach it -> oo-designing-for-testability
 how do I refactor this long function without breaking it -> oo-refactoring-toward-object-design
 this refactoring branch has grown for three weeks and still is not done -> oo-refactoring-toward-object-design
-refactor these if-else branches toward a strategy in small steps -> oo-refactoring-toward-object-design
 nobody wrote tests for this old class and we must change it this week -> oo-working-with-legacy-code
 how do we get this old class into a test harness -> oo-working-with-legacy-code
 swap out the old billing system gradually while it keeps running -> oo-working-with-legacy-code
@@ -145,6 +144,13 @@ the platform wants public setters on patient so it can fill them from forms -> o
 where should we stop going along with how our web stack wants things -> oo-working-within-a-framework
 calculating an invoice total also writes to the database, hard to test -> oo-applying-functional-techniques
 passing a slot to a helper quietly changed its start time somewhere -> oo-applying-functional-techniques
+My booking tests break every time i rename a private method -> oo-testing-object-oriented-code
+should i fake the payment provider's sdk directly in my billing tests -> oo-testing-object-oriented-code
+can't test the late cancellation fee because it reads the current time -> oo-designing-for-testability
+need to add a discount to old billing code that has zero tests -> oo-working-with-legacy-code
+how do we slowly move off the old scheduling system without a big rewrite -> oo-working-with-legacy-code
+sanity check the responsibilities in this invoice pr, feels like a god class->oo-recognising-antipatterns
+here's my plan for the payments module, who should own which data -> oo-assigning-responsibilities
 ```
 
 ## Known misses
@@ -155,4 +161,13 @@ case.
 ```text
 a small clinic change still needs design work -> oo-design
 made a whole class just to hold one discount rule, feels like overkill -> oo-applying-functional-techniques
+the invoice class is 2000 lines and i want to split it safely -> oo-refactoring-toward-object-design
+this giant if-else on insurance type keeps growing, how do i clean it up -> oo-replacing-conditionals-with-polymorphism
+can you look over my pr for the new slot booking classes -> oo-reviewing-object-design
+before i build it, does this billing class sketch hold up -> oo-reviewing-object-design
+can you look over my billing diff, are the objects split right -> oo-reviewing-object-design
+just pushed the slot booking changes, does the class structure hold up -> oo-reviewing-object-design
+haven't written it yet, does this patient and appointment model make sense -> oo-reviewing-object-design
+sketched classes for clinician schedules and slots, poke holes before i build->oo-reviewing-object-design
+refactor these if-else branches toward a strategy in small steps -> oo-replacing-conditionals-with-polymorphism
 ```
