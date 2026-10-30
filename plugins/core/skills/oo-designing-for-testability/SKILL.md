@@ -47,7 +47,8 @@ day it runs.
   stand-in to pass: that is
   [testing object-oriented code](../oo-testing-object-oriented-code/SKILL.md).
 - The code has no tests and must change now, before its design can
-  improve: getting a test around today's code is outside this skill.
+  improve: getting a test around today's code is in
+  [working with legacy code](../oo-working-with-legacy-code/SKILL.md).
 - A screen, a scheduled job or a message listener cannot run without
   its framework: [layering the system](../oo-layering-the-system/SKILL.md)
   rule 4 keeps that edge humble.
@@ -240,6 +241,8 @@ evidence: a measurement, a reproducible bug, or a failing test.
   hard edge humble, which rule 6 uses inside a class.
 - [oo-modeling-lifecycles](../oo-modeling-lifecycles/SKILL.md) gives the
   time to a transition method, which rule 3 follows.
+- [oo-working-with-legacy-code](../oo-working-with-legacy-code/SKILL.md)
+  gets a test around today's code before its design can improve.
 
 ## Further reading
 

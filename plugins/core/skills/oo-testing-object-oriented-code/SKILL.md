@@ -41,9 +41,11 @@ covers the moves, the names, and the stand-ins a test may use.
 
 - The code cannot be built in a test without a database, a server or the
   real time, and the question is how to change its design so it can:
-  that is outside this skill.
+  that is
+  [designing for testability](../oo-designing-for-testability/SKILL.md).
 - The code has no tests at all and must change now: pinning what it does
-  before the change is outside this skill.
+  before the change is in
+  [working with legacy code](../oo-working-with-legacy-code/SKILL.md).
 - A screen, a scheduled job or a message listener needs its framework to
   run: [layering the system](../oo-layering-the-system/SKILL.md) rule 4
   keeps such an edge humble.
@@ -233,6 +235,10 @@ evidence: a measurement, a reproducible bug, or a failing test.
 - [oo-designing-aggregates](../oo-designing-aggregates/SKILL.md) gives
   the freed-time step this skill's Pattern tests, and the waiting list
   it changes.
+- [oo-designing-for-testability](../oo-designing-for-testability/SKILL.md)
+  changes a design that a test cannot build or control.
+- [oo-working-with-legacy-code](../oo-working-with-legacy-code/SKILL.md)
+  pins what untested code does before it changes.
 
 ## Further reading
 
