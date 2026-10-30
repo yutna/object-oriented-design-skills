@@ -151,6 +151,9 @@ need to add a discount to old billing code that has zero tests -> oo-working-wit
 how do we slowly move off the old scheduling system without a big rewrite -> oo-working-with-legacy-code
 sanity check the responsibilities in this invoice pr, feels like a god class->oo-recognising-antipatterns
 here's my plan for the payments module, who should own which data -> oo-assigning-responsibilities
+java Slot vanishes from a HashSet, are my equals and hashCode wrong? -> oo-java
+java booking: checked exception when the slot is taken, or not? -> oo-java
+java: make Appointment final, or let others subclass it? -> oo-java
 ```
 
 ## Known misses
