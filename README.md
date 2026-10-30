@@ -70,6 +70,13 @@ name both load.
 Run `npm run gate`. See [AGENTS.md](AGENTS.md) and
 [CONTRIBUTING.md](CONTRIBUTING.md).
 
+`npm run validate:examples` parses every fence tagged with a language
+the pack has a grammar for, and runs the TypeScript compiler's syntax
+check on TypeScript as well. It checks syntax only: no name, type or
+import is resolved, and a grammar recovers from some errors a
+compiler would reject, so an example that parses can still fail to
+compile.
+
 ## Contributing
 
 Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) first.

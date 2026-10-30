@@ -14,6 +14,7 @@ export class NegativeCases {
   static #PROSE = 'scripts/validate-prose.mjs'
   static #PATTERNS = 'scripts/validate-patterns.mjs'
   static #COUNTS = 'scripts/validate-counts.mjs'
+  static #EXAMPLES = 'scripts/validate-examples.mjs'
   static #PATTERN_INDEX =
     'plugins/core/skills/oo-design/references/pattern-index.md'
   static #MEMENTO_FIND = '- **Memento.**'
@@ -440,6 +441,14 @@ export class NegativeCases {
         NegativeCases.#PATTERN_INDEX,
         NegativeCases.#BULKHEAD_FIND,
         NegativeCases.#BULKHEAD_REPLACE),
-      'pattern index: "Bulkhead" is named in the pack but has no entry')
+      'pattern index: "Bulkhead" is named in the pack but has no entry'),
+    new NegativeCase(
+      'examples reject a js fence that does not parse',
+      NegativeCases.#EXAMPLES,
+      new ReplaceText(
+        'AGENTS.md',
+        'if (import.meta.main) {',
+        'if (import.meta.main {'),
+      'js fence does not parse at ')
   ])
 }

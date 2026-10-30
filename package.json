@@ -27,7 +27,7 @@
   ],
   "scripts": {
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\" \"#OOP_SOURCES.md\" \"#PRIVATE-NOTES.md\" \"#.claude\"",
-    "test": "npm run lint:md && npm run validate:oop && npm run validate:skills && npm run validate:rules && npm run validate:prose && npm run validate:patterns && npm run validate:counts && npm run eval:routing",
+    "test": "npm run lint:md && npm run validate:oop && npm run validate:skills && npm run validate:rules && npm run validate:prose && npm run validate:patterns && npm run validate:counts && npm run validate:examples && npm run eval:routing",
     "test:unit": "node --test \"test/**/*.test.mjs\"",
     "test:negative": "node scripts/negative-test.mjs",
     "validate:oop": "node scripts/validate-oop.mjs",
@@ -36,14 +36,24 @@
     "validate:prose": "node scripts/validate-prose.mjs",
     "validate:patterns": "node scripts/validate-patterns.mjs",
     "validate:counts": "node scripts/validate-counts.mjs",
+    "validate:examples": "node scripts/validate-examples.mjs",
     "eval:routing": "node scripts/eval-routing.mjs",
     "bump-version": "node scripts/bump-version.mjs",
     "gate": "npm test && npm run test:unit && npm run test:negative"
   },
   "devDependencies": {
+    "@tree-sitter-grammars/tree-sitter-kotlin": "1.1.0",
     "acorn": "8.19.0",
     "acorn-walk": "8.3.5",
     "markdownlint-cli2": "0.24.0",
+    "tree-sitter-c-sharp": "0.23.5",
+    "tree-sitter-java": "0.23.5",
+    "tree-sitter-javascript": "0.25.0",
+    "tree-sitter-python": "0.25.0",
+    "tree-sitter-ruby": "0.23.1",
+    "tree-sitter-typescript": "0.23.2",
+    "typescript": "6.0.3",
+    "web-tree-sitter": "0.27.1",
     "yaml": "2.9.1"
   },
   "overrides": {
