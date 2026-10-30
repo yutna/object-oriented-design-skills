@@ -18,8 +18,8 @@ language.
 TypeScript puts much of a design into the type system and then takes
 some of it back: object types match by their shape, so a string that
 names a patient can stand where a string that names a clinician is
-expected, and `private` keeps a member out of the type's shape but not
-out of the JavaScript object. This skill applies the pack's core rules
+expected, and `private` is a compile-time promise that leaves the
+member in the JavaScript object. This skill applies the pack's core rules
 to plain TypeScript, from version 5.0 on, with `strict` on and no
 framework, using the ECMAScript decorators TypeScript 5.0 supports. It
 says which feature keeps each rule and how the compiler and the runtime
@@ -67,9 +67,9 @@ that names every adapter once.
    intersected with an object type that holds a `unique symbol` member,
    and that member exists in the type only. A checked factory asserts
    the brand once at the edge, where text becomes a value, and every
-   later call is checked. The exception is a type no other type shares a
-   shape with, such as a class with a `private` or `#private` member,
-   whose compatible types must come from the same declaration: a brand
+   later call is checked. The exception is a type no unrelated type
+   shares a shape with, such as a class with a `private` or `#private`
+   member, whose compatible types must come from the same declaration: a brand
    adds a name and protects nothing.
 
 2. Rule. **Hide state that a rule guards in `#private` fields, which the
@@ -105,15 +105,15 @@ that names every adapter once.
    where a test builds the object and calls it, and let a decorator hold
    no business rule, as `oo-encapsulating-state-and-behaviour` rule 1
    and `oo-working-within-a-framework` rule 1 ask.** A TypeScript 5.0
-   decorator runs outside the class body, so it cannot read a `#private`
-   field, and it guards only the calls that pass through the member it
-   decorates; a reader of the class does not see the rule, and a new
-   method that needs it must remember the decorator. A decorator may
-   log, time or register, which are concerns of the edge. The exception
-   is a decorator that carries a framework's demand at the edge, such as
-   one that registers a handler or a mapped field: it holds the
-   framework's concern, not the clinic's, and the clinic's rule stays in
-   a method.
+   decorator's context reaches the member it decorates, a `#private` one
+   included through `context.access`, but the decorator guards only that
+   member: a caller that reaches the guarded state another way skips it,
+   a reader of the class does not see the rule, and a new method that
+   needs it must remember the decorator. A decorator may log, time or
+   register, which are concerns of the edge. The exception is a decorator
+   that carries a framework's demand at the edge, such as one that
+   registers a handler or a mapped field: it holds the framework's
+   concern, not the clinic's, and the clinic's rule stays in a method.
 
 5. Default. **Close a set of cases the domain closes as a discriminated
    union, a union of object types with one literal `kind` field, and
@@ -132,13 +132,13 @@ that names every adapter once.
    2, 3 and 4 ask.** A class that builds its own adapter, imports a
    singleton or asks a module-level registry hides what it needs; its
    constructor does not say the need, a missing part waits until a
-   message runs, and a test must start the outside system. A constructor
-   parameter says the need, a missing one stops the program at start-up,
-   and a test passes a stand-in. The composition root, a `main` function
-   or the start of a request, is the only place that names an adapter,
-   and it calls each constructor after the objects that constructor
-   needs. A part whose lifetime the object owns, such as its own list of
-   attempts, is still created by the object.
+   message runs, and a test must start the outside system. A required
+   constructor parameter says the need, a call that leaves it out does
+   not compile, and a test passes a stand-in. The composition root, a
+   `main` function or the start of a request, is the only place that
+   names an adapter, and it calls each constructor after the objects
+   that constructor needs. A part whose lifetime the object owns, such
+   as its own list of attempts, is still created by the object.
 
 ## Pattern
 
