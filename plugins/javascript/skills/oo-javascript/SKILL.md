@@ -114,13 +114,13 @@ message.
    its `constructor`, before sending it a message, as
    `oo-honouring-substitutability` rule 6 asks.** Such a check puts the
    class into the caller: a new implementation must be added to the
-   check or it fails at run time, and the caller no longer depends on
-   the role's messages. If one implementation needs a different
-   message, the role's contract is wrong or that implementation does
-   not keep it, and rule 6 there says to fix the subtype or the
-   hierarchy, not the caller. The contract test from rule 1 names the
-   implementation that breaks the role, because the same test runs for
-   each one.
+   check or it takes the other branch, and the caller no longer
+   depends on the role's messages. If one implementation needs a
+   different message, the role's contract is wrong or that
+   implementation does not keep it, and rule 6 there says to fix the
+   subtype or the hierarchy, not the caller. The contract test from
+   rule 1 names the implementation that breaks the role, because the
+   same test runs for each one.
 
 ## Pattern
 
