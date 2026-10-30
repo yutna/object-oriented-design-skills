@@ -3,7 +3,7 @@ name: oo-designing-for-testability
 description: Use when tests depend on today's date, random values or generated ids, when a constructor does real work, or code is made public only for tests.
 license: MIT
 metadata:
-  version: 0.13.0
+  version: 0.14.0
   pack: object-oriented-design-skills
 ---
 

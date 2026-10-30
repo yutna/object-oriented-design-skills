@@ -3,7 +3,7 @@ name: oo-making-illegal-states-impossible
 description: Use when flags or optional fields allow forbidden states, such as accepted and declined at once, or a reason set when nothing was cancelled.
 license: MIT
 metadata:
-  version: 0.13.0
+  version: 0.14.0
   pack: object-oriented-design-skills
 ---
 

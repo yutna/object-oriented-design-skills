@@ -3,7 +3,7 @@ name: oo-inverting-dependencies
 description: Use when domain code depends on a database, framework or clock, when an object builds or looks up its collaborators, or when wiring objects.
 license: MIT
 metadata:
-  version: 0.13.0
+  version: 0.14.0
   pack: object-oriented-design-skills
 ---
 

@@ -3,7 +3,7 @@ name: oo-managing-shared-state
 description: Use when several threads or tasks use one object at once, when a cache or counter goes wrong under load, or when choosing locks or one owner.
 license: MIT
 metadata:
-  version: 0.13.0
+  version: 0.14.0
   pack: object-oriented-design-skills
 ---
 
