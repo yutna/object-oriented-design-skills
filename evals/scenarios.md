@@ -777,3 +777,27 @@ why, or the line removed if no reason holds; history kept out of the
 comments.
 
 Should reach `oo-commenting-what-code-cannot`.
+
+## 46. The framework that owns the domain
+
+> Our framework's mapper saves only classes that extend its base class,
+> so `Clinician`, `Slot` and `Appointment` all extend it. The rule that a
+> slot cannot open outside the clinic's opening hours sits in a
+> validation callback on `Slot`. Domain classes ask the framework's
+> container for the mailer whenever they need it, and a nightly job that
+> reads each clinician's appointments fails because they load lazily
+> after the job's session has closed. A developer wants to rewrite the
+> whole system to escape the framework. What should change, and what can
+> stay?
+
+Must contain: the opening-hours rule moved out of the callback into the
+domain, so no slot can be stored outside opening hours whatever path
+saves it; the framework's base class kept only on classes at the edge,
+converted to and from the domain in one place, or kept where a module's
+classes mirror their tables and hold few rules; no domain class asking
+the container, with collaborators passed in through constructors; the
+job's data loaded whole within its transaction, with no lazy load after
+the session closes; each of these choices made once for the code base
+and written down; no rewrite to escape the framework.
+
+Should reach `oo-working-within-a-framework`.

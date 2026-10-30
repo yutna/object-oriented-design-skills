@@ -140,6 +140,9 @@ the whiteboard picture of the booking system never matches the code anymore -> o
 the billing code is full of notes that just repeat what each line does -> oo-commenting-what-code-cannot
 how do i explain why we round invoice totals down without cluttering it -> oo-commenting-what-code-cannot
 found a note saying slots are 15 minutes but the code uses 20 -> oo-commenting-what-code-cannot
+the toolkit we use wants every appointment class to extend its base model -> oo-working-within-a-framework
+the platform wants public setters on patient so it can fill them from forms -> oo-working-within-a-framework
+where should we stop going along with how our web stack wants things -> oo-working-within-a-framework
 ```
 
 ## Known misses

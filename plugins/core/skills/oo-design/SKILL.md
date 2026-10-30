@@ -166,6 +166,8 @@ skills land.
 |What should we draw, and at what level?|[Documenting design decisions][decisions]|
 |Comments repeat the code or contradict it|[Commenting what code cannot say][commenting]|
 |Where do we explain why this code looks odd?|[Commenting what code cannot say][commenting]|
+|A framework hook or marker holds a business rule|[Working within a framework][framework]|
+|How far should we go along with the framework?|[Working within a framework][framework]|
 
 [aggregates]: ../oo-designing-aggregates/SKILL.md
 [antipatterns]: ../oo-recognising-antipatterns/SKILL.md
@@ -181,6 +183,7 @@ skills land.
 [domain-language]: ../oo-speaking-the-domain-language/SKILL.md
 [events]: ../oo-publishing-domain-events/SKILL.md
 [failure]: ../oo-designing-failure-behaviour/SKILL.md
+[framework]: ../oo-working-within-a-framework/SKILL.md
 [hiding]: ../oo-hiding-implementation/SKILL.md
 [illegal-states]: ../oo-making-illegal-states-impossible/SKILL.md
 [interfaces]: ../oo-designing-interfaces/SKILL.md
