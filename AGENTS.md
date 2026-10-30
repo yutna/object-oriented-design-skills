@@ -84,7 +84,9 @@ Never take an issue from `Backlog` or one without a milestone.
 5. Fill the Acceptance criteria section of the pull request body: copy
    every criterion from the issue, tick it, and put the evidence beside
    it. Evidence is a command with the last lines of its output, a file
-   path, or a link to a CI run.
+   path, or a link to a CI run. For a skill, add a row for each worked
+   example in its references: the state it ends in, the rule it keeps,
+   and why that state keeps it.
 6. Mark the pull request ready with `gh pr ready`, then confirm that
    `git ls-remote origin` shows your last commit on the branch. That
    finishes the issue.
@@ -153,8 +155,8 @@ Breaking one of these fails review, whatever the issue says.
 - Every framework or library API name in skill content is checked
   against its current official documentation. List the pages you
   checked in the pull request body, never in the files.
-- Examples use one domain: a clinic, with patients, clinicians,
-  appointments and slots.
+- Examples use one domain: an outpatient clinic, with patients,
+  clinicians, appointments and slots. No wards, theatres or bed stays.
 
 ## Code standard: object-oriented, without exception
 
@@ -263,7 +265,16 @@ metadata:
   which transaction, or that the fence leaves this out. Each rule a
   prose sentence claims is kept by a method in a fence, and one word
   names one concept across the pack: an appointment is a booked slot,
-  a visit is the encounter, and booking is the act.
+  a visit is the patient's time with a clinician, and booking is the
+  act. The pack's own word for that time is visit; "encounter" appears
+  only where another system's or old code's word is quoted.
+- A worked example in a reference ends in a state that keeps the rule
+  it names, and its last sentence says so.
+- An example's classes and story are new to the pack: grep `plugins/`
+  and `evals/scenarios.md` before using a class name or a story. No
+  file of a skill tells a scenario's story, and no example gives a
+  clinic job a second shape, such as a second class that books
+  appointments.
 - `## Red flags` are places to look, not verdicts. A red flag becomes a
   finding only with evidence: a measurement, a reproducible bug, or a
   failing test.
