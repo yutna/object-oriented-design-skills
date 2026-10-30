@@ -17,6 +17,8 @@ class Skills {
     'oo-assigning-responsibilities',
     'oo-design'
   ])
+
+  static JAVA = 'oo-java'
 }
 
 class Fixtures {
@@ -158,32 +160,60 @@ class TempRepository {
     'which class owns the appointment reminder ' +
       '-> oo-assigning-responsibilities'
   ])
+  static #CORE = 'core'
+  static #CORE_NAME = 'object-oriented-design-skills'
+  static #JAVA = 'java'
+  static #JAVA_NAME = 'object-oriented-design-java'
 
-  static async of({ cases = TempRepository.#CASES, skills = Skills.ALL } = {}) {
+  static async of({
+    cases = TempRepository.#CASES,
+    skills = Skills.ALL,
+    knownMisses = [],
+    java = false
+  } = {}) {
     const root = await mkdtemp(join(tmpdir(), 'oo-model-routing-'))
-    const plugin = join(root, 'plugins', 'core')
+    await TempRepository.#writePlugin(
+      join(root, 'plugins', TempRepository.#CORE),
+      TempRepository.#CORE_NAME,
+      skills)
+    if (java) {
+      await TempRepository.#writePlugin(
+        join(root, 'plugins', TempRepository.#JAVA),
+        TempRepository.#JAVA_NAME,
+        [Skills.JAVA])
+    }
+    await mkdir(join(root, 'evals'), { recursive: true })
+    const lines = [
+      '# Routing Cases',
+      '',
+      '```text',
+      ...cases,
+      '```',
+      ''
+    ]
+    if (knownMisses.length > 0) {
+      lines.push(
+        '## Known misses',
+        '',
+        '```text',
+        ...knownMisses,
+        '```',
+        '')
+    }
+    await writeFile(
+      join(root, 'evals', 'routing-cases.md'),
+      lines.join('\n'))
+    return new TempRepository(root)
+  }
+
+  static async #writePlugin(plugin, name, skills) {
     await mkdir(join(plugin, '.claude-plugin'), { recursive: true })
     await writeFile(
       join(plugin, '.claude-plugin', 'plugin.json'),
-      `${JSON.stringify({
-        name: 'object-oriented-design-skills',
-        version: '0.5.0'
-      })}\n`)
+      `${JSON.stringify({ name, version: '0.5.0' })}\n`)
     for (const skill of skills) {
       await TempRepository.#writeSkill(plugin, skill)
     }
-    await mkdir(join(root, 'evals'), { recursive: true })
-    await writeFile(
-      join(root, 'evals', 'routing-cases.md'),
-      [
-        '# Routing Cases',
-        '',
-        '```text',
-        ...cases,
-        '```',
-        ''
-      ].join('\n'))
-    return new TempRepository(root)
   }
 
   static async #writeSkill(plugin, skill) {
@@ -688,6 +718,111 @@ test('ModelRouting keeps a built-in skill answer verbatim', async () => {
     assert.deepEqual(
       answers.results.map(({ answer }) => answer),
       ['update-config', 'update-config'])
+  } finally {
+    await fixture.close()
+  }
+})
+
+test('ModelRouting routes a Known-misses line and notes it apart',
+  async () => {
+    const fixture = await TempRepository.of({
+      knownMisses: [
+        'a small clinic change still needs design work -> ' +
+          'oo-assigning-responsibilities'
+      ]
+    })
+    try {
+      const runner = new SelftestRunner()
+      const report = fixture.inspect({
+        argv: ['--selftest'],
+        runner,
+        environment: {}
+      })
+      assert.equal(report.failed, false)
+      assert.deepEqual(report.lines(), [
+        'hits: 3/6',
+        'known-miss hits: 3/3',
+        '0/3 we are sizing this appointment design work ' +
+          '-> expected oo-design; answered oo-assigning-responsibilities, ' +
+          'oo-assigning-responsibilities, oo-assigning-responsibilities',
+        'ok 3 routed case(s)'
+      ])
+      assert.equal(runner.calls, 9)
+    } finally {
+      await fixture.close()
+    }
+  })
+
+test('ModelRouting writes each result with its knownMiss flag',
+  async () => {
+    const fixture = await TempRepository.of({
+      knownMisses: [
+        'a small clinic change still needs design work -> oo-design'
+      ]
+    })
+    try {
+      const runner = new SelftestRunner()
+      const report = fixture.inspect({
+        argv: ['--selftest', '--runs', '1'],
+        runner,
+        environment: {}
+      })
+      assert.deepEqual(report.lines(), [
+        'hits: 1/2',
+        'known-miss hits: 0/1',
+        '0/1 we are sizing this appointment design work ' +
+          '-> expected oo-design; answered oo-assigning-responsibilities',
+        'known miss: 0/1 a small clinic change still needs design work ' +
+          '-> expected oo-design; answered oo-assigning-responsibilities',
+        'ok 3 routed case(s)'
+      ])
+      const [directory] = fixture.results()
+      const answers = await fixture.answers(directory)
+      assert.deepEqual(
+        answers.results.map(({ knownMiss }) => knownMiss),
+        [false, false, true])
+    } finally {
+      await fixture.close()
+    }
+  })
+
+test('ModelRouting is broken when the listing misses a second plugin skill',
+  async () => {
+    const fixture = await TempRepository.of({ java: true })
+    try {
+      const runner = new FakeRunner(RouteStream.text('none'))
+      assert.throws(
+        () => fixture.inspect({ runner }),
+        (error) => error instanceof RepoError &&
+          error.message ===
+            'run has no skill listing for ' +
+            'object-oriented-design-java:oo-java')
+    } finally {
+      await fixture.close()
+    }
+  })
+
+test('--case that matches only a Known-misses line routes it', async () => {
+  const fixture = await TempRepository.of({
+    knownMisses: [
+      'a small clinic change still needs design work -> ' +
+        'oo-assigning-responsibilities'
+    ]
+  })
+  try {
+    const runner = new SelftestRunner()
+    const report = fixture.inspect({
+      argv: ['--selftest', '--case', 'clinic change'],
+      runner,
+      environment: {}
+    })
+    assert.equal(report.failed, false)
+    assert.deepEqual(report.lines(), [
+      'hits: 0/0',
+      'known-miss hits: 3/3',
+      'ok 1 routed case(s)'
+    ])
+    assert.equal(runner.calls, 3)
   } finally {
     await fixture.close()
   }

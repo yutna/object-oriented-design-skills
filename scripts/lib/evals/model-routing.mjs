@@ -6,17 +6,17 @@ import { Check } from '../check.mjs'
 import { QueueGateError, RepoError } from '../errors.mjs'
 import { ProcessRunner } from '../negative/process-runner.mjs'
 import { RoutingCases } from '../routing/routing-cases.mjs'
-import { PluginCopy } from './plugin-copy.mjs'
+import { PluginsCopy } from './plugins-copy.mjs'
 
 export class ModelRouting extends Check {
   static #MODEL = 'claude-haiku-5-5'
-  static #PLUGIN = 'object-oriented-design-skills'
   static #PROMPT = 'Which of your skills fits this request best? ' +
     'Reply with its name only, or none.'
   static #ROUTING = 'evals/routing-cases.md'
   static #RESULTS = 'evals/results'
   static #ANSWER = /(?:[\w-]+:)?oo-[a-z0-9-]+/
   static #PREFIX = /^[\w-]+:/
+  static #KNOWN_MISS = 'known miss: '
   static #RUNS = '--runs'
   static #DEFAULT_RUNS = 3
   static #CASE = '--case'
@@ -52,61 +52,80 @@ export class ModelRouting extends Check {
       throw new QueueGateError()
     }
     const runs = this.#runs()
-    const cases = this.#select(RoutingCases.of(
-      this.#repository.file(ModelRouting.#ROUTING)))
-    const copy = PluginCopy.of(this.#repository)
+    const routingFile = this.#repository.file(ModelRouting.#ROUTING)
+    const lines = this.#select([
+      ...RoutingCases.of(routingFile).map((routingCase) =>
+        Object.freeze({ routingCase, knownMiss: false })),
+      ...RoutingCases.knownMissesOf(routingFile).map((routingCase) =>
+        Object.freeze({ routingCase, knownMiss: true }))
+    ])
+    const copy = PluginsCopy.of(this.#repository)
     try {
       if (dryRun) {
         // A dry run shows every command without starting a session.
-        for (const routingCase of cases) {
+        for (const line of lines) {
           for (let run = 0; run < runs; run += 1) {
             report.note(ModelRouting.#command(
               copy.path,
-              routingCase.symptom))
+              line.routingCase.symptom))
           }
         }
-        report.count('routed case(s)', cases.length)
+        report.count('routed case(s)', lines.length)
         return
       }
-      const skills = copy.skills()
+      const listing = copy.listing()
       const results = []
       const misses = []
-      for (const routingCase of cases) {
+      for (const line of lines) {
         const answers = []
         for (let run = 0; run < runs; run += 1) {
-          const output = this.#run(copy.path, routingCase)
-          ModelRouting.#requireListing(output, skills)
-          const answer = ModelRouting.#answer(output, skills)
+          const output = this.#run(copy.path, line.routingCase)
+          ModelRouting.#requireListing(output, listing)
+          const answer = ModelRouting.#answer(output, listing)
           answers.push(answer)
           results.push({
-            symptom: routingCase.symptom,
-            expected: routingCase.expected,
+            symptom: line.routingCase.symptom,
+            expected: line.routingCase.expected,
             answer,
-            output
+            output,
+            knownMiss: line.knownMiss
           })
         }
-        const caseHits = answers.filter((answer) =>
-          answer === routingCase.expected).length
-        // A case is worth a note once its runs disagree with each other.
-        if (caseHits < runs) {
+        const lineHits = answers.filter((answer) =>
+          answer === line.routingCase.expected).length
+        // A line is worth a note once its runs disagree with each other.
+        if (lineHits < runs) {
           misses.push(
-            `${caseHits}/${runs} ${routingCase.symptom} -> ` +
-            `expected ${routingCase.expected}; ` +
+            `${line.knownMiss ? ModelRouting.#KNOWN_MISS : ''}` +
+            `${lineHits}/${runs} ${line.routingCase.symptom} -> ` +
+            `expected ${line.routingCase.expected}; ` +
             `answered ${answers.join(', ')}`)
         }
       }
-      const hits = results.filter((result) =>
-        result.answer === result.expected).length
-      report.note(`hits: ${hits}/${results.length}`)
+      const caseResults = results.filter((result) => !result.knownMiss)
+      const knownMissResults = results.filter((result) => result.knownMiss)
+      report.note(
+        `hits: ${ModelRouting.#hits(caseResults)}/${caseResults.length}`)
+      if (knownMissResults.length > 0) {
+        report.note(
+          'known-miss hits: ' +
+          `${ModelRouting.#hits(knownMissResults)}/` +
+          `${knownMissResults.length}`)
+      }
       for (const miss of misses) {
         // A miss is a measurement, not a failed check.
         report.note(miss)
       }
-      this.#write(results, hits, runs, cases.length)
-      report.count('routed case(s)', cases.length)
+      this.#write(results, ModelRouting.#hits(results), runs, lines.length)
+      report.count('routed case(s)', lines.length)
     } finally {
       copy.close()
     }
+  }
+
+  static #hits(results) {
+    return results.filter((result) =>
+      result.answer === result.expected).length
   }
 
   #runs() {
@@ -132,11 +151,11 @@ export class ModelRouting extends Check {
     return text
   }
 
-  #select(cases) {
+  #select(lines) {
     const text = this.#case()
-    if (text === null) return cases
-    const kept = cases.filter((routingCase) =>
-      routingCase.symptom.includes(text))
+    if (text === null) return lines
+    const kept = lines.filter((line) =>
+      line.routingCase.symptom.includes(text))
     // A selection that kept nothing would measure nothing.
     if (kept.length === 0) {
       throw new RepoError(
@@ -173,7 +192,7 @@ export class ModelRouting extends Check {
     return result?.subtype === ModelRouting.#TURN_LIMIT
   }
 
-  #write(results, hits, runs, cases) {
+  #write(results, hits, runs, measured) {
     const stamp = new Date().toISOString().replace(/[:.]/g, '-')
     const directory = join(
       this.#repository.root,
@@ -190,6 +209,7 @@ export class ModelRouting extends Check {
         symptom: result.symptom,
         expected: result.expected,
         answer: result.answer,
+        knownMiss: result.knownMiss,
         stream
       }
     })
@@ -198,7 +218,7 @@ export class ModelRouting extends Check {
       commit: this.#commit(),
       runs,
       top1: hits,
-      cases,
+      cases: measured,
       results: answers
     }, null, 2)}\n`)
   }
@@ -254,16 +274,15 @@ export class ModelRouting extends Check {
     return events
   }
 
-  static #requireListing(output, skills) {
+  static #requireListing(output, listing) {
     // A copy with no skills cannot prove the pack was loaded.
-    if (skills.length === 0) {
+    if (listing.length === 0) {
       throw new RepoError('plugin copy lists no skills')
     }
     const init = ModelRouting.#events(output).find((event) =>
       event?.type === 'system' && event?.subtype === 'init')
     const listed = Array.isArray(init?.skills) ? init.skills : []
-    for (const skill of skills) {
-      const required = `${ModelRouting.#PLUGIN}:${skill}`
+    for (const required of listing) {
       // Without the listing the session never saw the pack.
       if (!listed.includes(required)) {
         throw new RepoError(`run has no skill listing for ${required}`)
@@ -271,10 +290,10 @@ export class ModelRouting extends Check {
     }
   }
 
-  static #answer(output, skills) {
+  static #answer(output, listing) {
     const events = ModelRouting.#events(output)
     const skill = ModelRouting.#skillAnswer(events)
-    if (skill !== null) return ModelRouting.#named(skill, skills)
+    if (skill !== null) return ModelRouting.#named(skill, listing)
     const result = events
       .filter((event) => event?.type === 'result').at(-1)
     // The limit's own message is the harness talking, not an answer.
@@ -285,17 +304,25 @@ export class ModelRouting extends Check {
     if (text === '') return 'none'
     const match = text.match(ModelRouting.#ANSWER)
     // A session that named no skill of ours still answered in its own words.
-    return ModelRouting.#named(match === null ? text : match[0], skills)
+    return ModelRouting.#named(match === null ? text : match[0], listing)
   }
 
-  static #named(answer, skills) {
+  static #named(answer, listing) {
     const name = ModelRouting.#withoutPlugin(answer)
     const prefixed = `oo-${name}`
+    const skills = listing.map((entry) =>
+      ModelRouting.#skillName(entry))
     // A model may name a pack skill without the prefix the pack requires.
     if (!skills.includes(name) && skills.includes(prefixed)) {
       return prefixed
     }
     return name
+  }
+
+  static #skillName(listingName) {
+    const at = listingName.indexOf(':')
+    // A name without a plugin prefix is its own skill name.
+    return at === -1 ? listingName : listingName.slice(at + 1)
   }
 
   static #skillAnswer(events) {
