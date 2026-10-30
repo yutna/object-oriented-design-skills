@@ -10,7 +10,7 @@
     {
       "name": "object-oriented-design-skills",
       "description": "Assign responsibilities, model a domain in objects, invert dependencies, structure a system, and refactor toward all of it",
-      "version": "0.14.0",
+      "version": "0.15.0",
       "source": "./plugins/core",
       "author": { "name": "Yutthana Siphuengchai" },
       "homepage": "https://github.com/yutna/object-oriented-design-skills",

@@ -3,7 +3,7 @@ name: oo-encapsulating-what-varies
 description: Use when one requirement keeps changing, when adding a case means editing working code, or when deciding how flexible a design should be.
 license: MIT
 metadata:
-  version: 0.14.0
+  version: 0.15.0
   pack: object-oriented-design-skills
 ---
 
