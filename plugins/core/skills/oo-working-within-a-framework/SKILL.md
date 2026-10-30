@@ -100,8 +100,7 @@ components, the clinic's rules still get a module of their own.
    decisions, rule 1, asks of a choice that is costly to reverse, and
    meet the demand the same way in every module.** A second module that
    meets the same demand another way is a second design that every later
-   reader must learn. The record says what the demand is, what the code
-   does about it, and where the edge that meets it lives.
+   reader must learn.
    The exception is a demand that only one module meets, such as the
    scheduler that only the reminders module uses: decide it in that
    module.
