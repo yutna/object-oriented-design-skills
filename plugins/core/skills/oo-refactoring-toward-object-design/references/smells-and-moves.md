@@ -15,44 +15,46 @@ asks.
   sits on the object whose data it uses, which is [limiting what an
   object knows](../../oo-limiting-what-an-object-knows/SKILL.md) rule 5.
 
-- **A primitive that carries a domain rule.** `DoseRound` holds the
-  infusion rate as a plain number, and both `DoseRound.times()` and
-  `DoseChart.print()` check that the number stays within the pump's
-  range before using it. The moves, in order, are: introduce a value
-  `InfusionRate` whose constructor holds the range check, replace the
-  number at each construction with the value, and delete the two checks
-  at the uses. The rule then has one home, which is [modeling values and
+- **A primitive that carries a domain rule.** `BoosterPlan` holds the
+  days between two doses as a plain number, and both
+  `BoosterPlan.nextDue()` and `BoosterCard.print()` check that the
+  number lies within the vaccine's shortest and longest interval before
+  using it. The moves, in order, are: introduce a value `DoseInterval`
+  whose constructor holds the range check, replace the number at each
+  construction with the value, and delete the two checks at the uses.
+  The rule then has one home, which is [modeling values and
   entities](../../oo-modeling-values-and-entities/SKILL.md) rule 5.
 
-- **The same switch on a type in more than one place.** `MealTray`
-  branches on a `DietKind` in `assemble()`, `label()` and `charge()`, and
-  a fourth diet kind is about to arrive. The moves, in order, are:
-  extract one method per branch inside `MealTray`, introduce one class
-  per diet kind behind one interface, move each extracted method into
-  the class for its kind, and replace every switch with a message to the
-  chosen object. The repeated condition then has one class per case,
-  which is [replacing conditionals with
+- **The same switch on a type in more than one place.** `ImagingRequest`
+  branches on a `ScanKind` in `preparation()`, `consentText()` and
+  `followUp()`, and a fourth scan kind is about to arrive. The moves, in
+  order, are: extract one method per branch inside `ImagingRequest`,
+  introduce one class per scan kind behind one interface, move each
+  extracted method into the class for its kind, and replace every switch
+  with a message to the chosen object. The repeated condition then has
+  one class per case, which is [replacing conditionals with
   polymorphism](../../oo-replacing-conditionals-with-polymorphism/SKILL.md)
   rule 1.
 
-- **A chain of messages through other objects.** `WardBoard.contact`
-  sends `tray.mealOrder().bedStay().ward().phoneNumber()` and hands the
-  answer back, so it depends on a structure three objects away. The
-  moves, in order, are: give `MealTray` a message `wardPhone()` that
-  answers what `WardBoard` wants, and let `WardBoard` send it; then let
-  each object on the way answer the next step itself, the meal order
-  asking its bed stay and the bed stay asking its ward, until no object
-  sends a message to an answer it did not hold. Each object then talks
-  only to its neighbours, which is [limiting what an object
+- **A chain of messages through other objects.** `ResultsBoard.contact`
+  sends `report.request().requester().practice().phoneNumber()` and
+  hands the answer back, so it depends on a structure three objects
+  away. The moves, in order, are: give `ImagingReport` a message
+  `requesterPhone()` that answers what `ResultsBoard` wants, and let
+  `ResultsBoard` send it; then let each object on the way answer the
+  next step itself, the request asking its requester and the requester
+  asking its practice, until no object sends a message to an answer it
+  did not hold. Each object then talks only to its neighbours, which is
+  [limiting what an object
   knows](../../oo-limiting-what-an-object-knows/SKILL.md) rule 2.
 
-- **A class changed for two kinds of request.** `SterilisationBatch`
-  gains methods when the theatre list changes and other methods when an
-  instrument is recalled, and the two groups read separate fields. The
-  moves, in order, are: extract the recall fields and methods into an
-  `InstrumentRecall`, move them there, keep the batch as a collaborator
-  of the recall, and update the callers. Each class then answers one
-  kind of request, which is [assigning
+- **A class changed for two kinds of request.** `ConsultingRoom` gains
+  methods when the session timetable changes and other methods when its
+  equipment is due for a safety check, and the two groups read separate
+  fields. The moves, in order, are: extract the safety-check fields and
+  methods into an `EquipmentCheck`, move them there, keep the room as a
+  collaborator of the check, and update the callers. Each class then
+  answers one kind of request, which is [assigning
   responsibilities](../../oo-assigning-responsibilities/SKILL.md) rules 7
   and 8.
 
