@@ -42,6 +42,18 @@
       "license": "MIT",
       "category": "development",
       "keywords": ["object-oriented-design", "kotlin"]
+    },
+    {
+      "name": "object-oriented-design-typescript",
+      "description": "Object-oriented design rules kept in plain TypeScript, with no framework",
+      "version": "0.15.0",
+      "source": "./plugins/typescript",
+      "author": { "name": "Yutthana Siphuengchai" },
+      "homepage": "https://github.com/yutna/object-oriented-design-skills",
+      "repository": "https://github.com/yutna/object-oriented-design-skills",
+      "license": "MIT",
+      "category": "development",
+      "keywords": ["object-oriented-design", "typescript"]
     }
   ]
 }

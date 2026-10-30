@@ -157,6 +157,9 @@ java: make Appointment final, or let others subclass it? -> oo-java
 kotlin data class Patient: copy() skips my validation, what now? -> oo-kotlin
 !! all over my kotlin code for appointment.clinician, how to fix? -> oo-kotlin
 kotlin extension functions on Visit are hiding real logic, ok? -> oo-kotlin
+ts lets me pass a Clinician where a Patient is expected. why? -> oo-typescript
+typescript: #private or the private keyword on Invoice fields? -> oo-typescript
+wire BookingService deps in typescript without a di container -> oo-typescript
 ```
 
 ## Known misses
