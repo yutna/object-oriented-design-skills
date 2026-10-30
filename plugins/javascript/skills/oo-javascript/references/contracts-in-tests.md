@@ -80,8 +80,7 @@ import { MapFeeSchedule, RecordFeeSchedule } from './fee-schedules.mjs'
 //    no amount is recorded there.
 // -- setFee(code, amount) records amount under code and replaces the
 //    amount recorded there before.
-// -- feeFor answers the same amount after a setFee for another code,
-//    because the two codes share no entry.
+// -- setFee for one code does not change the fee recorded for another.
 const implementations = [
   ['map', () => new MapFeeSchedule()],
   ['record', () => new RecordFeeSchedule()]
@@ -106,10 +105,10 @@ for (const [name, makeSchedule] of implementations) {
   an interface: each entry names a class and makes a fresh schedule
   (rule 1).
 - Every check in the test sends one of the role's messages and reads
-  its answer, so it holds for any class that keeps the role and for no
-  class that breaks it (rule 1).
-- The schedules and the test keep their fees in memory, under the
-  service code, in no transaction this fence shows.
+  its answer, so each check holds for any class that keeps the role,
+  and a class that breaks one of these promises fails it (rule 1).
+- The schedules keep their fees in memory, under the service code, in
+  no transaction this fence shows.
 
 ## A worked change
 

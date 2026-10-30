@@ -86,7 +86,7 @@ message.
    `oo-encapsulating-state-and-behaviour` rules 1 and 5 ask.** A
    `#private` field is not a property: a reference to it outside the
    class body is a syntax error, no `Object` method lists it, and a
-   subclass cannot reach it. An ordinary property is a message every
+   subclass cannot reach it. An ordinary property is a slot any
    caller may write, so a caller can leave the object in a state the
    rule forbids and the method that keeps the rule never runs. The rule
    stays in the method that changes the field, and a caller gets a
