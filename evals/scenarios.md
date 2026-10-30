@@ -801,3 +801,24 @@ the session closes; each of these choices made once for the code base
 and written down; no rewrite to escape the framework.
 
 Should reach `oo-working-within-a-framework`.
+
+## 47. The refund calculation that does everything
+
+> `TravelRefundCalculator.calculate(claim)` works out what the clinic
+> refunds a patient for travelling to a visit. It also reads today's
+> rates from the database, stamps the claim as calculated, and adds the
+> claim to a list its caller passed in for the month's report. Its tests
+> need stand-ins for the database, the clock and the report, and the
+> month's report counts some claims twice. The team has also made a
+> `RefundRule` interface with one method, and a class for each of three
+> rules that hold no state. What should change?
+
+Must contain: the refund worked out by a pure method from the claim and
+the rates passed in as values; the rates read and the stamped claim
+stored by the use case around that method; the caller's list left
+unchanged, the method answering a new value instead; tests of the
+calculation with plain values and no stand-ins; the three stateless
+rules passed as function values, unless the staff name them; objects
+kept, with no second architecture.
+
+Should reach `oo-applying-functional-techniques`.

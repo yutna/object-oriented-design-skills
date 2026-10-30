@@ -143,6 +143,8 @@ found a note saying slots are 15 minutes but the code uses 20 -> oo-commenting-w
 the toolkit we use wants every appointment class to extend its base model -> oo-working-within-a-framework
 the platform wants public setters on patient so it can fill them from forms -> oo-working-within-a-framework
 where should we stop going along with how our web stack wants things -> oo-working-within-a-framework
+calculating an invoice total also writes to the database, hard to test -> oo-applying-functional-techniques
+passing a slot to a helper quietly changed its start time somewhere -> oo-applying-functional-techniques
 ```
 
 ## Known misses
@@ -152,4 +154,5 @@ case.
 
 ```text
 a small clinic change still needs design work -> oo-design
+made a whole class just to hold one discount rule, feels like overkill -> oo-applying-functional-techniques
 ```
