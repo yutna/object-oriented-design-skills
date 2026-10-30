@@ -65,9 +65,9 @@ present unless the compiler has seen the check.
    `hashCode` and `copy` are derived from all of its contents, as
    `oo-modeling-values-and-entities` rules 2 and 3 ask; a property
    declared in the class body is left out of them.** The exception is a
-   value with a single property, such as a patient's identifier: write
-   it as a `@JvmInline` `value class`, a type of its own around that one
-   property, as `oo-modeling-values-and-entities` rule 5 asks.
+   value that holds a single property, such as a patient's identifier:
+   write it as a `@JvmInline` `value class`, a type of its own around
+   that one property, as `oo-modeling-values-and-entities` rule 5 asks.
 
 3. Default. **Close a set of cases the domain closes with a `sealed
    interface` whose cases are data classes and data objects, and answer
