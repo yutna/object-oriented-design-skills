@@ -20,6 +20,10 @@ updates:
     groups:
       npm:
         update-types: [minor, patch]
+    ignore:
+      # 7.x is the native compiler, with no JavaScript API to call.
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
     labels: [dependencies]
     assignees: [yutna]
     commit-message:
