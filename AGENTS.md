@@ -20,7 +20,9 @@ plugins/core/                     the plugin object-oriented-design-skills
   .claude-plugin/plugin.json
   skills/<skill-name>/SKILL.md
   skills/<skill-name>/references/*.md
-plugins/<family>/                 language plugins, from v0.16.0
+plugins/<family>/                 a language plugin, from v0.16.0
+  .claude-plugin/plugin.json      object-oriented-design-<family>
+  skills/oo-<language>/SKILL.md
 scripts/                          entry scripts, one per check or tool
 scripts/lib/                      the classes every script uses
 test/                             node:test unit tests and fixtures
@@ -152,9 +154,10 @@ Breaking one of these fails review, whatever the issue says.
   failing on wrong input before it passes: a unit test, or a failed CI
   run linked from the pull request.
 - A check that counted zero things has failed, not passed.
-- Every framework or library API name in skill content is checked
-  against its current official documentation. List the pages you
-  checked in the pull request body, never in the files.
+- Every language, framework or library API name in skill content is
+  checked against its current official documentation. List the pages
+  you checked in the pull request body, never in the files; an issue
+  may list pages the reviewer already checked.
 - Examples use one domain: an outpatient clinic, with patients,
   clinicians, appointments and slots. No wards, theatres or bed stays.
 
@@ -301,6 +304,46 @@ metadata:
 
 The index skill `oo-design` has its own shape, given in its issue.
 
+## Language skill house style
+
+A language skill shows how this pack's rules are kept in one language.
+It lives in its family's plugin, `plugins/<family>/`, whose manifest
+names the plugin `object-oriented-design-<family>`, and whose
+marketplace entry has the same fields as the core plugin's. A new
+manifest, entry or skill takes the version in `package.json`. Every
+Skill house style bullet holds, with these changes:
+
+- The shape is the core shape, with this back-link block in place of
+  the core one, because a link out of the plugin breaks once it is
+  installed:
+
+  ```markdown
+  **In this pack:** sizing and rule strictness are set by the core
+  plugin's `oo-design` skill; each rule here keeps a core rule in this
+  language.
+  ```
+
+- Each core rule opens with its label, as in a core skill, and names
+  the core rule it keeps, as "`oo-<skill>` rule N". It applies that
+  rule in the language and never restates the core rule's reasons.
+- `## Pattern` and the references show code in the language's own
+  syntax, in a fence tagged `java`, `kotlin`, `ruby`, `typescript`,
+  `javascript`, `csharp`, `python` or `json`. Each fence is a whole
+  file that parses on its own. The notation's keyword rule applies
+  only to `text` fences.
+- The example check parses syntax only. It resolves no name, type or
+  import, so a fence that parses can still fail to compile. Compile
+  every fence with the language's own compiler before commit,
+  declaring any name it only uses in a scratch file outside the
+  repository, and paste the commands and their output in the pull
+  request body.
+- A fence may show a class the core skills declare, such as `Slot`,
+  only with the fields and constructor the notation gives it; any other
+  class follows the grep rule above.
+- A base language skill's description says the code uses no
+  framework; a framework skill's description names its framework.
+- A language skill needs two routing lines and no scenario.
+
 ## Commands
 
 ```sh
@@ -314,5 +357,6 @@ claude plugin validate .    # checks the manifests; local, no model call
 
 - Any `.markdownlint*` configuration file.
 - Any `package.json` under `plugins/`.
+- A language plugin or skill the issue does not name.
 - `CHANGELOG.md`. GitHub Releases are the changelog.
 - Any file the issue's Files section does not list.
