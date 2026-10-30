@@ -65,5 +65,7 @@ handlers after the commit and may arrive more than once.
 A message that another organisation's system reads has a shape and a
 version that both sides agree on, and a change to it is a change to that
 agreement. That shape is a contract at the boundary between the systems,
-outside this skill. A domain event is written in the clinic's words and
-carries what the handlers in the clinic need.
+one that [crossing system
+boundaries](../../oo-crossing-system-boundaries/SKILL.md) gives its own
+transfer types and a version. A domain event is written in the clinic's
+words and carries what the handlers in the clinic need.

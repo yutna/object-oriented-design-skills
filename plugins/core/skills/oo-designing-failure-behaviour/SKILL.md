@@ -49,7 +49,8 @@ must act on and no fault it cannot repair.
 - The code can neither refuse nor find nothing, such as a calculation
   over values that are already checked.
 - The question is retrying or timing out a call to another system. That
-  is outside this skill.
+  is [making work reliable](../oo-making-work-reliable/SKILL.md), which
+  bounds the call and decides what a retry may repeat.
 
 ## Core rules
 

@@ -101,11 +101,11 @@ export class NegativeCases {
     '    raises RegisterRecordIncomplete, RegisterUnavailable'
   static #RAISES_CONTRACT_REPLACE = '    raises RegisterUnavailable'
   static #PACK_SCOPE = 'plugins/core/skills/' +
-    'oo-publishing-domain-events/references/events-or-direct-messages.md'
+    'oo-designing-failure-behaviour/SKILL.md'
   static #PACK_SCOPE_FIND =
-    'outside this skill. A domain event is written'
+    'language makes its callers declare is outside this skill.'
   static #PACK_SCOPE_REPLACE =
-    'outside this pack. A domain event is written'
+    'language makes its callers declare is outside this pack.'
 
   static ALL = Object.freeze([
     new NegativeCase(
