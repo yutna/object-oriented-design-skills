@@ -738,3 +738,23 @@ old tests, written as separate notes rather than demanded of this
 change.
 
 Should reach `oo-reviewing-object-design`.
+
+## 44. The choice nobody can explain
+
+> Years ago the team chose to keep each clinic site's patients in a
+> separate database. Nobody who made that choice is still here. New
+> developers keep proposing one shared database, and the old arguments
+> are lost. A wiki page holds a large diagram of every table and class,
+> drawn long ago, that no longer matches the code, and someone has edited
+> an old design note to say the choice was a mistake. How should the team
+> keep its design decisions and its pictures?
+
+Must contain: a short decision record for the choice, with its context,
+the options weighed, the choice, its consequences, a date and a status,
+kept in the repository; a new record that supersedes the old one when
+the team changes course, instead of an edit to the old note; pictures
+drawn only where they show what the code cannot show quickly, one level
+each, dated, and redrawn or deleted when the code moves; no diagram of
+every table and class.
+
+Should reach `oo-documenting-design-decisions`.
