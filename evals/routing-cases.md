@@ -160,6 +160,9 @@ kotlin extension functions on Visit are hiding real logic, ok? -> oo-kotlin
 ts lets me pass a Clinician where a Patient is expected. why? -> oo-typescript
 typescript: #private or the private keyword on Invoice fields? -> oo-typescript
 wire BookingService deps in typescript without a di container -> oo-typescript
+js has no interfaces: how do I pin what a slot store must do? -> oo-javascript
+is Object.freeze enough for a js Appointment value object? -> oo-javascript
+js Patient: use class syntax or plain prototypes? -> oo-javascript
 ```
 
 ## Known misses
