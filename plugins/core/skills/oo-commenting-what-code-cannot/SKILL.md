@@ -1,6 +1,6 @@
 ---
 name: oo-commenting-what-code-cannot
-description: Use when comments or notes repeat the code or contradict it, or when explaining to callers a reason or a warning no well-chosen name can explain.
+description: Use when comments or notes repeat the code or contradict it, or when a note must explain a reason or a warning no well-chosen name can explain.
 license: MIT
 metadata:
   version: 0.15.0

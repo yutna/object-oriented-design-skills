@@ -5,6 +5,8 @@ should answer it. This is a keyword check on skill names and
 descriptions, not a test of how an agent routes.
 
 Format: `symptom -> expected-skill`, split on the last arrow.
+A line with no space around its arrow keeps a long symptom within 80
+columns.
 
 ```text
 we need to size this appointment design work -> oo-design
@@ -149,7 +151,6 @@ should i fake the payment provider's sdk directly in my billing tests -> oo-test
 can't test the late cancellation fee because it reads the current time -> oo-designing-for-testability
 need to add a discount to old billing code that has zero tests -> oo-working-with-legacy-code
 how do we slowly move off the old scheduling system without a big rewrite -> oo-working-with-legacy-code
-sanity check the responsibilities in this invoice pr, feels like a god class->oo-recognising-antipatterns
 here's my plan for the payments module, who should own which data -> oo-assigning-responsibilities
 java Slot vanishes from a HashSet, are my equals and hashCode wrong? -> oo-java
 java booking: checked exception when the slot is taken, or not? -> oo-java
@@ -182,4 +183,5 @@ just pushed the slot booking changes, does the class structure hold up -> oo-rev
 haven't written it yet, does this patient and appointment model make sense -> oo-reviewing-object-design
 sketched classes for clinician schedules and slots, poke holes before i build->oo-reviewing-object-design
 refactor these if-else branches toward a strategy in small steps -> oo-replacing-conditionals-with-polymorphism
+sanity check the responsibilities in this invoice pr, feels like a god class->oo-reviewing-object-design
 ```

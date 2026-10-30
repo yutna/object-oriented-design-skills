@@ -24,7 +24,7 @@ shifted. Each shift below names the rules in this pack that carry it.
   collaborators through its constructor, and the program is wired by
   hand in one place; a container is kept for the objects a framework
   builds itself.
-  [Inverting dependencies][inverting], rules 2 and 4;
+  [Inverting dependencies][inverting], rules 2, 3 and 4;
   [patterns the language provides][language-patterns], rule 6.
 - **Many stand-ins in a test became a sign about the design.** A test
   that needs many stand-ins to check one decision points at a design
