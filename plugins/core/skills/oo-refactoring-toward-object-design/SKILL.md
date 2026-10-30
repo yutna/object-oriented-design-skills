@@ -38,7 +38,8 @@ that no change needs.
 ## When not to use
 
 - The code has no tests and must change now: pinning what it does before
-  any step is outside this skill.
+  any step is in
+  [working with legacy code](../oo-working-with-legacy-code/SKILL.md).
 - The change adds or alters behaviour, such as a new clinic rule: the
   skill that owns that rule shapes it, and any refactoring is a separate
   step before or after.
@@ -224,6 +225,8 @@ evidence: a measurement, a reproducible bug, or a failing test.
   splits a class that changes for two kinds of request.
 - [oo-honouring-substitutability](../oo-honouring-substitutability/SKILL.md)
   decides when a subclass stops extending its parent.
+- [oo-working-with-legacy-code](../oo-working-with-legacy-code/SKILL.md)
+  pins what untested code does before the first refactoring step.
 
 ## Further reading
 
