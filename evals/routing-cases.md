@@ -134,6 +134,9 @@ swap out the old billing system gradually while it keeps running -> oo-working-w
 what should I look for when reviewing a teammate's class design -> oo-reviewing-object-design
 should a naming nitpick stop this pull request from merging -> oo-reviewing-object-design
 a checklist for reviewing a new module before it is built -> oo-reviewing-object-design
+new hire keeps asking why we split billing from booking, nobody remembers -> oo-documenting-design-decisions
+should i draw something before redesigning how slots get assigned to clinicians->oo-documenting-design-decisions
+the whiteboard picture of the booking system never matches the code anymore -> oo-documenting-design-decisions
 ```
 
 ## Known misses

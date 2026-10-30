@@ -161,6 +161,8 @@ skills land.
 |Replace an old system piece by piece|[Working with legacy code][legacy]|
 |What should this review check?|[Reviewing object design][reviewing]|
 |Which review findings block a merge?|[Reviewing object design][reviewing]|
+|Nobody remembers why the code is shaped this way|[Documenting design decisions][decisions]|
+|What should we draw, and at what level?|[Documenting design decisions][decisions]|
 
 [aggregates]: ../oo-designing-aggregates/SKILL.md
 [antipatterns]: ../oo-recognising-antipatterns/SKILL.md
@@ -171,6 +173,7 @@ skills land.
 [constructing]: ../oo-constructing-valid-objects/SKILL.md
 [contexts]: ../oo-bounding-contexts/SKILL.md
 [coupling]: ../oo-diagnosing-coupling/SKILL.md
+[decisions]: ../oo-documenting-design-decisions/SKILL.md
 [domain-language]: ../oo-speaking-the-domain-language/SKILL.md
 [events]: ../oo-publishing-domain-events/SKILL.md
 [failure]: ../oo-designing-failure-behaviour/SKILL.md
