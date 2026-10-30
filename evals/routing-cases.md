@@ -131,6 +131,9 @@ refactor these if-else branches toward a strategy in small steps -> oo-refactori
 nobody wrote tests for this old class and we must change it this week -> oo-working-with-legacy-code
 how do we get this old class into a test harness -> oo-working-with-legacy-code
 swap out the old billing system gradually while it keeps running -> oo-working-with-legacy-code
+what should I look for when reviewing a teammate's class design -> oo-reviewing-object-design
+should a naming nitpick stop this pull request from merging -> oo-reviewing-object-design
+a checklist for reviewing a new module before it is built -> oo-reviewing-object-design
 ```
 
 ## Known misses
