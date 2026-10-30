@@ -26,6 +26,11 @@ class TempRepository {
             name: 'object-oriented-design-skills',
             version: '1.0.0',
             source: './plugins/core'
+          },
+          {
+            name: 'object-oriented-design-java',
+            version: '1.0.0',
+            source: './plugins/java'
           }
         ]
       }))
@@ -38,6 +43,15 @@ class TempRepository {
         name: 'object-oriented-design-skills',
         version: '1.0.0'
       }))
+    await mkdir(join(root, 'plugins', 'java', '.claude-plugin'), {
+      recursive: true
+    })
+    await writeFile(
+      join(root, 'plugins', 'java', '.claude-plugin', 'plugin.json'),
+      JSON.stringify({
+        name: 'object-oriented-design-java',
+        version: '1.0.0'
+      }))
     return new TempRepository(root)
   }
 
@@ -45,11 +59,11 @@ class TempRepository {
     this.#root = root
   }
 
-  async writeSkill(name, body) {
+  async writeSkill(name, body, plugin = 'core') {
     const directory = join(
       this.#root,
       'plugins',
-      'core',
+      plugin,
       'skills',
       name)
     await mkdir(directory, { recursive: true })
@@ -67,11 +81,11 @@ class TempRepository {
     ].join('\n'))
   }
 
-  skillPath(name) {
+  skillPath(name, plugin = 'core') {
     return join(
       this.#root,
       'plugins',
-      'core',
+      plugin,
       'skills',
       name,
       'SKILL.md')
@@ -229,6 +243,25 @@ test('a rule must follow its label with a bold statement', async () => {
       'item 1 must follow Rule., Default. or Judgement. ' +
       'with a bold statement',
       'labels: Rule 100% (1), Default 0% (0), Judgement 0% (0)',
+      'failed: 1 error(s)'
+    ])
+  } finally {
+    await repository.close()
+  }
+})
+
+test('a language skill rule without a label is an error', async () => {
+  const repository = await TempRepository.create()
+  try {
+    await repository.writeSkill(
+      'oo-java',
+      Rules.body(['1. **Do one thing.**']),
+      'java')
+    const report = repository.inspect()
+    assert.deepEqual(report.lines(), [
+      `error ${repository.skillPath('oo-java', 'java')}: ` +
+      'item 1 must start with Rule., Default. or Judgement.',
+      'labels: Rule 0% (0), Default 0% (0), Judgement 0% (0)',
       'failed: 1 error(s)'
     ])
   } finally {

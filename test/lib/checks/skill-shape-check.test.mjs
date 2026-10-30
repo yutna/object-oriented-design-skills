@@ -27,6 +27,11 @@ class TempRepository {
             name: 'object-oriented-design-skills',
             version: '1.0.0',
             source: './plugins/core'
+          },
+          {
+            name: 'object-oriented-design-java',
+            version: '1.0.0',
+            source: './plugins/java'
           }
         ]
       }))
@@ -39,6 +44,15 @@ class TempRepository {
         name: 'object-oriented-design-skills',
         version: '1.0.0'
       }))
+    await mkdir(join(root, 'plugins', 'java', '.claude-plugin'), {
+      recursive: true
+    })
+    await writeFile(
+      join(root, 'plugins', 'java', '.claude-plugin', 'plugin.json'),
+      JSON.stringify({
+        name: 'object-oriented-design-java',
+        version: '1.0.0'
+      }))
     return new TempRepository(root)
   }
 
@@ -46,11 +60,11 @@ class TempRepository {
     this.#root = root
   }
 
-  async writeSkill(name, body) {
+  async writeSkill(name, body, plugin = 'core') {
     const directory = join(
       this.#root,
       'plugins',
-      'core',
+      plugin,
       'skills',
       name)
     await mkdir(directory, { recursive: true })
@@ -68,11 +82,11 @@ class TempRepository {
     ].join('\n'))
   }
 
-  skillPath(name) {
+  skillPath(name, plugin = 'core') {
     return join(
       this.#root,
       'plugins',
-      'core',
+      plugin,
       'skills',
       name,
       'SKILL.md')
@@ -135,6 +149,35 @@ class Shape {
       ''
     ].join('\n')
   }
+
+  static languageBackLink() {
+    return [
+      '**In this pack:** sizing and rule strictness are set by the core',
+      "plugin's `oo-design` skill; each rule here keeps a core rule in this",
+      'language.'
+    ].join('\n')
+  }
+
+  static language(title = 'A Java Skill') {
+    return [
+      `# ${title}`,
+      '',
+      Shape.languageBackLink(),
+      '',
+      '## Overview',
+      '## When to use',
+      '## When not to use',
+      '- The code is written in another language.',
+      '- The question is about the core rules themselves.',
+      '## Core rules',
+      '## Pattern',
+      '## Red flags',
+      '## Common mistakes',
+      '## Related skills',
+      '## Further reading',
+      ''
+    ].join('\n')
+  }
 }
 
 class HouseStyle {
@@ -157,6 +200,23 @@ class HouseStyle {
         .filter((line) => line.startsWith('## '))
         .map((line) => line.slice(3))
     }
+  }
+
+  static languageBackLink(text) {
+    const lines = text.split('\n')
+    const section = lines.findIndex((line) =>
+      line.trim() === '## Language skill house style')
+    const start = lines.findIndex((line, index) =>
+      index > section && line.trim() === '```markdown')
+    const end = lines.findIndex((line, index) =>
+      index > start && line.trim() === '```')
+    const body = lines.slice(start + 1, end)
+    const indent = body[0].match(/^ */)[0]
+    return body
+      .map((line) => line.startsWith(indent)
+        ? line.slice(indent.length)
+        : line)
+      .join('\n')
   }
 }
 
@@ -251,15 +311,61 @@ test('When not to use holds at least two list items', async () => {
   }
 })
 
+test('a language skill has LANGUAGE_BACK_LINK and CORE_HEADINGS', async () => {
+  const repository = await TempRepository.create()
+  try {
+    await repository.writeSkill('oo-design', Shape.index())
+    await repository.writeSkill('oo-demo', Shape.core())
+    await repository.writeSkill('oo-java', Shape.language(), 'java')
+    const report = repository.inspect()
+    assert.equal(report.failed, false)
+    assert.deepEqual(report.lines(), ['ok 3 skill shape(s)'])
+  } finally {
+    await repository.close()
+  }
+})
+
+test('a language skill with the core back-link block is an error', async () => {
+  const repository = await TempRepository.create()
+  try {
+    await repository.writeSkill('oo-java', Shape.core(), 'java')
+    const report = repository.inspect()
+    assert.ok(report.lines().includes(
+      `error ${repository.skillPath('oo-java', 'java')}: ` +
+      'back-link block must sit between the title and Overview'))
+  } finally {
+    await repository.close()
+  }
+})
+
+test('a language skill missing a core heading is an error', async () => {
+  const repository = await TempRepository.create()
+  try {
+    await repository.writeSkill(
+      'oo-java',
+      Shape.language().replace('## Common mistakes', '## Mistakes'),
+      'java')
+    const report = repository.inspect()
+    assert.ok(report.lines().includes(
+      `error ${repository.skillPath('oo-java', 'java')}: ` +
+      'level-two headings must equal CORE_HEADINGS'))
+  } finally {
+    await repository.close()
+  }
+})
+
 test('the shape constants are frozen', () => {
   assert.equal(Array.isArray(SkillShapeCheck.INDEX_HEADINGS), true)
   assert.equal(SkillShapeCheck.INDEX_HEADINGS.length, 8)
   assert.equal(Array.isArray(SkillShapeCheck.CORE_HEADINGS), true)
   assert.equal(SkillShapeCheck.CORE_HEADINGS.length, 9)
   assert.equal(typeof SkillShapeCheck.BACK_LINK, 'string')
+  assert.equal(typeof SkillShapeCheck.LANGUAGE_BACK_LINK, 'string')
   assert.equal(Object.isFrozen(SkillShapeCheck.INDEX_HEADINGS), true)
   assert.equal(Object.isFrozen(SkillShapeCheck.CORE_HEADINGS), true)
   assert.equal(Object.isFrozen(SkillShapeCheck.BACK_LINK), true)
+  assert.equal(
+    Object.isFrozen(SkillShapeCheck.LANGUAGE_BACK_LINK), true)
 })
 
 test('AGENTS.md house style equals BACK_LINK and CORE_HEADINGS', () => {
@@ -267,6 +373,13 @@ test('AGENTS.md house style equals BACK_LINK and CORE_HEADINGS', () => {
   const style = HouseStyle.of(text)
   assert.equal(style.backLink, SkillShapeCheck.BACK_LINK)
   assert.deepEqual(style.headings, SkillShapeCheck.CORE_HEADINGS)
+})
+
+test('AGENTS.md language style equals LANGUAGE_BACK_LINK', () => {
+  const text = TextFile.read(join(process.cwd(), 'AGENTS.md')).text
+  assert.equal(
+    HouseStyle.languageBackLink(text),
+    SkillShapeCheck.LANGUAGE_BACK_LINK)
 })
 
 test('a changed heading in AGENTS.md no longer matches CORE_HEADINGS', () => {
