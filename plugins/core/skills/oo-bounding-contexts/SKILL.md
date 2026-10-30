@@ -57,7 +57,7 @@ makes this clinic different.
    meaning.** A context is a part of the system whose model has its own
    words and one owner. Inside one context each word means one thing; at
    the line, reception's *appointment* is a booked slot while billing's
-   *billable visit* is the encounter it prices. Where those two meanings
+   *billable visit* is the visit it prices. Where those two meanings
    meet, two contexts meet. Each context keeps its own model, even when
    both read one table today. Inside shared code, two meanings become
    two classes, as rule 4 of speaking the domain language asks; its
