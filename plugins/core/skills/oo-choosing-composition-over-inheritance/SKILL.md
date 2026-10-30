@@ -3,7 +3,7 @@ name: oo-choosing-composition-over-inheritance
 description: Use when a subclass only reuses code, when a base class change breaks its subclasses, or when choosing between extending a class and wrapping it.
 license: MIT
 metadata:
-  version: 0.14.0
+  version: 0.15.0
   pack: object-oriented-design-skills
 ---
 

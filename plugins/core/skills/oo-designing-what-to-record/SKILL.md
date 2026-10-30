@@ -3,7 +3,7 @@ name: oo-designing-what-to-record
 description: Use when deciding what to log, measure or trace, when an incident cannot be explained from the records, or staff actions need an audit trail.
 license: MIT
 metadata:
-  version: 0.14.0
+  version: 0.15.0
   pack: object-oriented-design-skills
 ---
 
