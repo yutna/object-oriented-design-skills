@@ -57,7 +57,8 @@ missing is not design, and this pack cannot supply it.
    [layering the system](../oo-layering-the-system/SKILL.md)).
 6. Name things in the domain's words, and comment only what the code
    cannot say
-   ([naming classes and methods](../oo-naming-classes-and-methods/SKILL.md)).
+   ([naming classes and methods](../oo-naming-classes-and-methods/SKILL.md),
+   [commenting what code cannot say](../oo-commenting-what-code-cannot/SKILL.md)).
 7. Check the result against the red flags below
    ([reviewing object design](../oo-reviewing-object-design/SKILL.md)).
 
@@ -163,12 +164,15 @@ skills land.
 |Which review findings block a merge?|[Reviewing object design][reviewing]|
 |Nobody remembers why the code is shaped this way|[Documenting design decisions][decisions]|
 |What should we draw, and at what level?|[Documenting design decisions][decisions]|
+|Comments repeat the code or contradict it|[Commenting what code cannot say][commenting]|
+|Where do we explain why this code looks odd?|[Commenting what code cannot say][commenting]|
 
 [aggregates]: ../oo-designing-aggregates/SKILL.md
 [antipatterns]: ../oo-recognising-antipatterns/SKILL.md
 [assigning]: ../oo-assigning-responsibilities/SKILL.md
 [boundaries]: ../oo-crossing-system-boundaries/SKILL.md
 [choosing-pattern]: ../oo-choosing-a-pattern/SKILL.md
+[commenting]: ../oo-commenting-what-code-cannot/SKILL.md
 [composition]: ../oo-choosing-composition-over-inheritance/SKILL.md
 [constructing]: ../oo-constructing-valid-objects/SKILL.md
 [contexts]: ../oo-bounding-contexts/SKILL.md

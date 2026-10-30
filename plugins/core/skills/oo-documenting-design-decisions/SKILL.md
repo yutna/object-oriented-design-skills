@@ -39,8 +39,8 @@ outgrown.
 
 ## When not to use
 
-- A comment beside one line or one method is the question: what a comment
-  should say is outside this skill.
+- A comment beside one line or one method is the question: that is
+  [commenting what code cannot say](../oo-commenting-what-code-cannot/SKILL.md).
 - The decision is local to one class and cheap to undo, such as a private
   method's name: the code and its review carry all a reader needs.
 - The question is where one team's model ends and another's begins,
@@ -186,6 +186,9 @@ evidence: a measurement, a reproducible bug, or a failing test.
   for a lifecycle written before its code.
 - [oo-organising-modules](../oo-organising-modules/SKILL.md) rule 1,
   for business capabilities as top-level modules.
+- [oo-commenting-what-code-cannot](../oo-commenting-what-code-cannot/SKILL.md)
+  decides what a comment beside the code says, and keeps a decision's
+  history in its record.
 
 ## Further reading
 

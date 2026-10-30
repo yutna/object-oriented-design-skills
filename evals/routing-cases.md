@@ -137,6 +137,9 @@ a checklist for reviewing a new module before it is built -> oo-reviewing-object
 new hire keeps asking why we split billing from booking, nobody remembers -> oo-documenting-design-decisions
 should i draw something before redesigning how slots get assigned to clinicians->oo-documenting-design-decisions
 the whiteboard picture of the booking system never matches the code anymore -> oo-documenting-design-decisions
+the billing code is full of notes that just repeat what each line does -> oo-commenting-what-code-cannot
+how do i explain why we round invoice totals down without cluttering it -> oo-commenting-what-code-cannot
+found a note saying slots are 15 minutes but the code uses 20 -> oo-commenting-what-code-cannot
 ```
 
 ## Known misses
