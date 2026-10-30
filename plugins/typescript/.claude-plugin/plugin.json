@@ -1,0 +1,14 @@
+{
+  "name": "object-oriented-design-typescript",
+  "version": "0.15.0",
+  "description": "Object-oriented design rules kept in plain TypeScript: branded identifiers, #private state, abstract classes, decorators, discriminated unions and a composition root",
+  "author": {
+    "name": "Yutthana Siphuengchai",
+    "url": "https://github.com/yutna"
+  },
+  "homepage": "https://github.com/yutna/object-oriented-design-skills",
+  "repository": "https://github.com/yutna/object-oriented-design-skills",
+  "license": "MIT",
+  "keywords": ["object-oriented-design", "typescript"],
+  "skills": "./skills/"
+}
