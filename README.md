@@ -22,6 +22,15 @@ In Claude Code:
 /plugin install object-oriented-design-skills@object-oriented-design-skills
 ```
 
+Each language plugin is installed beside the core plugin:
+
+```text
+/plugin install object-oriented-design-java@object-oriented-design-skills
+/plugin install object-oriented-design-kotlin@object-oriented-design-skills
+/plugin install object-oriented-design-typescript@object-oriented-design-skills
+/plugin install object-oriented-design-javascript@object-oriented-design-skills
+```
+
 ### From a checkout
 
 From a checkout, copy the selected plugin's skills into
