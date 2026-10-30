@@ -234,3 +234,4 @@ evidence: a measurement, a reproducible bug, or a failing test.
 - [Notation](references/notation.md)
 - [The CLAUDE.md block](references/claude-md-block.md)
 - [Pattern index](references/pattern-index.md)
+- [What changed](references/what-changed.md)
