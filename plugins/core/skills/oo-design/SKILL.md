@@ -237,8 +237,18 @@ replaces them. A base language skill is for code with no framework.
 - `oo-javascript`, from `object-oriented-design-javascript`: contract
   tests, `#private` state, frozen values, and classes rather than
   edited prototypes.
+- `oo-csharp`, from `object-oriented-design-csharp`: records whose
+  copies keep their checks, structs, nullable reference types,
+  default interface members, and `async` kept in the shell.
+- `oo-python`, from `object-oriented-design-python`: protocols and
+  abstract base classes, frozen dataclasses, properties without
+  setters, mixins and the method resolution order, and `final`.
+- `oo-ruby`, from `object-oriented-design-ruby`: contract tests,
+  messages instead of class checks, readers without writers, values
+  with `Data`, held objects instead of mixins, and methods defined
+  where a reader finds them.
 - A language with no skill of its own reads the nearest shipped one:
-  Scala and Groovy read `oo-java`.
+  Scala and Groovy read `oo-java`, and PHP reads `oo-python`.
 
 In Claude Code, install a language plugin beside the core one:
 `/plugin install object-oriented-design-java@object-oriented-design-skills`
