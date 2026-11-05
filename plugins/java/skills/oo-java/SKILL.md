@@ -43,8 +43,9 @@ cannot ignore a refusal by accident.
 - The question is one no Java feature changes, such as which object owns
   a rule or where a module's boundary runs. The core skills answer it,
   starting from `oo-design`.
-- The source files are not `.java` but another language that runs on the
-  same virtual machine: outside this skill.
+- The source files are not `.java` but Kotlin, another language that
+  runs on the same virtual machine: outside this skill; `oo-kotlin` says
+  which Kotlin feature keeps each rule.
 
 ## Core rules
 

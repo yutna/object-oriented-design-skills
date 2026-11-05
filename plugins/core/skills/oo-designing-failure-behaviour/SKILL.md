@@ -77,7 +77,8 @@ must act on and no fault it cannot repair.
    edge, such as the request handler, which records it and answers a
    general failure. What tips the balance is whether the immediate
    caller would do anything different on hearing of it. Which errors a
-   language makes its callers declare is outside this skill.
+   language makes its callers declare is outside this skill; `oo-java`
+   rules 4 and 5 decide it for Java.
 
 3. Default. **Give the refusals one module raises a common base error
    named for what the module refuses, such as `BookingRefused`, with
