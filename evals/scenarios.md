@@ -15,9 +15,10 @@ route passes.
 > new places that decide whether a slot is taken. Where should that
 > decision live?
 
-Must contain: the check moving to the object that holds the slot's
-booking data; neither the scheduler nor the controller deciding it from
-the slot's fields itself; one owner for the rule.
+Must contain: the check moving to the object that holds the slot's booking data;
+neither the scheduler nor the controller deciding it from the slot's fields
+itself; one owner for the rule; the controller handing the booking request to
+the use-case object, with no check of the slot of its own.
 
 Should reach `oo-assigning-responsibilities`.
 
@@ -598,13 +599,14 @@ Should reach `oo-managing-shared-state`.
 > and now some pharmacies receive the same prescription twice. What
 > should change?
 
-Must contain: a time limit on each call to the pharmacy network, with
-an expired wait treated as an unknown outcome; the pharmacy calls kept
-in their own bounded pool or behind a breaker, so a slow network cannot
-take the threads booking needs; each prescription sent with an identity
-created once and kept with it, so the network recognises a repeat;
-retries limited to failures that may pass, a bounded number of times,
-with growing waits.
+Must contain: a time limit on each call to the pharmacy network, with an expired
+wait treated as an unknown outcome; the pharmacy calls kept in their own bounded
+pool or behind a breaker, so a slow network cannot take the threads booking
+needs; each prescription sent with an identity created once and kept with it, so
+the network recognises a repeat; retries limited to failures that may pass, a
+bounded number of times, with growing waits; the time limit, the retries and the
+breaker kept in the adapter for the pharmacy network, or in an object that wraps
+its port, never in a domain object.
 
 Should reach `oo-making-work-reliable`.
 
@@ -673,11 +675,12 @@ Should reach `oo-testing-object-oriented-code`.
 > month and on the day the clocks change. How should the class change?
 
 Must contain: the current time and the random draw received through
-collaborators passed in, or the time passed in as a value, so a test
-chooses them; the fee decision split from writing the charge, so a test
-checks it with plain values and no billing system; the test-only field
-and method removed, with the test checking what callers can see or what
-is sent through a port.
+collaborators passed in, or the time passed in as a value, so a test chooses
+them; the fee decision split from writing the charge, so a test checks it with
+plain values and no billing system; the test-only field and method removed, with
+the test checking what callers can see or what is sent through a port; the fee
+decision given the time as a value, with the clock asked once by the code that
+runs the decision.
 
 Should reach `oo-designing-for-testability`.
 
