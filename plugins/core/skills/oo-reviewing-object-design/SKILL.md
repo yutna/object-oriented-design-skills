@@ -53,9 +53,12 @@ of findings, each with a verdict.
    its contract, not for a new model.
 
 2. Rule. **Report a finding only with the rule it breaks, by skill and
-   number, and the lines of the change that break it.** A red flag
-   alone is a question to the author until it has the evidence the
-   index asks for: a measurement, a reproducible bug or a failing test.
+   number, and the lines of the change that break it.** Before writing
+   it, read that rule's number, label and statement in the rule's own
+   skill, reached from the checklist question that names it; take none
+   of them from memory. A red flag alone is a question to the author
+   until it has the evidence the index asks for: a measurement, a
+   reproducible bug or a failing test.
 
 3. Rule. **Weigh a finding by the label of the rule it breaks.** The
    index defines the three labels under how strictly a rule is meant. A
