@@ -817,10 +817,11 @@ Should reach `oo-working-within-a-framework`.
 
 Must contain: the refund worked out by a pure method from the claim and
 the rates passed in as values; the rates read and the stamped claim
-stored by the use case around that method; the caller's list left
-unchanged, the method answering a new value instead; tests of the
-calculation with plain values and no stand-ins; the three stateless
-rules passed as function values, unless the staff name them; objects
-kept, with no second architecture.
+stored by the use case around that method; the caller's list no longer
+changed by the method, which answers a new value or leaves the report
+to code that reads the stored claims; tests of the calculation with
+plain values and no stand-ins; the three stateless rules passed as
+function values, unless the staff name them; objects kept, with no
+second architecture.
 
 Should reach `oo-applying-functional-techniques`.
