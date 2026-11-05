@@ -2,6 +2,7 @@ import { Cli } from './lib/cli.mjs'
 import { CheckSuite } from './lib/checks/check-suite.mjs'
 import { CitationCheck } from './lib/checks/citation-check.mjs'
 import { DomainCheck } from './lib/checks/domain-check.mjs'
+import { LineLengthCheck } from './lib/checks/line-length-check.mjs'
 import { NotationCheck } from './lib/checks/notation-check.mjs'
 import { PackScopeCheck } from './lib/checks/pack-scope-check.mjs'
 import { RaisesContractCheck } from './lib/checks/raises-contract-check.mjs'
@@ -13,6 +14,7 @@ if (import.meta.main) {
   await new Cli(process).run(new CheckSuite('validate-prose', [
     new CitationCheck(repository),
     new DomainCheck(repository),
+    new LineLengthCheck(repository),
     new NotationCheck(repository),
     new PackScopeCheck(repository),
     new RaisesContractCheck(repository),
