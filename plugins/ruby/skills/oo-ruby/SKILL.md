@@ -48,7 +48,7 @@ with `respond_to_missing?`.
   whose models are table rows: outside this skill.
 - The code is Python, which `oo-python` covers.
 - The question is one no Ruby feature changes, such as which object
-  owns a rule or where a module boundary runs: the core skills,
+  owns a rule or where a system boundary runs: the core skills,
   starting from `oo-design`.
 
 ## Core rules
@@ -70,7 +70,7 @@ with `respond_to_missing?`.
    only what a caller sees, so the same tests hold for every
    implementation. `oo-designing-interfaces` rule 5 asks a type to
    name the role it plays and to declare which types play it; here the
-   module's name is the role, and each implementation's test class
+   module's name carries the role, and each implementation's test class
    declares that its class plays it by including the module. Minitest
    is a bundled gem, and a module included in a `Minitest::Test`
    subclass has each `test_` method run for that class.
