@@ -78,6 +78,18 @@
       "license": "MIT",
       "category": "development",
       "keywords": ["object-oriented-design", "csharp"]
+    },
+    {
+      "name": "object-oriented-design-python",
+      "description": "Object-oriented design rules kept in plain Python, with no framework",
+      "version": "0.16.1",
+      "source": "./plugins/python",
+      "author": { "name": "Yutthana Siphuengchai" },
+      "homepage": "https://github.com/yutna/object-oriented-design-skills",
+      "repository": "https://github.com/yutna/object-oriented-design-skills",
+      "license": "MIT",
+      "category": "development",
+      "keywords": ["object-oriented-design", "python"]
     }
   ]
 }

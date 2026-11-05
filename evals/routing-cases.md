@@ -160,6 +160,7 @@ is Object.freeze enough for a js Appointment value object? -> oo-javascript
 js Patient: use class syntax or plain prototypes? -> oo-javascript
 should Appointment be a record in C#? it has an id and changes status -> oo-csharp
 can't make the C# Clinic constructor async, where do I load the slots then? -> oo-csharp
+my @dataclass Appointment lets anyone reassign .slot after it's booked -> oo-python
 ```
 
 ## Known misses
@@ -187,4 +188,6 @@ should telehealth visit extend visit or wrap it -> oo-choosing-composition-over-
 a checklist for reviewing a new module before it is built -> oo-reviewing-object-design
 calculating an invoice total also writes to the database, hard to test -> oo-applying-functional-techniques
 Appointment.cs: CS8618 on Visit, which only exists once the patient shows up->oo-csharp
+class Clinician(Staff, Schedulable): super().__init__ skips Schedulable's init->oo-python
+mypy says my FakeSmsSender isn't a Notifier, but it has the same send() -> oo-python
 ```
