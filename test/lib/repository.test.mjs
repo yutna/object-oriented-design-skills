@@ -98,7 +98,7 @@ test('a valid repository with one plugin and two skills', async () => {
   }
 })
 
-test('Repository.at on this repository finds the fifty-one skills and the package version', async () => {
+test('Repository.at on this repository finds the fifty-two skills and the package version', async () => {
   const root = process.cwd()
   const repository = Repository.at(root)
   const packageData = JSON.parse(
@@ -146,6 +146,7 @@ test('Repository.at on this repository finds the fifty-one skills and the packag
       'oo-patterns-the-language-provides',
       'oo-placing-domain-logic',
       'oo-publishing-domain-events',
+      'oo-python',
       'oo-recognising-antipatterns',
       'oo-refactoring-toward-object-design',
       'oo-replacing-conditionals-with-polymorphism',
