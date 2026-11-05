@@ -64,7 +64,8 @@ the claim cannot be tested without an insurer stand-in (rule 7). The
 port also says nothing about the refusal an implementation raises, so
 a caller cannot read which exception to expect (rule 8). The fence
 sets the receipt reference on the `VisitClaim` it was given, whose
-identity is `ClaimNumber`, and shows no transaction.
+identity is `ClaimNumber`, shows no transaction, and leaves out where
+the claim is stored.
 
 ## A worked change
 
@@ -75,8 +76,9 @@ identity is `ClaimNumber`, and shows no transaction.
    `RecordReceipt` that sets the reference the service got.
 3. Add `ClaimRefused` and declare it in an
    `<exception cref="ClaimRefused">` tag on `IClaimChannel.SendAsync`;
-   make `InsurerClaimChannel` catch the gateway's exception and throw
-   `ClaimRefused`.
+   make `InsurerClaimChannel` catch the insurer's refusal,
+   `InsurerRefusalException`, and throw `ClaimRefused`, letting any
+   other gateway failure pass as a fault.
 
 ```csharp
 using System;
@@ -93,7 +95,8 @@ public interface IClaimChannel
 {
     /// <summary>Sends one claim to the insurer.</summary>
     /// <exception cref="ClaimRefused">
-    /// The insurer refused the claim; the caller may try again later.
+    /// The insurer refused the claim; the caller may correct the claim
+    /// and send it again.
     /// </exception>
     Task<string> SendAsync(string claimNumber, string message);
 }
@@ -163,9 +166,9 @@ public sealed class InsurerGateway
     }
 }
 
-public sealed class InsurerGatewayException : Exception
+public sealed class InsurerRefusalException : Exception
 {
-    public InsurerGatewayException(string message) : base(message)
+    public InsurerRefusalException(string message) : base(message)
     {
     }
 }
@@ -187,9 +190,9 @@ public sealed class InsurerClaimChannel : IClaimChannel
         {
             return await gateway.PostAsync(claimNumber, message);
         }
-        catch (InsurerGatewayException failure)
+        catch (InsurerRefusalException refusal)
         {
-            throw new ClaimRefused(failure.Message);
+            throw new ClaimRefused(refusal.Message);
         }
     }
 }
@@ -201,8 +204,10 @@ fields and checks its arguments. `SubmitVisitClaim` is the application
 service; it receives the port through its constructor, awaits it, and
 then calls `claim.RecordReceipt` with the reference it got (rule 7).
 `IClaimChannel` declares `ClaimRefused` in its `<exception>` tag, and
-`InsurerClaimChannel` turns `InsurerGatewayException` into that refusal
-(rule 8). The fence sets the receipt reference on the `VisitClaim` it
-was given, whose identity is `ClaimNumber`, and shows no transaction.
-The change ends with every domain method synchronous and no domain
-object holding a port, so rule 7 is kept.
+`InsurerClaimChannel` turns the insurer's refusal,
+`InsurerRefusalException`, into that refusal and lets any other gateway
+failure pass as a fault (rule 8). The fence sets the receipt reference
+on the `VisitClaim` it was given, whose identity is `ClaimNumber`,
+shows no transaction, and leaves out where the claim is stored. The
+change ends with every domain method synchronous and no domain object
+holding a port, so rule 7 is kept.

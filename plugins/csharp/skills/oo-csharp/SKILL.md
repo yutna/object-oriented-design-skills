@@ -74,11 +74,12 @@ the ports while the domain stays synchronous.
    `WithChangeEveryDays` builds a new value through the checked
    constructor.
 
-   The exception is a value whose representation must stay hidden: a
-   record exposes every property, so write that value as a `sealed`
-   class with private fields and only the accessors its callers need,
-   with its own `Equals` and `GetHashCode`, keeping the same
-   constructor checks.
+   The exception is a value whose printed form must not show a detail
+   it carries, such as a patient's name: a record's generated
+   `ToString` prints every public property and field, so write that
+   value as a `sealed` class with private fields and only the accessors
+   its callers need, with its own `Equals` and `GetHashCode`, keeping
+   the same constructor checks.
 
 2. Rule. **A value record that holds a collection defines its own
    `Equals` and `GetHashCode` over the collection's contents, as
@@ -214,7 +215,7 @@ the copy holds a plan construction would refuse (rule 1). The
 `List<string>` property is compared by the generated equality with the
 list's own equality, which is reference equality, so two plans holding
 equal steps in two lists are not equal (rule 2). The caller's list is
-kept, so a change to it changes the plan's contents (rule 1). The
+kept, so a change to it changes the plan's contents (rule 2). The
 fence stores nothing.
 
 After:
