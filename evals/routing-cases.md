@@ -158,6 +158,8 @@ wire BookingService deps in typescript without a di container -> oo-typescript
 js has no interfaces: how do I pin what a slot store must do? -> oo-javascript
 is Object.freeze enough for a js Appointment value object? -> oo-javascript
 js Patient: use class syntax or plain prototypes? -> oo-javascript
+should Appointment be a record in C#? it has an id and changes status -> oo-csharp
+can't make the C# Clinic constructor async, where do I load the slots then? -> oo-csharp
 ```
 
 ## Known misses
@@ -184,4 +186,5 @@ callers check appointment status first -> oo-encapsulating-state-and-behaviour
 should telehealth visit extend visit or wrap it -> oo-choosing-composition-over-inheritance
 a checklist for reviewing a new module before it is built -> oo-reviewing-object-design
 calculating an invoice total also writes to the database, hard to test -> oo-applying-functional-techniques
+Appointment.cs: CS8618 on Visit, which only exists once the patient shows up->oo-csharp
 ```
