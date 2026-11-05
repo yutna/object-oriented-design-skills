@@ -419,12 +419,42 @@ test('a baseline piece runs with-without and keeps its no-plugin runs',
       const run = JSON.parse(await readFile(
         join(fixture.run.resultsPath, 'run.json'), 'utf8'))
       assert.equal(run.arm, 'baseline')
+      assert.equal(run.baselineHashes[EvalRepositoryFixture.QUESTION], hash)
       assert.deepEqual(run.cases, [EvalRepositoryFixture.QUESTION])
     } finally {
       await rm(scaffold, { recursive: true, force: true })
       await fixture.close()
     }
   })
+
+test('a block piece and a baseline piece record the same hash', async () => {
+  const scaffold = await mkdtemp(join(tmpdir(), 'e-'))
+  await mkdir(join(scaffold, 'out'), { recursive: true })
+  writeFileSync(
+    join(scaffold, 'out', 'trace.jsonl'),
+    '{"type":"assistant"}\n')
+  const block = await RunFixture.create({ result: SampleResult.read() })
+  const baseline = await RunFixture.create({
+    result: SampleResult.withBaseline(scaffold),
+    options: Options.baseline()
+  })
+  try {
+    block.run.execute(new Report())
+    baseline.run.execute(new Report())
+    const blockRun = JSON.parse(await readFile(
+      join(block.run.resultsPath, 'run.json'), 'utf8'))
+    const baselineRun = JSON.parse(await readFile(
+      join(baseline.run.resultsPath, 'run.json'), 'utf8'))
+    const name = EvalRepositoryFixture.QUESTION
+    assert.match(blockRun.baselineHashes?.[name] ?? '', /^[0-9a-f]{12}$/)
+    assert.equal(
+      blockRun.baselineHashes[name], baselineRun.baselineHashes[name])
+  } finally {
+    await rm(scaffold, { recursive: true, force: true })
+    await block.close()
+    await baseline.close()
+  }
+})
 
 test('execute copies each trace and removes only its own scaffold',
   async () => {
@@ -470,7 +500,8 @@ test('run.json carries cost, both models, commit, dirtiness, arm and cases',
       fixture.run.execute(new Report())
       const run = JSON.parse(await readFile(
         join(fixture.run.resultsPath, 'run.json'), 'utf8'))
-      assert.deepEqual(run, {
+      const { baselineHashes, ...rest } = run
+      assert.deepEqual(rest, {
         costUsd: 0.06658909999999998,
         model: 'claude-sonnet-5-5',
         judgeModel: 'claude-haiku-5-5',
@@ -479,6 +510,11 @@ test('run.json carries cost, both models, commit, dirtiness, arm and cases',
         arm: 'block',
         cases: [EvalRepositoryFixture.QUESTION]
       })
+      assert.deepEqual(Object.keys(baselineHashes), [
+        EvalRepositoryFixture.QUESTION
+      ])
+      assert.match(
+        baselineHashes[EvalRepositoryFixture.QUESTION], /^[0-9a-f]{12}$/)
     } finally {
       await fixture.close()
     }

@@ -18,7 +18,7 @@ export class EvalSummary extends Check {
   static #SUMMARY = 'summary.json'
   static #BASELINES = 'baselines'
   static #TRACES = 'traces'
-  static #HASHED = /^(.+)-[0-9a-f]{12}\.json$/
+  static #HASHED = /^(.+)-([0-9a-f]{12})\.json$/
   static #FAMILIES = Object.freeze({
     q: 'question',
     t: 'task',
@@ -82,6 +82,8 @@ export class EvalSummary extends Check {
       .filter((model) => model !== null))
     const baselines = this.#baselines(models)
     const cases = new Map()
+    const noBaseline = new Set()
+    const storedBaselines = new Set()
     for (const piece of pieces) {
       const result = this.#json(piece.resultPath)
       if (!Array.isArray(result.cases)) {
@@ -89,12 +91,12 @@ export class EvalSummary extends Check {
           `${piece.path}: result.json holds no cases`, 2)
       }
       piece.graded = this.#pieceRuns(
-        piece, result.cases, baselines, cases)
+        piece, result.cases, baselines, cases, noBaseline,
+        storedBaselines)
     }
-    for (const baseline of baselines.values()) {
-      // The baseline folder accumulates every case; only a case in this
-      // results folder has a block run to compare against it.
-      if (!cases.has(baseline.case)) continue
+    for (const baseline of storedBaselines) {
+      // A stored file is recorded once for its case, however many pieces
+      // name it, so its runs are never measured twice.
       const entry = this.#entry(
         cases, baseline.case, this.#familyOfName(baseline.case))
       for (const run of baseline.runs) {
@@ -116,6 +118,7 @@ export class EvalSummary extends Check {
       families: Object.freeze(this.#families(graded)),
       wins: Object.freeze(wins),
       losses: Object.freeze(losses),
+      noBaseline: Object.freeze([...noBaseline].sort()),
       pieces: Object.freeze(pieces.map((piece) => Object.freeze({
         path: piece.path,
         arm: piece.arm,
@@ -139,11 +142,21 @@ export class EvalSummary extends Check {
         resultPath,
         arm: typeof record.arm === 'string' ? record.arm : 'block',
         model: typeof record.model === 'string' ? record.model : null,
+        hashes: this.#recordedHashes(record),
         families: record.families ?? {},
         graded: 0
       })
     }
     return pieces
+  }
+
+  #recordedHashes(record) {
+    const hashes = record.baselineHashes
+    if (hashes === null || typeof hashes !== 'object' ||
+      Array.isArray(hashes)) {
+      return Object.freeze({})
+    }
+    return Object.freeze({ ...hashes })
   }
 
   #resultFiles(directory) {
@@ -168,18 +181,24 @@ export class EvalSummary extends Check {
     return this.#json(path)
   }
 
-  #pieceRuns(piece, rows, baselines, cases) {
+  #pieceRuns(piece, rows, baselines, cases, noBaseline,
+    storedBaselines) {
     let graded = 0
     for (const row of rows) {
       const entry = this.#entry(
         cases, row.name,
         this.#familyOf(row, piece))
+      const stored = this.#storedBaseline(piece, baselines, row.name)
+      if (stored !== null) {
+        storedBaselines.add(stored)
+      } else if (piece.arm !== 'baseline') {
+        noBaseline.add(row.name)
+      }
       for (const [arm, runs] of Object.entries(row.arms ?? {})) {
         const condition = EvalSummary.#condition(piece.arm, arm)
         // A stored baseline already holds these runs; counting both would
         // measure the same no-pack answers twice.
-        if (condition === 'none' &&
-          this.#hasBaseline(baselines, piece.model, row.name)) continue
+        if (condition === 'none' && stored !== null) continue
         for (const [index, run] of (runs ?? []).entries()) {
           const trace = this.#trace(piece, row.name, arm, index)
           const grade = new RunGrade(run, trace)
@@ -189,6 +208,35 @@ export class EvalSummary extends Check {
       }
     }
     return graded
+  }
+
+  #storedBaseline(piece, baselines, name) {
+    // A baseline piece keeps the newest stored file, as it always has; only
+    // a block piece takes the file whose case text it recorded.
+    if (piece.arm === 'baseline') {
+      return this.#newestBaseline(baselines, piece.model, name)
+    }
+    const hash = piece.hashes[name]
+    if (typeof hash !== 'string') return null
+    if (piece.model !== null) {
+      return baselines.get(`${piece.model}\0${name}\0${hash}`) ?? null
+    }
+    for (const baseline of baselines.values()) {
+      if (baseline.case === name && baseline.hash === hash) return baseline
+    }
+    return null
+  }
+
+  #newestBaseline(baselines, model, name) {
+    let newest = null
+    for (const baseline of baselines.values()) {
+      if (baseline.case !== name) continue
+      if (model !== null && baseline.model !== model) continue
+      if (newest === null || baseline.mtime > newest.mtime) {
+        newest = baseline
+      }
+    }
+    return newest
   }
 
   static #condition(pieceArm, resultArm) {
@@ -209,8 +257,8 @@ export class EvalSummary extends Check {
 
   #baselines(models) {
     const directory = this.#baselineDirectory()
-    const chosen = new Map()
-    if (directory === null) return chosen
+    const baselines = new Map()
+    if (directory === null) return baselines
     for (const entry of readdirSync(
       directory, { withFileTypes: true })) {
       if (!entry.isDirectory()) continue
@@ -220,34 +268,23 @@ export class EvalSummary extends Check {
         const named = EvalSummary.#HASHED.exec(file)
         if (named === null) continue
         const path = join(modelDirectory, file)
-        const key = `${entry.name}\0${named[1]}`
-        const previous = chosen.get(key)
-        // An edited case gets a new hash; only the newest file can belong to
-        // the case as it stands now.
-        const mtime = statSync(path).mtimeMs
-        if (previous === undefined || mtime > previous.mtime) {
-          chosen.set(key, {
-            model: entry.name,
-            case: named[1],
-            path,
-            mtime
-          })
+        // A stored file is named by the case text it was run on, so a piece
+        // takes it only when its recorded hash names that text.
+        const key = `${entry.name}\0${named[1]}\0${named[2]}`
+        const parsed = this.#json(path)
+        const runs = Array.isArray(parsed) ? parsed : parsed.runs
+        if (!Array.isArray(runs)) {
+          throw new RepoError(
+            `baseline ${path} holds no runs`, 2)
         }
+        baselines.set(key, Object.freeze({
+          model: entry.name,
+          case: named[1],
+          hash: named[2],
+          mtime: statSync(path).mtimeMs,
+          runs: Object.freeze(runs)
+        }))
       }
-    }
-    const baselines = new Map()
-    for (const [key, baseline] of chosen) {
-      const parsed = this.#json(baseline.path)
-      const runs = Array.isArray(parsed) ? parsed : parsed.runs
-      if (!Array.isArray(runs)) {
-        throw new RepoError(
-          `baseline ${baseline.path} holds no runs`, 2)
-      }
-      baselines.set(key, Object.freeze({
-        model: baseline.model,
-        case: baseline.case,
-        runs: Object.freeze(runs)
-      }))
     }
     return baselines
   }
@@ -260,14 +297,6 @@ export class EvalSummary extends Check {
     const above = join(
       dirname(this.#directory), EvalSummary.#BASELINES)
     return existsSync(above) ? above : null
-  }
-
-  #hasBaseline(baselines, model, name) {
-    if (model !== null) return baselines.has(`${model}\0${name}`)
-    for (const key of baselines.keys()) {
-      if (key.endsWith(`\0${name}`)) return true
-    }
-    return false
   }
 
   #familyOf(row, piece) {
@@ -455,6 +484,11 @@ export class EvalSummary extends Check {
     }
     for (const [arm, names] of Object.entries(summary.losses)) {
       lines.push(`losses ${arm}: ${names.join(', ') || 'none'}`)
+    }
+    if (summary.noBaseline.length > 0) {
+      lines.push(
+        'no baseline for this case text: ' +
+        summary.noBaseline.join(', '))
     }
     return lines
   }

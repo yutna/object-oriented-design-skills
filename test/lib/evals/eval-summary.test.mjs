@@ -1,7 +1,19 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { existsSync, readFileSync } from 'node:fs'
-import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises'
+import {
+  cpSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync
+} from 'node:fs'
+import {
+  mkdir,
+  mkdtemp,
+  rm,
+  utimes,
+  writeFile
+} from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
@@ -11,6 +23,8 @@ import { Report } from '../../../scripts/lib/report.mjs'
 class Fixture {
   static ROOT = join(process.cwd(), 'test', 'fixtures', 'eval-summary')
 
+  static HASH = '0123456789ab'
+
   static QUESTION = 'q01-the-slot-rule-keeps-moving'
 
   static TASK = 't01-check-before-booking'
@@ -18,13 +32,139 @@ class Fixture {
   static RESTRAINT = 'r01-overnight-duration'
 
   static summary() {
-    return new EvalSummary(Fixture.ROOT).summary()
+    const root = Fixture.#copy()
+    try {
+      return new EvalSummary(root).summary()
+    } finally {
+      Fixture.#remove(root)
+    }
   }
 
   static report() {
+    const root = Fixture.#copy()
+    try {
+      const report = new Report()
+      new EvalSummary(root).inspect(report)
+      return report
+    } finally {
+      Fixture.#remove(root)
+    }
+  }
+
+  static inspected() {
+    const root = Fixture.#copy()
+    try {
+      const report = new Report()
+      const summary = new EvalSummary(root)
+      summary.inspect(report)
+      return Object.freeze({
+        report,
+        summary: summary.summary(),
+        written: JSON.parse(
+          readFileSync(join(root, 'summary.json'), 'utf8'))
+      })
+    } finally {
+      Fixture.#remove(root)
+    }
+  }
+
+  static #copy() {
+    const root = mkdtempSync(
+      join(tmpdir(), 'oo-eval-summary-fixture-'))
+    cpSync(Fixture.ROOT, root, { recursive: true })
+    const path = join(root, 'run-1', 'run.json')
+    const record = JSON.parse(readFileSync(path, 'utf8'))
+    record.baselineHashes = Object.fromEntries(
+      record.cases.map((name) => [name, Fixture.HASH]))
+    writeFileSync(path, `${JSON.stringify(record, null, 2)}\n`)
+    return root
+  }
+
+  static #remove(root) {
+    rmSync(root, { recursive: true, force: true })
+  }
+}
+
+class SummaryFixture {
+  static HASH = 'aaaaaaaaaaaa'
+
+  static OTHER = 'bbbbbbbbbbbb'
+
+  static MODEL = 'claude-sonnet-5-5'
+
+  static QUESTION = 'q01-the-slot-rule-keeps-moving'
+
+  static TASK = 't01-check-before-booking'
+
+  static async create() {
+    return new SummaryFixture(
+      await mkdtemp(join(tmpdir(), 'oo-eval-summary-')))
+  }
+
+  #root
+
+  constructor(root) {
+    this.#root = root
+  }
+
+  async piece({ name = 'piece', arm = 'block', hashes = null, cases }) {
+    const directory = join(this.#root, name)
+    await mkdir(directory, { recursive: true })
+    const record = { arm, model: SummaryFixture.MODEL }
+    if (hashes !== null) record.baselineHashes = hashes
+    await writeFile(
+      join(directory, 'run.json'),
+      `${JSON.stringify(record, null, 2)}\n`)
+    await writeFile(
+      join(directory, 'result.json'),
+      `${JSON.stringify({ schemaVersion: 1, cases }, null, 2)}\n`)
+  }
+
+  async baseline({ name, hash, runs, mtime = null }) {
+    const directory = join(
+      this.#root, 'baselines', SummaryFixture.MODEL)
+    await mkdir(directory, { recursive: true })
+    const path = join(directory, `${name}-${hash}.json`)
+    await writeFile(path, `${JSON.stringify(runs, null, 2)}\n`)
+    if (mtime !== null) {
+      const date = new Date(mtime)
+      await utimes(path, date, date)
+    }
+  }
+
+  summary() {
+    return new EvalSummary(this.#root).summary()
+  }
+
+  report() {
     const report = new Report()
-    new EvalSummary(Fixture.ROOT).inspect(report)
+    new EvalSummary(this.#root).inspect(report)
     return report
+  }
+
+  async close() {
+    await rm(this.#root, { recursive: true, force: true })
+  }
+}
+
+class CaseResult {
+  static graded(passed) {
+    return {
+      passed,
+      error: null,
+      graders: [{
+        name: 'substance',
+        passed,
+        judgeVotes: [passed],
+        explanation: passed
+          ? 'judge votes: PASS PASS PASS'
+          : 'judge votes: FAIL FAIL FAIL'
+      }]
+    }
+  }
+
+  static row(name, arms) {
+    return { name, arms }
   }
 }
 
@@ -117,13 +257,197 @@ test('cases won and lost against the stored baselines are named', () => {
 })
 
 test('the run prints a table and writes summary.json', () => {
-  const report = Fixture.report()
+  const { report, written } = Fixture.inspected()
   assert.equal(report.lines().at(-1), 'ok 10 graded run(s)')
-  assert.equal(existsSync(join(Fixture.ROOT, 'summary.json')), true)
-  const summary = JSON.parse(
-    readFileSync(join(Fixture.ROOT, 'summary.json'), 'utf8'))
-  assert.equal(summary.gradedRuns, 10)
-  assert.equal(summary.cases[Fixture.QUESTION].family, 'question')
+  assert.equal(written.schemaVersion, 1)
+  assert.equal(written.gradedRuns, 10)
+  assert.equal(written.cases[Fixture.QUESTION].family, 'question')
+})
+
+test('a stored baseline with another hash is not used even when newest',
+  async () => {
+    const fixture = await SummaryFixture.create()
+    const name = SummaryFixture.QUESTION
+    try {
+      await fixture.piece({
+        hashes: { [name]: SummaryFixture.HASH },
+        cases: [CaseResult.row(name, {
+          with: [CaseResult.graded(true)]
+        })]
+      })
+      await fixture.baseline({
+        name,
+        hash: SummaryFixture.OTHER,
+        runs: [CaseResult.graded(false)],
+        mtime: Date.now() + 60000
+      })
+      const summary = fixture.summary()
+      assert.deepEqual(summary.wins.block, [])
+      assert.deepEqual(summary.losses.block, [])
+      assert.ok(fixture.report().lines().includes(
+        `no baseline for this case text: ${name}`))
+    } finally {
+      await fixture.close()
+    }
+  })
+
+test('a matching stored baseline decides wins and losses', async () => {
+  const fixture = await SummaryFixture.create()
+  const win = SummaryFixture.QUESTION
+  const loss = SummaryFixture.TASK
+  try {
+    await fixture.piece({
+      hashes: {
+        [win]: SummaryFixture.HASH,
+        [loss]: SummaryFixture.OTHER
+      },
+      cases: [
+        CaseResult.row(win, {
+          with: [CaseResult.graded(true)]
+        }),
+        CaseResult.row(loss, {
+          with: [CaseResult.graded(false)]
+        })
+      ]
+    })
+    await fixture.baseline({
+      name: win,
+      hash: SummaryFixture.HASH,
+      runs: [CaseResult.graded(false)],
+      mtime: 1000
+    })
+    await fixture.baseline({
+      name: loss,
+      hash: SummaryFixture.OTHER,
+      runs: [CaseResult.graded(true)],
+      mtime: 1000
+    })
+    await fixture.baseline({
+      name: win,
+      hash: SummaryFixture.OTHER,
+      runs: [CaseResult.graded(true)],
+      mtime: 2000
+    })
+    await fixture.baseline({
+      name: loss,
+      hash: SummaryFixture.HASH,
+      runs: [CaseResult.graded(false)],
+      mtime: 2000
+    })
+    const summary = fixture.summary()
+    assert.deepEqual(summary.wins.block, [win])
+    assert.deepEqual(summary.losses.block, [loss])
+  } finally {
+    await fixture.close()
+  }
+})
+
+test('a block piece with no recorded hashes uses no stored baseline',
+  async () => {
+    const fixture = await SummaryFixture.create()
+    const question = SummaryFixture.QUESTION
+    const task = SummaryFixture.TASK
+    try {
+      await fixture.piece({
+        cases: [
+          CaseResult.row(question, {
+            with: [CaseResult.graded(true)]
+          }),
+          CaseResult.row(task, {
+            with: [CaseResult.graded(false)]
+          })
+        ]
+      })
+      await fixture.baseline({
+        name: question,
+        hash: SummaryFixture.HASH,
+        runs: [CaseResult.graded(false)]
+      })
+      await fixture.baseline({
+        name: task,
+        hash: SummaryFixture.HASH,
+        runs: [CaseResult.graded(true)]
+      })
+      const summary = fixture.summary()
+      assert.deepEqual(summary.wins.block, [])
+      assert.deepEqual(summary.losses.block, [])
+      assert.equal(summary.cases[question].arms.none, undefined)
+      assert.ok(fixture.report().lines().includes(
+        `no baseline for this case text: ${question}, ${task}`))
+    } finally {
+      await fixture.close()
+    }
+  })
+
+test('a baseline piece with no recorded hashes keeps its no-pack runs',
+  async () => {
+    const fixture = await SummaryFixture.create()
+    const name = SummaryFixture.QUESTION
+    try {
+      const noPack = [
+        CaseResult.graded(false),
+        CaseResult.graded(false)
+      ]
+      await fixture.piece({
+        arm: 'baseline',
+        cases: [CaseResult.row(name, {
+          with: [CaseResult.graded(true)],
+          without: noPack
+        })]
+      })
+      await fixture.baseline({
+        name,
+        hash: SummaryFixture.HASH,
+        runs: noPack,
+        mtime: Date.now()
+      })
+      const summary = fixture.summary()
+      assert.equal(summary.cases[name].arms.none.graded, 2)
+      assert.deepEqual(summary.wins.baseline, [name])
+      assert.deepEqual(summary.losses.baseline, [])
+      assert.equal((summary.noBaseline ?? []).length, 0)
+      assert.equal(fixture.report().lines().some((line) =>
+        line.startsWith('no baseline for this case text:')), false)
+    } finally {
+      await fixture.close()
+    }
+  })
+
+test('two pieces of one case count a stored baseline once', async () => {
+  const fixture = await SummaryFixture.create()
+  const name = SummaryFixture.QUESTION
+  try {
+    const runs = [
+      CaseResult.graded(false),
+      CaseResult.graded(true),
+      CaseResult.graded(false)
+    ]
+    await fixture.piece({
+      name: 'baseline',
+      arm: 'baseline',
+      cases: [CaseResult.row(name, {
+        with: [CaseResult.graded(true)],
+        without: runs
+      })]
+    })
+    await fixture.piece({
+      name: 'block',
+      hashes: { [name]: SummaryFixture.HASH },
+      cases: [CaseResult.row(name, {
+        with: [CaseResult.graded(true)]
+      })]
+    })
+    await fixture.baseline({
+      name,
+      hash: SummaryFixture.HASH,
+      runs
+    })
+    const summary = fixture.summary()
+    assert.equal(
+      summary.cases[name].arms.none.graded, runs.length)
+  } finally {
+    await fixture.close()
+  }
 })
 
 test('a piece with no graded run fails', async () => {

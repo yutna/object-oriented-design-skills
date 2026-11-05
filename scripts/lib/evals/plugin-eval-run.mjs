@@ -133,7 +133,7 @@ export class PluginEvalRun {
       const traces = this.#keepTraces(result, prepared.outputDir)
       this.#writeRun(result, prepared.outputDir)
       if (this.#options.arm === 'baseline') {
-        this.#writeBaselines(result, prepared.copy)
+        this.#writeBaselines(result)
       }
       report.note(`results: ${prepared.outputDir}`)
       report.note(
@@ -166,8 +166,14 @@ export class PluginEvalRun {
       // The copy holds only this piece's cases, so the tool needs no --case
       // selection and cannot see a case that belongs to another piece.
       copy = PluginCopy.of(this.#repository)
-      new EvalBuild(this.#repository, copy)
-        .build({ arm: this.#options.arm, only: this.caseNames })
+      const build = new EvalBuild(this.#repository, copy)
+      // A baseline arm's case text is what a stored baseline is named by,
+      // whatever arm this piece runs, so build it first and hash it.
+      build.build({ arm: 'baseline', only: this.caseNames })
+      const hashes = this.#baselineHashes(copy)
+      if (this.#options.arm !== 'baseline') {
+        build.build({ arm: this.#options.arm, only: this.caseNames })
+      }
       const outputDir = join(
         this.#repository.root,
         PluginEvalRun.#RESULTS,
@@ -195,6 +201,7 @@ export class PluginEvalRun {
         copy,
         outputDir,
         resultFile,
+        hashes,
         args: Object.freeze(args)
       }
       return this.#prepared
@@ -332,6 +339,7 @@ export class PluginEvalRun {
       commit: this.#commit(),
       dirty: this.#dirty(),
       arm: this.#options.arm,
+      baselineHashes: this.#prepared.hashes,
       cases: this.caseNames
     }
     writeFileSync(
@@ -359,7 +367,7 @@ export class PluginEvalRun {
     return output.trim() !== ''
   }
 
-  #writeBaselines(result, copy) {
+  #writeBaselines(result) {
     const rows = this.#caseRows(result)
     const directory = join(
       this.#repository.root,
@@ -374,11 +382,21 @@ export class PluginEvalRun {
           `${row.name}: a baseline run has no without arm`, 2)
       }
       // The case hash keeps an edited case from reusing a stale baseline.
-      const hash = this.#caseHash(copy, row.name)
+      const hash = this.#prepared.hashes[row.name]
       writeFileSync(
         join(directory, `${row.name}-${hash}.json`),
         `${JSON.stringify(runs, null, 2)}\n`)
     }
+  }
+
+  #baselineHashes(copy) {
+    // The stored file name and the run record share this hash, so a summary
+    // can tell which case text a baseline was run on.
+    const hashes = {}
+    for (const name of this.caseNames) {
+      hashes[name] = this.#caseHash(copy, name)
+    }
+    return Object.freeze(hashes)
   }
 
   #caseHash(copy, name) {
