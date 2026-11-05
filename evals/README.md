@@ -32,7 +32,9 @@ moved the five-hour window under 1 point.
 
 **Tier 2, the quality of what changed.** This tier runs the plugin-eval
 pieces for the skills a milestone added or changed, three runs per case,
-with the block against a stored no-pack baseline. Queue the pieces with
+with the block against a stored no-pack baseline. A stored baseline is
+used only for the case text it was run on, so a case whose text changed
+needs a new baseline run. Queue the pieces with
 `node scripts/eval-plugin.mjs --queue`, then let the queue run them.
 `node scripts/eval-summary.mjs <results dir>` reads each piece as cases
 won and lost, names the failed graders, and lists the skills each run
