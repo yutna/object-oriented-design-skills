@@ -113,15 +113,15 @@ method names, and a `@final` mark that only the checker enforces.
 
 5. Default. **Share behaviour across classes with an object each one
    holds, not a mixin, as `oo-choosing-composition-over-inheritance`
-   rule 3 asks; a mixin that stays holds no state, uses only the host's
-   public methods, and calls `super()` knowing that it reaches the next
-   class in the instance's method resolution order, as rule 5 there
-   asks.** A held object has its own attributes and offers only the
-   messages its holder sends. A mixin shares the host's attributes and
-   can break a rule the host keeps; it also makes `super()` reach a
-   class the mixin never names, because in `class C(A, B)` a
-   `super().save()` written in `A` calls `B.save`, and the route comes
-   from the instance's MRO.
+   rule 5 asks; a mixin that stays holds no state, uses only the host's
+   public methods, so it depends on no send the host keeps internal, as
+   rule 3 there asks, and calls `super()` knowing that it reaches the
+   next class in the instance's method resolution order.** A held object
+   has its own attributes and offers only the messages its holder
+   sends. A mixin shares the host's attributes and can break a rule the
+   host keeps; it also makes `super()` reach a class the mixin never
+   names, because in `class C(A, B)` a `super().save()` written in `A`
+   calls `B.save`, and the route comes from the instance's MRO.
 
    The exception is a mixin that adds only behaviour built from the
    host's public methods, such as an ordering built from a comparison
