@@ -153,10 +153,11 @@ test('eval cases reject tags without one family tag', async () => {
 })
 
 test('eval cases accept a scaffold naming an existing fixture', async () => {
-  const report = await CheckRun.report(CaseYaml.passing()
-    .replace('scaffold_script: fixture.sh',
-      'scaffold_script: fixture-java.sh'),
-  ['fixture-tasks', 'fixture-java'])
+  const report = await CheckRun.report(
+    CaseYaml.passing()
+      .replace('scaffold_script: fixture.sh',
+        'scaffold_script: fixture-java.sh'),
+    ['fixture-tasks', 'fixture-java'])
   assert.deepEqual(report.lines(), ['ok 1 task case(s)'])
 })
 
