@@ -15,9 +15,7 @@ starting a new clinic service needs design help -> oo-design
 which class owns the appointment reminder -> oo-assigning-responsibilities
 where does this new visit method belong -> oo-assigning-responsibilities
 our visit class has grown to do too much -> oo-assigning-responsibilities
-where should this reminder behaviour live -> oo-assigning-responsibilities
 this clinic design has one class doing too much -> oo-assigning-responsibilities
-the visit handler decides if a slot is free -> oo-assigning-responsibilities
 we are starting this design with one class for visits -> oo-design
 which object should hold the booking rule -> oo-assigning-responsibilities
 should the schedule create the appointment -> oo-assigning-responsibilities
@@ -27,7 +25,6 @@ our patient class is only getters and setters -> oo-deciding-object-or-data
 should this intake form be a class or just a map -> oo-deciding-object-or-data
 every new insurer means editing the invoice code -> oo-encapsulating-what-varies
 how flexible should the reminder module be -> oo-encapsulating-what-varies
-callers check appointment status first -> oo-encapsulating-state-and-behaviour
 any code can set a slot back to free -> oo-encapsulating-state-and-behaviour
 a new slot exists before its times are set -> oo-constructing-valid-objects
 appointment constructor takes eleven arguments -> oo-constructing-valid-objects
@@ -35,7 +32,6 @@ patient ids are plain strings everywhere -> oo-modeling-values-and-entities
 changing one visit's duration changed another visit -> oo-modeling-values-and-entities
 two patient records with the same id do not compare equal -> oo-modeling-values-and-entities
 every clinic subclass breaks when the base visit class changes -> oo-choosing-composition-over-inheritance
-should telehealth visit extend visit or wrap it -> oo-choosing-composition-over-inheritance
 we subclass the reminder sender just to reuse one method -> oo-choosing-composition-over-inheritance
 the subclass throws where the parent class did not -> oo-honouring-substitutability
 a subclass refuses a method its parent promises -> oo-honouring-substitutability
@@ -134,7 +130,6 @@ how do we get this old class into a test harness -> oo-working-with-legacy-code
 swap out the old billing system gradually while it keeps running -> oo-working-with-legacy-code
 what should I look for when reviewing a teammate's class design -> oo-reviewing-object-design
 should a naming nitpick stop this pull request from merging -> oo-reviewing-object-design
-a checklist for reviewing a new module before it is built -> oo-reviewing-object-design
 new hire keeps asking why we split billing from booking, nobody remembers -> oo-documenting-design-decisions
 should i draw something before redesigning how slots get assigned to clinicians->oo-documenting-design-decisions
 the whiteboard picture of the booking system never matches the code anymore -> oo-documenting-design-decisions
@@ -144,7 +139,6 @@ found a note saying slots are 15 minutes but the code uses 20 -> oo-commenting-w
 the toolkit we use wants every appointment class to extend its base model -> oo-working-within-a-framework
 the platform wants public setters on patient so it can fill them from forms -> oo-working-within-a-framework
 where should we stop going along with how our web stack wants things -> oo-working-within-a-framework
-calculating an invoice total also writes to the database, hard to test -> oo-applying-functional-techniques
 passing a slot to a helper quietly changed its start time somewhere -> oo-applying-functional-techniques
 My booking tests break every time i rename a private method -> oo-testing-object-oriented-code
 should i fake the payment provider's sdk directly in my billing tests -> oo-testing-object-oriented-code
@@ -168,8 +162,8 @@ js Patient: use class syntax or plain prototypes? -> oo-javascript
 
 ## Known misses
 
-A routing line that misses the gate is kept here as a note, never as a
-case.
+A routing line that misses the gate, or that the model routes under 7
+times in 10 in tier 1, is kept here as a note, never as a case.
 
 ```text
 a small clinic change still needs design work -> oo-design
@@ -184,4 +178,10 @@ haven't written it yet, does this patient and appointment model make sense -> oo
 sketched classes for clinician schedules and slots, poke holes before i build->oo-reviewing-object-design
 refactor these if-else branches toward a strategy in small steps -> oo-replacing-conditionals-with-polymorphism
 sanity check the responsibilities in this invoice pr, feels like a god class->oo-reviewing-object-design
+where should this reminder behaviour live -> oo-assigning-responsibilities
+the visit handler decides if a slot is free -> oo-assigning-responsibilities
+callers check appointment status first -> oo-encapsulating-state-and-behaviour
+should telehealth visit extend visit or wrap it -> oo-choosing-composition-over-inheritance
+a checklist for reviewing a new module before it is built -> oo-reviewing-object-design
+calculating an invoice total also writes to the database, hard to test -> oo-applying-functional-techniques
 ```

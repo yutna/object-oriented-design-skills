@@ -70,9 +70,11 @@ export class RoutingCheck extends Check {
       const position = ranked.findIndex(({ name }) =>
         name === knownMiss.expected) + 1
       const score = ranked[position - 1]?.score ?? 0
-      // A known miss that would pass now can move back into the cases.
+      // A known miss that passes this gate stays a note: tier 1 decides
+      // whether the line moves back into the cases.
       if (position > 0 && position <= top && score > 0) {
-        report.note(`known miss now passes: ${knownMiss.symptom}`)
+        report.note(
+          `known miss passes the keyword gate: ${knownMiss.symptom}`)
         continue
       }
       // A known miss is a result, so its rank is a note, not an error.
