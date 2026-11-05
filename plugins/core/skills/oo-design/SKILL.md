@@ -242,14 +242,14 @@ In Claude Code, install a language plugin beside the core one:
 
 ## Quick reference
 
-Common design questions, each answered by the default this pack
-applies and the rule it rests on.
+Common design questions, each with the answer this pack
+gives and the rule it rests on.
 
-|Question|Default answer|Skill|Rule|
+|Question|Answer|Skill|Rule|
 |---|---|---|---|
 |How many reasons to change per class?|One kind of change request.|[Assigning responsibilities][assigning]|7|
-|Command or query?|A command writes; a query reads.|[Encapsulating state and behaviour][state-and-behaviour]|4|
-|Can I return its list?|No; methods or a view.|[Encapsulating state and behaviour][state-and-behaviour]|5|
+|Command/query?|Writes, no return; reads, no change.|[Encapsulating state and behaviour][state-and-behaviour]|4|
+|Return its list?|No; methods or a read-only view.|[Encapsulating state and behaviour][state-and-behaviour]|5|
 |How do I keep a value from changing?|Make it immutable.|[Modeling values and entities][values]|2|
 |Should this class allow extension?|No, unless built for it.|[Honouring substitutability][substitutability]|5|
 |Should an aggregate hold another aggregate?|No; hold its identity.|[Designing aggregates][aggregates]|3|
