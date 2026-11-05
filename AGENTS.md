@@ -342,7 +342,8 @@ Skill house style bullet holds, with these changes:
   class follows the grep rule above.
 - A base language skill's description says the code uses no
   framework; a framework skill's description names its framework.
-- A language skill needs two routing lines and no scenario.
+- A language skill needs two routing lines, one task case that
+  names it in a Skill grader, and no scenario.
 
 ## Commands
 

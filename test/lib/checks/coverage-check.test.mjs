@@ -50,6 +50,7 @@ class TempRepository {
           'plugin.json'),
         JSON.stringify({ name, version: '1.0.0' }))
     }
+    await mkdir(join(root, 'evals', 'tasks'), { recursive: true })
     return new TempRepository(root)
   }
 
@@ -84,6 +85,19 @@ class TempRepository {
     const target = join(this.#root, path)
     await mkdir(join(target, '..'), { recursive: true })
     await writeFile(target, text)
+  }
+
+  async writeTaskCase(fileName, namedSkill) {
+    await this.writeEval(`evals/tasks/${fileName}.yaml`, [
+      'schema_version: "1.1"',
+      `name: ${fileName}`,
+      'graders:',
+      '  - name: loaded-skill',
+      '    type: tool_used',
+      '    tool: Skill',
+      `    input_match: '"skill"\\s*:\\s*"(?:[\\w-]+:)?${namedSkill}"'`,
+      ''
+    ].join('\n'))
   }
 
   inspect() {
@@ -240,12 +254,130 @@ test('a language skill needs routing lines but no scenario', async () => {
       CoverageFiles.scenarios([
         ['oo-design']
       ]))
+    await repository.writeTaskCase('t02-java-cancellation-kinds', 'oo-java')
     const report = repository.inspect()
     assert.equal(report.failed, true)
     assert.deepEqual(report.lines(), [
       'error evals/scenarios.md: oo-other has no scenario',
       'failed: 1 error(s)'
     ])
+  } finally {
+    await repository.close()
+  }
+})
+
+test('coverage rejects a language skill with no task case', async () => {
+  const repository = await TempRepository.create()
+  try {
+    await repository.writeSkill('core', 'oo-design')
+    await repository.writeSkill('java', 'oo-java')
+    await repository.writeEval(
+      'evals/routing-cases.md',
+      CoverageFiles.routing([
+        'a clinic design -> oo-design',
+        'a small clinic change -> oo-design',
+        'a java rule -> oo-java',
+        'a second java rule -> oo-java'
+      ]))
+    await repository.writeEval(
+      'evals/scenarios.md',
+      CoverageFiles.scenarios([
+        ['oo-design']
+      ]))
+    const report = repository.inspect()
+    assert.equal(report.failed, true)
+    assert.deepEqual(report.lines(), [
+      'error evals/tasks: oo-java has no task case in evals/tasks',
+      'failed: 1 error(s)'
+    ])
+  } finally {
+    await repository.close()
+  }
+})
+
+test('coverage accepts a language skill its task case names', async () => {
+  const repository = await TempRepository.create()
+  try {
+    await repository.writeSkill('core', 'oo-design')
+    await repository.writeSkill('java', 'oo-java')
+    await repository.writeEval(
+      'evals/routing-cases.md',
+      CoverageFiles.routing([
+        'a clinic design -> oo-design',
+        'a small clinic change -> oo-design',
+        'a java rule -> oo-java',
+        'a second java rule -> oo-java'
+      ]))
+    await repository.writeEval(
+      'evals/scenarios.md',
+      CoverageFiles.scenarios([
+        ['oo-design']
+      ]))
+    await repository.writeTaskCase('t02-java-cancellation-kinds', 'oo-java')
+    const report = repository.inspect()
+    assert.equal(report.failed, false)
+    assert.deepEqual(report.lines(), ['ok 2 skill(s) covered'])
+  } finally {
+    await repository.close()
+  }
+})
+
+test('a task case covers only the whole skill name it names', async () => {
+  for (const [namedSkill, otherSkill] of [
+    ['oo-java', 'oo-javascript'],
+    ['oo-javascript', 'oo-java']
+  ]) {
+    const repository = await TempRepository.create()
+    try {
+      await repository.writeSkill('core', 'oo-design')
+      await repository.writeSkill('java', namedSkill)
+      await repository.writeSkill('java', otherSkill)
+      await repository.writeEval(
+        'evals/routing-cases.md',
+        CoverageFiles.routing([
+          'a clinic design -> oo-design',
+          'a small clinic change -> oo-design',
+          `${namedSkill} rule -> ${namedSkill}`,
+          `a second ${namedSkill} rule -> ${namedSkill}`,
+          `${otherSkill} rule -> ${otherSkill}`,
+          `a second ${otherSkill} rule -> ${otherSkill}`
+        ]))
+      await repository.writeEval(
+        'evals/scenarios.md',
+        CoverageFiles.scenarios([
+          ['oo-design']
+        ]))
+      await repository.writeTaskCase(`t-${namedSkill}`, namedSkill)
+      const report = repository.inspect()
+      assert.equal(report.failed, true)
+      assert.deepEqual(report.lines(), [
+        `error evals/tasks: ${otherSkill} has no task case in evals/tasks`,
+        'failed: 1 error(s)'
+      ])
+    } finally {
+      await repository.close()
+    }
+  }
+})
+
+test('a core skill needs no task case', async () => {
+  const repository = await TempRepository.create()
+  try {
+    await repository.writeSkill('core', 'oo-design')
+    await repository.writeEval(
+      'evals/routing-cases.md',
+      CoverageFiles.routing([
+        'a clinic design -> oo-design',
+        'a small clinic change -> oo-design'
+      ]))
+    await repository.writeEval(
+      'evals/scenarios.md',
+      CoverageFiles.scenarios([
+        ['oo-design']
+      ]))
+    const report = repository.inspect()
+    assert.equal(report.failed, false)
+    assert.deepEqual(report.lines(), ['ok 1 skill(s) covered'])
   } finally {
     await repository.close()
   }
@@ -275,7 +407,8 @@ test('a known miss counts toward the routing minimum', async () => {
   }
 })
 
-test('coverage keeps both minimums as static fields', () => {
+test('coverage keeps its minimums as static fields', () => {
   assert.equal(CoverageCheck.MIN_ROUTING_CASES, 2)
   assert.equal(CoverageCheck.MIN_SCENARIOS, 1)
+  assert.equal(CoverageCheck.MIN_TASK_CASES, 1)
 })
