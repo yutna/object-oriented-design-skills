@@ -155,10 +155,10 @@ method names, and a `@final` mark that only the checker enforces.
 
 ## Pattern
 
-`ReferralLetter` is a letter the clinic sends to another clinician
-about a patient's care: its reason and the names of the files that go
-with it. Two letters with the same reason and attachments are the same
-letter, a value (`oo-modeling-values-and-entities` rule 1).
+`LabRequest` is a request the clinic sends to a laboratory: the panel
+it names and the tests it asks for. Two requests with the same panel
+and tests are the same request, a value
+(`oo-modeling-values-and-entities` rule 1).
 
 Before:
 
@@ -167,28 +167,23 @@ from dataclasses import dataclass
 
 
 @dataclass
-class ReferralLetter:
-    reason: str
-    attachments: list[str]
-
-    def with_reason(self, reason: str) -> "ReferralLetter":
-        return ReferralLetter(reason, self.attachments)
+class LabRequest:
+    panel: str
+    tests: list[str]
 
 
-attachments = ["scan.pdf"]
-letter = ReferralLetter("review the scan", attachments)
-attachments.append("")
-letter.reason = ""
+tests = ["full blood count", "ferritin"]
+request = LabRequest("anaemia panel", tests)
+tests.append("")
+request.panel = ""
 ```
 
-In the Before, `ReferralLetter` is a plain dataclass, so any caller can
-assign `letter.reason` or append to the list it holds (rule 3). The
+In the Before, `LabRequest` is a plain dataclass, so any caller can
+assign `request.panel` or append to the list it holds (rule 3). The
 constructor keeps the caller's list, so the later append changes the
-letter's attachments as well (rule 3). Nothing refuses a blank reason
-or a blank attachment (rule 3), and `with_reason` builds a new letter
-that shares the original list (rule 3). The fence stores nothing: it
-leaves out where a letter is saved, under which identity, and in which
-transaction.
+request's tests as well (rule 3). Nothing refuses a blank panel or a
+blank test (rule 3). The fence stores nothing: it leaves out where a
+request is saved, under which identity, and in which transaction.
 
 After:
 
@@ -197,34 +192,33 @@ from dataclasses import dataclass, replace
 
 
 @dataclass(frozen=True)
-class ReferralLetter:
-    reason: str
-    attachments: tuple[str, ...]
+class LabRequest:
+    panel: str
+    tests: tuple[str, ...]
 
     def __post_init__(self) -> None:
-        if self.reason.strip() == "":
-            raise ValueError("a referral letter names its reason")
-        if len(self.attachments) == 0:
-            raise ValueError("a referral letter carries an attachment")
-        for attachment in self.attachments:
-            if attachment.strip() == "":
-                raise ValueError("an attachment is named")
+        if self.panel.strip() == "":
+            raise ValueError("a lab request names its panel")
+        if len(self.tests) == 0:
+            raise ValueError("a lab request asks for a test")
+        for test in self.tests:
+            if test.strip() == "":
+                raise ValueError("a test is named")
 
-    def with_reason(self, reason: str) -> "ReferralLetter":
-        return replace(self, reason=reason)
+    def with_tests(self, tests: tuple[str, ...]) -> "LabRequest":
+        return replace(self, tests=tests)
 ```
 
-In the After, `ReferralLetter` is a frozen dataclass: assigning
-`reason` or `attachments` raises `FrozenInstanceError` (rule 3).
-`attachments` is a tuple, so no caller can append to it (rule 3).
-`__post_init__` runs during construction and refuses a blank reason, no
-attachments, or a blank attachment (rule 3). `with_reason` calls
-`replace`, which builds the copy through `__init__` and `__post_init__`,
-so the checks hold for the copy too (rule 3). The generated equality
-reads both fields and the generated hash reads the same fields, so two
-letters with equal contents hash alike (rule 3). The fence stores
-nothing: it leaves out where a letter is saved, under which identity,
-and in which transaction.
+In the After, `LabRequest` is a frozen dataclass: assigning `panel` or
+`tests` raises `FrozenInstanceError` (rule 3). `tests` is a tuple, so
+no caller can append to it (rule 3). `__post_init__` runs during
+construction and refuses a blank panel, no tests, or a blank test
+(rule 3). `with_tests` calls `replace`, which builds the copy through
+`__init__` and `__post_init__`, so the checks hold for the copy too
+(rule 3). The generated equality reads both fields and the generated
+hash reads the same fields, so two requests with equal contents hash
+alike (rule 3). The fence stores nothing: it leaves out where a request
+is saved, under which identity, and in which transaction.
 
 ## Red flags
 
