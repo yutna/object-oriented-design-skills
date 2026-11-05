@@ -29,6 +29,9 @@ Each language plugin is installed beside the core plugin:
 /plugin install object-oriented-design-kotlin@object-oriented-design-skills
 /plugin install object-oriented-design-typescript@object-oriented-design-skills
 /plugin install object-oriented-design-javascript@object-oriented-design-skills
+/plugin install object-oriented-design-csharp@object-oriented-design-skills
+/plugin install object-oriented-design-python@object-oriented-design-skills
+/plugin install object-oriented-design-ruby@object-oriented-design-skills
 ```
 
 A plugin install prints no `CLAUDE.md` block. A project that wants an
