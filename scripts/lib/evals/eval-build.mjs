@@ -4,6 +4,7 @@ import { parse, stringify } from 'yaml'
 
 import { RepoError } from '../errors.mjs'
 import { MarkdownDocument } from '../markdown-document.mjs'
+import { FixtureScaffold } from './fixture-scaffold.mjs'
 import { QuestionCase } from './question-case.mjs'
 import { Scenarios } from './scenarios.mjs'
 import { TaskCases } from './task-cases.mjs'
@@ -11,18 +12,8 @@ import { TaskCases } from './task-cases.mjs'
 export class EvalBuild {
   static #SCENARIOS = 'evals/scenarios.md'
   static #TASKS = 'evals/tasks'
-  static #FIXTURE = 'evals/fixture-tasks'
-  static #FIXTURE_NAME = 'fixture-tasks'
-  static #SCRIPT = 'fixture.sh'
   static #BLOCK = 'plugins/core/skills/oo-design/references/claude-md-block.md'
   static #FAMILIES = Object.freeze(['task', 'restraint', 'precedence'])
-  static #SCRIPT_BODY = [
-    '#!/usr/bin/env bash',
-    'set -euo pipefail',
-    'here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"',
-    'cp -R "$here/fixture-tasks/." .',
-    ''
-  ].join('\n')
 
   #repository
   #copy
@@ -90,7 +81,8 @@ export class EvalBuild {
       tags: taskCase.tags,
       document: block === null ? null : this.#withBlock(text, block),
       text: block === null ? text : null,
-      task: true
+      task: true,
+      scaffold: FixtureScaffold.of(this.#repository, taskCase.scaffold)
     }
   }
 
@@ -142,18 +134,18 @@ export class EvalBuild {
       join(directory, 'case.yaml'),
       entry.text ?? stringify(entry.document, { lineWidth: 0 }))
     if (entry.task) {
-      this.#writeFixture(directory)
+      this.#writeFixture(directory, entry.scaffold)
     }
   }
 
-  #writeFixture(directory) {
+  #writeFixture(directory, scaffold) {
     // The scaffold runs inside the copy, so the fixture travels beside the case.
     cpSync(
-      join(this.#repository.root, EvalBuild.#FIXTURE),
-      join(directory, EvalBuild.#FIXTURE_NAME),
+      join(this.#repository.root, scaffold.directory),
+      join(directory, scaffold.folder),
       { recursive: true })
-    const script = join(directory, EvalBuild.#SCRIPT)
-    writeFileSync(script, EvalBuild.#SCRIPT_BODY)
+    const script = join(directory, scaffold.script)
+    writeFileSync(script, scaffold.scriptText)
     chmodSync(script, 0o755)
   }
 

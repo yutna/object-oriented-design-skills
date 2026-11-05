@@ -1,4 +1,6 @@
 import { Check } from '../check.mjs'
+import { RepoError } from '../errors.mjs'
+import { FixtureScaffold } from '../evals/fixture-scaffold.mjs'
 import { TaskCases } from '../evals/task-cases.mjs'
 
 export class EvalCasesCheck extends Check {
@@ -55,10 +57,8 @@ export class EvalCasesCheck extends Check {
         'tags must hold exactly one family tag of ' +
         'task, restraint or precedence')
     }
-    // The runner supplies the scaffold, so a case cannot point elsewhere.
-    if (testCase.scaffold !== 'fixture.sh') {
-      report.error(file, 'context.scaffold_script must be fixture.sh')
-    }
+    // A case names the fixture it runs on, and that folder must exist.
+    this.#inspectScaffold(testCase, file, report)
     // A case that cannot use Skill cannot be routed.
     if (!testCase.allowedTools.includes('Skill')) {
       report.error(
@@ -67,6 +67,15 @@ export class EvalCasesCheck extends Check {
     }
     for (const grader of testCase.graders) {
       this.#inspectGrader(grader, file, names, report)
+    }
+  }
+
+  #inspectScaffold(testCase, file, report) {
+    try {
+      FixtureScaffold.of(this.#repository, testCase.scaffold)
+    } catch (error) {
+      if (!(error instanceof RepoError)) throw error
+      report.error(file, error.message)
     }
   }
 

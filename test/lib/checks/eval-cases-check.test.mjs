@@ -1,5 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import { existsSync } from 'node:fs'
 import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -35,6 +36,10 @@ class FakeRepository {
 
   file(path) {
     return TextFile.read(join(this.#root, path))
+  }
+
+  exists(path) {
+    return existsSync(join(this.#root, path))
   }
 
   skills() {
@@ -74,10 +79,14 @@ class CaseYaml {
 }
 
 class TempCase {
-  static async of(text, fileName = 't01-check-before-booking.yaml') {
+  static async of(text, fileName = 't01-check-before-booking.yaml',
+    folders = ['fixture-tasks']) {
     const root = await mkdtemp(join(tmpdir(), 'oo-eval-cases-'))
     const directory = join(root, 'evals', 'tasks')
     await mkdir(directory, { recursive: true })
+    for (const folder of folders) {
+      await mkdir(join(root, 'evals', folder), { recursive: true })
+    }
     await writeFile(join(directory, fileName), text)
     return new TempCase(root, new FakeRepository(root))
   }
@@ -103,8 +112,9 @@ class TempCase {
 }
 
 class CheckRun {
-  static async report(text) {
-    const fixture = await TempCase.of(text)
+  static async report(text, folders = ['fixture-tasks']) {
+    const fixture = await TempCase.of(
+      text, 't01-check-before-booking.yaml', folders)
     try {
       return fixture.inspect()
     } finally {
@@ -142,14 +152,39 @@ test('eval cases reject tags without one family tag', async () => {
   ])
 })
 
-test('eval cases reject a scaffold the runner does not supply', async () => {
-  const report = await CheckRun.report(CaseYaml.passing()
-    .replace('scaffold_script: fixture.sh',
-      'scaffold_script: other.sh'))
-  assert.deepEqual(report.lines(), [
-    `error ${FILE}: context.scaffold_script must be fixture.sh`,
-    'failed: 1 error(s)'
-  ])
+test('eval cases accept a scaffold naming an existing fixture', async () => {
+  const report = await CheckRun.report(
+    CaseYaml.passing()
+      .replace('scaffold_script: fixture.sh',
+        'scaffold_script: fixture-java.sh'),
+    ['fixture-tasks', 'fixture-java'])
+  assert.deepEqual(report.lines(), ['ok 1 task case(s)'])
+})
+
+test('eval cases reject a scaffold whose fixture folder is missing',
+  async () => {
+    const report = await CheckRun.report(CaseYaml.passing()
+      .replace('scaffold_script: fixture.sh',
+        'scaffold_script: fixture-java.sh'))
+    assert.deepEqual(report.lines(), [
+      `error ${FILE}: context.scaffold_script "fixture-java.sh" names ` +
+        'evals/fixture-java/, which does not exist',
+      'failed: 1 error(s)'
+    ])
+  })
+
+test('eval cases reject a malformed scaffold name', async () => {
+  for (const script of ['fixture_Java.sh', 'setup.sh']) {
+    const report = await CheckRun.report(CaseYaml.passing()
+      .replace('scaffold_script: fixture.sh',
+        `scaffold_script: ${script}`))
+    assert.deepEqual(report.lines(), [
+      `error ${FILE}: context.scaffold_script "${script}" must be ` +
+        'fixture.sh for evals/fixture-tasks/ or fixture-<name>.sh for ' +
+        'evals/fixture-<name>/',
+      'failed: 1 error(s)'
+    ])
+  }
 })
 
 test('eval cases reject allowed tools without Skill', async () => {

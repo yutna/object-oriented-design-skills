@@ -6,6 +6,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { parse } from 'yaml'
 
+import { RepoError } from '../../../scripts/lib/errors.mjs'
 import { EvalBuild } from '../../../scripts/lib/evals/eval-build.mjs'
 import { PluginCopy } from '../../../scripts/lib/evals/plugin-copy.mjs'
 import { Repository } from '../../../scripts/lib/repository.mjs'
@@ -50,7 +51,7 @@ class RepositoryFixture {
     '  Restraint: fix the method body and stop.',
     'tags: [restraint, smoke]',
     'context:',
-    '  scaffold_script: fixture.sh',
+    '  scaffold_script: fixture-java.sh',
     'execution:',
     '  prompt: |',
     '    Fix the overnight duration.',
@@ -120,6 +121,7 @@ class RepositoryFixture {
     const evals = join(root, 'evals')
     await mkdir(join(evals, 'tasks'), { recursive: true })
     await mkdir(join(evals, 'fixture-tasks'), { recursive: true })
+    await mkdir(join(evals, 'fixture-java'), { recursive: true })
     await writeFile(join(evals, 'scenarios.md'), RepositoryFixture.SCENARIOS)
     await writeFile(
       join(evals, 'tasks', 't01-check-before-booking.yaml'),
@@ -130,6 +132,9 @@ class RepositoryFixture {
     await writeFile(
       join(evals, 'fixture-tasks', 'CONVENTIONS.md'),
       '# Conventions\n')
+    await writeFile(
+      join(evals, 'fixture-java', 'CONVENTIONS.md'),
+      '# Java conventions\n')
     return new RepositoryFixture(root)
   }
 
@@ -304,6 +309,43 @@ test('fixture.sh copies the fixture from its own directory', async () => {
     await fixture.close()
   }
 })
+
+test('a task case names its fixture with fixture-<name>.sh', async () => {
+  const fixture = await EvalFixture.create()
+  try {
+    fixture.build()
+    assert.equal(
+      fixture.exists(
+        'r01-overnight-duration', 'fixture-java/CONVENTIONS.md'),
+      true)
+    assert.equal(fixture.exists('r01-overnight-duration', 'fixture-tasks'), false)
+    const script = fixture.read('r01-overnight-duration', 'fixture-java.sh')
+    assert.match(script, /^#!\/usr\/bin\/env bash$/m)
+    assert.match(script, /cp -R "\$here\/fixture-java\/\." \./)
+    assert.equal(script.includes(fixture.repository.root), false)
+  } finally {
+    await fixture.close()
+  }
+})
+
+test('EvalBuild fails before writing a case whose fixture is missing',
+  async () => {
+    const fixture = await EvalFixture.create()
+    try {
+      await rm(join(fixture.repository.root, 'evals', 'fixture-java'), {
+        recursive: true,
+        force: true
+      })
+      assert.throws(
+        () => fixture.build(),
+        (error) => error instanceof RepoError &&
+          error.message.includes('fixture-java.sh') &&
+          error.message.includes('evals/fixture-java/'))
+      assert.equal(fixture.exists('t01-check-before-booking'), false)
+    } finally {
+      await fixture.close()
+    }
+  })
 
 test('--tag restraint selects only restraint cases', async () => {
   const fixture = await EvalFixture.create()

@@ -136,6 +136,7 @@ the model and the session, so no score is recorded as if stable.
 project. Each starts from `fixture-tasks/`, a dependency-free
 TypeScript project with a slot-booking handler, an invoice and an
 appointment that crosses midnight. They cover the task, restraint and
-precedence families.
+precedence families. A case chooses its fixture with `fixture-<name>.sh`,
+copied from `evals/fixture-<name>/`.
 
 `tasks/` holds 3 task cases.
