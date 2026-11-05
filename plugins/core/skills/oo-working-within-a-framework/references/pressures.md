@@ -2,9 +2,9 @@
 
 Each pressure below is something a framework asks of the code, with
 what to accept and what never to accept. Rule 2 settles a demand by
-meeting it in a class at the edge, or by its active-record exception,
-and rule 3 weighs the demands it leaves open. The "never" side of each
-names the rule that no framework excuses.
+meeting it in a class at the edge, or, for a base class, by its
+active-record exception, and rule 3 weighs the demands it leaves open.
+The "never" side of each names the rule that no framework excuses.
 
 - **A mapper's base class.** The mapper saves only objects that extend
   its base class. Accept, under rule 2: the base class on a row class
