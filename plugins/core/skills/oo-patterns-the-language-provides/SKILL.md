@@ -114,7 +114,10 @@ replace them where it does the same job.
    it is built of classes the team reads, a class the team recognises
    can stay.** A feature that removes a pattern in one module is no
    reason to rewrite another. Changing the idiom costs more than the
-   feature saves, and the reader pays it on every later change.
+   feature saves, and the reader pays it on every later change. A class
+   the team recognises is one with a name the staff use, the exception
+   rule 1 gives; a strategy with one operation, no state and no such
+   name is passed as a function value in a module built of classes too.
 
 ## Pattern
 

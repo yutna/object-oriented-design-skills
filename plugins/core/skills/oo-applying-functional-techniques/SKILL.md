@@ -95,12 +95,14 @@ stand-in for a store, a clock or a sender.
    of the object that owns the data, a value stays a value type, and a
    function value enters only where patterns the language provides,
    rules 1 to 3, place one.** Keep the module's classes and give each
-   borrowed technique the shape its neighbours already have. Do not
-   rebuild the module as free functions passed from step to step, as
-   result values chained in place of the refusals that designing
-   failure behaviour, rule 1, raises, or as pipelines composed from
-   small functions; patterns the language provides, rule 7, keeps each
-   module in the idiom it already uses.
+   borrowed technique the shape its neighbours already have. A strategy
+   class with one operation, no state and no name the staff use is not
+   one of those classes: patterns the language provides, rule 1, passes
+   it as a function value. Do not rebuild the module as free functions
+   passed from step to step, as result values chained in place of the
+   refusals that designing failure behaviour, rule 1, raises, or as
+   pipelines composed from small functions; patterns the language
+   provides, rule 7, keeps each module in the idiom it already uses.
 
 ## Pattern
 
