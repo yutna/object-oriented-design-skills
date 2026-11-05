@@ -16,6 +16,9 @@ style, not universal advice. A project's own written conventions win over
 the pack. Follow the idiom of the module being changed. This skill sizes
 the task and names the skill that fits.
 
+Load the skill this index names before you answer: its rules and
+examples live there, not here.
+
 ## How much design a task warrants
 
 |Task|Use|Skip|
