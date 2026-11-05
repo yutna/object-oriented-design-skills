@@ -31,6 +31,11 @@ Each language plugin is installed beside the core plugin:
 /plugin install object-oriented-design-javascript@object-oriented-design-skills
 ```
 
+A plugin install prints no `CLAUDE.md` block. A project that wants an
+agent to know the pack is there copies the block from
+[claude-md-block.md](plugins/core/skills/oo-design/references/claude-md-block.md)
+into its `CLAUDE.md`.
+
 ### From a checkout
 
 From a checkout, copy the selected plugin's skills into
@@ -96,9 +101,9 @@ none.
 
 To report what happened, open an issue with the early-adopter form. A
 useful report says what was asked of the agent, which skill it opened
-or that it opened none, what it did, what you expected instead, and
-the plugin version and the model. Never paste private code or patient
-data.
+or that it opened none, what it did, what you expected instead, the
+plugin version and the model, and whether the project's `CLAUDE.md`
+holds the block. Never paste private code or patient data.
 
 ## Development
 
