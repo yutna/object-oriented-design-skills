@@ -50,15 +50,20 @@ method names, and a `@final` mark that only the checker enforces.
 ## Core rules
 
 1. Default. **Name each role a caller needs as a `typing.Protocol`,
-   annotate every parameter that takes the role with it, and leave the
-   implementation unnamed, so a type checker reports a class that does
-   not match, as `oo-designing-interfaces` rule 5 asks.** Python
-   matches an object by the methods it happens to have, and no runtime
-   check makes a class declare the protocol, so a class with a wrong
-   method signature can be passed where the role is expected; the
-   annotation is what a checker such as mypy reads, and a class that
-   fails it is reported. The protocol is also where the contract sits
-   that every implementation keeps, as
+   annotate every parameter that takes the role with it, and have each
+   implementation declare the role as a base class, so a type checker
+   reports a class that does not match, as
+   `oo-designing-interfaces` rule 5 asks.** Python matches an object by
+   the methods it happens to have, so a class that never names the role
+   can still satisfy the annotation at run time, and no runtime check
+   reads the method signatures. Listing the protocol as a base class is
+   how an implementation declares which role it plays, which is the
+   named role `oo-designing-interfaces` rule 5 asks for: a checker such
+   as mypy reports a signature that differs from the protocol's, and a
+   class that leaves a required method out cannot be instantiated. The
+   annotation is what the checker reads at a call site, so a class that
+   only matches by shape is still checked against the role. The protocol
+   is also where the contract sits that every implementation keeps, as
    `oo-honouring-substitutability` rule 4 asks.
 
    The exception is a role whose whole contract is one call, such as a
@@ -114,14 +119,19 @@ method names, and a `@final` mark that only the checker enforces.
 5. Default. **Share behaviour across classes with an object each one
    holds, not a mixin, as `oo-choosing-composition-over-inheritance`
    rule 5 asks; a mixin that stays holds no state, uses only the host's
-   public methods, so it depends on no send the host keeps internal, as
+   public methods, and keeps each send a host may depend on in its
+   contract, so a host depends on no send the mixin keeps internal, as
    rule 3 there asks, and calls `super()` knowing that it reaches the
    next class in the instance's method resolution order.** A held object
    has its own attributes and offers only the messages its holder
    sends. A mixin shares the host's attributes and can break a rule the
-   host keeps; it also makes `super()` reach a class the mixin never
-   names, because in `class C(A, B)` a `super().save()` written in `A`
-   calls `B.save`, and the route comes from the instance's MRO.
+   host keeps; an override in the host that works only because the
+   mixin sends it from another method depends on an internal send and
+   breaks when the mixin changes it, which is what rule 3 there forbids
+   from the host's side. It also makes `super()` reach a class the
+   mixin never names, because in `class C(A, B)` a `super().save()`
+   written in `A` calls `B.save`, and the route comes from the
+   instance's MRO.
 
    The exception is a mixin that adds only behaviour built from the
    host's public methods, such as an ordering built from a comparison
@@ -149,9 +159,10 @@ method names, and a `@final` mark that only the checker enforces.
    with the contract an override must keep written beside it, and which
    of the class's own methods send them.
 
-   The exception is a framework that must extend the class at run time,
-   such as a proxy for lazy loading: leave the class open and say in
-   the code why.
+   The exception is a class that a framework extends with a subclass
+   declared in checked code, such as a generated adapter: the mark does
+   not stop a `type()` subclass, but it reports the declared one, so
+   leave the class open and say in the code why.
 
 ## Pattern
 
