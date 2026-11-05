@@ -163,6 +163,7 @@ can't make the C# Clinic constructor async, where do I load the slots then? -> o
 my @dataclass Appointment lets anyone reassign .slot after it's booked -> oo-python
 Appointment uses method_missing for status checks, typos only blow up in prod->oo-ruby
 in ruby I keep checking slot.is_a?(Slot) before booking, any better way? -> oo-ruby
+changed save() in BaseAppointment and three subclasses broke, why so brittle->oo-choosing-composition-over-inheritance
 ```
 
 ## Known misses
@@ -193,4 +194,12 @@ Appointment.cs: CS8618 on Visit, which only exists once the patient shows up->oo
 class Clinician(Staff, Schedulable): super().__init__ skips Schedulable's init->oo-python
 mypy says my FakeSmsSender isn't a Notifier, but it has the same send() -> oo-python
 included Remindable in patient.rb, it reads @phone directly, is that ok? -> oo-ruby
+slot.setEndTime() lets callers make slots that end before they start -> oo-encapsulating-state-and-behaviour
+code does patient.getAppointments().add(appt) and skips the booking checks -> oo-encapsulating-state-and-behaviour
+Slot.isAvailable() also holds the slot for 5 min if free, fine or smell? -> oo-encapsulating-state-and-behaviour
+to follow one call to confirm() I keep jumping up and down 5 parent classes -> oo-choosing-composition-over-inheritance
+should TelehealthVisit extend Visit or just hold one? it overrides half of it->oo-choosing-composition-over-inheritance
+calling schedule.freeSlots() somehow reorders the clinician's slot list -> oo-applying-functional-techniques
+visit fee calc reads the db and the clock, can't unit test without mocks -> oo-applying-functional-techniques
+I have a ReminderPolicy interface with one method, could I just pass a lambda->oo-applying-functional-techniques
 ```
