@@ -1,0 +1,40 @@
+schema_version: "1.1"
+name: t05-javascript-second-store
+description: >-
+  Task (oo-javascript rule 1): a second implementation of a role
+  runs the same contract test as the first.
+tags: [task]
+context:
+  scaffold_script: fixture-javascript.sh
+execution:
+  prompt: |
+    Add `JsonFileSlotStore` in `src/json-file-slot-store.js`. It
+    answers the same messages as `MemorySlotStore` and keeps the
+    slots in a JSON file whose path it is given. Move the store
+    tests into `test/slot-stores.test.js`, so that one file tests
+    both stores.
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  max_turns: 30
+  timeout_seconds: 600
+graders:
+  - name: loaded-any-skill
+    type: tool_used
+    tool: Skill
+  - name: loaded-javascript
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?oo-javascript"'
+  - name: one-contract-both-stores
+    type: llm
+    focus: { source: file, path: test/slot-stores.test.js }
+    criteria: |
+      You are grading the tests of two slot stores, which must
+      answer the same messages: `MemorySlotStore` and the new
+      `JsonFileSlotStore`.
+
+      PASS if one body of tests, the contract of the messages both
+      stores answer, is written once and run once per store, for
+      example a function that takes a way to make a store and is
+      called for each, or a loop over the two stores. FAIL if each
+      store has its own copy of the tests, or if only one store is
+      tested.
