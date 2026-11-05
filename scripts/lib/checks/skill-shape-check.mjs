@@ -9,6 +9,7 @@ export class SkillShapeCheck extends Check {
     'How strictly a rule is meant',
     'Symptoms to skills',
     'Language skills',
+    'Quick reference',
     'Red flags',
     'Further reading'
   ])
