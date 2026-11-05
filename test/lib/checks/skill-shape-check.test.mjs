@@ -124,6 +124,7 @@ class Shape {
       '## How strictly a rule is meant',
       '## Symptoms to skills',
       '## Language skills',
+      '## Quick reference',
       '## Red flags',
       '## Further reading',
       ''
@@ -357,8 +358,9 @@ test('a language skill missing a core heading is an error', async () => {
 
 test('the shape constants are frozen', () => {
   assert.equal(Array.isArray(SkillShapeCheck.INDEX_HEADINGS), true)
-  assert.equal(SkillShapeCheck.INDEX_HEADINGS.length, 9)
+  assert.equal(SkillShapeCheck.INDEX_HEADINGS.length, 10)
   assert.equal(SkillShapeCheck.INDEX_HEADINGS[6], 'Language skills')
+  assert.equal(SkillShapeCheck.INDEX_HEADINGS[7], 'Quick reference')
   assert.equal(Array.isArray(SkillShapeCheck.CORE_HEADINGS), true)
   assert.equal(SkillShapeCheck.CORE_HEADINGS.length, 9)
   assert.equal(typeof SkillShapeCheck.BACK_LINK, 'string')

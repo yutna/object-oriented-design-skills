@@ -240,6 +240,26 @@ replaces them. A base language skill is for code with no framework.
 In Claude Code, install a language plugin beside the core one:
 `/plugin install object-oriented-design-java@object-oriented-design-skills`
 
+## Quick reference
+
+Common design questions, each answered by the default this pack
+applies and the rule it rests on.
+
+|Question|Default answer|Skill|Rule|
+|---|---|---|---|
+|How many reasons to change per class?|One kind of change request.|[Assigning responsibilities][assigning]|7|
+|Command or query?|A command writes; a query reads.|[Encapsulating state and behaviour][state-and-behaviour]|4|
+|Can I return its list?|No; methods or a view.|[Encapsulating state and behaviour][state-and-behaviour]|5|
+|How do I keep a value from changing?|Make it immutable.|[Modeling values and entities][values]|2|
+|Should this class allow extension?|No, unless built for it.|[Honouring substitutability][substitutability]|5|
+|Should an aggregate hold another aggregate?|No; hold its identity.|[Designing aggregates][aggregates]|3|
+|Where should input checks live?|At the edge; domain decides.|[Placing domain logic][placing]|5|
+|How much should a module expose?|A small public interface.|[Organising modules][modules]|6|
+|How do outside types reach the domain?|Map at the boundary.|[Crossing system boundaries][boundaries]|2|
+|Where should repository interfaces go?|In the domain, types only.|[Designing repositories][repositories]|2|
+|How do I name a test?|For the behaviour it checks.|[Testing object-oriented code][testing]|3|
+|When should preconditions be checked?|Before any change.|[Designing failure behaviour][failure]|4|
+
 ## Red flags
 
 Places to look, not verdicts. A red flag becomes a finding only with
