@@ -66,6 +66,18 @@
       "license": "MIT",
       "category": "development",
       "keywords": ["object-oriented-design", "javascript"]
+    },
+    {
+      "name": "object-oriented-design-csharp",
+      "description": "Object-oriented design rules kept in plain C#, with no framework",
+      "version": "0.16.1",
+      "source": "./plugins/csharp",
+      "author": { "name": "Yutthana Siphuengchai" },
+      "homepage": "https://github.com/yutna/object-oriented-design-skills",
+      "repository": "https://github.com/yutna/object-oriented-design-skills",
+      "license": "MIT",
+      "category": "development",
+      "keywords": ["object-oriented-design", "csharp"]
     }
   ]
 }

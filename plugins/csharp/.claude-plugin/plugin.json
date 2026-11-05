@@ -1,0 +1,14 @@
+{
+  "name": "object-oriented-design-csharp",
+  "version": "0.16.1",
+  "description": "Object-oriented design rules kept in plain C#: records, nullable reference types, default interface members, structs and async at the edge",
+  "author": {
+    "name": "Yutthana Siphuengchai",
+    "url": "https://github.com/yutna"
+  },
+  "homepage": "https://github.com/yutna/object-oriented-design-skills",
+  "repository": "https://github.com/yutna/object-oriented-design-skills",
+  "license": "MIT",
+  "keywords": ["object-oriented-design", "csharp"],
+  "skills": "./skills/"
+}
