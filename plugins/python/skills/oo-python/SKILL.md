@@ -159,10 +159,11 @@ method names, and a `@final` mark that only the checker enforces.
    with the contract an override must keep written beside it, and which
    of the class's own methods send them.
 
-   The exception is a class that a framework extends with a subclass
-   declared in checked code, such as a generated adapter: the mark does
-   not stop a `type()` subclass, but it reports the declared one, so
-   leave the class open and say in the code why.
+   The exception is a class that a framework subclasses with a declared
+   subclass in checked code, such as a generated adapter, even where no
+   override is part of the design: the mark does not stop a `type()`
+   subclass, but it reports the declared one, so leave the class open
+   and say in the code why.
 
 ## Pattern
 
