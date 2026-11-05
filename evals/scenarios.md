@@ -374,9 +374,10 @@ Should reach `oo-placing-domain-logic`.
 > never saved. What should change?
 
 Must contain: recording the result as one change that records a
-past-tense event, such as an abnormal result received; the page, the
-chart entry and the follow-up each run as their own handler after the
-result commits, each in its own transaction; the event stored with the
+past-tense event, such as an abnormal result received; the page and the
+follow-up each run as their own handler after the result commits, each
+in its own transaction, and the chart entry too unless the answer makes
+the chart part of the result's own aggregate; the event stored with the
 result in one transaction and sent from there afterwards, so no page
 goes out for an unsaved result and none is lost; each handler safe to
 run twice, so a repeated event books no second follow-up.
@@ -762,11 +763,13 @@ Should reach `oo-documenting-design-decisions`.
 ## 45. The comments nobody trusts
 
 > Every method in `ConsentRecorder` has a comment that restates its name.
-> A block of old code sits commented out at the bottom, "in case we need
-> it". The comment on `withdraw` says a withdrawal takes effect at the end
-> of the month, while the code applies it at once. One line sends the
-> consent to the regional record twice, and the only comment above it
-> says "do not touch". How should the comments in this class change?
+> The class opens with a comment listing who changed it, on which dates,
+> and what each change replaced. A block of old code sits commented out
+> at the bottom, "in case we need it". The comment on `withdraw` says a
+> withdrawal takes effect at the end of the month, while the code applies
+> it at once. One line sends the consent to the regional record twice,
+> and the only comment above it says "do not touch". How should the
+> comments in this class change?
 
 Must contain: the comments that restate method names deleted; the
 commented-out code deleted, since version control keeps it; the
