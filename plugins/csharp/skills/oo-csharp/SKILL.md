@@ -76,8 +76,9 @@ the ports while the domain stays synchronous.
 
    The exception is a value whose representation must stay hidden: a
    record exposes every property, so write that value as a `sealed`
-   class with get-only properties and its own `Equals` and
-   `GetHashCode`, keeping the same constructor checks.
+   class with private fields and only the accessors its callers need,
+   with its own `Equals` and `GetHashCode`, keeping the same
+   constructor checks.
 
 2. Rule. **A value record that holds a collection defines its own
    `Equals` and `GetHashCode` over the collection's contents, as
@@ -145,11 +146,12 @@ the ports while the domain stays synchronous.
    interface member is reachable only through the interface type, not
    through a reference typed as the implementing class (CS1061), and
    an interface declares no instance fields. Adding a default member
-   to a published interface leaves existing implementers working,
-   which is the compatible change `oo-crossing-system-boundaries`
-   rule 4 asks of a published contract; adding an abstract member
-   breaks them. What tips the balance is whether the shared code
-   needs state, which an interface cannot hold.
+   to a published interface leaves existing class implementers
+   working, which is the compatible change
+   `oo-crossing-system-boundaries` rule 4 asks of a published
+   contract; adding an abstract member breaks them. What tips the
+   balance is whether the shared code needs state, which an interface
+   cannot hold.
 
 7. Rule. **Keep `async` in the shell: a domain object's methods are
    synchronous and reach no port, no constructor waits for anything,
@@ -208,7 +210,7 @@ public record WoundCarePlan(
 In the Before, `ChangeEveryDays` is a positional property with an
 `init` accessor, so `plan with { ChangeEveryDays = 0 }` compiles; the
 check sits in the property initializer, which `with` does not run, so
-the copy holds a plan the constructor would refuse (rule 1). The
+the copy holds a plan construction would refuse (rule 1). The
 `List<string>` property is compared by the generated equality with the
 list's own equality, which is reference equality, so two plans holding
 equal steps in two lists are not equal (rule 2). The caller's list is
