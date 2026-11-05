@@ -1,8 +1,9 @@
 # Framework Pressures
 
 Each pressure below is something a framework asks of the code, with
-what to accept and what never to accept, weighed as rule 3 weighs them.
-The "never" side of each names the rule that no framework excuses.
+what to accept and what never to accept. Rule 2 settles a demand met at
+the edge, and rule 3 weighs the demands it leaves open. The "never" side
+of each names the rule that no framework excuses.
 
 - **A mapper's base class.** The mapper saves only objects that extend
   its base class. Accept: the base class on a row class at the edge,
@@ -44,7 +45,7 @@ The "never" side of each names the rule that no framework excuses.
 ## A worked weighing
 
 A clinic team's framework saves only classes that extend its record
-class, and runs a hook before each save. The team weighs two demands.
+class, and runs a hook before each save. The team meets two demands.
 
 1. The record class: it touches only the classes the mapper saves. The
    team puts it on a row class at the edge, converts each row to the
@@ -55,5 +56,5 @@ class, and runs a hook before each save. The team weighs two demands.
    refuses it, and the reading answers whether it needs review from the
    moment it is built (rule 1).
 
-The weighing ends with every rule in the domain and each of the
-framework's demands met at the edge.
+The work ends with every rule in the domain and each of the framework's
+demands met at the edge.
