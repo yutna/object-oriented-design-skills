@@ -1,0 +1,37 @@
+schema_version: "1.1"
+name: t03-kotlin-visit-length
+description: >-
+  Task (oo-kotlin rule 1): a data class's rule holds for every
+  construction, copy included.
+tags: [task]
+context:
+  scaffold_script: fixture-kotlin.sh
+execution:
+  prompt: |
+    A clinician can now extend a running visit by a number of
+    minutes. Add that to `VisitLength`; a visit still lasts from 5
+    to 120 minutes.
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  max_turns: 30
+  timeout_seconds: 600
+graders:
+  - name: loaded-any-skill
+    type: tool_used
+    tool: Skill
+  - name: loaded-kotlin
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?oo-kotlin"'
+  - name: rule-checked-in-init
+    type: llm
+    focus: { source: file, path: src/clinic/VisitLength.kt }
+    criteria: |
+      You are grading a Kotlin data class after a change that lets a
+      visit be extended. A visit lasts from 5 to 120 minutes.
+
+      PASS if the 5-to-120 rule is checked in an `init` block (with
+      `require` or a throw), so the primary constructor and `copy`
+      cannot build a length outside it, and the new extension
+      method builds its answer through that check. FAIL if the
+      check stays only in a factory or a secondary constructor while
+      the public constructor or `copy` can still build any length.
