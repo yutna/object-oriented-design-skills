@@ -1,0 +1,39 @@
+schema_version: "1.1"
+name: t07-python-second-sender
+description: >-
+  Task (oo-python rule 1): a role two senders play, named so a type
+  checker can check it.
+tags: [task]
+context:
+  scaffold_script: fixture-python.sh
+execution:
+  prompt: |
+    Patients can now choose text messages instead of email for their
+    reminders. Add `SmsSender` in `clinic/sms_sender.py`, and let
+    `ReminderRun` work with either sender. Declare any new type that
+    `ReminderRun` needs in `clinic/reminder_run.py`.
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  max_turns: 30
+  timeout_seconds: 600
+graders:
+  - name: loaded-any-skill
+    type: tool_used
+    tool: Skill
+  - name: loaded-python
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?oo-python"'
+  - name: sender-named-as-a-role
+    type: llm
+    focus: { source: file, path: clinic/reminder_run.py }
+    criteria: |
+      You are grading a reminder run after a change that lets it
+      send through either of two senders.
+
+      PASS if the sender parameter is annotated with one role type
+      declared in this file that both senders satisfy, a
+      `typing.Protocol` or an abstract base class, and the run sends
+      without asking which sender it holds. FAIL if the
+      parameter is annotated with a union of the two classes, `Any`,
+      `object` or nothing, or if the run checks the sender with
+      `isinstance` or `type()`.
