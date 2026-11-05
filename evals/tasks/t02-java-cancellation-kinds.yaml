@@ -1,0 +1,41 @@
+schema_version: "1.1"
+name: t02-java-cancellation-kinds
+description: >-
+  Task (oo-java rule 3): two kinds of cancellation, each with its
+  own data, decided by a switch that names every kind.
+tags: [task]
+context:
+  scaffold_script: fixture-java.sh
+execution:
+  prompt: |
+    A cancellation now records who cancelled. A patient who cancels
+    gives how many hours' notice they gave; when the clinic cancels,
+    it gives a reason. A patient who cancels with less than 24
+    hours' notice pays the late fee in `CancellationFee`; a clinic
+    cancellation is never charged. Make the change.
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  max_turns: 30
+  timeout_seconds: 600
+graders:
+  - name: loaded-any-skill
+    type: tool_used
+    tool: Skill
+  - name: loaded-java
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?oo-java"'
+  - name: fee-switch-names-every-kind
+    type: llm
+    focus: { source: file, path: src/clinic/CancellationFee.java }
+    criteria: |
+      You are grading the fee calculation after a change that adds
+      two kinds of cancellation: by the patient, with hours of
+      notice, and by the clinic, with a reason.
+
+      PASS if the fee is decided by a `switch` over the
+      cancellation's type that has one case per kind, each a type
+      pattern such as `case PatientCancellation p ->`, and no
+      `default` branch, so a new kind of cancellation would fail to
+      compile here. FAIL if the fee compares strings, branches on
+      an enum or a flag, uses an `instanceof` chain, or has a
+      `default` branch.

@@ -139,4 +139,4 @@ appointment that crosses midnight. They cover the task, restraint and
 precedence families. A case chooses its fixture with `fixture-<name>.sh`,
 copied from `evals/fixture-<name>/`.
 
-`tasks/` holds 3 task cases.
+`tasks/` holds 5 task cases.
