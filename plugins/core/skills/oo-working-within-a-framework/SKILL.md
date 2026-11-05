@@ -80,13 +80,16 @@ own.
    few rules: there the framework's class is the module's class.
 
 3. Judgement. **Weigh each demand rule 2 does not settle by what it
-   would cost the domain.** A framework base class on a class that holds
-   a rule is not weighed here: rule 2 already keeps the base class on
-   the class at the edge, so no cost makes it acceptable on the class
-   that holds the rule. For the demands left, accept one that touches
-   only the edge: a base class on a mapped row, a marker on a request
-   handler, or a container that builds the objects the framework builds,
-   as [patterns the language provides](../oo-patterns-the-language-provides/SKILL.md)
+   would cost the domain.** Rule 2 settles where a framework base class
+   goes. When a class holds rules, the base class goes on a class at
+   the edge, unless taming persistence rule 1 puts the module on active
+   records: there the module's own classes hold few rules and carry it.
+   Rule 3 does not weigh that choice again. The demand for a base class
+   on a mapped row, and the demand for a marker on a request handler,
+   are met in an edge class rule 2 names, so rule 3 does not weigh them
+   either. For the demands left, accept one that touches only the edge:
+   a container that builds the objects the framework builds, as
+   [patterns the language provides](../oo-patterns-the-language-provides/SKILL.md)
    rule 6 allows. Refuse a demand that moves a rule out of the domain,
    lets an object exist in a state the clinic forbids, hands a container
    to domain code, which
