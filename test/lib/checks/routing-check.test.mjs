@@ -130,7 +130,7 @@ test('a known miss is noted with its rank and never fails', () => {
   ])
 })
 
-test('a known miss that now passes is noted and never fails', () => {
+test('a known miss that passes the keyword gate is noted and never fails', () => {
   const report = CheckRun.of(SKILLS, [
     'a clinic design -> oo-design'
   ], false, [
@@ -139,7 +139,7 @@ test('a known miss that now passes is noted and never fails', () => {
   assert.equal(report.failed, false)
   assert.deepEqual(report.lines(), [
     'top-1: 1/1',
-    'known miss now passes: a clinic design',
+    'known miss passes the keyword gate: a clinic design',
     'ok 1 routing case(s)'
   ])
 })
