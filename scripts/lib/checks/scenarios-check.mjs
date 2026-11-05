@@ -66,5 +66,14 @@ export class ScenariosCheck extends Check {
           `scenario ${scenario.number} names unknown skill: ${skill}`)
       }
     }
+    this.#inspectMustContain(scenario, report)
+  }
+
+  #inspectMustContain(scenario, report) {
+    // Stub: the tests fail on their assertions until the check lands.
+    report.error(
+      ScenariosCheck.#SCENARIOS,
+      `scenario ${scenario.number} must hold its "Must contain:" ` +
+      'points in one sentence')
   }
 }
