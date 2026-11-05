@@ -41,8 +41,7 @@ Should reach `oo-assigning-responsibilities`.
 > a discount class. Should I go along?
 
 Must contain: changing the method body and stopping there; keeping the
-existing owner; no service, new class or redesign. The sizing table's
-one-method row skips remodelling.
+existing owner; no service, new class or redesign.
 
 Should reach `oo-design`.
 
