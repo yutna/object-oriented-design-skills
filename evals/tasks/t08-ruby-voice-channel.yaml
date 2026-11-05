@@ -1,0 +1,37 @@
+schema_version: "1.1"
+name: t08-ruby-voice-channel
+description: >-
+  Task (oo-ruby rule 2): a third channel joins by answering the
+  message the others answer, not by a third class check.
+tags: [task]
+context:
+  scaffold_script: fixture-ruby.sh
+execution:
+  prompt: |
+    Some patients want a phone call instead. Add `VoiceChannel` in
+    `lib/voice_channel.rb`, which reads the reminder out to the
+    patient's phone, and let `ReminderRun` deliver through it too.
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  max_turns: 30
+  timeout_seconds: 600
+graders:
+  - name: loaded-any-skill
+    type: tool_used
+    tool: Skill
+  - name: loaded-ruby
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?oo-ruby"'
+  - name: one-message-no-class-check
+    type: llm
+    focus: { source: file, path: lib/reminder_run.rb }
+    criteria: |
+      You are grading a reminder run after a change that adds a
+      third delivery channel.
+
+      PASS if the run sends every channel one message that all
+      channels answer, such as `channel.deliver(reminder)`, and asks
+      no channel its class or abilities: no `case` over classes, no
+      `is_a?`, `kind_of?`, `instance_of?` or `respond_to?` branch.
+      FAIL if it adds a third branch on the channel's class, or
+      keeps any class check.

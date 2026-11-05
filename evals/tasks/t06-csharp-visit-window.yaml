@@ -1,0 +1,42 @@
+schema_version: "1.1"
+name: t06-csharp-visit-window
+description: >-
+  Task (oo-csharp rule 1): a value record's check holds for every
+  changed copy, with expressions included.
+tags: [task]
+context:
+  scaffold_script: fixture-csharp.sh
+execution:
+  prompt: |
+    Clinicians need to push a visit window later by a number of
+    minutes, and to shorten it by a number of minutes from its end.
+    Add both to `VisitWindow`. A window's end must stay after its
+    start.
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  max_turns: 30
+  timeout_seconds: 600
+graders:
+  - name: loaded-any-skill
+    type: tool_used
+    tool: Skill
+  - name: loaded-csharp
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?oo-csharp"'
+  - name: no-unchecked-copy
+    type: llm
+    focus: { source: file, path: src/VisitWindow.cs }
+    criteria: |
+      You are grading a C# record after a change that adds two ways
+      to change a visit window. A window's end must stay after its
+      start.
+
+      PASS if no code inside or outside the record can produce a
+      window whose end is not after its start: the new methods build
+      their result through the constructor's check, and `Start` and
+      `End` have no `init` or `set` accessor that a `with`
+      expression could set past the check (or each such accessor
+      runs the check itself). FAIL if a new method uses `with` on
+      properties the constructor alone checks, or if `Start` and
+      `End` keep plain `init` accessors that let any caller's
+      `with` skip the check.
