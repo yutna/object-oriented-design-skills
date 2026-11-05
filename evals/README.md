@@ -137,6 +137,8 @@ project. Each starts from `fixture-tasks/`, a dependency-free
 TypeScript project with a slot-booking handler, an invoice and an
 appointment that crosses midnight. They cover the task, restraint and
 precedence families. A case chooses its fixture with `fixture-<name>.sh`,
-copied from `evals/fixture-<name>/`.
+copied from `evals/fixture-<name>/`. Each language skill has one task
+case on a fixture in its language, and `CoverageCheck` fails a language
+skill without one.
 
 `tasks/` holds 10 task cases.
