@@ -83,14 +83,16 @@ The pack has been checked in the ways below. Static checks read the
 repository and call no model. A routing check asks a small model to
 pick one skill for each written routing line. A quality check has an
 agent answer clinic design questions, with the pack and with no pack,
-and judges each answer against written points. A release sweep runs
-every case in both arms. The [evals README](evals/README.md) describes
-each check and how to run it.
+and judges each answer against written points. The
+[evals README](evals/README.md) describes the static, routing and
+quality checks and how to run them.
 
 The pack has not been checked in real projects, with models other
 than the ones a release names, in long sessions that change many
-files, or in languages with no language skill. Each release's notes
-carry that release's numbers; this README states none.
+files, or in languages with no language skill. A release sweep of
+every case in both arms has not run yet; it is planned for v0.21.0.
+Each release's notes carry that release's numbers; this README states
+none.
 
 To report what happened, open an issue with the early-adopter form. A
 useful report says what was asked of the agent, which skill it opened
