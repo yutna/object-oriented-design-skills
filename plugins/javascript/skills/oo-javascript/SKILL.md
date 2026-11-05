@@ -107,12 +107,13 @@ message.
    value is that no method does that, and every change answers a new
    value.
 
-   The exception is a field that holds another value rather than an
-   entity: because a value never changes, the constructor keeps the
-   instance it was given without copying it, as
-   `oo-modeling-values-and-entities` rule 2 says, and a field that needs
-   an entity holds its identifier, as `oo-designing-aggregates` rule 3
-   asks.
+   The exception is a field that holds a value rather than an entity:
+   because a value never changes, the constructor keeps the instance it
+   was given without copying it, as `oo-modeling-values-and-entities`
+   rule 2 says. A field that holds an entity of another aggregate keeps
+   its identifier, as `oo-designing-aggregates` rule 3 asks, and a value
+   holds no mutable entity at all: `oo-modeling-values-and-entities`
+   rule 2 makes it immutable.
 
 5. Rule. **Never ask which class an object is, by `instanceof` or by
    its `constructor`, before sending it a message, as
