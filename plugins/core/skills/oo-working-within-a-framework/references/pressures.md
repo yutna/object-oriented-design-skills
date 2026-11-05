@@ -48,7 +48,8 @@ The "never" side of each names the rule that no framework excuses.
 ## A worked weighing
 
 A clinic team's framework saves only classes that extend its record
-class, and runs a hook before each save. The team meets two demands.
+class, and runs a hook before each save. The team meets the first
+demand at the edge and refuses the second.
 
 1. The record class: it touches only the classes the mapper saves. The
    team puts it on a row class at the edge, converts each row to the
@@ -59,5 +60,5 @@ class, and runs a hook before each save. The team meets two demands.
    refuses it, and the reading answers whether it needs review from the
    moment it is built (rule 1).
 
-The work ends with every rule in the domain and each of the framework's
-demands met at the edge.
+The work ends with the record class on the row at the edge and the save
+hook refused, so the review rule stays in the domain (rule 1).
