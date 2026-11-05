@@ -120,6 +120,8 @@ npm run eval:routing
 
 It checks the numbering, the prompt, the Must contain paragraph and
 the Should reach skill, and it checks that every named skill exists.
+The paragraph holds the points only, joined by semicolons into one
+sentence, because the grader reads all of it as points.
 It does not run a model.
 
 `scenarios.md` holds 47 scenarios.

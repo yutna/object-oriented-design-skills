@@ -70,10 +70,57 @@ export class ScenariosCheck extends Check {
   }
 
   #inspectMustContain(scenario, report) {
-    // Stub: the tests fail on their assertions until the check lands.
-    report.error(
-      ScenariosCheck.#SCENARIOS,
-      `scenario ${scenario.number} must hold its "Must contain:" ` +
-      'points in one sentence')
+    const paragraph = scenario.mustContain.trim()
+    // An empty paragraph is a missing part, reported before this check.
+    if (paragraph === '') return
+    const breakIndex = this.#firstSentenceBreak(paragraph)
+    if (breakIndex !== -1) {
+      const after = paragraph.slice(breakIndex + 1).trim()
+        .replace(/\s+/g, ' ')
+      report.error(
+        ScenariosCheck.#SCENARIOS,
+        `scenario ${scenario.number} must hold points only in one ` +
+        'sentence; text after the first full stop: ' +
+        `"${after}"`)
+      return
+    }
+    // A paragraph without its closing full stop is not one sentence.
+    if (!this.#endsWithFullStop(paragraph)) {
+      report.error(
+        ScenariosCheck.#SCENARIOS,
+        `scenario ${scenario.number} must end its "Must contain:" ` +
+        'paragraph with a full stop')
+    }
+  }
+
+  #firstSentenceBreak(paragraph) {
+    let inCode = false
+    for (let index = 0; index < paragraph.length; index += 1) {
+      const character = paragraph[index]
+      if (character === '`') {
+        inCode = !inCode
+        continue
+      }
+      if (inCode || character !== '.') continue
+      const next = paragraph[index + 1]
+      const previous = paragraph[index - 1] ?? ''
+      // A full stop between two digits belongs to a number.
+      if (/[0-9]/.test(previous) && /[0-9]/.test(next ?? '')) {
+        continue
+      }
+      // Only a full stop followed by whitespace ends a sentence.
+      if (next === undefined || !/\s/.test(next)) continue
+      return index
+    }
+    return -1
+  }
+
+  #endsWithFullStop(paragraph) {
+    if (!paragraph.endsWith('.')) return false
+    let inCode = false
+    for (const character of paragraph) {
+      if (character === '`') inCode = !inCode
+    }
+    return !inCode
   }
 }
