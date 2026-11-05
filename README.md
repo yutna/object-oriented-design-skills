@@ -74,6 +74,30 @@ The pack keeps the core plugin's listing under a fixed ceiling. Use one
 install route, not both: a plugin skill and a personal skill of the same
 name both load.
 
+## Early adopters
+
+The pack is meant for real projects before more language packs arrive.
+Feedback from those projects shapes the next releases.
+
+The pack has been checked in the ways below. Static checks read the
+repository and call no model. A routing check asks a small model to
+pick one skill for each written routing line. A quality check has an
+agent answer clinic design questions, with the pack and with no pack,
+and judges each answer against written points. A release sweep runs
+every case in both arms. The [evals README](evals/README.md) describes
+each check and how to run it.
+
+The pack has not been checked in real projects, with models other
+than the ones a release names, in long sessions that change many
+files, or in languages with no language skill. Each release's notes
+carry that release's numbers; this README states none.
+
+To report what happened, open an issue with the early-adopter form. A
+useful report says what was asked of the agent, which skill it opened
+or that it opened none, what it did, what you expected instead, and
+the plugin version and the model. Never paste private code or patient
+data.
+
 ## Development
 
 Run `npm run gate`. See [AGENTS.md](AGENTS.md) and
