@@ -59,8 +59,9 @@ method names, and a `@final` mark that only the checker enforces.
    reads the method signatures. Listing the protocol as a base class is
    how an implementation declares which role it plays, which is the
    named role `oo-designing-interfaces` rule 5 asks for: a checker such
-   as mypy reports a signature that differs from the protocol's, and a
-   class that leaves a required method out cannot be instantiated. The
+   as mypy reports a signature that differs from the protocol's and
+   refuses to instantiate a class that leaves a required method out,
+   while Python builds it and the missing method answers `None`. The
    annotation is what the checker reads at a call site, so a class that
    only matches by shape is still checked against the role. The protocol
    is also where the contract sits that every implementation keeps, as
