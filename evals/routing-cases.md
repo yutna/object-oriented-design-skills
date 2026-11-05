@@ -161,6 +161,8 @@ js Patient: use class syntax or plain prototypes? -> oo-javascript
 should Appointment be a record in C#? it has an id and changes status -> oo-csharp
 can't make the C# Clinic constructor async, where do I load the slots then? -> oo-csharp
 my @dataclass Appointment lets anyone reassign .slot after it's booked -> oo-python
+Appointment uses method_missing for status checks, typos only blow up in prod->oo-ruby
+in ruby I keep checking slot.is_a?(Slot) before booking, any better way? -> oo-ruby
 ```
 
 ## Known misses
@@ -190,4 +192,5 @@ calculating an invoice total also writes to the database, hard to test -> oo-app
 Appointment.cs: CS8618 on Visit, which only exists once the patient shows up->oo-csharp
 class Clinician(Staff, Schedulable): super().__init__ skips Schedulable's init->oo-python
 mypy says my FakeSmsSender isn't a Notifier, but it has the same send() -> oo-python
+included Remindable in patient.rb, it reads @phone directly, is that ok? -> oo-ruby
 ```

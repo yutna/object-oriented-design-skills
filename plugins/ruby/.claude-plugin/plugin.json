@@ -1,0 +1,14 @@
+{
+  "name": "object-oriented-design-ruby",
+  "version": "0.16.1",
+  "description": "Object-oriented design rules kept in plain Ruby: duck typing, modules and mixins, Data values, and metaprogramming with discipline",
+  "author": {
+    "name": "Yutthana Siphuengchai",
+    "url": "https://github.com/yutna"
+  },
+  "homepage": "https://github.com/yutna/object-oriented-design-skills",
+  "repository": "https://github.com/yutna/object-oriented-design-skills",
+  "license": "MIT",
+  "keywords": ["object-oriented-design", "ruby"],
+  "skills": "./skills/"
+}
