@@ -101,11 +101,11 @@ export class NegativeCases {
     '    raises RegisterRecordIncomplete, RegisterUnavailable'
   static #RAISES_CONTRACT_REPLACE = '    raises RegisterUnavailable'
   static #PACK_SCOPE = 'plugins/core/skills/' +
-    'oo-working-within-a-framework/SKILL.md'
+    'oo-documenting-design-decisions/SKILL.md'
   static #PACK_SCOPE_FIND =
-    'configured: outside this skill.'
+    'generated from the code: outside this skill.'
   static #PACK_SCOPE_REPLACE =
-    'configured: outside this pack.'
+    'generated from the code: outside this pack.'
 
   static ALL = Object.freeze([
     new NegativeCase(

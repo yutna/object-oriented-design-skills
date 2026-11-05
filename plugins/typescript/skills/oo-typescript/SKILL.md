@@ -55,7 +55,7 @@ that names every adapter once.
   starting from `oo-design`.
 - The files carry no type annotations and are JavaScript, not
   TypeScript: outside this skill; `oo-javascript` says how plain
-  JavaScript keeps these rules with no type checker.
+  JavaScript keeps the pack's core rules with no type checker.
 
 ## Core rules
 
