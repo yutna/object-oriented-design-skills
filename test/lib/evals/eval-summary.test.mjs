@@ -413,6 +413,43 @@ test('a baseline piece with no recorded hashes keeps its no-pack runs',
     }
   })
 
+test('two pieces of one case count a stored baseline once', async () => {
+  const fixture = await SummaryFixture.create()
+  const name = SummaryFixture.QUESTION
+  try {
+    const runs = [
+      CaseResult.graded(false),
+      CaseResult.graded(true),
+      CaseResult.graded(false)
+    ]
+    await fixture.piece({
+      name: 'baseline',
+      arm: 'baseline',
+      cases: [CaseResult.row(name, {
+        with: [CaseResult.graded(true)],
+        without: runs
+      })]
+    })
+    await fixture.piece({
+      name: 'block',
+      hashes: { [name]: SummaryFixture.HASH },
+      cases: [CaseResult.row(name, {
+        with: [CaseResult.graded(true)]
+      })]
+    })
+    await fixture.baseline({
+      name,
+      hash: SummaryFixture.HASH,
+      runs
+    })
+    const summary = fixture.summary()
+    assert.equal(
+      summary.cases[name].arms.none.graded, runs.length)
+  } finally {
+    await fixture.close()
+  }
+})
+
 test('a piece with no graded run fails', async () => {
   const piece = await EmptyPiece.create()
   try {

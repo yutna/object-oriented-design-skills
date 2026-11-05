@@ -83,6 +83,7 @@ export class EvalSummary extends Check {
     const baselines = this.#baselines(models)
     const cases = new Map()
     const noBaseline = new Set()
+    const storedBaselines = new Set()
     for (const piece of pieces) {
       const result = this.#json(piece.resultPath)
       if (!Array.isArray(result.cases)) {
@@ -90,7 +91,17 @@ export class EvalSummary extends Check {
           `${piece.path}: result.json holds no cases`, 2)
       }
       piece.graded = this.#pieceRuns(
-        piece, result.cases, baselines, cases, noBaseline)
+        piece, result.cases, baselines, cases, noBaseline,
+        storedBaselines)
+    }
+    for (const baseline of storedBaselines) {
+      // A stored file is recorded once for its case, however many pieces
+      // name it, so its runs are never measured twice.
+      const entry = this.#entry(
+        cases, baseline.case, this.#familyOfName(baseline.case))
+      for (const run of baseline.runs) {
+        this.#record(entry, 'none', new RunGrade(run))
+      }
     }
     const graded = {}
     for (const [name, entry] of cases) {
@@ -170,7 +181,8 @@ export class EvalSummary extends Check {
     return this.#json(path)
   }
 
-  #pieceRuns(piece, rows, baselines, cases, noBaseline) {
+  #pieceRuns(piece, rows, baselines, cases, noBaseline,
+    storedBaselines) {
     let graded = 0
     for (const row of rows) {
       const entry = this.#entry(
@@ -178,9 +190,7 @@ export class EvalSummary extends Check {
         this.#familyOf(row, piece))
       const stored = this.#storedBaseline(piece, baselines, row.name)
       if (stored !== null) {
-        for (const run of stored.runs) {
-          this.#record(entry, 'none', new RunGrade(run))
-        }
+        storedBaselines.add(stored)
       } else if (piece.arm !== 'baseline') {
         noBaseline.add(row.name)
       }
