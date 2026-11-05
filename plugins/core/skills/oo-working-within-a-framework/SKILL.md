@@ -21,9 +21,10 @@ hook before each save, a setter its binder fills, a marker its container
 reads. Each offer is convenient, and none of them is a home for a
 business rule. This skill keeps every rule and invariant in the domain,
 meets the framework in a class at the edge that converts once, weighs
-each demand by whether it reaches a rule, and records each choice once
-for the code base. Where the framework is built of functions and
-components, the clinic's rules still get a module of their own.
+the demands rule 2 leaves open by whether they reach a rule, and records
+each choice once for the code base. Where the framework is built of
+functions and components, the clinic's rules still get a module of their
+own.
 
 ## When to use
 
@@ -78,10 +79,16 @@ components, the clinic's rules still get a module of their own.
    on active records, because its classes mirror their tables and hold
    few rules: there the framework's class is the module's class.
 
-3. Judgement. **Weigh each demand by what it would cost the domain.**
-   Accept a demand that touches only the edge: a base class on a mapped
-   row, a marker on a request handler, or a container that builds the
-   objects the framework builds, as
+3. Judgement. **Weigh each demand rule 2 does not settle by what it
+   would cost the domain.** Rule 2 settles where a framework base class
+   goes. When a class holds rules, the base class goes on a class at
+   the edge, unless taming persistence rule 1 puts the module on active
+   records: there the module's own classes hold few rules and carry it.
+   Rule 3 does not weigh that choice again. The demand for a base class
+   on a mapped row, and the demand for a marker on a request handler,
+   are met in an edge class rule 2 names, so rule 3 does not weigh them
+   either. For the demands left, accept one that touches only the edge:
+   a container that builds the objects the framework builds, as
    [patterns the language provides](../oo-patterns-the-language-provides/SKILL.md)
    rule 6 allows. Refuse a demand that moves a rule out of the domain,
    lets an object exist in a state the clinic forbids, hands a container
@@ -95,12 +102,16 @@ components, the clinic's rules still get a module of their own.
    the edge, while fighting the framework where nothing in the domain is
    at stake costs code that every later change must carry.
 
-4. Default. **Decide how the code base meets each framework demand once,
-   write the choice down as a decision record, as documenting design
-   decisions, rule 1, asks of a choice that is costly to reverse, and
-   meet the demand the same way in every module.** A second module that
-   meets the same demand another way is a second design that every later
-   reader must learn.
+4. Default. **Decide once for the whole code base how it meets each
+   framework demand, write that one decision down as a decision record,
+   as documenting design decisions, rule 1, asks of a choice that is
+   costly to reverse, and meet the demand the same way in every module.**
+   Once means once for the code base, not once for each module: rule 2's
+   exception for a module on active records is part of that same
+   decision, so which modules it covers is settled there, not by a
+   second choice in each module. A second module that meets the same
+   demand another way is a second design that every later reader must
+   learn.
    The exception is a demand that only one module meets, such as the
    scheduler that only the reminders module uses: decide it in that
    module.
@@ -164,8 +175,8 @@ from `HomeReading` in one adapter, as
 [taming persistence](../oo-taming-persistence/SKILL.md) rule 2 keeps
 every mapping decision there; the row class and the adapter are left out
 of the fence (rule 2).
-The base class on the row is accepted because it touches only the edge,
-and the hook is refused because it reaches a rule (rule 3).
+The base class on the row is the edge class rule 2 asks for, and the
+hook is refused because it reaches a rule (rule 3).
 
 `BloodPressure` is taken to be a value whose `isHigh()` answers whether
 the reading is above the clinic's level for review. `true` and `false`
