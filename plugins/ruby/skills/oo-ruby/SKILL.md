@@ -59,21 +59,10 @@ with `respond_to_missing?`.
    `oo-honouring-substitutability` rules 1 and 4,
    `oo-testing-object-oriented-code` rule 1, and
    `oo-designing-interfaces` rule 5 ask.**
-   `oo-honouring-substitutability` rule 1 asks that every
-   implementation stand where the role is expected without the caller
-   knowing which one it holds. Its rule 4 asks that the contract sit
-   where its readers can find it, with what each message requires,
-   what it guarantees, and what stays true between calls; the module of
-   tests is that place in Ruby, because an implementer reads the
-   role's promises there. `oo-testing-object-oriented-code` rule 1
-   asks a test to send only the messages a caller sends and to check
-   only what a caller sees, so the same tests hold for every
-   implementation. `oo-designing-interfaces` rule 5 asks a type to
-   name the role it plays and to declare which types play it; here the
-   module's name carries the role, and each implementation's test class
-   declares that its class plays it by including the module. Minitest
-   is a bundled gem, and a module included in a `Minitest::Test`
-   subclass has each `test_` method run for that class.
+   Here the module's name carries the role, and each implementation's
+   test class declares that its class plays it by including the module.
+   Minitest is a bundled gem, and a module included in a
+   `Minitest::Test` subclass has each `test_` method run for that class.
 
    Ruby enforces none of this: `include` adds methods and checks no
    message, so a class that includes a module missing a method fails
@@ -104,12 +93,7 @@ with `respond_to_missing?`.
    through a method named for the domain action; a reader of a
    collection answers a frozen copy, as
    `oo-encapsulating-state-and-behaviour` rules 2 and 5 ask.**
-   `oo-encapsulating-state-and-behaviour` rule 2 adds no setter and
-   puts each change in a method that reads the current state, checks
-   the rule, and changes only what the action allows;
-   `oo-encapsulating-state-and-behaviour` rule 5 forbids handing out
-   the internal collection and asks for a method that names what a
-   caller may do with it, or a read-only view. In Ruby, `attr_writer`
+   In Ruby, `attr_writer`
    and `attr_accessor` define a `name=` method, so an assignment from
    outside runs it; a class with only `attr_reader` raises
    `NoMethodError` for that assignment. `attr_reader` answers the
@@ -133,13 +117,7 @@ with `respond_to_missing?`.
    `initialize` that calls `super`, and freeze a copy of each
    collection it holds, as `oo-modeling-values-and-entities` rules 2
    and 3 and `oo-constructing-valid-objects` rule 3 ask.**
-   `oo-modeling-values-and-entities` rule 2 makes a value immutable
-   and answers a change with a new value;
-   `oo-modeling-values-and-entities` rule 3 compares a value by all
-   its contents and keeps equality, hashing and any ordering in
-   agreement; `oo-constructing-valid-objects` rule 3 rejects an
-   invalid input when the object is built, with an error that names
-   the broken rule. In Ruby, `Data.define` gives the class a reader
+   In Ruby, `Data.define` gives the class a reader
    for every member, freezes each instance, and answers equality and
    hashing from all members; an assignment to a member raises
    `NoMethodError`, and two instances with equal members answer true
@@ -164,13 +142,7 @@ with `respond_to_missing?`.
    holds, forwarding to it with `Forwardable`, not with a module that
    reads or writes the host's instance variables, as
    `oo-choosing-composition-over-inheritance` rules 5 and 6 ask.**
-   `oo-choosing-composition-over-inheritance` rule 5 shares behaviour
-   across unrelated classes with an object each one holds, because
-   code mixed into a host shares the host's fields and can break rules
-   the host keeps; `oo-choosing-composition-over-inheritance` rule 6
-   offers only the messages the reusing class means to offer, one
-   forwarding method for each message it promises, never the held
-   object's whole interface. In Ruby, `extend Forwardable` makes
+   In Ruby, `extend Forwardable` makes
    `def_delegator` and `def_delegators` define forwarding methods on
    the class, each sending the named message to the held object; a
    module's methods run with the host as `self`, so `@field` in the
@@ -194,21 +166,15 @@ with `respond_to_missing?`.
    `oo-encapsulating-state-and-behaviour` rule 1,
    `oo-testing-object-oriented-code` rule 1, and
    `oo-designing-for-testability` rule 8 ask.**
-   `oo-encapsulating-state-and-behaviour` rule 1 keeps an invariant
-   with the object that holds the state and gives a caller no way to
-   assemble a state the rules forbid; `oo-testing-object-oriented-code`
-   rule 1 speaks to an object only through the messages its callers
-   send and checks only what a caller could see;
-   `oo-designing-for-testability` rule 8 forbids opening a production
-   class only so a test can reach inside. In Ruby, `send` calls a
-   private method, and `public_send` raises `NoMethodError` for one;
-   `instance_variable_get` and `instance_variable_set` read and write
-   any instance variable, and a private method refuses an ordinary
-   call with an explicit receiver. A test that reaches in still
-   passes, which is the danger: the test is tied to one arrangement of
-   the code.
+   In Ruby, `send` calls a private method, and `public_send` raises
+   `NoMethodError` for one; `instance_variable_get` and
+   `instance_variable_set` read and write any instance variable, and a
+   private method called on another receiver raises `NoMethodError`,
+   while a call with `self` as its receiver reaches it. A test that
+   reaches in still passes, which is the danger: the test is tied to
+   one arrangement of the code.
 
-   Ruby refuses the ordinary private call, but `send`,
+   Ruby refuses a private call on another receiver, but `send`,
    `instance_variable_get` and `instance_variable_set` bypass that
    refusal; nothing stops a test from using them, so only the rule and
    review keep it out.
@@ -217,11 +183,7 @@ with `respond_to_missing?`.
    a reader and a search find it, and pair any `method_missing` with
    `respond_to_missing?`, as `oo-honouring-substitutability` rule 4 and
    `oo-designing-interfaces` rule 5 ask.**
-   `oo-honouring-substitutability` rule 4 writes a type's contract
-   where its callers read it, with what each method requires, what it
-   guarantees, and what stays true between calls;
-   `oo-designing-interfaces` rule 5 names the role and declares which
-   types play it. A message defined with `def`, or with `define_method`
+   A message defined with `def`, or with `define_method`
    when its name is computed as the class is built, is in the method
    table: `respond_to?` answers true, `methods` lists it, and a reader
    or a search finds it, so the contract module from rule 1 can name
@@ -290,7 +252,7 @@ Formulary = Data.define(:medicines) do
     if medicines.uniq.length != medicines.length
       raise ArgumentError, "a formulary lists a medicine once"
     end
-    copies = medicines.map { |medicine| medicine.dup.freeze }
+    copies = medicines.sort.map { |medicine| medicine.dup.freeze }
     super(medicines: copies.freeze)
   end
 end
@@ -315,13 +277,14 @@ In the After, `Formulary` is a `Data` value. Ruby freezes each
 instance and gives it no setter, so the assignment raises
 `NoMethodError` (rule 4). `initialize` refuses an empty list, a blank
 medicine, and a duplicate, and raises `ArgumentError` with a message
-that names the broken rule (rule 4). It copies the array and each
-string before freezing them, so the caller's later changes cannot
-reach the value; the reader answers the frozen array the value holds
-(rule 4). `with` builds `changed` through `initialize`, so the same
-checks run for the copy (rule 4). `==`, `eql?` and `hash` read the
-same member, so two formularies with the same medicines compare equal
-and hash alike (rule 4). The fence stores nothing: it leaves out where
+that names the broken rule (rule 4). It orders the medicines,
+duplicates and freezes each string, and freezes the array, so the
+caller's later changes cannot reach the value; the reader answers the
+frozen array the value holds (rule 4). `with` builds `changed` through
+`initialize`, so the same checks run for the copy (rule 4). `==`,
+`eql?` and `hash` read the same member, so two formularies with the
+same medicines, in any order, compare equal and hash alike (rule 4).
+The fence stores nothing: it leaves out where
 a formulary is saved, under which identity, and in which transaction.
 
 ## Red flags
