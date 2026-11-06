@@ -165,7 +165,7 @@ export class PluginEvalRun {
     try {
       // The copy holds only this piece's cases, so the tool needs no --case
       // selection and cannot see a case that belongs to another piece.
-      copy = PluginCopy.of(this.#repository)
+      copy = PluginCopy.of(this.#repository, this.#cases)
       const build = new EvalBuild(this.#repository, copy)
       // A baseline arm's case text is what a stored baseline is named by,
       // whatever arm this piece runs, so build it first and hash it.

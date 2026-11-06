@@ -23,6 +23,8 @@ class EvalRepositoryFixture {
 
   static RESTRAINT = 'r01-overnight-duration'
 
+  static LANGUAGE_TASK = 't02-java-cancellation-kinds'
+
   static BLOCK = [
     '## Object-oriented design skills',
     '',
@@ -70,6 +72,28 @@ class EvalRepositoryFixture {
     ''
   ].join('\n')
 
+  static LANGUAGE_YAML = [
+    'schema_version: "1.1"',
+    'name: t02-java-cancellation-kinds',
+    'description: >-',
+    '  Task: name the two kinds of cancellation.',
+    'tags: [task]',
+    'context:',
+    '  scaffold_script: fixture.sh',
+    'execution:',
+    '  prompt: |',
+    '    Name the two kinds of cancellation.',
+    '  allowed_tools: [Read, Skill, Edit]',
+    '  max_turns: 30',
+    '  timeout_seconds: 600',
+    'graders:',
+    '  - name: loaded-java',
+    '    type: tool_used',
+    '    tool: Skill',
+    `    input_match: '"skill"\\s*:\\s*"(?:[\\w-]+:)?oo-java"'`,
+    ''
+  ].join('\n')
+
   static SCENARIOS = [
     '# Scenarios',
     '',
@@ -97,6 +121,20 @@ class EvalRepositoryFixture {
     ''
   ].join('\n')
 
+  static LANGUAGE_SKILL = [
+    '---',
+    'name: oo-java',
+    'description: Use when a clinic rule needs Java.',
+    'license: MIT',
+    'metadata:',
+    '  version: 0.5.0',
+    '  pack: object-oriented-design-skills',
+    '---',
+    '',
+    '# Java',
+    ''
+  ].join('\n')
+
   static async create() {
     const root = await mkdtemp(join(tmpdir(), 'oo-eval-repository-'))
     const plugin = join(root, 'plugins', 'core')
@@ -120,6 +158,18 @@ class EvalRepositoryFixture {
         '```',
         ''
       ].join('\n'))
+    const java = join(root, 'plugins', 'java')
+    await mkdir(join(java, '.claude-plugin'), { recursive: true })
+    await writeFile(
+      join(java, '.claude-plugin', 'plugin.json'),
+      `${JSON.stringify({
+        name: 'object-oriented-design-java',
+        version: '0.5.0'
+      })}\n`)
+    await mkdir(join(java, 'skills', 'oo-java'), { recursive: true })
+    await writeFile(
+      join(java, 'skills', 'oo-java', 'SKILL.md'),
+      EvalRepositoryFixture.LANGUAGE_SKILL)
     const evals = join(root, 'evals')
     await mkdir(join(evals, 'tasks'), { recursive: true })
     await mkdir(join(evals, 'fixture-tasks'), { recursive: true })
@@ -131,6 +181,9 @@ class EvalRepositoryFixture {
     await writeFile(
       join(evals, 'tasks', `${EvalRepositoryFixture.RESTRAINT}.yaml`),
       EvalRepositoryFixture.RESTRAINT_YAML)
+    await writeFile(
+      join(evals, 'tasks', `${EvalRepositoryFixture.LANGUAGE_TASK}.yaml`),
+      EvalRepositoryFixture.LANGUAGE_YAML)
     await writeFile(
       join(evals, 'fixture-tasks', 'CONVENTIONS.md'),
       '# Conventions\n')
@@ -367,6 +420,23 @@ test('a task piece grants Write and Edit', async () => {
     assert.deepEqual(
       command.slice(at, at + 3),
       ['--allow-tools', 'Write', 'Edit'])
+  } finally {
+    fixture.run.close()
+    await fixture.close()
+  }
+})
+
+test('a task piece copies the language skill its case names', async () => {
+  const fixture = await RunFixture.create({
+    result: SampleResult.read(),
+    cases: [
+      CaseFixture.task(EvalRepositoryFixture.LANGUAGE_TASK)
+    ]
+  })
+  try {
+    const copy = fixture.run.command()[2]
+    assert.equal(existsSync(join(copy, 'skills', 'oo-java')), true)
+    assert.equal(existsSync(join(copy, 'skills', 'oo-design')), true)
   } finally {
     fixture.run.close()
     await fixture.close()
