@@ -3,7 +3,7 @@ name: oo-python
 description: Use when plain Python with no framework needs a Protocol or an ABC, a frozen dataclass, a mixin and its MRO, or a property instead of a setter.
 license: MIT
 metadata:
-  version: 0.17.0
+  version: 0.17.1
   pack: object-oriented-design-skills
 ---
 
