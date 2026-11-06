@@ -3,7 +3,7 @@ name: oo-applying-functional-techniques
 description: Use when calculating also writes or sends so tests need mocks, when a helper changes what it was handed, or when borrowing functional style.
 license: MIT
 metadata:
-  version: 0.16.1
+  version: 0.17.0
   pack: object-oriented-design-skills
 ---
 
