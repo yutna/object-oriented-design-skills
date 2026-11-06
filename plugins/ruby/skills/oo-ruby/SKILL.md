@@ -3,7 +3,7 @@ name: oo-ruby
 description: Use when plain Ruby with no framework leans on duck typing, mixes in a module, defines a value with Data, or reaches for method_missing or send.
 license: MIT
 metadata:
-  version: 0.17.0
+  version: 0.17.1
   pack: object-oriented-design-skills
 ---
 
