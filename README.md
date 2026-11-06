@@ -37,7 +37,8 @@ Each language plugin is installed beside the core plugin:
 A plugin install prints no `CLAUDE.md` block. A project that wants an
 agent to know the pack is there copies the block from
 [claude-md-block.md](plugins/core/skills/oo-design/references/claude-md-block.md)
-into its `CLAUDE.md`.
+into its `CLAUDE.md`. Copy it again after each plugin update: a release
+can change the block.
 
 ### From a checkout
 
