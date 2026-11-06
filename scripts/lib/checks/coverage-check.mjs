@@ -1,5 +1,6 @@
 import { Check } from '../check.mjs'
 import { Scenarios } from '../evals/scenarios.mjs'
+import { TaskCaseSkills } from '../evals/task-case-skills.mjs'
 import { TaskCases } from '../evals/task-cases.mjs'
 import { RoutingCases } from '../routing/routing-cases.mjs'
 
@@ -12,7 +13,6 @@ export class CoverageCheck extends Check {
   static #ROUTING = 'evals/routing-cases.md'
   static #SCENARIOS = 'evals/scenarios.md'
   static #TASKS = 'evals/tasks'
-  static #SKILL_GRADER = 'Skill'
 
   #repository
 
@@ -32,6 +32,7 @@ export class CoverageCheck extends Check {
     const routing = this.#routing()
     const scenarios = this.#scenarios()
     const taskCases = TaskCases.of(this.#repository)
+      .map((taskCase) => new TaskCaseSkills(taskCase))
     let covered = 0
     for (const skill of skills) {
       const coreSkill = core.has(skill.path)
@@ -59,7 +60,7 @@ export class CoverageCheck extends Check {
       const taskCaseCount = coreSkill
         ? CoverageCheck.MIN_TASK_CASES
         : taskCases.filter((taskCase) =>
-          CoverageCheck.#namesSkill(taskCase, skill.name)).length
+          taskCase.names(skill.name)).length
       if (!coreSkill &&
         taskCaseCount < CoverageCheck.MIN_TASK_CASES) {
         report.error(
@@ -74,21 +75,6 @@ export class CoverageCheck extends Check {
     }
     // A skill that meets every minimum that applies to it is covered.
     report.count('skill(s) covered', covered)
-  }
-
-  static #namesSkill(taskCase, skillName) {
-    // Only a Skill grader says which loaded skill the case scored, and
-    // the name counts only as a whole name.
-    return taskCase.graders.some((grader) =>
-      grader.tool === CoverageCheck.#SKILL_GRADER &&
-      CoverageCheck.#namesAsWhole(grader.input_match, skillName))
-  }
-
-  static #namesAsWhole(inputMatch, skillName) {
-    if (typeof inputMatch !== 'string') return false
-    const escaped = skillName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-    return new RegExp(
-      `(?<![\\w-])${escaped}(?![\\w-])`).test(inputMatch)
   }
 
   #corePaths() {
