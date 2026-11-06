@@ -19,6 +19,10 @@ the task and names the skill that fits.
 Load the skill this index names before you answer: its rules and
 examples live there, not here.
 
+Code in a language that has its own skill, listed under
+Language skills, also needs that skill: load it before you
+write the code, whatever the size of the change.
+
 ## How much design a task warrants
 
 |Task|Use|Skip|
