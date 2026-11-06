@@ -129,8 +129,8 @@ Breaking one of these fails review, whatever the issue says.
   configuration file and no inline disable comment; rewrite the text
   instead. Lines stay within 80 characters, code blocks and tables
   included. The one exception is the default rule's own: a line may
-  run longer only where nothing after column 80 contains a space,
-  such as a long URL.
+  run longer only where no space sits at column 80 or later, such as
+  a long URL.
 - Every tracked file is in English.
 - Skill content under `plugins/` never cites: no book titles, author
   names, publishers, chapter numbers, editions, or years in
