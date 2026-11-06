@@ -3,7 +3,7 @@ name: oo-crossing-system-boundaries
 description: Use when an API or message must keep its shape as the model changes, when mapping partner data into the domain, or a contract needs a version.
 license: MIT
 metadata:
-  version: 0.16.1
+  version: 0.17.0
   pack: object-oriented-design-skills
 ---
 

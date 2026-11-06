@@ -3,7 +3,7 @@ name: oo-making-work-reliable
 description: Use when calls to another system hang, time out or fail midway, when a retry could do the work twice, or a process spans steps that may fail.
 license: MIT
 metadata:
-  version: 0.16.1
+  version: 0.17.0
   pack: object-oriented-design-skills
 ---
 

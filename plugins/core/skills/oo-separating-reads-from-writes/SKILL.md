@@ -3,7 +3,7 @@ name: oo-separating-reads-from-writes
 description: Use when screens need data shaped unlike the model, when reads slow down writes, or when weighing read models, projections or event sourcing.
 license: MIT
 metadata:
-  version: 0.16.1
+  version: 0.17.0
   pack: object-oriented-design-skills
 ---
 
