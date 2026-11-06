@@ -130,10 +130,11 @@ export class PluginEvalRun {
         prepared.cwd)
       const result = this.#result(prepared.resultFile)
       this.#accept(exitCode, result, output)
+      const version = this.#claudeVersion(result)
       const traces = this.#keepTraces(result, prepared.outputDir)
       this.#writeRun(result, prepared.outputDir)
       if (this.#options.arm === 'baseline') {
-        this.#writeBaselines(result)
+        this.#writeBaselines(result, version)
       }
       report.note(`results: ${prepared.outputDir}`)
       report.note(
@@ -258,6 +259,17 @@ export class PluginEvalRun {
       (reason === undefined ? '' : `: ${reason}`), 2)
   }
 
+  #claudeVersion(result) {
+    // The tool's version is what a stored baseline is reused on, so a result
+    // document that does not name it cannot be compared or stored.
+    if (typeof result.claudeVersion !== 'string' ||
+      result.claudeVersion === '') {
+      throw new RepoError(
+        'the result document holds no claudeVersion', 2)
+    }
+    return result.claudeVersion
+  }
+
   #keepTraces(result, outputDir) {
     const rows = this.#caseRows(result)
     let kept = 0
@@ -367,7 +379,7 @@ export class PluginEvalRun {
     return output.trim() !== ''
   }
 
-  #writeBaselines(result) {
+  #writeBaselines(result, version) {
     const rows = this.#caseRows(result)
     const directory = join(
       this.#repository.root,
@@ -381,11 +393,13 @@ export class PluginEvalRun {
         throw new RepoError(
           `${row.name}: a baseline run has no without arm`, 2)
       }
-      // The case hash keeps an edited case from reusing a stale baseline.
+      // The case hash keeps an edited case from reusing a stale baseline,
+      // and the version keeps one Claude Code version from replacing the
+      // runs another version stored for the same case text.
       const hash = this.#prepared.hashes[row.name]
       writeFileSync(
-        join(directory, `${row.name}-${hash}.json`),
-        `${JSON.stringify(runs, null, 2)}\n`)
+        join(directory, `${row.name}-${hash}-${version}.json`),
+        `${JSON.stringify({ claudeVersion: version, runs }, null, 2)}\n`)
     }
   }
 

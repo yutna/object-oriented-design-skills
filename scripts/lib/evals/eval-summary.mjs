@@ -18,7 +18,7 @@ export class EvalSummary extends Check {
   static #SUMMARY = 'summary.json'
   static #BASELINES = 'baselines'
   static #TRACES = 'traces'
-  static #HASHED = /^(.+)-([0-9a-f]{12})\.json$/
+  static #HASHED = /^(.+)-([0-9a-f]{12})(?:-(.+))?\.json$/
   static #FAMILIES = Object.freeze({
     q: 'question',
     t: 'task',
@@ -90,6 +90,7 @@ export class EvalSummary extends Check {
         throw new RepoError(
           `${piece.path}: result.json holds no cases`, 2)
       }
+      piece.claudeVersion = this.#claudeVersion(result)
       piece.graded = this.#pieceRuns(
         piece, result.cases, baselines, cases, noBaseline,
         storedBaselines)
@@ -125,6 +126,15 @@ export class EvalSummary extends Check {
         graded: piece.graded
       })))
     })
+  }
+
+  #claudeVersion(result) {
+    // A result that does not name its Claude Code version can still be
+    // counted, but no stored baseline can be compared with it.
+    return typeof result.claudeVersion === 'string' &&
+      result.claudeVersion !== ''
+      ? result.claudeVersion
+      : null
   }
 
   #pieces() {
@@ -211,26 +221,36 @@ export class EvalSummary extends Check {
   }
 
   #storedBaseline(piece, baselines, name) {
-    // A baseline piece keeps the newest stored file, as it always has; only
-    // a block piece takes the file whose case text it recorded.
+    // A stored file without a version cannot be matched, and a piece whose
+    // result names none takes no stored baseline at all.
+    const version = piece.claudeVersion
+    if (version === null) return null
+    // A baseline piece keeps the newest stored file of its version; only a
+    // block piece takes the file whose case text it recorded.
     if (piece.arm === 'baseline') {
-      return this.#newestBaseline(baselines, piece.model, name)
+      return this.#newestBaseline(
+        baselines, piece.model, name, version)
     }
     const hash = piece.hashes[name]
     if (typeof hash !== 'string') return null
     if (piece.model !== null) {
-      return baselines.get(`${piece.model}\0${name}\0${hash}`) ?? null
+      return baselines.get(
+        `${piece.model}\0${name}\0${hash}\0${version}`) ?? null
     }
     for (const baseline of baselines.values()) {
-      if (baseline.case === name && baseline.hash === hash) return baseline
+      if (baseline.case === name && baseline.hash === hash &&
+        baseline.version === version) {
+        return baseline
+      }
     }
     return null
   }
 
-  #newestBaseline(baselines, model, name) {
+  #newestBaseline(baselines, model, name, version) {
     let newest = null
     for (const baseline of baselines.values()) {
       if (baseline.case !== name) continue
+      if (baseline.version !== version) continue
       if (model !== null && baseline.model !== model) continue
       if (newest === null || baseline.mtime > newest.mtime) {
         newest = baseline
@@ -268,10 +288,11 @@ export class EvalSummary extends Check {
         const named = EvalSummary.#HASHED.exec(file)
         if (named === null) continue
         const path = join(modelDirectory, file)
-        // A stored file is named by the case text it was run on, so a piece
-        // takes it only when its recorded hash names that text.
-        const key = `${entry.name}\0${named[1]}\0${named[2]}`
+        // A stored file is named by the case text it was run on and the
+        // Claude Code version, so a piece takes it only when both match.
         const parsed = this.#json(path)
+        const version = this.#claudeVersion(parsed ?? {})
+        const key = `${entry.name}\0${named[1]}\0${named[2]}\0${version}`
         const runs = Array.isArray(parsed) ? parsed : parsed.runs
         if (!Array.isArray(runs)) {
           throw new RepoError(
@@ -281,6 +302,7 @@ export class EvalSummary extends Check {
           model: entry.name,
           case: named[1],
           hash: named[2],
+          version,
           mtime: statSync(path).mtimeMs,
           runs: Object.freeze(runs)
         }))

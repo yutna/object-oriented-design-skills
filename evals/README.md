@@ -33,8 +33,9 @@ moved the five-hour window under 1 point.
 **Tier 2, the quality of what changed.** This tier runs the plugin-eval
 pieces for the skills a milestone added or changed, three runs per case,
 with the block against a stored no-pack baseline. A stored baseline is
-used only for the case text it was run on, so a case whose text changed
-needs a new baseline run. Queue the pieces with
+used only for the case text and the Claude Code version it was run on,
+so a case whose text changed, or a newer Claude Code, needs a new
+baseline run. Queue the pieces with
 `node scripts/eval-plugin.mjs --queue`, then let the queue run them.
 `node scripts/eval-summary.mjs <results dir>` reads each piece as cases
 won and lost, names the failed graders, and lists the skills each run
@@ -47,8 +48,9 @@ five-hour window about 1 point and the seven-day window under 1 point;
 a blocked batch waits for quota and does not hold a milestone open.
 
 **Tier 3, the release sweep.** This tier runs every case in both arms,
-three runs each, with baselines reused when the agent model is
-unchanged. Queue a baseline sweep with `--arm baseline` first, then the
+three runs each, with baselines reused when the agent model and the
+Claude Code version are unchanged. Queue a baseline sweep with
+`--arm baseline` first, then the
 block sweep with `--arm block`; summarise the timestamp folder with
 `node scripts/eval-summary.mjs evals/results/<stamp>`. Read every losing
 case before changing anything, and rerun it in the next window. A clean
