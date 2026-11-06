@@ -5,6 +5,7 @@ import {
   existsSync,
   mkdirSync,
   readFileSync,
+  readdirSync,
   writeFileSync
 } from 'node:fs'
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
@@ -300,6 +301,13 @@ class RunFixture {
     CaseFixture.question(EvalRepositoryFixture.QUESTION)
   ], exitCode = 0 } = {}) {
     const repository = await EvalRepositoryFixture.create()
+    return RunFixture.shared(
+      repository, { result, options, cases, exitCode })
+  }
+
+  static shared(repository, { result, options = Options.block(), cases = [
+    CaseFixture.question(EvalRepositoryFixture.QUESTION)
+  ], exitCode = 0 } = {}) {
     return new RunFixture(repository, result, options, cases, exitCode)
   }
 
@@ -480,12 +488,17 @@ test('a baseline piece runs with-without and keeps its no-plugin runs',
         fixture.run.commandLine(),
         / --ablation with-without$/)
       fixture.run.execute(new Report())
-      const baseline = await readFile(join(
+      const directory = join(
         fixture.root,
-        'evals/results/baselines/claude-sonnet-5-5',
-        `${EvalRepositoryFixture.QUESTION}-${hash}.json`), 'utf8')
-      assert.deepEqual(
-        JSON.parse(baseline), result.cases[0].arms.without)
+        'evals/results/baselines/claude-sonnet-5-5')
+      const files = readdirSync(directory)
+      assert.deepEqual(files, [
+        `${EvalRepositoryFixture.QUESTION}-${hash}-2.1.308.json`
+      ])
+      const baseline = JSON.parse(await readFile(
+        join(directory, files[0]), 'utf8'))
+      assert.equal(baseline.claudeVersion, '2.1.308')
+      assert.deepEqual(baseline.runs, result.cases[0].arms.without)
       const run = JSON.parse(await readFile(
         join(fixture.run.resultsPath, 'run.json'), 'utf8'))
       assert.equal(run.arm, 'baseline')
@@ -494,6 +507,98 @@ test('a baseline piece runs with-without and keeps its no-plugin runs',
     } finally {
       await rm(scaffold, { recursive: true, force: true })
       await fixture.close()
+    }
+  })
+
+test('a baseline run stores the Claude Code version beside its runs',
+  async () => {
+    const scaffold = await mkdtemp(join(tmpdir(), 'e-'))
+    await mkdir(join(scaffold, 'out'), { recursive: true })
+    writeFileSync(
+      join(scaffold, 'out', 'trace.jsonl'),
+      '{"type":"assistant"}\n')
+    const result = SampleResult.withBaseline(scaffold)
+    result.claudeVersion = '2.1.311'
+    const fixture = await RunFixture.create({
+      result,
+      options: Options.baseline()
+    })
+    try {
+      const copy = fixture.run.command()[2]
+      const caseYaml = readFileSync(
+        join(copy, 'evals', EvalRepositoryFixture.QUESTION, 'case.yaml'))
+      const hash = createHash('sha256')
+        .update(caseYaml)
+        .digest('hex')
+        .slice(0, 12)
+      fixture.run.execute(new Report())
+      const directory = join(
+        fixture.root,
+        'evals/results/baselines/claude-sonnet-5-5')
+      assert.deepEqual(readdirSync(directory), [
+        `${EvalRepositoryFixture.QUESTION}-${hash}-2.1.311.json`
+      ])
+      const stored = JSON.parse(await readFile(
+        join(directory,
+          `${EvalRepositoryFixture.QUESTION}-${hash}-2.1.311.json`),
+        'utf8'))
+      assert.equal(stored.claudeVersion, '2.1.311')
+      assert.deepEqual(stored.runs, result.cases[0].arms.without)
+    } finally {
+      await rm(scaffold, { recursive: true, force: true })
+      await fixture.close()
+    }
+  })
+
+test('a result document with no Claude Code version is a tool break',
+  async () => {
+    const result = SampleResult.read()
+    delete result.claudeVersion
+    const fixture = await RunFixture.create({ result })
+    try {
+      assert.throws(
+        () => fixture.run.execute(new Report()),
+        (error) => error instanceof RepoError && error.exitCode === 2)
+    } finally {
+      await fixture.close()
+    }
+  })
+
+test('two Claude Code versions of one case text keep two baselines',
+  async () => {
+    const repository = await EvalRepositoryFixture.create()
+    const results = new Map()
+    try {
+      for (const version of ['2.1.308', '2.1.311']) {
+        const result = SampleResult.read()
+        result.claudeVersion = version
+        result.cases[0].arms.without = [
+          structuredClone(result.cases[0].arms.with[0])
+        ]
+        results.set(version, result)
+        const fixture = RunFixture.shared(repository, {
+          result,
+          options: Options.baseline()
+        })
+        fixture.run.execute(new Report())
+      }
+      const directory = join(
+        repository.root,
+        'evals/results/baselines/claude-sonnet-5-5')
+      const files = readdirSync(directory).sort()
+      assert.equal(files.length, 2)
+      for (const version of ['2.1.308', '2.1.311']) {
+        const file = files.find((name) =>
+          name.endsWith(`-${version}.json`))
+        assert.notEqual(file, undefined)
+        const stored = JSON.parse(
+          readFileSync(join(directory, file), 'utf8'))
+        assert.equal(stored.claudeVersion, version)
+        assert.deepEqual(
+          stored.runs, results.get(version).cases[0].arms.without)
+      }
+    } finally {
+      await repository.close()
     }
   })
 

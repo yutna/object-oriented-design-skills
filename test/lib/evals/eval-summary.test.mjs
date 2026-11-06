@@ -4,6 +4,7 @@ import {
   cpSync,
   mkdtempSync,
   readFileSync,
+  readdirSync,
   rmSync,
   writeFileSync
 } from 'node:fs'
@@ -24,6 +25,8 @@ class Fixture {
   static ROOT = join(process.cwd(), 'test', 'fixtures', 'eval-summary')
 
   static HASH = '0123456789ab'
+
+  static VERSION = '2.1.308'
 
   static QUESTION = 'q01-the-slot-rule-keeps-moving'
 
@@ -77,7 +80,20 @@ class Fixture {
     record.baselineHashes = Object.fromEntries(
       record.cases.map((name) => [name, Fixture.HASH]))
     writeFileSync(path, `${JSON.stringify(record, null, 2)}\n`)
+    Fixture.#versionBaselines(root)
     return root
+  }
+
+  static #versionBaselines(root) {
+    const directory = join(root, 'baselines', 'claude-sonnet-5-5')
+    for (const file of readdirSync(directory)) {
+      const path = join(directory, file)
+      const runs = JSON.parse(readFileSync(path, 'utf8'))
+      writeFileSync(path, `${JSON.stringify({
+        claudeVersion: Fixture.VERSION,
+        runs
+      }, null, 2)}\n`)
+    }
   }
 
   static #remove(root) {
@@ -91,6 +107,10 @@ class SummaryFixture {
   static OTHER = 'bbbbbbbbbbbb'
 
   static MODEL = 'claude-sonnet-5-5'
+
+  static VERSION = '2.1.311'
+
+  static OLDER = '2.1.308'
 
   static QUESTION = 'q01-the-slot-rule-keeps-moving'
 
@@ -107,7 +127,13 @@ class SummaryFixture {
     this.#root = root
   }
 
-  async piece({ name = 'piece', arm = 'block', hashes = null, cases }) {
+  async piece({
+    name = 'piece',
+    arm = 'block',
+    hashes = null,
+    claudeVersion = SummaryFixture.VERSION,
+    cases
+  }) {
     const directory = join(this.#root, name)
     await mkdir(directory, { recursive: true })
     const record = { arm, model: SummaryFixture.MODEL }
@@ -117,15 +143,30 @@ class SummaryFixture {
       `${JSON.stringify(record, null, 2)}\n`)
     await writeFile(
       join(directory, 'result.json'),
-      `${JSON.stringify({ schemaVersion: 1, cases }, null, 2)}\n`)
+      `${JSON.stringify({
+        schemaVersion: 1,
+        claudeVersion,
+        cases
+      }, null, 2)}\n`)
   }
 
-  async baseline({ name, hash, runs, mtime = null }) {
+  async baseline({
+    name,
+    hash,
+    runs,
+    mtime = null,
+    claudeVersion = SummaryFixture.VERSION,
+    versioned = false
+  }) {
     const directory = join(
       this.#root, 'baselines', SummaryFixture.MODEL)
     await mkdir(directory, { recursive: true })
-    const path = join(directory, `${name}-${hash}.json`)
-    await writeFile(path, `${JSON.stringify(runs, null, 2)}\n`)
+    const file = versioned
+      ? `${name}-${hash}-${claudeVersion}.json`
+      : `${name}-${hash}.json`
+    const path = join(directory, file)
+    const body = claudeVersion === null ? runs : { claudeVersion, runs }
+    await writeFile(path, `${JSON.stringify(body, null, 2)}\n`)
     if (mtime !== null) {
       const date = new Date(mtime)
       await utimes(path, date, date)
@@ -341,6 +382,132 @@ test('a matching stored baseline decides wins and losses', async () => {
     await fixture.close()
   }
 })
+
+test('a block piece takes a stored baseline of its Claude Code version',
+  async () => {
+    const fixture = await SummaryFixture.create()
+    const name = SummaryFixture.QUESTION
+    try {
+      await fixture.piece({
+        hashes: { [name]: SummaryFixture.HASH },
+        claudeVersion: SummaryFixture.VERSION,
+        cases: [CaseResult.row(name, {
+          with: [CaseResult.graded(true)]
+        })]
+      })
+      await fixture.baseline({
+        name,
+        hash: SummaryFixture.HASH,
+        runs: [CaseResult.graded(false)],
+        claudeVersion: SummaryFixture.VERSION,
+        versioned: true
+      })
+      const summary = fixture.summary()
+      assert.deepEqual(summary.wins.block, [name])
+      assert.equal(summary.cases[name].arms.none.graded, 1)
+      assert.equal(summary.noBaseline.includes(name), false)
+    } finally {
+      await fixture.close()
+    }
+  })
+
+test('a block piece ignores a baseline of another version or no version',
+  async () => {
+    const fixture = await SummaryFixture.create()
+    const other = SummaryFixture.QUESTION
+    const missing = SummaryFixture.TASK
+    try {
+      await fixture.piece({
+        hashes: {
+          [other]: SummaryFixture.HASH,
+          [missing]: SummaryFixture.OTHER
+        },
+        claudeVersion: SummaryFixture.VERSION,
+        cases: [
+          CaseResult.row(other, {
+            with: [CaseResult.graded(true)]
+          }),
+          CaseResult.row(missing, {
+            with: [CaseResult.graded(false)]
+          })
+        ]
+      })
+      await fixture.baseline({
+        name: other,
+        hash: SummaryFixture.HASH,
+        runs: [CaseResult.graded(false)],
+        claudeVersion: SummaryFixture.OLDER
+      })
+      await fixture.baseline({
+        name: missing,
+        hash: SummaryFixture.OTHER,
+        runs: [CaseResult.graded(true)],
+        claudeVersion: null
+      })
+      const summary = fixture.summary()
+      assert.deepEqual(summary.wins.block, [])
+      assert.deepEqual(summary.losses.block, [])
+      assert.equal(summary.cases[other].arms.none, undefined)
+      assert.equal(summary.cases[missing].arms.none, undefined)
+      assert.deepEqual(summary.noBaseline, [other, missing])
+      assert.ok(fixture.report().lines().includes(
+        `no baseline for this case text: ${other}, ${missing}`))
+    } finally {
+      await fixture.close()
+    }
+  })
+
+test('a baseline piece ignores a newer stored file of another version or none',
+  async () => {
+    // A stored file with no version is ignored as well, even when newest.
+    const fixture = await SummaryFixture.create()
+    const name = SummaryFixture.QUESTION
+    try {
+      await fixture.piece({
+        arm: 'baseline',
+        claudeVersion: SummaryFixture.VERSION,
+        cases: [CaseResult.row(name, {
+          with: [CaseResult.graded(true)],
+          without: [CaseResult.graded(false)]
+        })]
+      })
+      await fixture.baseline({
+        name,
+        hash: SummaryFixture.HASH,
+        runs: [
+          CaseResult.graded(true),
+          CaseResult.graded(true)
+        ],
+        claudeVersion: SummaryFixture.VERSION,
+        versioned: true,
+        mtime: 1000
+      })
+      await fixture.baseline({
+        name,
+        hash: SummaryFixture.OTHER,
+        runs: [
+          CaseResult.graded(false),
+          CaseResult.graded(false),
+          CaseResult.graded(false)
+        ],
+        claudeVersion: SummaryFixture.OLDER,
+        versioned: true,
+        mtime: 2000
+      })
+      await fixture.baseline({
+        name,
+        hash: SummaryFixture.OTHER,
+        runs: [CaseResult.graded(true)],
+        claudeVersion: null,
+        mtime: 3000
+      })
+      const summary = fixture.summary()
+      assert.equal(summary.cases[name].arms.none.graded, 2)
+      assert.equal(summary.cases[name].arms.none.passed, 2)
+    } finally {
+      await fixture.close()
+    }
+  })
 
 test('a block piece with no recorded hashes uses no stored baseline',
   async () => {
