@@ -66,13 +66,23 @@ test('a link line with a space after column 80 fails', () => {
   assert.equal(line.length, 86)
   const report = CheckRun.of(line)
   assert.deepEqual(report.lines(), [
-    `${ERROR}1: line is 86 characters with a space after column 80`,
+    `${ERROR}1: line is 86 characters with a space at or after column 80`,
     'failed: 1 error(s)'
   ])
 })
 
-test('a long line whose last space is at column 80 passes', () => {
+test('a long line whose last space is at column 80 fails', () => {
   const line = Fixture.lineOf(120, 80)
+  assert.equal(line.length, 120)
+  const report = CheckRun.of(line)
+  assert.deepEqual(report.lines(), [
+    `${ERROR}1: line is 120 characters with a space at or after column 80`,
+    'failed: 1 error(s)'
+  ])
+})
+
+test('a long line whose last space is at column 79 passes', () => {
+  const line = Fixture.lineOf(120, 79)
   assert.equal(line.length, 120)
   const report = CheckRun.of(line)
   assert.deepEqual(report.lines(), ['ok 1 markdown file(s)'])
@@ -97,7 +107,7 @@ test('the same long line below frontmatter fails', () => {
     Fixture.longLine()
   ].join('\n'))
   assert.deepEqual(report.lines(), [
-    `${ERROR}4: line is 150 characters with a space after column 80`,
+    `${ERROR}4: line is 150 characters with a space at or after column 80`,
     'failed: 1 error(s)'
   ])
 })
@@ -110,7 +120,7 @@ test('a long line inside a code fence fails', () => {
     '```'
   ].join('\n'))
   assert.deepEqual(report.lines(), [
-    `${ERROR}3: line is 150 characters with a space after column 80`,
+    `${ERROR}3: line is 150 characters with a space at or after column 80`,
     'failed: 1 error(s)'
   ])
 })
