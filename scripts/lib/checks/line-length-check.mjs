@@ -28,12 +28,12 @@ export class LineLengthCheck extends Check {
         index += 1) {
         const line = lines[index]
         if (line.length <= LineLengthCheck.#LIMIT) continue
-        // A long line passes only when nothing after column 80 holds a
-        // space, such as a long URL.
-        if (!line.slice(LineLengthCheck.#LIMIT).includes(' ')) continue
+        // A long line passes only when no space sits at column 80 or
+        // later, such as a long URL.
+        if (!line.slice(LineLengthCheck.#LIMIT - 1).includes(' ')) continue
         report.error(
           `${path}:${index + 1}`,
-          `line is ${line.length} characters with a space after ` +
+          `line is ${line.length} characters with a space at or after ` +
           `column ${LineLengthCheck.#LIMIT}`)
       }
     }
