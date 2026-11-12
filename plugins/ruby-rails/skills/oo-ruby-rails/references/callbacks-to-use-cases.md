@@ -57,7 +57,8 @@ Both models keep their columns and hold no callback. The fence shows the
 two models in one file for reading. A save of either stores its row
 under its id in its own table, inside the transaction the caller opens.
 `CallbackTask` is one row inside the request's aggregate, one task for
-one request, so the use case changes one aggregate.
+one request, so the use case creates one aggregate and changes no
+existing one.
 
 ```ruby
 class RequestCallback

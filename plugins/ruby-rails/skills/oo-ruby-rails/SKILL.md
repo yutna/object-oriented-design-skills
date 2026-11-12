@@ -120,11 +120,10 @@ application's rules are the shapes this skill names. Rails 8.1 on Ruby
    validations with no table behind it; `ActiveModel::Model` includes
    `ActiveModel::API`, so it works with `form_with` and validations,
    and the guide calls it the recommended way to write a model-like
-   Ruby class. The exception is a request that maps onto no model of
-   its own but changes exactly one row through that row's model action
-   method: the controller may send the model that one message, because
-   the model keeps the rule and a service object would decide nothing.
-   The controller still sends no `update(status: ...)` (rule 3).
+   Ruby class. The exception is a request that maps onto no model and
+   changes nothing, such as a search that applies no business rule: it
+   needs no service or form object, because a read query answers it and
+   the read decides no rule (rule 5).
 
 5. Default. **Name each read for the question it answers, in a scope or
    a query object, and keep `where` chains out of controllers and
