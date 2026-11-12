@@ -82,8 +82,9 @@ application's rules are the shapes this skill names. Rails 8.1 on Ruby
    `transaction.after_commit` runs after the transaction has committed.
    The callbacks guide says `after_commit` and `after_rollback` do not
    execute until the database changes have been committed or rolled
-   back, and that they are most useful when a model must reach a system
-   outside the database transaction.
+   back, which is when a model's commit callbacks run. Neither callback
+   is where the outside work goes; the use case's
+   `transaction.after_commit` is.
 
 3. Rule. **Change state that a rule guards only in a model method named
    for the action, which checks the rule and raises before anything
@@ -129,7 +130,7 @@ application's rules are the shapes this skill names. Rails 8.1 on Ruby
    a query object, and keep `where` chains out of controllers and
    views, as `oo-designing-repositories` rules 3 and 4 and
    `oo-layering-the-system` rule 6 ask.** A scope reads as one clinic
-   question at its call site, so `Appointment.forClinicianOn` says what
+   question at its call site, so `Appointment.for_clinician_on` says what
    comes back, while a `where` in a controller leaves the question
    spelled in the edge and each caller writes its own version of it. A
    query object carries criteria that combine freely. A scope always
@@ -263,7 +264,7 @@ evidence: a measurement, a reproducible bug, or a failing test.
 - A service object that changes several aggregates in one transaction.
 - A form object whose `save` writes models with no transaction.
 - A model whose rules no longer match the columns it mirrors.
-- An `after_commit` that holds a business rule instead of outside work.
+- A callback that holds a business rule, whatever its timing.
 
 ## Common mistakes
 
@@ -279,8 +280,7 @@ evidence: a measurement, a reproducible bug, or a failing test.
   transaction.
 - Using a scope whose name states a rule, such as `available`, and
   letting a caller decide what the rule means.
-- Treating `after_commit` as a place for a rule rather than for work
-  after the commit.
+- Treating `after_commit` as a place for a business rule.
 - Keeping every rule on one large model because Active Record makes
   saving convenient.
 
