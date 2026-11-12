@@ -93,9 +93,10 @@ middleware that grows the business logic. ASP.NET Core 10 and EF Core
 
    The exception is a type the framework builds for a request without a
    registration of its own, such as an MVC controller: ASP.NET Core
-   does not register controllers as services by default, resolves their
-   constructor parameters from the container, and the controller names
-   no container.
+   does not register controllers as services by default, the framework's
+   activator resolves their constructor parameters from the container,
+   and the root never constructs the controller. The controller names no
+   container.
 
 3. Rule. **Keep an entity's invariants under EF Core: private setters,
    state changed only through methods named for domain actions that
