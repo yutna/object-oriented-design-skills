@@ -1,0 +1,15 @@
+{
+  "name": "object-oriented-design-ruby-rails",
+  "version": "0.17.1",
+  "description": "Object-oriented design rules kept in Ruby on Rails: models that keep their rules, callbacks with no hidden effects, and service, form and query objects",
+  "author": {
+    "name": "Yutthana Siphuengchai",
+    "url": "https://github.com/yutna"
+  },
+  "homepage": "https://github.com/yutna/object-oriented-design-skills",
+  "repository": "https://github.com/yutna/object-oriented-design-skills",
+  "license": "MIT",
+  "keywords": ["object-oriented-design", "ruby", "rails"],
+  "skills": "./skills/",
+  "dependencies": ["object-oriented-design-skills", "object-oriented-design-ruby"]
+}

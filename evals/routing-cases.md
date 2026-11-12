@@ -170,6 +170,10 @@ Spring Data JPA Appointment is all setters, can it own rules? -> oo-java-spring
 SlotService: @ApplicationScoped CDI bean or @Stateless EJB?->oo-java-jakarta-ee
 @Stateless threw SlotTaken but the appointment still committed->oo-java-jakarta-ee
 JTA tx across 3 EJBs updates slot, patient and clinician, ok?->oo-java-jakarta-ee
+Rails Appointment model is 600 lines, split into what? -> oo-ruby-rails
+Rails: BookSlot service object or a method on Slot model? -> oo-ruby-rails
+after_create callback on Appointment sends SMS, keep or move? -> oo-ruby-rails
+in a Rails app, Struct or Data.define for a ClinicHours value? -> oo-ruby
 ```
 
 ## Known misses

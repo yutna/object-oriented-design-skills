@@ -1,0 +1,51 @@
+schema_version: "1.1"
+name: t11-ruby-rails-booking-audit
+description: >-
+  Task (oo-ruby-rails rule 2): the booking's audit entry is recorded
+  by the code that books, never by a model callback.
+tags: [task]
+context:
+  scaffold_script: fixture-ruby-rails.sh
+execution:
+  prompt: |
+    Every booking must now leave an entry in the clinic's audit log
+    through `AuditEntry.record`. Make the change.
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  max_turns: 30
+  timeout_seconds: 600
+graders:
+  - name: loaded-any-skill
+    type: tool_used
+    tool: Skill
+  - name: loaded-ruby-rails
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?oo-ruby-rails"'
+  - name: loaded-ruby
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?oo-ruby"'
+  - name: no-audit-callback
+    type: llm
+    focus: { source: file, path: app/models/appointment.rb }
+    criteria: |
+      You are grading an Active Record model after a change that records
+      every booking in an audit log.
+
+      PASS if `Appointment` declares no callback that records the audit
+      entry: no `after_create`, `after_save`, `after_commit`,
+      `after_create_commit`, `before_save` or other callback that calls
+      `AuditEntry`, and it includes no module that adds one. FAIL if any
+      callback, declared here or in an included module, records it.
+  - name: booking-records-it
+    type: llm
+    focus: { source: file, path: app/controllers/appointments_controller.rb }
+    criteria: |
+      You are grading a controller after a change that records every
+      booking in an audit log.
+
+      PASS if the `create` action records the audit entry for the booking
+      itself, or calls an object by name that books and records it, and
+      the entry is recorded only for a booking that was saved. FAIL if
+      the action leaves the recording to the model, or records an entry
+      for a booking that failed to save.

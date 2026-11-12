@@ -100,7 +100,7 @@ is missing, scores zero, or ranks outside the allowed top, and prints
 the first-place count. `--noise` also prints skills that reach the top
 three for cases they do not own.
 
-`routing-cases.md` holds 161 routing cases.
+`routing-cases.md` holds 165 routing cases.
 
 What it proves: the descriptions contain the words people use for the
 problems the skills own. What it does not prove: that an agent chooses
@@ -144,4 +144,4 @@ case on a fixture in its language, and `CoverageCheck` fails a language
 skill without one. A language task case runs with its language skill
 installed beside the core skills, so the case can measure that skill.
 
-`tasks/` holds 12 task cases.
+`tasks/` holds 13 task cases.
