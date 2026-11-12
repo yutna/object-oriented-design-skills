@@ -47,6 +47,11 @@ inside that transaction.
 
 ```ruby
 class CallbackRequest < ApplicationRecord
+  def plan_callback(at:)
+    CallbackTask.create!(
+      callback_request_id: id,
+      due_at: at + 3600)
+  end
 end
 
 class CallbackTask < ApplicationRecord
@@ -58,7 +63,8 @@ two models in one file for reading. A save of either stores its row
 under its id in its own table, inside the transaction the caller opens.
 `CallbackTask` is one row inside the request's aggregate, one task for
 one request, so the use case creates one aggregate and changes no
-existing one.
+existing one. `plan_callback` is the root's message that stores the
+task.
 
 ```ruby
 class RequestCallback
@@ -71,9 +77,7 @@ class RequestCallback
       request = CallbackRequest.create!(
         patient_id: patient_id,
         requested_at: at)
-      CallbackTask.create!(
-        callback_request_id: request.id,
-        due_at: at + 3600)
+      request.plan_callback(at: at)
       transaction.after_commit do
         @texts.confirm(patient_id, at)
       end
@@ -87,7 +91,7 @@ end
 clinic's `TextMessages` sender through its constructor and never builds
 it. `call` opens one transaction; inside it `CallbackRequest.create!`
 stores a request under the id the database assigns, and
-`CallbackTask.create!` stores a task under that request's id, both in
+`request.plan_callback` stores a task under that request's id, both in
 the clinic's database. `transaction.after_commit` registers the send on
 that transaction, so `@texts.confirm` runs only after the transaction
 commits. If the transaction rolls back, neither row is stored and the
