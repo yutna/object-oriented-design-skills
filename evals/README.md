@@ -143,5 +143,7 @@ copied from `evals/fixture-<name>/`. Each language skill has one task
 case on a fixture in its language, and `CoverageCheck` fails a language
 skill without one. A language task case runs with its language skill
 installed beside the core skills, so the case can measure that skill.
+A framework task case also names its base language skill, so both are
+installed.
 
 `tasks/` holds 15 task cases.

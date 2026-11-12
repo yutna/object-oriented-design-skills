@@ -34,6 +34,19 @@ Each language plugin is installed beside the core plugin:
 /plugin install object-oriented-design-ruby@object-oriented-design-skills
 ```
 
+Each framework plugin installs its language plugin and the core
+plugin with it, through the plugin's `dependencies` (checked on
+Claude Code 2.1.311). On a version that does not install them,
+install the language and core plugins as well:
+
+```text
+/plugin install object-oriented-design-java-spring@object-oriented-design-skills
+/plugin install object-oriented-design-java-jakarta-ee@object-oriented-design-skills
+/plugin install object-oriented-design-ruby-rails@object-oriented-design-skills
+/plugin install object-oriented-design-csharp-aspnet@object-oriented-design-skills
+/plugin install object-oriented-design-python-django@object-oriented-design-skills
+```
+
 A plugin install prints no `CLAUDE.md` block. A project that wants an
 agent to know the pack is there copies the block from
 [claude-md-block.md](plugins/core/skills/oo-design/references/claude-md-block.md)
@@ -56,11 +69,13 @@ On Windows:
 ```
 
 The scripts accept `--plugin <name>` (repeatable), `--all`, `--force`
-and `--dry-run`. With no selection they use the core plugin. They copy
-a skill when the name is free. They skip a skill this pack already
-installed unless `--force` replaces it. They refuse a name that belongs
-to another pack or claims no pack, and leave it alone. A copy prints
-`copied`, a skip prints `skipped`, and a refusal prints an error.
+and `--dry-run`. With no selection they use the core plugin. They do
+not follow a plugin's dependencies: name a framework plugin's
+language plugin and the core plugin too. They copy a skill when the
+name is free. They skip a skill this pack already installed unless
+`--force` replaces it. They refuse a name that belongs to another pack
+or claims no pack, and leave it alone. A copy prints `copied`, a skip
+prints `skipped`, and a refusal prints an error.
 
 The script also prints the `CLAUDE.md` block to paste into a project,
 so an agent working there knows the pack is available.
