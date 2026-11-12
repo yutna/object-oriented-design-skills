@@ -157,8 +157,9 @@ application's rules are the shapes this skill names. Rails 8.1 on Ruby
 ## Pattern
 
 `Consent` records a patient's consent to a treatment. It is an Active
-Record model whose status a rule guards: only a pending consent may be
-given, and only a given consent may be withdrawn. The first fence is a
+Record model with `status`, `given_at` and `withdrawn_at` columns, and
+its status a rule guards: only a pending consent may be given, and only
+a given consent may be withdrawn. The first fence is a
 controller that decides both rules and writes the status itself,
 including one path with `update_column`. The second fence moves each
 check into the model's action method and calls it from a service

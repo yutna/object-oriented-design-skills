@@ -32,11 +32,13 @@ class CallbackTask < ApplicationRecord
 end
 ```
 
-`CallbackRequest` is the Active Record model for the request, and
-`CallbackTask` is the desk's row. `after_create` runs both callbacks
-after the request row is inserted but while the save's transaction is
-open. `create_callback_task` stores a task under the request's id, and
-`send_confirmation` builds a sender and sends before the commit. If a
+`CallbackRequest` is the Active Record model for the request, with
+`patient_id` and `requested_at` columns, and `CallbackTask` is the
+desk's row, with `callback_request_id` and `due_at` columns.
+`after_create` runs both callbacks after the request row is inserted but
+while the save's transaction is open. `create_callback_task` stores a
+task under the request's id, and `send_confirmation` builds a sender and
+sends before the commit. If a
 later step rolls the save back, the task goes with it and the text has
 already gone out. The fence stores a request row under its id and a task
 row under that request's id, in the clinic's database, inside the
