@@ -1,5 +1,8 @@
 import { Cli } from './lib/cli.mjs'
 import { CheckSuite } from './lib/checks/check-suite.mjs'
+import {
+  FrameworkPluginCheck
+} from './lib/checks/framework-plugin-check.mjs'
 import { FrontmatterCheck } from './lib/checks/frontmatter-check.mjs'
 import { LinkCheck } from './lib/checks/link-check.mjs'
 import { ListingBudgetCheck } from './lib/checks/listing-budget-check.mjs'
@@ -15,6 +18,7 @@ if (import.meta.main) {
   await new Cli(process).run(new CheckSuite('validate-skills', [
     new FrontmatterCheck(repository),
     new ManifestCheck(repository),
+    new FrameworkPluginCheck(repository),
     new ListingBudgetCheck(repository),
     new PinnedDependencyCheck(repository),
     new SkillShapeCheck(repository),

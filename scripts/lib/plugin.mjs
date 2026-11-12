@@ -39,6 +39,12 @@ export class Plugin {
     return this.#directory
   }
 
+  get dependencies() {
+    const dependencies = this.#manifest.dependencies
+    return Object.freeze(
+      Array.isArray(dependencies) ? [...dependencies] : [])
+  }
+
   skills() {
     const directory = join(this.#directory, 'skills')
     if (!existsSync(directory)) return []
