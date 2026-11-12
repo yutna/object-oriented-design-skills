@@ -1,0 +1,18 @@
+{
+  "name": "object-oriented-design-csharp-aspnet",
+  "version": "0.17.1",
+  "description": "Object-oriented design rules kept in ASP.NET Core: service lifetimes, EF Core entities that keep their rules, one unit of work per use case, and endpoints at the edge",
+  "author": {
+    "name": "Yutthana Siphuengchai",
+    "url": "https://github.com/yutna"
+  },
+  "homepage": "https://github.com/yutna/object-oriented-design-skills",
+  "repository": "https://github.com/yutna/object-oriented-design-skills",
+  "license": "MIT",
+  "keywords": ["object-oriented-design", "csharp", "aspnet"],
+  "skills": "./skills/",
+  "dependencies": [
+    "object-oriented-design-skills",
+    "object-oriented-design-csharp"
+  ]
+}
