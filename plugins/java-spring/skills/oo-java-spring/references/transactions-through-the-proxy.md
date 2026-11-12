@@ -179,6 +179,6 @@ commits when `sign` returns; then it calls `NoteDeliveryService.deliver`
 through that bean's proxy, which opens a second transaction and changes
 only the delivery. The second transaction starts only after the first has
 committed. If the delivery fails, its transaction rolls back: the note
-stays signed and no delivery is stored. The fence stores nothing. Each
-unit changes one aggregate in its own transaction, and that state keeps
-rule 3.
+stays signed and no delivery is stored. It stores only through those
+two calls. Each unit changes one aggregate in its own transaction, and
+that state keeps rule 3.
