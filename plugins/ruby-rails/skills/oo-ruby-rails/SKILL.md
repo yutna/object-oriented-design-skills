@@ -79,12 +79,11 @@ application's rules are the shapes this skill names. Rails 8.1 on Ruby
    the transaction back, which shows the callback runs before the
    commit. The use case calls the second write and the outside work
    itself. When the work is for another system, it waits:
-   `transaction.after_commit` runs after the transaction has committed,
-   and a job enqueued after the transaction block has returned starts
-   after that commit. The callbacks guide says `after_commit` and
-   `after_rollback` do not execute until the database changes have been
-   committed or rolled back, and that they are most useful when a model
-   must reach a system outside the database transaction.
+   `transaction.after_commit` runs after the transaction has committed.
+   The callbacks guide says `after_commit` and `after_rollback` do not
+   execute until the database changes have been committed or rolled
+   back, and that they are most useful when a model must reach a system
+   outside the database transaction.
 
 3. Rule. **Change state that a rule guards only in a model method named
    for the action, which checks the rule and raises before anything
