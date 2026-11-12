@@ -1,0 +1,15 @@
+{
+  "name": "object-oriented-design-python-django",
+  "version": "0.17.1",
+  "description": "Object-oriented design rules kept in Django: models that keep their rules, no business logic in views or signals, and apps as modules",
+  "author": {
+    "name": "Yutthana Siphuengchai",
+    "url": "https://github.com/yutna"
+  },
+  "homepage": "https://github.com/yutna/object-oriented-design-skills",
+  "repository": "https://github.com/yutna/object-oriented-design-skills",
+  "license": "MIT",
+  "keywords": ["object-oriented-design", "python", "django"],
+  "skills": "./skills/",
+  "dependencies": ["object-oriented-design-skills", "object-oriented-design-python"]
+}
