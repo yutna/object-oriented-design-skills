@@ -1,16 +1,16 @@
 # Refusals That Roll Back
 
 This file follows rule 4 through one use case: a clinician records a
-visit on a scheduled appointment. The first version uses a
-container-managed enterprise bean, stores the visit and then asks the
+visit on a scheduled appointment. The first version uses a CDI bean
+whose `@Transactional` method stores the visit and then asks the
 appointment to complete; the appointment refuses because it is already
 completed, and the checked exception commits the store. The change asks
-the appointment first and marks the refusal to roll back, so a refusal
-leaves nothing written and a later refusal after a store undoes it.
+the appointment first and names the refusal in `rollbackOn`, so a
+refusal leaves nothing written and a later refusal after a store undoes
+it.
 
 - [The types](#the-types)
 - [The use case as it is](#the-use-case-as-it-is)
-- [The refusal after the change](#the-refusal-after-the-change)
 - [The use case after the change](#the-use-case-after-the-change)
 
 ## The types
@@ -93,12 +93,16 @@ public class VisitAlreadyRecorded extends Exception {
 }
 ```
 
+`VisitAlreadyRecorded` is the aggregate's checked refusal. It imports
+nothing from Jakarta: the domain type carries no container annotation.
+
 ```java
-import jakarta.ejb.Stateless;
+import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import java.time.Instant;
 
-@Stateless
+@Dependent
 public class VisitRecording {
     private final AppointmentStore appointments;
 
@@ -111,6 +115,7 @@ public class VisitRecording {
         this.appointments = appointments;
     }
 
+    @Transactional
     public void record(long appointmentId, Instant at)
             throws VisitAlreadyRecorded {
         ScheduledAppointment appointment =
@@ -124,54 +129,36 @@ public class VisitRecording {
 }
 ```
 
-`VisitRecording` is the use case, and the container manages its
-transaction: `@Stateless` is container-managed by default (Jakarta
-Enterprise Beans 4.0 section 8.3.1), and `record` gets `REQUIRED`
-because no transaction attribute is given (section 8.3.7). The public
-no-argument constructor is the enterprise bean container's requirement;
-the `@Inject` constructor receives the store. The class is non-final
-because the enterprise bean container requires a non-final class,
-which relaxes `oo-java` rule 7.
+`VisitRecording` is the use case as a CDI bean. It declares the
+`@Dependent` scope (CDI 4.1 section 2.4.4), and `@Transactional` is a
+bound interceptor, so CDI 4.1 section 3.10 asks its bean type to be
+proxyable. The class is non-final and keeps a non-private no-argument
+constructor that no code of yours calls, which relaxes `oo-java` rule
+7; the proxy needs both. The `@Inject` constructor receives the store.
 
-`record` loads the scheduled appointment by its id, adds a `VisitRecord`
-inside it and stores the whole appointment through `AppointmentStore`
-under the appointment's id, in the appointment table and the visit
-record table, inside the container-managed transaction the `@Stateless`
-bean starts. The appointment is already completed, so `complete` refuses
-with `VisitAlreadyRecorded` after the store. The exception is a checked
-exception listed in `record`'s `throws` clause, so it is an application
-exception, and its class has no `@ApplicationException(rollback =
-true)`: the container does not mark the transaction for rollback and
-commits the visit record (section 9.2.1).
-
-## The refusal after the change
-
-```java
-import jakarta.ejb.ApplicationException;
-
-@ApplicationException(rollback = true)
-public final class VisitAlreadyRecorded extends Exception {
-    public VisitAlreadyRecorded(Long appointmentId) {
-        super("appointment " + appointmentId + " already recorded");
-    }
-}
-```
-
-The refusal is the same checked exception with
-`@ApplicationException(rollback = true)`. The annotation sits on the
-exception class, so the container marks the transaction for rollback
-when a container-managed enterprise bean method throws it (section
-9.2.1), and a refusal raised after a store undoes the store. The class
-is final, which keeps `oo-java` rule 7.
+`record` runs in one container transaction that `@Transactional` starts
+with `TxType.REQUIRED` (Jakarta Transactions 2.0 section 3.7). It loads
+the scheduled appointment by its id, adds a `VisitRecord` inside it,
+and stores the whole appointment through `AppointmentStore` under the
+appointment's id, in the appointment table and the visit record table,
+inside that transaction. The appointment is already completed, so
+`complete` refuses with `VisitAlreadyRecorded` after the store. The
+refusal is a checked exception and `record` names no `rollbackOn`, so
+the transactional interceptor does not mark the transaction for
+rollback (section 3.7), and the container commits the visit record.
 
 ## The use case after the change
 
+The refusal does not change: it is the `VisitAlreadyRecorded` above,
+with no Jakarta import and no container annotation.
+
 ```java
-import jakarta.ejb.Stateless;
+import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import java.time.Instant;
 
-@Stateless
+@Dependent
 public class VisitRecording {
     private final AppointmentStore appointments;
 
@@ -184,6 +171,7 @@ public class VisitRecording {
         this.appointments = appointments;
     }
 
+    @Transactional(rollbackOn = VisitAlreadyRecorded.class)
     public void record(long appointmentId, Instant at)
             throws VisitAlreadyRecorded {
         ScheduledAppointment appointment =
@@ -197,14 +185,20 @@ public class VisitRecording {
 }
 ```
 
-`record` loads the appointment, asks it to complete first, then adds the
-visit and stores the whole appointment under the appointment's id, in
-the appointment table and the visit record table, inside the same
-container-managed transaction. A refusal from `complete` happens before
-the visit is added or stored, so no write happens; the exception's
-annotation also makes a refusal raised after the store roll the
-transaction back, so the visit and the completion are not stored. If
-the store fails, the transaction rolls back the appointment's
-completion too, and the two changes commit or fail together. The state
-keeps rule 4: a refusal before the write leaves nothing written, and
-the annotated refusal makes a later refusal undo the write.
+`VisitRecording` is the same bean: `@Dependent`, non-final and with a
+non-private no-argument constructor because its `@Transactional` method
+is a bound interceptor (CDI 4.1 section 3.10), which relaxes `oo-java`
+rule 7.
+
+`record` loads the appointment, asks it to complete before anything
+changes, then adds the visit and stores the whole appointment through
+`AppointmentStore` under the appointment's id, in the appointment table
+and the visit record table, inside the same container transaction. A
+refusal from `complete` happens before the visit is added or stored, so
+no write happens. The `rollbackOn` element names `VisitAlreadyRecorded`;
+it is the guard for a refusal that comes after a change, and the order
+above keeps this use case's refusal before the write. If the store
+fails, the transaction rolls back the appointment's completion too, and
+the two changes commit or fail together. The state keeps rule 4: a
+refusal before the write leaves nothing written, and a refusal that
+comes after a change rolls the transaction back.

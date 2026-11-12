@@ -54,17 +54,20 @@ not.
 
 1. Rule. **Inject every collaborator through one `@Inject` constructor:
    no field injection, and no `CDI.current()` or JNDI lookup in domain
-   code; a normal-scoped bean also keeps the non-private no-argument
-   constructor its client proxy needs, which no code of yours calls:
+   code; a normal-scoped bean, or one with a bound interceptor such as
+   `@Transactional`, also keeps the non-private no-argument constructor
+   its proxy needs, which no code of yours calls:
    `oo-inverting-dependencies` rules 2 and 5.** The bean constructor is
    the one annotated `@Inject`, and two such constructors are a
-   definition error (CDI 4.1 section 3.5.1). A normal-scoped bean is
-   reached through a client proxy, and CDI 4.1 section 3.10 treats a
-   class without a non-private no-argument constructor as unproxyable,
-   so the bean keeps one that only the container calls. An enterprise
-   bean keeps the public no-argument constructor its container requires
-   (Jakarta Enterprise Beans 4.0 section 4.9.2) and receives its
-   collaborators through the `@Inject` constructor.
+   definition error (CDI 4.1 section 3.5.1). CDI 4.1 section 3.10 asks
+   a bean type to be proxyable when the bean requires a client proxy or
+   has a bound interceptor, and a class without a non-private
+   constructor with no parameters is not proxyable, so a normal-scoped
+   bean and a bean with `@Transactional` both keep one that only the
+   container calls. An enterprise bean keeps the public no-argument
+   constructor its container requires (Jakarta Enterprise Beans 4.0
+   section 4.9.2) and receives its collaborators through the `@Inject`
+   constructor.
 
 2. Default. **Keep domain classes free of CDI and enterprise bean
    annotations, and make them in `@Produces` methods of one producer
@@ -101,32 +104,39 @@ not.
    as `oo-working-within-a-framework` rule 4 asks, not class by class.
 
 4. Rule. **Let a refusal leave nothing written: refuse before anything
-   changes, and where a refusal can come after a change, make it roll
-   back, because a checked exception from a container-managed
-   enterprise bean method commits unless its class is
-   `@ApplicationException(rollback = true)`, and `@Transactional` rolls
-   back on a checked exception only when `rollbackOn` names it:
-   `oo-designing-failure-behaviour` rule 4, `oo-taming-persistence`
-   rule 4, `oo-designing-aggregates` rule 4.** A checked exception
-   listed in a session bean's `throws` clause is an application
-   exception, and an application exception does not mark the
-   transaction for rollback unless its class carries the annotation
-   (Jakarta Enterprise Beans 4.0 section 9.2.1). A `@Transactional`
-   method marks the transaction for rollback on a `RuntimeException` by
-   default and not on a checked exception, unless `rollbackOn` names it
-   (Jakarta Transactions 2.0 section 3.7). Both paths otherwise leave
-   the write committed.
+   changes, and where a refusal can come after a change, make the
+   transaction roll back without putting a container annotation on the
+   domain's refusal, because a checked exception commits by default: on
+   a CDI bean name the refusal in `@Transactional`'s `rollbackOn`, and
+   in a container-managed enterprise bean mark the transaction for
+   rollback through the bean's context before the refusal leaves the
+   method: `oo-designing-failure-behaviour` rule 4,
+   `oo-taming-persistence` rule 4, `oo-designing-aggregates` rule 4.**
+   A `@Transactional` method marks the transaction for rollback on a
+   `RuntimeException` by default and not on a checked exception, unless
+   `rollbackOn` names it (Jakarta Transactions 2.0 section 3.7). A
+   container-managed enterprise bean calls `setRollbackOnly` on its
+   `EJBContext` to mark the transaction such that it can never commit,
+   and the spec names that call as the step before throwing an
+   application exception that is not specified to roll back (Jakarta
+   Enterprise Beans 4.0 section 8.3.4.2); a checked exception in the
+   bean's business method is an application exception and does not roll
+   back on its own (section 9.2.1). Both paths otherwise leave the
+   write committed.
 
 5. Rule. **Reach a method that needs its own transaction or interceptor
    through an injected reference to another bean, because a call
    through `this` is a plain Java call that no interceptor sees:
    `oo-placing-domain-logic` rule 2, `oo-taming-persistence` rule 4.**
-   CDI 4.1 section 7.2 says a method invocation passes through method
-   interceptors if, and only if, it is a business method invocation,
-   and the application's call on `this` is a plain Java call. The
-   transaction or interceptor advice runs only when the call enters a
-   bean reference, so a unit that needs its own transaction lives on
-   another bean and the caller reaches it through the injected
+   CDI 4.1 section 7.2 treats a method invocation as a business method
+   invocation when the application invokes a method of a bean through a
+   contextual reference to the bean, and says an invocation that is not
+   a business method invocation is treated as a normal Java method call
+   and is not intercepted by the container. A call on `this` does not
+   pass through a contextual reference, so no interceptor sees it, and
+   the transaction or interceptor advice runs only when the call enters
+   a bean reference. A unit that needs its own transaction therefore
+   lives on another bean and the caller reaches it through the injected
    reference.
 
 6. Default. **A Jakarta Persistence entity that is a domain object
@@ -150,20 +160,22 @@ not.
    other caller still uses the action methods that name the change.
 
 7. Rule. **Leave non-final exactly the classes the container or the
-   provider subclasses, a normal-scoped bean class, a class with a
-   bound interceptor such as `@Transactional`, and an entity, and say
-   beside each that it relaxes `oo-java` rule 7; a domain class made by
-   a producer method that declares no scope keeps that rule, because a
-   `@Dependent` bean needs no client proxy: `oo-java` rule 7,
+   provider subclasses or requires open, a normal-scoped bean class, a
+   class with a bound interceptor such as `@Transactional`, an
+   enterprise bean class, and an entity, and say beside each that it
+   relaxes `oo-java` rule 7; a domain class made by a producer method
+   that declares no scope keeps that rule, because a `@Dependent` bean
+   needs no client proxy: `oo-java` rule 7,
    `oo-honouring-substitutability` rule 5.** CDI 4.1 section 3.10
    treats a final class as unproxyable when the bean type needs a
    client proxy or has a bound interceptor, and section 5.4 says a
    client proxy is never required for a `@Dependent` bean. A producer
    method that declares no scope produces a `@Dependent` bean (section
    2.4.4), so the domain class it returns may stay final. Jakarta
-   Persistence 3.2 section 2.1 requires an entity to be non-final. The
-   sentence beside each non-final class in the code says which case it
-   is.
+   Enterprise Beans 4.0 section 4.9.2 requires a session bean class to
+   be public, not final and not abstract. Jakarta Persistence 3.2
+   section 2.1 requires an entity to be non-final. The sentence beside
+   each non-final class in the code says which case it is.
 
 ## Pattern
 
@@ -269,8 +281,8 @@ evidence: a measurement, a reproducible bug, or a failing test.
   `rollbackOn`.
 - A call through `this` to a method that needs its own transaction or
   interceptor.
-- A final class that is a normal-scoped bean or carries
-  `@Transactional`.
+- A final class that is a normal-scoped bean, carries
+  `@Transactional`, or is a session bean.
 - A JPA entity with a public no-argument constructor or a setter.
 - A producer method for a domain class that declares a normal scope
   while the class is final.
