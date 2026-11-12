@@ -1,0 +1,54 @@
+schema_version: "1.1"
+name: t12-csharp-aspnet-slot-once
+description: >-
+  Task (oo-csharp-aspnet rule 3): the slot refuses a second booking
+  and owns its flag; the endpoint neither tests nor sets it.
+tags: [task]
+context:
+  scaffold_script: fixture-csharp-aspnet.sh
+execution:
+  prompt: |
+    Two patients were booked into the same slot this morning. Make sure
+    a slot can only ever be booked once.
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  max_turns: 30
+  timeout_seconds: 600
+graders:
+  - name: loaded-any-skill
+    type: tool_used
+    tool: Skill
+  - name: loaded-csharp-aspnet
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?oo-csharp-aspnet"'
+  - name: loaded-csharp
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?oo-csharp"'
+  - name: slot-refuses-second-booking
+    type: llm
+    focus: { source: file, path: Slot.cs }
+    criteria: |
+      You are grading a slot class after a change that stops a slot being
+      booked twice.
+
+      PASS if `Slot` has a method, such as `Book`, that refuses when the
+      slot is already booked, and that method is the only way to mark the
+      slot booked: the booked flag, or what replaces it, has no public
+      setter. FAIL if code outside `Slot` can still set the flag, or no
+      method of `Slot` refuses a second booking.
+  - name: endpoint-asks-the-slot
+    type: llm
+    focus: { source: file, path: Program.cs }
+    criteria: |
+      You are grading a booking endpoint after a change that stops a slot
+      being booked twice.
+
+      PASS if the endpoint neither tests whether the slot is taken nor
+      sets the booked flag itself, directly or with `ExecuteUpdate`, and
+      hands the booking to the slot's booking method, or to an object it
+      receives that does; and a refusal reaches the caller as an error
+      result such as 409 Conflict, mapped in the endpoint or by an
+      exception handler registered in this file. FAIL if the endpoint
+      checks the flag, queries for an existing appointment to decide, or
+      sets the flag.

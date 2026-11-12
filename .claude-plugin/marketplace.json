@@ -138,6 +138,18 @@
       "license": "MIT",
       "category": "development",
       "keywords": ["object-oriented-design", "ruby", "rails"]
+    },
+    {
+      "name": "object-oriented-design-csharp-aspnet",
+      "description": "Object-oriented design rules kept in ASP.NET Core, added to the C# plugin",
+      "version": "0.17.1",
+      "source": "./plugins/csharp-aspnet",
+      "author": { "name": "Yutthana Siphuengchai" },
+      "homepage": "https://github.com/yutna/object-oriented-design-skills",
+      "repository": "https://github.com/yutna/object-oriented-design-skills",
+      "license": "MIT",
+      "category": "development",
+      "keywords": ["object-oriented-design", "csharp", "aspnet"]
     }
   ]
 }

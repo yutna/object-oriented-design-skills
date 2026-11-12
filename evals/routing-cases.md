@@ -174,6 +174,10 @@ Rails Appointment model is 600 lines, split into what? -> oo-ruby-rails
 Rails: BookSlot service object or a method on Slot model? -> oo-ruby-rails
 after_create callback on Appointment sends SMS, keep or move? -> oo-ruby-rails
 in a Rails app, Struct or Data.define for a ClinicHours value? -> oo-ruby
+Cannot consume scoped service ClinicDbContext from singleton -> oo-csharp-aspnet
+EF Core saved an Appointment I never called Update on, why? -> oo-csharp-aspnet
+app.MapPost for booking is 80 lines of logic, move it where? -> oo-csharp-aspnet
+ASP.NET app: TimeRange as a record struct or a record class? -> oo-csharp
 ```
 
 ## Known misses
