@@ -373,15 +373,17 @@ constructor sets the fields EF Core binds by name, so the entity is
 mapped and no caller can assign a field (rule 3). `Offer` is the one
 method that changes `Status` and `OfferedAt`; it checks the current
 status and throws `WaitlistEntryAlreadyOffered` before it changes
-anything, so every caller gets the same rule (rule 3). `WaitlistDb` is
-scoped by `AddDbContext`, and `OfferWaitlistEntry` loads the entry,
-sends `Offer`, and calls `SaveChangesAsync` once, so the use case is one
-unit of work (rule 5). The endpoint binds the route value and calls the
-application service; it neither tests the status nor writes a field.
-The fence stores the offered entry under its id in the waitlist table,
-inside the request's scope, with the one `SaveChangesAsync` the
-application service calls. The state keeps rules 3 and 5: the entity
-owns the check, and the use case owns one save.
+anything, so every caller gets the same rule (rule 3). `Program.cs`
+registers `WaitlistDb` with `AddDbContext` and `OfferWaitlistEntry`
+with `AddScoped`, both scoped, and the fence leaves those registrations
+out. `OfferWaitlistEntry` loads the entry, sends `Offer`, and calls
+`SaveChangesAsync` once, so the use case is one unit of work (rule 5).
+The endpoint binds the route value and calls the application service;
+it neither tests the status nor writes a field. The fence stores the
+offered entry under its id in the waitlist table, inside the request's
+scope, with the one `SaveChangesAsync` the application service calls.
+The state keeps rules 3 and 5: the entity owns the check, and the use
+case owns one save.
 
 ## Red flags
 
