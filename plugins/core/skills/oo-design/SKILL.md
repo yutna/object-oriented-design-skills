@@ -19,9 +19,9 @@ the task and names the skill that fits.
 Load the skill this index names before you answer: its rules and
 examples live there, not here.
 
-Code in a language that has its own skill, listed under
-Language skills, also needs that skill: load it before you
-write the code, whatever the size of the change.
+Code in a language that has its own installed skill, listed under
+Language skills, also needs that skill: load it before you write
+the code, whatever the size of the change.
 
 ## How much design a task warrants
 
@@ -227,11 +227,18 @@ skills land.
 ## Language skills
 
 A language skill keeps the core rules in one language and never
-replaces them. A base language skill is for code with no framework.
+replaces them. A framework skill adds only what its framework changes,
+and is loaded with its base language skill.
 
 - `oo-java`, from `object-oriented-design-java`: records, sealed types,
   `equals` and `hashCode`, checked exceptions, `Optional`, and classes
   closed to extension.
+- `oo-java-spring`, from `object-oriented-design-java-spring`: Spring
+  beans built in configuration, `@Transactional` on the use case, and
+  JPA entities that keep their rules.
+- `oo-java-jakarta-ee`, from `object-oriented-design-java-jakarta-ee`:
+  CDI producers, container transactions that roll back refusals, and
+  enterprise beans chosen once.
 - `oo-kotlin`, from `object-oriented-design-kotlin`: data classes,
   sealed types, nullable types, delegation with `by`, and extension
   functions.
@@ -244,18 +251,31 @@ replaces them. A base language skill is for code with no framework.
 - `oo-csharp`, from `object-oriented-design-csharp`: records whose
   copies keep their checks, structs, nullable reference types,
   default interface members, and `async` kept in the shell.
+- `oo-csharp-aspnet`, from `object-oriented-design-csharp-aspnet`:
+  service lifetimes, EF Core entities that keep their rules, and
+  endpoints at the edge.
 - `oo-python`, from `object-oriented-design-python`: protocols and
   abstract base classes, frozen dataclasses, properties without
   setters, mixins and the method resolution order, and `final`.
+- `oo-python-django`, from `object-oriented-design-python-django`:
+  model methods that keep the rules `save()` skips, views and signals
+  with no business logic, and apps as modules.
 - `oo-ruby`, from `object-oriented-design-ruby`: contract tests,
   messages instead of class checks, readers without writers, values
   with `Data`, held objects instead of mixins, and methods defined
   where a reader finds them.
+- `oo-ruby-rails`, from `object-oriented-design-ruby-rails`: models
+  that keep their rules, callbacks with no hidden effects, and service
+  and query objects.
 - A language with no skill of its own reads the nearest shipped one:
   Scala and Groovy read `oo-java`, and PHP reads `oo-python`.
 
 In Claude Code, install a language plugin beside the core one:
 `/plugin install object-oriented-design-java@object-oriented-design-skills`
+
+A framework plugin installs its language plugin and the core one with
+it (checked on Claude Code 2.1.311; on an older version, install those
+too): `/plugin install object-oriented-design-java-spring@object-oriented-design-skills`
 
 ## Quick reference
 
