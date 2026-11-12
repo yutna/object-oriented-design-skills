@@ -275,8 +275,8 @@ evidence: a measurement, a reproducible bug, or a failing test.
 - A `@Stateless` bean chosen without a container service CDI beans do
   not get.
 - A checked refusal thrown after a write from a container-managed
-  enterprise bean method without `@ApplicationException(rollback =
-  true)`.
+  enterprise bean method that never calls `setRollbackOnly` on its
+  context.
 - A `@Transactional` method that can throw a checked refusal without
   `rollbackOn`.
 - A call through `this` to a method that needs its own transaction or
