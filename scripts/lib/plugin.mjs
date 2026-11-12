@@ -40,7 +40,9 @@ export class Plugin {
   }
 
   get dependencies() {
-    return undefined
+    const dependencies = this.#manifest.dependencies
+    return Object.freeze(
+      Array.isArray(dependencies) ? [...dependencies] : [])
   }
 
   skills() {

@@ -23,6 +23,9 @@ plugins/core/                     the plugin object-oriented-design-skills
 plugins/<family>/                 a language plugin, from v0.16.0
   .claude-plugin/plugin.json      object-oriented-design-<family>
   skills/oo-<language>/SKILL.md
+plugins/<family>-<framework>/     a framework plugin, from v0.18.0
+  .claude-plugin/plugin.json      object-oriented-design-<family>-<framework>
+  skills/oo-<family>-<framework>/SKILL.md
 scripts/                          entry scripts, one per check or tool
 scripts/lib/                      the classes every script uses
 test/                             node:test unit tests and fixtures
@@ -307,11 +310,18 @@ The index skill `oo-design` has its own shape, given in its issue.
 ## Language skill house style
 
 A language skill shows how this pack's rules are kept in one language.
-It lives in its family's plugin, `plugins/<family>/`, whose manifest
-names the plugin `object-oriented-design-<family>`, and whose
-marketplace entry has the same fields as the core plugin's. A new
-manifest, entry or skill takes the version in `package.json`. Every
-Skill house style bullet holds, with these changes:
+A base language skill lives in its family's plugin,
+`plugins/<family>/`, whose manifest names the plugin
+`object-oriented-design-<family>`. A framework skill,
+`oo-<family>-<framework>`, lives in a plugin of its own,
+`plugins/<family>-<framework>/`, named
+`object-oriented-design-<family>-<framework>`, whose manifest lists
+the core plugin and its family's plugin under `dependencies`, by
+bare name and with no version range, so that installing it installs
+both. Every marketplace entry has the same fields as the core
+plugin's. A new manifest, entry or skill takes the version in
+`package.json`. Every Skill house style bullet holds, with these
+changes:
 
 - The shape is the core shape, with this back-link block in place of
   the core one, because a link out of the plugin breaks once it is
@@ -344,6 +354,21 @@ Skill house style bullet holds, with these changes:
   framework; a framework skill's description names its framework.
 - A language skill needs two routing lines, one task case that
   names it in a Skill grader, and no scenario.
+- A framework skill holds only what its framework changes and never
+  restates its base language skill. Its Overview's first paragraph
+  names that skill in backticks and says to load it too.
+- A framework skill may relax a core or base `Default` or
+  `Judgement` for the classes its framework builds, naming the item
+  it relaxes. It never relaxes a `Rule.`: where a framework's demand
+  meets a Rule, it gives the answer of `oo-working-within-a-framework`,
+  a class at the edge or the active-record exception.
+- A framework fence compiles or runs against the real framework, at
+  the version its issue names, in a scratch project outside the
+  repository. Only this pack's own names may be declared in a
+  scratch file; a framework name never is, because a stub would
+  hide a wrong name.
+- A framework skill's task case also names its base language skill
+  in a `loaded-` grader, so the eval installs both.
 
 ## Commands
 
