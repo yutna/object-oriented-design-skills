@@ -64,7 +64,8 @@ under its id in its own table, inside the transaction the caller opens.
 `CallbackTask` is one row inside the request's aggregate, one task for
 one request, so the use case creates one aggregate and changes no
 existing one. `plan_callback` is the root's message that stores the
-task.
+task, and `RequestCallback` calls it itself; a save of the request
+triggers neither effect.
 
 ```ruby
 class RequestCallback
