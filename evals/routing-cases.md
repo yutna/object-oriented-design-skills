@@ -178,6 +178,10 @@ Cannot consume scoped service ClinicDbContext from singleton -> oo-csharp-aspnet
 EF Core saved an Appointment I never called Update on, why? -> oo-csharp-aspnet
 app.MapPost for booking is 80 lines of logic, move it where? -> oo-csharp-aspnet
 ASP.NET app: TimeRange as a record struct or a record class? -> oo-csharp
+Django apps scheduling and patients import each other's models->oo-python-django
+Django Appointment model or a separate domain class for rules?->oo-python-django
+double-booking check: Django view, ModelForm.clean() or model?->oo-python-django
+Django project: typing.Protocol or ABC for the SMS sender? -> oo-python
 ```
 
 ## Known misses

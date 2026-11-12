@@ -1,0 +1,51 @@
+schema_version: "1.1"
+name: t13-python-django-late-arrival
+description: >-
+  Task (oo-python-django rule 1): a model method refuses a late
+  check-in before it changes anything; the view only calls it.
+tags: [task]
+context:
+  scaffold_script: fixture-python-django.sh
+execution:
+  prompt: |
+    Patients who arrive more than 15 minutes after their appointment
+    starts can no longer be checked in; reception has to rebook them.
+    Make the change.
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  max_turns: 30
+  timeout_seconds: 600
+graders:
+  - name: loaded-any-skill
+    type: tool_used
+    tool: Skill
+  - name: loaded-python-django
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?oo-python-django"'
+  - name: loaded-python
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?oo-python"'
+  - name: appointment-decides-check-in
+    type: llm
+    focus: { source: file, path: clinic/models.py }
+    criteria: |
+      You are grading a model after a change that refuses a check-in more
+      than 15 minutes after the appointment starts.
+
+      PASS if `Appointment` has a method that performs the check-in, such
+      as `check_in(now)`, and refuses it, before changing anything, when
+      the check-in time is more than 15 minutes after `starts_at`. FAIL if
+      no method of `Appointment` decides it.
+  - name: view-asks-the-appointment
+    type: llm
+    focus: { source: file, path: clinic/views.py }
+    criteria: |
+      You are grading a view after a change that refuses a check-in more
+      than 15 minutes after the appointment starts.
+
+      PASS if the view neither compares times nor sets the status itself,
+      directly or with `QuerySet.update()`, and hands the check-in to the
+      appointment's method, or to a function or object that does; and a
+      refusal reaches the caller as a response. FAIL if the view decides
+      the 15 minutes or sets the status.
