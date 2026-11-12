@@ -1,0 +1,15 @@
+{
+  "name": "object-oriented-design-java-jakarta-ee",
+  "version": "0.17.1",
+  "description": "Object-oriented design rules kept in Java on Jakarta EE: CDI injection and producers, container transactions that roll back refusals, and entities that keep their rules",
+  "author": {
+    "name": "Yutthana Siphuengchai",
+    "url": "https://github.com/yutna"
+  },
+  "homepage": "https://github.com/yutna/object-oriented-design-skills",
+  "repository": "https://github.com/yutna/object-oriented-design-skills",
+  "license": "MIT",
+  "keywords": ["object-oriented-design", "java", "jakarta-ee"],
+  "skills": "./skills/",
+  "dependencies": ["object-oriented-design-skills", "object-oriented-design-java"]
+}

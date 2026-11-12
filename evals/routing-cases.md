@@ -167,6 +167,9 @@ changed save() in BaseAppointment and three subclasses broke, why so brittle->oo
 @Autowired everywhere, no idea who wires BookingService -> oo-java-spring
 Spring @Transactional on every repo call, booking half-saves -> oo-java-spring
 Spring Data JPA Appointment is all setters, can it own rules? -> oo-java-spring
+SlotService: @ApplicationScoped CDI bean or @Stateless EJB?->oo-java-jakarta-ee
+@Stateless threw SlotTaken but the appointment still committed->oo-java-jakarta-ee
+JTA tx across 3 EJBs updates slot, patient and clinician, ok?->oo-java-jakarta-ee
 ```
 
 ## Known misses

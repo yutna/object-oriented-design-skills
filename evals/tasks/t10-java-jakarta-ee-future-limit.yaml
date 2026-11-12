@@ -1,0 +1,56 @@
+schema_version: "1.1"
+name: t10-java-jakarta-ee-future-limit
+description: >-
+  Task (oo-java-jakarta-ee rule 2): the class that holds a new rule
+  carries no CDI or enterprise bean annotation, and the resource
+  receives it.
+tags: [task]
+context:
+  scaffold_script: fixture-java-jakarta-ee.sh
+execution:
+  prompt: |
+    A patient may now hold at most two future appointments. Add
+    `FutureAppointmentLimit` in
+    `src/main/java/clinic/FutureAppointmentLimit.java`, which decides
+    whether a patient can book one more, and make `BookingResource`
+    turn down a third booking with it.
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  max_turns: 30
+  timeout_seconds: 600
+graders:
+  - name: loaded-any-skill
+    type: tool_used
+    tool: Skill
+  - name: loaded-java-jakarta-ee
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?oo-java-jakarta-ee"'
+  - name: loaded-java
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?oo-java"'
+  - name: limit-is-plain
+    type: llm
+    focus: { source: file, path: src/main/java/clinic/FutureAppointmentLimit.java }
+    criteria: |
+      You are grading a class that decides whether a patient can book one
+      more future appointment.
+
+      PASS if `FutureAppointmentLimit` is a plain class: it carries no
+      CDI or Enterprise Beans annotation (such as `@ApplicationScoped`,
+      `@Dependent`, `@Stateless` or `@Inject`) and imports nothing from
+      `jakarta.enterprise`, `jakarta.inject` or `jakarta.ejb`. FAIL if it
+      carries such an annotation or import, or the file does not exist.
+  - name: resource-asks-the-limit
+    type: llm
+    focus: { source: file, path: src/main/java/clinic/BookingResource.java }
+    criteria: |
+      You are grading a booking resource after a change that limits a
+      patient to two future appointments.
+
+      PASS if, before the appointment is added, the booking is checked
+      against a `FutureAppointmentLimit`: the booking method asks one that
+      the resource receives by injection, or hands the booking to an
+      injected object that does; and the booking is turned down when the
+      limit says no. FAIL if the resource counts appointments or compares
+      with two itself, or creates the limit, or that object, with `new`.
