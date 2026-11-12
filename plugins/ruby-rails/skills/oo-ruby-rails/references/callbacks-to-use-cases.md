@@ -53,10 +53,12 @@ class CallbackTask < ApplicationRecord
 end
 ```
 
-Both models keep their columns and hold no callback. A save of either
-stores its row under its id in its own table, inside the transaction the
-caller opens. `CallbackTask` is one row inside the request's aggregate,
-one task for one request, so the use case changes one aggregate.
+Both models keep their columns and hold no callback. The fence shows the
+two models in one file for reading; a Rails app has one file for each.
+A save of either stores its row under its id in its own table, inside the
+transaction the caller opens. `CallbackTask` is one row inside the
+request's aggregate, one task for one request, so the use case changes
+one aggregate.
 
 ```ruby
 class RequestCallback
