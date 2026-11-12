@@ -3,9 +3,10 @@
 This file follows rule 2 through one use case: a patient asks the clinic
 to call them back, and the request also creates a task for the desk and
 sends the patient a text. The first version does both in callbacks on
-the model, inside the save. The change moves both effects into the use
-case: the task is stored in the same transaction as the request, and the
-text goes out after that transaction has committed, through
+the model, inside the save. The change takes both effects out of the
+callbacks and puts them in the use case's path: the use case calls the
+request's task step in the same transaction as the request, and the text
+goes out after that transaction has committed, through
 `transaction.after_commit`.
 
 ## The model as it is
