@@ -368,16 +368,25 @@ public static class WaitlistEndpoints
 }
 ```
 
-In the After, every property but `Id` has a private setter and the
-constructor sets the fields EF Core binds by name, so the entity is
-mapped and no caller can assign a field (rule 3). `Offer` is the one
-method that changes `Status` and `OfferedAt`; it checks the current
-status and throws `WaitlistEntryAlreadyOffered` before it changes
-anything, so every caller gets the same rule (rule 3). `Program.cs`
-registers `WaitlistDb` with `AddDbContext` and `OfferWaitlistEntry`
-with `AddScoped`, both scoped, and the fence leaves those registrations
-out. `OfferWaitlistEntry` loads the entry, sends `Offer`, and calls
-`SaveChangesAsync` once, so the use case is one unit of work (rule 5).
+In the After, every property has a private setter and the constructor
+sets the fields EF Core binds by name, so the entity is mapped and no
+caller can assign a field (rule 3). `Offer` is the one method that
+changes `Status` and `OfferedAt`; it checks the current status and
+throws `WaitlistEntryAlreadyOffered` before it changes anything, so the
+check sits in the entity rather than in one caller (rule 3). Two
+requests that load the same waiting entry at once both pass `Offer`'s
+check and both save; the concurrency token rule 4 describes, left out
+of this fence, is what refuses the second.
+`Program.cs` registers `WaitlistDb` with `AddDbContext` and
+`OfferWaitlistEntry` with `AddScoped`, both scoped, registers one
+`IExceptionHandler` with `AddExceptionHandler<WaitlistExceptionHandler>()`,
+and calls `UseExceptionHandler()` and `AddProblemDetails()`; the fence
+leaves those registrations and the handler out. The handler maps
+`WaitlistEntryNotFound` to 404 and `WaitlistEntryAlreadyOffered` to
+409, each with problem details, so neither refusal reaches the caller
+as a 500 (rule 7). `OfferWaitlistEntry` loads the entry, sends `Offer`,
+and calls `SaveChangesAsync` once, so the use case is one unit of work
+(rule 5).
 The endpoint binds the route value and calls the application service;
 it neither tests the status nor writes a field. The fence stores the
 offered entry under its id in the waitlist table, inside the request's

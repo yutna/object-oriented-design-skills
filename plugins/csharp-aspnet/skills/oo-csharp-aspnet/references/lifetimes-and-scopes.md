@@ -3,9 +3,10 @@
 This file follows rule 1 through one background job: a sweep marks
 screening invitations overdue when they have waited a month. The first
 version is a hosted service that takes its `DbContext` in its
-constructor, so one context serves every sweep and outlives every unit
-of work. The change gives the service an `IServiceScopeFactory`, and
-each sweep takes a scoped context from a scope of its own.
+constructor, so, with scope validation off, one context serves every
+sweep and outlives every unit of work. The change gives the service an
+`IServiceScopeFactory`, and each sweep takes a scoped context from a
+scope of its own.
 
 - [The types](#the-types)
 - [The hosted service as it is](#the-hosted-service-as-it-is)
@@ -108,15 +109,21 @@ public sealed class ScreeningSweep(
 
 The constructor asks the container for `ScreeningDbContext`, and the
 host registers `ScreeningSweep` as a hosted service, which is a
-singleton. A hosted service cannot take a scoped service such as a
-`DbContext` in its constructor, and no scope is created for it by
-default. The registration asks the root for a scoped context, whose
-lifetime the root container promotes to its own: one context then
-serves every sweep and outlives every unit of work, and its change
-tracker carries the first sweep's tracked entities into the next. The
-fence stores each overdue invitation's `FlaggedAt` value under the
-invitation's id in the screening table, inside the transaction
-`SaveChangesAsync` opens, with the one save in each sweep.
+singleton. A hosted service is meant to create a scope for each unit
+of work rather than take a scoped service such as a `DbContext` in its
+constructor, and no scope is created for it by default. With scope
+validation off, as it is by default outside Development, the
+registration succeeds: it asks the root for a scoped context, whose
+lifetime the root container promotes to its own, so one context serves
+every sweep and outlives every unit of work, and its change tracker
+carries the first sweep's tracked entities into the next. In
+Development the default provider validates scopes, and building the
+host throws `Cannot consume scoped service 'ScreeningDbContext' from
+singleton 'Microsoft.Extensions.Hosting.IHostedService'`, so the
+Before never starts. The fence stores each overdue invitation's
+`FlaggedAt` value under the invitation's id in the screening table,
+inside the transaction `SaveChangesAsync` opens, with the one save in
+each sweep.
 
 ## The scope for each unit
 
@@ -165,12 +172,13 @@ registers as a singleton, so the hosted service holds no scoped
 service. Each sweep opens one scope, resolves the scoped
 `ScreeningDbContext` from `scope.ServiceProvider`, uses it for the
 load, the changes and one `SaveChangesAsync`, and disposes it when the
-scope ends. The next sweep starts from a new context with an empty
-change tracker. A failure in one sweep therefore leaves no tracked
-state for the next, and the context is never shared between sweeps.
-The fence stores each overdue invitation's `FlaggedAt` value under the
-invitation's id in the screening table, inside the transaction the
-scope's one `SaveChangesAsync` opens; each scope holds one unit of work.
-The state keeps rule 1: the singleton holds only `IServiceScopeFactory`,
-and every unit of work takes a scoped context from its own scope and
+scope ends. Each sweep's scope disposes its context when the unit of
+work ends, so the context is never shared between sweeps. An exception
+that leaves one sweep also leaves `ExecuteAsync`, and the host stops by
+default, so no later sweep reuses that context. The fence stores each
+overdue invitation's `FlaggedAt` value under the invitation's id in the
+screening table, inside the transaction the scope's one
+`SaveChangesAsync` opens; each scope holds one unit of work. The state
+keeps rule 1: the singleton holds only `IServiceScopeFactory`, and
+every unit of work takes a scoped context from its own scope and
 disposes it with that scope.
