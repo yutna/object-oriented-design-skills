@@ -250,7 +250,8 @@ evidence: a measurement, a reproducible bug, or a failing test.
 - A JPA entity with a setter or a public no-argument constructor.
 - A mapped association to another aggregate root.
 - `spring.jpa.open-in-view` left true.
-- A domain repository interface that extends `JpaRepository`.
+- A repository interface that extends `JpaRepository` and reaches
+  domain code.
 - A `final` class whose methods carry `@Transactional`.
 - A controller that takes a request record and passes it into the
   domain.
