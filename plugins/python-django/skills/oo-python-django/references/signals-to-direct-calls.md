@@ -38,17 +38,31 @@ class RadiologyRequest(models.Model):
     patient_number = models.CharField(max_length=200)
     kind = models.CharField(max_length=100)
     expires_at = models.DateTimeField()
-    status = models.CharField(
-        max_length=20, choices=STATUSES, default=REQUESTED)
-    scheduled_at = models.DateTimeField(null=True, blank=True)
+    _status = models.CharField(
+        max_length=20, choices=STATUSES, default=REQUESTED,
+        db_column="status")
+    _scheduled_at = models.DateTimeField(
+        null=True, blank=True, db_column="scheduled_at")
+
+    @property
+    def status(self) -> str:
+        return self._status
+
+    @property
+    def scheduled_at(self) -> datetime | None:
+        return self._scheduled_at
 
     def schedule(self, now: datetime) -> None:
-        if self.status != RadiologyRequest.REQUESTED:
+        if self._status != RadiologyRequest.REQUESTED:
             raise RadiologyRequestAlreadyScheduled(self.pk)
         if now > self.expires_at:
             raise RadiologyRequestExpired(self.pk)
-        self.status = RadiologyRequest.SCHEDULED
-        self.scheduled_at = now
+        self._status = RadiologyRequest.SCHEDULED
+        self._scheduled_at = now
+
+    def add_task(self, due_at: datetime) -> None:
+        RadiologyTask.objects.create(
+            radiology_request=self, due_at=due_at)
 
 
 class RadiologyTask(models.Model):
@@ -60,12 +74,13 @@ class RadiologyTask(models.Model):
 
 `RadiologyRequest` is the Pattern's model, repeated here so both models
 sit in one file for reading: it has the same fields, the same errors and
-the same `schedule` method. `RadiologyTask` is one row inside the
+the same `schedule` method, plus an `add_task` method that stores the
+task the use case asks for. `RadiologyTask` is one row inside the
 radiology request's aggregate: one task for one request, stored in the
 radiology task table and reached through the request. The `post_save`
 receiver below is connected from the radiology app's `ready()` method,
-which the documentation recommends for signal registration; the
-registration is left out of these fences.
+the method a subclass overrides to perform initialization tasks such as
+registering signals; the registration is left out of these fences.
 
 ## The receiver as it is
 
@@ -81,8 +96,8 @@ from .models import RadiologyRequest, RadiologyTask
 
 
 @receiver(post_save, sender=RadiologyRequest)
-def create_radiology_task(sender, instance, created, **kwargs):
-    if not created:
+def create_radiology_task(sender, instance, **kwargs):
+    if instance.status != RadiologyRequest.SCHEDULED:
         return
     RadiologyTask.objects.create(
         radiology_request=instance,
@@ -91,20 +106,20 @@ def create_radiology_task(sender, instance, created, **kwargs):
 ```
 
 The receiver runs from every `save()` of an `RadiologyRequest`. When the
-request is new, it decides that a task is due, stores a task row under
-the request's identity, and sends the order to the radiology centre. The
-`created` check is a rule, and it sits where no reader of the use case
-sees it: the rule is kept in a receiver (rule 4). A `post_save` runs
-inside the save, so inside an `atomic()` block it runs before that
-block commits. If the transaction rolls back, the task row goes with
-it and the send has already left. If the send raises, the exception
-leaves `save()`; if the exception leaves the caller's `atomic()` block,
-both rows roll back, while in autocommit mode both rows are already
-stored. The fence stores a task row under the request's identity in the
-radiology task table, in the clinic's database, inside the caller's
-transaction when the save runs in one, and sends to the radiology
-centre before that transaction commits; in autocommit mode each
-statement commits on its own.
+request's status is `SCHEDULED`, it decides that a task is due, stores a
+task row under the request's identity, and sends the order to the
+radiology centre. The status check is a rule, and it sits where no
+reader of the use case sees it: the rule is kept in a receiver (rule 4).
+A `post_save` runs inside the save, so inside an `atomic()` block it
+runs before that block commits. If the transaction rolls back, the task
+row goes with it and the send has already left. If the send raises, the
+exception leaves `save()`; if the exception leaves the caller's
+`atomic()` block, both rows roll back, while in autocommit mode both
+rows are already stored. The fence stores a task row under the request's
+identity in the radiology task table, in the clinic's database, inside
+the caller's transaction when the save runs in one, and sends to the
+radiology centre before that transaction commits; in autocommit mode
+each statement commits on its own.
 
 ## The use case after the change
 
@@ -114,7 +129,7 @@ from datetime import datetime, timedelta
 from django.db import transaction
 
 from .radiology_centre import RadiologyCentre
-from .models import RadiologyRequest, RadiologyTask
+from .models import RadiologyRequest
 
 
 class ScheduleRadiologyRequest:
@@ -128,9 +143,7 @@ class ScheduleRadiologyRequest:
                 .get(pk=radiology_request_id))
             radiology_request.schedule(now)
             radiology_request.save()
-            RadiologyTask.objects.create(
-                radiology_request=radiology_request,
-                due_at=now + timedelta(days=1))
+            radiology_request.add_task(now + timedelta(days=1))
             transaction.on_commit(
                 lambda: self._centre.send(radiology_request.pk))
 ```
@@ -139,10 +152,11 @@ class ScheduleRadiologyRequest:
 the radiology centre's sender through its constructor and never builds
 it. The receiver and the `ready()` import that connects it are deleted;
 the use case calls both effects itself. `__call__` opens one `atomic()`
-block, loads the request, sends it `schedule`, saves it, stores the
-task, and registers the send with `transaction.on_commit()`. The task is
-stored in the same transaction as the request, so a refusal or a failed
-write stores neither row. The send runs only after that transaction
+block, loads the request, sends it `schedule`, saves it, sends it
+`add_task` with the due time, and registers the send with
+`transaction.on_commit()`. The task is stored by the request in the same
+transaction as the request itself, so a refusal or a failed write stores
+neither row. The send runs only after that transaction
 commits; a rollback discards the callback, so no order leaves for a
 schedule that was never stored. If the send itself fails after the
 commit, the request and the task stay stored and the sender's error

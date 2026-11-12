@@ -80,13 +80,13 @@ require.
    `oo-designing-repositories` rule 6 asks.** `update()` runs an SQL
    update for the rows it matches, `bulk_update()` saves its changes
    through the same SQL path, and `bulk_create()` inserts its list in
-   one query; none of the three calls the model's `save()`, and none
-   sends either save signal. A model method that every ordinary path
-   calls therefore never sees these writes, so the guarded field can
-   move from one value to another with no check. A new row is no
-   safer: `bulk_create()` inserts it with no call to the model's
-   `save()`. Change the aggregate by loading it, sending its root the
-   action and saving it whole.
+   generally only one query; none of the three calls the model's
+   `save()`, and none sends either save signal. A model method that
+   every ordinary path calls therefore never sees these writes, so the
+   guarded field can move from one value to another with no check. A new
+   row is no safer: `bulk_create()` inserts it with no call to the
+   model's `save()`. Change the aggregate by loading it, sending its
+   root the action and saving it whole.
 
 3. Default. **Let a view or a form check a request's shape, and run the
    use case in a plain function or class that opens
@@ -203,15 +203,16 @@ def schedule_from_waitlist(pk):
 ```
 
 In the Before, `RadiologyRequest` is the model whose `status` a rule
-guards. `schedule_radiology_request` is the first path: it reads the
-status and the expiry, decides both rules, and assigns the two fields
-before it saves, so the rule lives in a view (rule 1). The second path,
-`schedule_from_waitlist`, writes the guarded status with `update()`, at
-the SQL level, so no check runs on that path at all (rule 2). The first
-path stores a radiology request row under its primary key in the
-radiology request table, with one `save()`; the second path stores the
-same row with one SQL update. Neither path opens a transaction of its
-own.
+guards, and its `status` and `scheduled_at` are public fields that any
+caller can assign. `schedule_radiology_request` is the first path: it
+reads the status and the expiry, decides both rules, and assigns the
+two fields before it saves, so the rule lives in a view (rule 1). The
+second path, `schedule_from_waitlist`, writes the guarded status with
+`update()`, at the SQL level, so no check runs on that path at all
+(rule 2). The first path stores a radiology request row under its
+primary key in the radiology request table, with one `save()`; the
+second path stores the same row with one SQL update. Neither path opens
+a transaction of its own.
 
 After, the model:
 
@@ -240,17 +241,27 @@ class RadiologyRequest(models.Model):
     patient_number = models.CharField(max_length=200)
     kind = models.CharField(max_length=100)
     expires_at = models.DateTimeField()
-    status = models.CharField(
-        max_length=20, choices=STATUSES, default=REQUESTED)
-    scheduled_at = models.DateTimeField(null=True, blank=True)
+    _status = models.CharField(
+        max_length=20, choices=STATUSES, default=REQUESTED,
+        db_column="status")
+    _scheduled_at = models.DateTimeField(
+        null=True, blank=True, db_column="scheduled_at")
+
+    @property
+    def status(self) -> str:
+        return self._status
+
+    @property
+    def scheduled_at(self) -> datetime | None:
+        return self._scheduled_at
 
     def schedule(self, now: datetime) -> None:
-        if self.status != RadiologyRequest.REQUESTED:
+        if self._status != RadiologyRequest.REQUESTED:
             raise RadiologyRequestAlreadyScheduled(self.pk)
         if now > self.expires_at:
             raise RadiologyRequestExpired(self.pk)
-        self.status = RadiologyRequest.SCHEDULED
-        self.scheduled_at = now
+        self._status = RadiologyRequest.SCHEDULED
+        self._scheduled_at = now
 ```
 
 After, both paths:
@@ -288,8 +299,12 @@ def schedule_from_waitlist(pk):
 ```
 
 `RadiologyRequest` is an active record: its class mirrors the radiology
-request table, and `schedule` is its one action method. `schedule`
-checks the status and the expiry and raises `RadiologyRequestExpired` or
+request table, and `schedule` is its one action method. The two fields
+the rule guards are private, `_status` and `_scheduled_at`, each read
+through a property with no setter and each keeping its table column
+name through `db_column`; a caller's assignment raises `AttributeError`,
+so only `schedule` changes them (`oo-python` rule 4). `schedule` checks
+the status and the expiry and raises `RadiologyRequestExpired` or
 `RadiologyRequestAlreadyScheduled` before it assigns either field, so a
 refused call changes nothing (rule 1). Both paths call the same method:
 the view reads neither the status nor the expiry, and
