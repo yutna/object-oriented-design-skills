@@ -72,10 +72,10 @@ require.
    scan, as `oo-inverting-dependencies` rules 3 and 4 and
    `oo-working-within-a-framework` rule 2 ask.
 
-   The exception is the repository interface that this skill's rule 7
-   lets extend Spring Data's `Repository`: it declares only the
-   domain's methods, the Spring type stops at that declaration, and
-   every domain object it returns stays free of Spring.
+   The exception is a domain object the use case builds for one call:
+   its owner builds it with `new` from values it already holds, so no
+   `@Bean` method builds it, and the class still imports nothing from
+   Spring.
 
 3. Rule. **Put `@Transactional` on the public method of the application
    service that runs one use case, so that one transaction changes one
@@ -101,9 +101,10 @@ require.
    2, `oo-constructing-valid-objects` rule 3 and
    `oo-working-within-a-framework` rule 1 ask.
 
-   The exception is an entity mapped to a table another system owns,
-   such as a read-only view: keep the protected constructor, add no
-   setter, and expose only the reads the domain needs.
+   The exception is an entity whose mapped superclass maps by property
+   access: the provider then reads and writes through accessors, so
+   they stay `protected` and callers use the entity's action methods,
+   which still name each change.
 
 5. Rule. **Reach another aggregate by its identity, never by a mapped
    association to its root, and set `spring.jpa.open-in-view=false` so
@@ -124,28 +125,33 @@ require.
    constructors, as `oo-placing-domain-logic` rule 5 and
    `oo-crossing-system-boundaries` rules 1 and 2 ask.
 
-   The exception is a request that carries a file or a stream, which
-   Bean Validation cannot inspect: check its metadata at the edge and
-   still build the domain's values in that one place.
+   The exception is a request with several parts, such as a body and a
+   file: `@Valid` on each `@RequestPart` applies Bean Validation to the
+   part, the file's size and type are checked at the edge, and the
+   domain's values are still built in that one place.
 
-7. Rule. **Declare the repository the domain uses in domain types and
-   implement it at the edge with Spring Data, or extend `Repository`
-   and expose only the domain's methods; the generic methods of
-   `JpaRepository` never reach domain code.** Extending a CRUD
-   repository exposes its complete set of methods, while copying only
-   `findById` and `save` exposes only those, as
+7. Rule. **Declare the repository the domain uses in domain types,
+   importing nothing from Spring, and implement it at the edge with an
+   adapter class that delegates to a Spring Data interface exposing
+   only the methods the adapter needs; the generic methods of
+   `JpaRepository` never reach domain code.** The domain's interface
+   names the calls the domain makes, the adapter implements them in
+   Spring's types, and the Spring Data interface copies only the
+   methods the adapter delegates to, so a CRUD repository's complete
+   set of methods stops at the edge, as
    `oo-designing-repositories` rules 1 and 2 ask.
 
 8. Rule. **Leave non-final exactly the classes Spring or the
    persistence provider subclasses: a `@Configuration` class whose
    `proxyBeanMethods` is true, which relaxes `oo-java` rule 7; a bean
-   proxied through its class, such as one whose methods carry
-   `@Transactional` and that implements no interface, which relaxes
-   `oo-java` rule 7; and a JPA entity, which relaxes `oo-java` rule 7;
-   every other class keeps that rule.** A final class cannot be
-   proxied, a final method cannot be advised, a configuration class
-   with `proxyBeanMethods` true needs a runtime subclass, and the
-   provider requires an entity to be non-final.
+   Spring proxies through its class, which under Spring Boot's default
+   (`spring.aop.proxy-target-class=true`) is any bean whose methods
+   carry `@Transactional`, whether or not it implements an interface,
+   which relaxes `oo-java` rule 7; and a JPA entity, which relaxes
+   `oo-java` rule 7; every other class keeps that rule.** A final class
+   cannot be proxied, a final method cannot be advised, a
+   configuration class with `proxyBeanMethods` true needs a runtime
+   subclass, and the provider requires an entity to be non-final.
    `oo-honouring-substitutability` rule 5 still asks every other class
    to be closed.
 
@@ -244,8 +250,7 @@ evidence: a measurement, a reproducible bug, or a failing test.
 - A JPA entity with a setter or a public no-argument constructor.
 - A mapped association to another aggregate root.
 - `spring.jpa.open-in-view` left true.
-- A repository interface that extends `JpaRepository` and reaches
-  domain code.
+- A domain repository interface that extends `JpaRepository`.
 - A `final` class whose methods carry `@Transactional`.
 - A controller that takes a request record and passes it into the
   domain.
