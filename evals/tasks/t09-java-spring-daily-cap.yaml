@@ -1,0 +1,55 @@
+schema_version: "1.1"
+name: t09-java-spring-daily-cap
+description: >-
+  Task (oo-java-spring rule 2): the class that holds a new rule
+  carries no Spring annotation, and the controller receives it.
+tags: [task]
+context:
+  scaffold_script: fixture-java-spring.sh
+execution:
+  prompt: |
+    A clinician now takes at most twelve appointments a day. Add
+    `DailyCap` in `src/main/java/clinic/DailyCap.java`, which decides
+    whether a clinician can take one more appointment on a given day,
+    and make `BookingController` refuse the thirteenth booking with it.
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  max_turns: 30
+  timeout_seconds: 600
+graders:
+  - name: loaded-any-skill
+    type: tool_used
+    tool: Skill
+  - name: loaded-java-spring
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?oo-java-spring"'
+  - name: loaded-java
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?oo-java"'
+  - name: daily-cap-is-plain
+    type: llm
+    focus: { source: file, path: src/main/java/clinic/DailyCap.java }
+    criteria: |
+      You are grading a class that decides whether a clinician can take
+      one more appointment on a day.
+
+      PASS if `DailyCap` is a plain class: it carries no Spring
+      annotation (such as `@Component`, `@Service` or `@Configuration`)
+      and imports nothing from `org.springframework`. FAIL if it is
+      annotated for Spring, imports from `org.springframework`, or the
+      file does not exist.
+  - name: controller-asks-the-cap
+    type: llm
+    focus: { source: file, path: src/main/java/clinic/BookingController.java }
+    criteria: |
+      You are grading a booking controller after a change that caps a
+      clinician at twelve appointments a day.
+
+      PASS if, before anything is saved, the booking is checked against a
+      `DailyCap`: the booking method asks a `DailyCap` that the
+      constructor receives, or hands the booking to an object the
+      constructor receives that does; and the booking is refused when the
+      cap says no. FAIL if the controller counts appointments or compares
+      with twelve itself, or creates the `DailyCap`, or that object, with
+      `new`.

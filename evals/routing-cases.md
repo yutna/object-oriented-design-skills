@@ -164,6 +164,9 @@ my @dataclass Appointment lets anyone reassign .slot after it's booked -> oo-pyt
 Appointment uses method_missing for status checks, typos only blow up in prod->oo-ruby
 in ruby I keep checking slot.is_a?(Slot) before booking, any better way? -> oo-ruby
 changed save() in BaseAppointment and three subclasses broke, why so brittle->oo-choosing-composition-over-inheritance
+@Autowired everywhere, no idea who wires BookingService -> oo-java-spring
+Spring @Transactional on every repo call, booking half-saves -> oo-java-spring
+Spring Data JPA Appointment is all setters, can it own rules? -> oo-java-spring
 ```
 
 ## Known misses
@@ -202,4 +205,5 @@ should TelehealthVisit extend Visit or just hold one? it overrides half of it->o
 calling schedule.freeSlots() somehow reorders the clinician's slot list -> oo-applying-functional-techniques
 visit fee calc reads the db and the clock, can't unit test without mocks -> oo-applying-functional-techniques
 I have a ReminderPolicy interface with one method, could I just pass a lambda->oo-applying-functional-techniques
+Spring app: model VisitOutcome as a sealed interface or enum? -> oo-java
 ```
