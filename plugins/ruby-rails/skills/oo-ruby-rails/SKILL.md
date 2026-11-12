@@ -243,9 +243,9 @@ objects: each loads the consent, sends it one action message, and opens
 one transaction around that one aggregate's change (rule 4). The
 controller calls one of them. `update!` runs validations inside the
 transaction, and the model's class still mirrors its table. The fence
-shows the types in one file for reading; a Rails app puts each class in
-its own file. The fence stores a consent row under its id in the
-consents table, inside the transaction the service object opens.
+shows the types in one file for reading. The fence stores a consent row
+under its id in the consents table, inside the transaction the service
+object opens.
 
 ## Red flags
 
