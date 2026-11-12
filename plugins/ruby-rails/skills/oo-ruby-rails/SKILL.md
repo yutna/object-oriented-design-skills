@@ -16,8 +16,8 @@ language.
 ## Overview
 
 This skill holds only what Rails changes on top of `oo-ruby`: load that
-skill too, because its rules on duck typing, modules, `Data` values and
-`send` still hold in a Rails code base. Rails supplies Active Record,
+skill too, because its rules on duck typing, modules and `Data` values
+still hold in a Rails code base. Rails supplies Active Record,
 whose instances stand for rows in a table, and callbacks that run inside the save;
 the same rules now have new places to hide. A callback that writes a
 second row, a controller that sets a guarded column with `update`, a
@@ -286,7 +286,7 @@ evidence: a measurement, a reproducible bug, or a failing test.
 ## Related skills
 
 - `oo-ruby` holds the language rules this skill applies, including its
-  rules on duck typing, modules, `Data` values and `send`.
+  rules on duck typing, modules and `Data` values.
 - `oo-taming-persistence` decides between an active record and a data
   mapper, and keeps a lazy load inside its transaction.
 - `oo-working-within-a-framework` decides what a framework may shape
