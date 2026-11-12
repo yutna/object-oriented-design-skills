@@ -102,6 +102,18 @@
       "license": "MIT",
       "category": "development",
       "keywords": ["object-oriented-design", "ruby"]
+    },
+    {
+      "name": "object-oriented-design-java-spring",
+      "description": "Object-oriented design rules kept in Java on Spring, added to the Java plugin",
+      "version": "0.17.1",
+      "source": "./plugins/java-spring",
+      "author": { "name": "Yutthana Siphuengchai" },
+      "homepage": "https://github.com/yutna/object-oriented-design-skills",
+      "repository": "https://github.com/yutna/object-oriented-design-skills",
+      "license": "MIT",
+      "category": "development",
+      "keywords": ["object-oriented-design", "java", "spring"]
     }
   ]
 }
