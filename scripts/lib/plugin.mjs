@@ -39,6 +39,10 @@ export class Plugin {
     return this.#directory
   }
 
+  get dependencies() {
+    return undefined
+  }
+
   skills() {
     const directory = join(this.#directory, 'skills')
     if (!existsSync(directory)) return []
