@@ -246,8 +246,9 @@ end
 In the After, `Consent#give` and `Consent#withdraw` are named for the
 actions; each checks the status and raises `ConsentAlreadyGiven` or
 `ConsentNotGiven` before it writes, so nothing changes on a refused call
-(rule 3). Both copies pass that check, because each read the status its
-action expects; what refuses the second caller is the version guard.
+(rule 3). Two copies of the same consent, both loaded before either
+saves, pass that check, because each read the status its action
+expects; what refuses the second caller is the version guard.
 The consents table holds an integer `lock_version` column, and Active
 Record's optimistic locking reads it with the row and adds the version
 it read to the save's condition. The first call writes the guarded
@@ -255,11 +256,10 @@ status, its timestamp and the next version; a second copy loaded before
 that write matches no row, so its save raises
 `ActiveRecord::StaleObjectError`, which `give` or `withdraw` turns into
 its own refusal. That guard needs no row lock, so it refuses the second
-caller on every store Rails supports; `with_lock` asks for a row lock,
-which SQLite does not provide, so it adds no guard on that store. A
-caller sees `ConsentAlreadyGiven`, `ConsentNotGiven` or, on a validation
-failure, `ActiveRecord::RecordInvalid` (rule 3), and the guard's store
-error never leaves the action. `GiveConsent` and `WithdrawConsent` are
+caller on every store Rails supports. A caller sees
+`ConsentAlreadyGiven`, `ConsentNotGiven` or, on a validation failure,
+`ActiveRecord::RecordInvalid` (rule 3), and the guard's store error
+never leaves the action. `GiveConsent` and `WithdrawConsent` are
 plain Ruby service objects: each loads the consent, sends it one action
 message, and opens one transaction around that one aggregate's change
 (rule 4). The controller calls one of them. `update!` runs validations
