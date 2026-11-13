@@ -64,14 +64,14 @@ middleware that grows the business logic. ASP.NET Core 10 and EF Core
    `oo-inverting-dependencies` rules 2 and 3 and `oo-taming-persistence`
    rule 4 ask.** `AddScoped` registers a service for one request in MVC
    or Razor Pages, or one circuit in Blazor, and `AddDbContext`
-   registers a context scoped by default. The documentation warns that
-   a service should not use a context whose lifetime is shorter than
-   its own. A singleton keeps a scoped service for the life of the
-   process, and a hosted service is registered as a singleton: it
-   cannot take a scoped service such as a context in its constructor,
-   and no scope is created for it by default. Take `IServiceScopeFactory`
-   instead, call `CreateScope()`, resolve the scoped services from
-   `scope.ServiceProvider`, and dispose the scope with the unit of work.
+   registers a context scoped by default. A service must not use a
+   context whose lifetime is shorter than its own. A singleton keeps a
+   scoped service for the life of the process, and a hosted service is
+   registered as a singleton: it cannot take a scoped service such as a
+   context in its constructor, and no scope is created for it by
+   default. Take `IServiceScopeFactory` instead, call `CreateScope()`,
+   resolve the scoped services from `scope.ServiceProvider`, and
+   dispose the scope with the unit of work.
    A middleware that is not factory-based is activated once, so a scoped
    service goes in `Invoke` or `InvokeAsync`, or the middleware is
    factory-based. In the Development environment the default provider
@@ -169,11 +169,11 @@ middleware that grows the business logic. ASP.NET Core 10 and EF Core
    object; it is not discovered by convention, so `OnModelCreating`
    names each property that maps one. An owned entity type is still an
    entity type behind the scenes: it has a hidden key and reference
-   semantics, so two equal values are not the same stored object, and
-   the documentation suggests a complex type instead for a value. In
-   EF Core 10 a complex property may be optional, hold a collection
-   mapped with `ToJson`, or be a `struct` or `record struct`; each is
-   still a value with no identity.
+   semantics, so two equal values are not the same stored object, and a
+   value belongs in a complex type instead. In EF Core 10 a complex
+   property may be optional, hold a collection mapped with `ToJson`, or
+   be a `struct` or `record struct`; each is still a value with no
+   identity.
 
    The exception is a value that the existing schema already maps as an
    owned entity type in its own table: a complex type is stored in its
@@ -342,14 +342,15 @@ public sealed class WaitlistDb(DbContextOptions<WaitlistDb> options)
         Set<WaitlistEntry>();
 }
 
-public sealed class OfferWaitlistEntry(WaitlistDb db)
+public sealed class OfferWaitlistEntry(WaitlistDb db, TimeProvider time)
 {
     public async Task OfferAsync(int waitlistEntryId)
     {
+        var now = time.GetUtcNow().UtcDateTime;
         var entry = await db.WaitlistEntries
             .FindAsync(waitlistEntryId)
             ?? throw new WaitlistEntryNotFound(waitlistEntryId);
-        entry.Offer(DateTime.UtcNow);
+        entry.Offer(now);
         await db.SaveChangesAsync();
     }
 }
@@ -378,15 +379,19 @@ requests that load the same waiting entry at once both pass `Offer`'s
 check and both save; the concurrency token rule 4 describes, left out
 of this fence, is what refuses the second.
 `Program.cs` registers `WaitlistDb` with `AddDbContext` and
-`OfferWaitlistEntry` with `AddScoped`, both scoped, registers one
+`OfferWaitlistEntry` with `AddScoped`, both scoped, and registers
+`TimeProvider.System` as a singleton. It registers one
 `IExceptionHandler` with `AddExceptionHandler<WaitlistExceptionHandler>()`,
 and calls `UseExceptionHandler()` and `AddProblemDetails()`; the fence
 leaves those registrations and the handler out. The handler maps
 `WaitlistEntryNotFound` to 404 and `WaitlistEntryAlreadyOffered` to
 409, each with problem details, so neither refusal reaches the caller
-as a 500 (rule 7). `OfferWaitlistEntry` loads the entry, sends `Offer`,
-and calls `SaveChangesAsync` once, so the use case is one unit of work
-(rule 5).
+as a 500 (rule 7). `OfferWaitlistEntry` asks the `TimeProvider` once
+and passes that value to `Offer`, so the time comes from a collaborator
+passed in rather than from a static call, which keeps
+`oo-designing-for-testability` rule 5. It loads the entry, sends
+`Offer`, and calls `SaveChangesAsync` once, so the use case is one unit
+of work (rule 5).
 The endpoint binds the route value and calls the application service;
 it neither tests the status nor writes a field. The fence stores the
 offered entry under its id in the waitlist table, inside the request's
