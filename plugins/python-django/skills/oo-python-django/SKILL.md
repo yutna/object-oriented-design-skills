@@ -120,11 +120,12 @@ require.
    A receiver that writes another model or sends to another system
    makes that effect happen wherever the save runs, and can send word
    of a change that was never stored. It also hides the reaction from
-   the use case and from a test that calls the model method. Django's
-   signal guide says to opt for directly calling the handling code
-   rather than dispatching through a signal. The use case calls the
-   second model's change and the outside send itself: the first inside
-   its transaction, the second after the commit, as rule 3 says.
+   the use case and from a test that calls the model method. A signal
+   gives the appearance of loose coupling, but code connected by
+   signals can quickly become hard to understand, adjust and debug;
+   where possible, call the handling code directly. The use case calls
+   the second model's change and the outside send itself: the first
+   inside its transaction, the second after the commit, as rule 3 says.
 
 5. Judgement. **Treat an app as a module with a public interface:
    other apps call its functions rather than import its models, and an
@@ -149,13 +150,14 @@ require.
    repeated in views, as `oo-designing-repositories` rule 3 and
    `oo-layering-the-system` rule 6 ask.** A filter chain in a view
    spells the question at the edge, so each caller writes its own
-   version and a change to the question touches every view. A manager
-   method is where Django's guide puts table-level functionality, and
-   `QuerySet.as_manager()` or `Manager.from_queryset()` gives the
-   manager and the queryset one set of query methods, so
-   `RadiologyRequest.objects.due_today()` answers the question from
-   either. A model method is for one row, not a table, which is why the
-   same guide keeps row-level rules on the model.
+   version and a change to the question touches every view. An extra
+   manager method is the preferred way to add table-level
+   functionality to a model, and `QuerySet.as_manager()` or
+   `Manager.from_queryset()` gives the manager and the queryset one set
+   of query methods, so `RadiologyRequest.objects.due_today()` answers
+   the question from either. A model method is for one row, not a
+   table, which is why row-level functionality goes on the model and
+   not a custom manager.
 
    The exception is a read of one row already named by its identity,
    such as a detail screen loading the request whose primary key the
@@ -169,8 +171,8 @@ patient. Its status is guarded: only a requested scan may be
 scheduled, and a request carries the moment it expires. The first
 fence is a view that decides both rules and writes the status itself,
 beside a second path that writes the same field with `update()`. The
-second and third fences move the check into the model's action method
-and call it from both paths.
+fences after it move the check into the model's action method and call
+it from both paths.
 
 Before:
 
@@ -267,8 +269,10 @@ class RadiologyRequest(models.Model):
 After, both paths:
 
 ```python
+from collections.abc import Callable
+from datetime import datetime
+
 from django.http import HttpResponse
-from django.utils import timezone
 
 from .models import (
     RadiologyRequest,
@@ -277,13 +281,15 @@ from .models import (
 )
 
 
-def schedule_radiology_request(request, pk):
+def schedule_radiology_request(
+        request, pk: int, clock: Callable[[], datetime]) -> HttpResponse:
     try:
         radiology_request = RadiologyRequest.objects.get(pk=pk)
     except RadiologyRequest.DoesNotExist:
         return HttpResponse("no radiology request", status=404)
+    now = clock()
     try:
-        radiology_request.schedule(timezone.now())
+        radiology_request.schedule(now)
     except RadiologyRequestAlreadyScheduled:
         return HttpResponse("already scheduled", status=409)
     except RadiologyRequestExpired:
@@ -292,10 +298,43 @@ def schedule_radiology_request(request, pk):
     return HttpResponse("scheduled")
 
 
-def schedule_from_waitlist(pk):
-    radiology_request = RadiologyRequest.objects.get(pk=pk)
-    radiology_request.schedule(timezone.now())
+def schedule_from_waitlist(
+        request, pk: int, clock: Callable[[], datetime]) -> HttpResponse:
+    try:
+        radiology_request = RadiologyRequest.objects.get(pk=pk)
+    except RadiologyRequest.DoesNotExist:
+        return HttpResponse("no radiology request", status=404)
+    now = clock()
+    try:
+        radiology_request.schedule(now)
+    except RadiologyRequestAlreadyScheduled:
+        return HttpResponse("already scheduled", status=409)
+    except RadiologyRequestExpired:
+        return HttpResponse("expired", status=409)
     radiology_request.save()
+    return HttpResponse("scheduled")
+```
+
+The URLconf is the composition root for both views:
+
+```python
+from django.urls import path
+from django.utils import timezone
+
+from . import views
+
+urlpatterns = [
+    path(
+        "radiology/<int:pk>/schedule/",
+        views.schedule_radiology_request,
+        {"clock": timezone.now},
+    ),
+    path(
+        "waitlist/<int:pk>/schedule/",
+        views.schedule_from_waitlist,
+        {"clock": timezone.now},
+    ),
+]
 ```
 
 `RadiologyRequest` is an active record: its class mirrors the radiology
@@ -307,9 +346,12 @@ so only `schedule` changes them (`oo-python` rule 4). `schedule` checks
 the status and the expiry and raises `RadiologyRequestExpired` or
 `RadiologyRequestAlreadyScheduled` before it assigns either field, so a
 refused call changes nothing (rule 1). Both paths call the same method:
-the view reads neither the status nor the expiry, and
-`schedule_from_waitlist`, a plain function that a view calls, uses no
-`update()`, `bulk_update()` or `bulk_create()` (rule 2). The two paths
+neither view reads the status or the expiry, and
+`schedule_from_waitlist` uses no `update()`, `bulk_update()` or
+`bulk_create()` (rule 2). The URLconf fence stores nothing: it is the
+composition root, giving each view the `timezone.now` callable as its
+`clock` keyword. Each view asks that callable once and passes the answer
+to `schedule`, so neither view reaches a static clock. The two paths
 store a radiology request row under its primary key in the radiology
 request table, each with one `save()`; neither opens a transaction of
 its own, and each changes one row and hands nothing to another system,
@@ -318,9 +360,10 @@ method; two requests that load the same radiology request at once both
 pass it and both save. `select_for_update()` inside a transaction, left
 out of this fence, makes the second wait on a store that provides row
 locks and then load the scheduled row, which `schedule` refuses. The
-state keeps rules 1 and 2: the rule sits in `schedule`, and neither path
-writes the guarded field with `update()`, `bulk_update()` or
-`bulk_create()`.
+state keeps rules 1 and 2 and `oo-designing-for-testability` rule 5:
+the rule sits in `schedule`, neither path writes the guarded field with
+`update()`, `bulk_update()` or `bulk_create()`, and each view receives
+its clock from the composition root instead of reaching a static one.
 
 ## Red flags
 
