@@ -283,8 +283,7 @@ there from the notice period. The producer method declares no scope, so
 CDI makes a `@Dependent` bean, which needs no client proxy and lets the
 class stay final; that keeps `oo-java` rule 7. `CancellationConfiguration`
 itself is non-final because its `@ApplicationScoped` scope needs a
-client proxy, which relaxes `oo-java` rule 7, and its implicit
-no-argument constructor is the one that proxy calls.
+client proxy, which relaxes `oo-java` rule 7.
 `CheckCancellationNotice` is `@Dependent` and final, so it needs no
 client proxy either. None of the fences stores anything.
 
