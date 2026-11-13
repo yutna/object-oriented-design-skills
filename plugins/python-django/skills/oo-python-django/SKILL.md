@@ -149,15 +149,13 @@ require.
    repeated in views, as `oo-designing-repositories` rule 3 and
    `oo-layering-the-system` rule 6 ask.** A filter chain in a view
    spells the question at the edge, so each caller writes its own
-   version and a change to the question touches every view. The
-   framework's documentation treats a method on the manager as the
-   usual place for a question about the whole table, and
+   version and a change to the question touches every view. A manager
+   method is the usual home for a question about the whole table, and
    `QuerySet.as_manager()` or `Manager.from_queryset()` gives the
    manager and the queryset one set of query methods, so
    `RadiologyRequest.objects.due_today()` answers the question from
-   either. A model method answers for one row, not a table, so that
-   documentation leaves a row's rules to the model rather than to a
-   manager.
+   either. A model method answers for one row, not a table, so a row's
+   rules stay on the model rather than on a manager.
 
    The exception is a read of one row already named by its identity,
    such as a detail screen loading the request whose primary key the
