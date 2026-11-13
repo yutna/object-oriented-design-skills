@@ -80,31 +80,34 @@ application's rules are the shapes this skill names. Rails 8.1 on Ruby
    commit. The use case calls the second write and the outside work
    itself. When the work is for another system, it waits:
    `transaction.after_commit` runs after the transaction has committed.
-   The callbacks guide says `after_commit` and `after_rollback` do not
-   execute until the database changes have been committed or rolled
-   back, which is when a model's commit callbacks run. Neither callback
-   is where the outside work goes; the use case's
-   `transaction.after_commit` is.
+   `after_commit` and `after_rollback` do not run until the database
+   changes have been committed or rolled back, which is when a model's
+   commit callbacks run. Neither callback is where the outside work
+   goes; the use case's `transaction.after_commit` is.
 
 3. Rule. **Change state that a rule guards only in a model method named
    for the action, which checks the rule and raises before anything
-   changes; no controller sends `update(status: ...)`, and no code uses
+   changes; no controller sends `update(status: ...)`, no code assigns
+   the guarded attribute outside that method, and no code uses
    `update_column`, `update_columns` or `update_all` on that state, as
    `oo-encapsulating-state-and-behaviour` rules 1 and 3,
    `oo-designing-repositories` rule 6 and
-   `oo-designing-failure-behaviour` rule 4 ask.** The validations guide
-   lists `update_column`, `update_columns` and `update_all` among
-   methods that skip validations and save regardless of validity; the
-   callbacks guide lists the same three among methods that skip
-   callbacks. `update` runs validations and callbacks. A controller
-   that sends `update(status: ...)` decides the rule in the edge, and a
-   second path with `update_column` writes the guarded column with no
-   rule at all. The model method named for the action reads the current
-   state, raises when the rule refuses, and only then writes, so every
-   caller reaches the same check and nothing changes on a refused call.
-   The bang save methods raise `ActiveRecord::RecordInvalid` on a
-   failed validation; `save` and `update` return false, which a caller
-   that ignores it never sees.
+   `oo-designing-failure-behaviour` rule 4 ask.** `update_column`,
+   `update_columns` and `update_all` skip validations and save
+   regardless of validity, and the same three skip callbacks. `update`
+   runs validations and callbacks. A controller that sends
+   `update(status: ...)` decides the rule in the edge, and a second path
+   with `update_column` writes the guarded column with no rule at all.
+   The model method named for the action reads the current state, raises
+   when the rule refuses, and only then writes, so every caller reaches
+   the same check and nothing changes on a refused call. Active Record
+   defines a public writer for every column of its table, `status=`
+   beside `status`, so `oo-ruby` rule 3, which asks for readers only, is
+   relaxed for those generated attribute writers. The writer is not a
+   domain action: this rule forbids assigning the guarded attribute
+   outside the action method. The bang save methods raise
+   `ActiveRecord::RecordInvalid` on a failed validation; `save` and
+   `update` return false, which a caller that ignores it never sees.
 
 4. Default. **Put a use case that changes more than one model, or a
    request that maps onto no model, in a plain Ruby object: a service
@@ -119,12 +122,12 @@ application's rules are the shapes this skill names. Rails 8.1 on Ruby
    constructor, loads the aggregate, sends the commands and opens one
    transaction. A form object holds a request's attributes and
    validations with no table behind it; `ActiveModel::Model` includes
-   `ActiveModel::API`, so it works with `form_with` and validations,
-   and the guide calls it the recommended way to write a model-like
-   Ruby class. The exception is a request that maps onto no model and
-   changes nothing, such as a search that applies no business rule: it
-   needs no service or form object, because a read query answers it and
-   the read decides no rule (rule 5).
+   `ActiveModel::API`, so it works with `form_with` and validations, and
+   it is the shape for a model-like Ruby class with no table. The exception
+   is a request that maps onto no model and changes nothing, such as a
+   search that applies no business rule: it needs no service or form
+   object, because a read query answers it and the read decides no rule
+   (rule 5).
 
 5. Default. **Name each read for the question it answers, in a scope or
    a query object, and keep `where` chains out of controllers and
@@ -148,9 +151,9 @@ application's rules are the shapes this skill names. Rails 8.1 on Ruby
    `oo-working-within-a-framework` rule 1 ask.** `validates :slot_id,
    uniqueness: true` finds no row with the value and creates no
    constraint in the database, so two connections can both find no row
-   and both save. The validations guide says the validation creates no
-   uniqueness constraint and that a unique index must be added, through
-   `add_index` with `unique: true` in a migration. The database
+   and both save. The validation creates no uniqueness constraint, so
+   the unique index must be added, through `add_index` with
+   `unique: true` in a migration. The database
    constraint refuses the second save whatever the application did
    first, so one model's method cannot keep the rule alone: the index
    sees every writer.
@@ -158,13 +161,13 @@ application's rules are the shapes this skill names. Rails 8.1 on Ruby
 ## Pattern
 
 `Consent` records a patient's consent to a treatment. It is an Active
-Record model with `status`, `given_at` and `withdrawn_at` columns, and
-its status a rule guards: only a pending consent may be given, and only
-a given consent may be withdrawn. The first fence is a
-controller that decides both rules and writes the status itself,
-including one path with `update_column`. The second fence moves each
-check into the model's action method and calls it from a service
-object that opens one transaction.
+Record model with `status`, `given_at`, `withdrawn_at` and
+`lock_version` columns, and its status a rule guards: only a pending
+consent may be given, and only a given consent may be withdrawn. The
+first fence is a controller that decides both rules and writes the
+status itself, including one path with `update_column`. The second
+fence moves each check into the model's action method and calls it from
+a service object that opens one transaction.
 
 Before:
 
@@ -209,6 +212,8 @@ class Consent < ApplicationRecord
       status == "pending"
 
     update!(status: "given", given_at: at)
+  rescue ActiveRecord::StaleObjectError
+    raise ConsentAlreadyGiven, "consent #{id} is not pending"
   end
 
   def withdraw(at:)
@@ -216,6 +221,8 @@ class Consent < ApplicationRecord
       status == "given"
 
     update!(status: "withdrawn", withdrawn_at: at)
+  rescue ActiveRecord::StaleObjectError
+    raise ConsentNotGiven, "consent #{id} was not given"
   end
 end
 
@@ -239,14 +246,30 @@ end
 In the After, `Consent#give` and `Consent#withdraw` are named for the
 actions; each checks the status and raises `ConsentAlreadyGiven` or
 `ConsentNotGiven` before it writes, so nothing changes on a refused call
-(rule 3). `GiveConsent` and `WithdrawConsent` are plain Ruby service
-objects: each loads the consent, sends it one action message, and opens
-one transaction around that one aggregate's change (rule 4). The
-controller calls one of them. `update!` runs validations inside the
-transaction, and the model's class still mirrors its table. The fence
-shows the types in one file for reading. The fence stores a consent row
-under its id in the consents table, inside the transaction the service
-object opens.
+(rule 3). Two copies of the same consent, both loaded before either
+saves, pass that check, because each read the status its action
+expects; what refuses the second caller is the version guard.
+The consents table holds an integer `lock_version` column, and Active
+Record's optimistic locking reads it with the row and adds the version
+it read to the save's condition. The first call writes the guarded
+status, its timestamp and the next version; a second copy loaded before
+that write matches no row, so its save raises
+`ActiveRecord::StaleObjectError`, which `give` or `withdraw` turns into
+its own refusal. That guard needs no row lock, so it refuses the second
+caller on every store Rails supports. A caller sees
+`ConsentAlreadyGiven`, `ConsentNotGiven` or, on a validation failure,
+`ActiveRecord::RecordInvalid` (rule 3), and the guard's store error
+never leaves the action. `GiveConsent` and `WithdrawConsent` are
+plain Ruby service objects: each loads the consent, sends it one action
+message, and opens one transaction around that one aggregate's change
+(rule 4). The controller calls one of them. `update!` runs validations
+inside the transaction, and the model's class still mirrors its table.
+The fence shows the types in one file for reading. The fence stores a
+consent row under its id in the consents table, inside the transaction
+the service object opens: the guarded status, its timestamp and
+`lock_version` change in that one save. The state keeps rules 3 and 4:
+every change goes through the action method, and each service object
+opens one transaction around one aggregate.
 
 ## Red flags
 
