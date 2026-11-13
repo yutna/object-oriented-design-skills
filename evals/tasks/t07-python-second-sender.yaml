@@ -37,3 +37,16 @@ graders:
       parameter is annotated with a union of the two classes, `Any`,
       `object` or nothing, or if the run checks the sender with
       `isinstance` or `type()`.
+  - name: sender-declares-the-role
+    type: llm
+    focus: { source: file, path: clinic/sms_sender.py }
+    criteria: |
+      You are grading the SMS sender of a clinic project, added
+      beside an email sender behind one role that `ReminderRun`
+      declares.
+
+      PASS if `SmsSender` lists the role type that
+      `clinic/reminder_run.py` declares among its base classes, so a
+      type checker compares its methods with the role's. FAIL if
+      `SmsSender` has no base class, or only `object`, or inherits
+      from `EmailSender`.
