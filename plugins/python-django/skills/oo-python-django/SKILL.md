@@ -120,12 +120,11 @@ require.
    A receiver that writes another model or sends to another system
    makes that effect happen wherever the save runs, and can send word
    of a change that was never stored. It also hides the reaction from
-   the use case and from a test that calls the model method. A signal
-   gives the appearance of loose coupling, but code connected by
-   signals can quickly become hard to understand, adjust and debug;
-   where possible, call the handling code directly. The use case calls
-   the second model's change and the outside send itself: the first
-   inside its transaction, the second after the commit, as rule 3 says.
+   the use case and from a test that calls the model method. The use
+   case calls the handling code itself, with no signal in between. It
+   calls the second model's change and the outside send itself: the
+   first inside its transaction, the second after the commit, as rule
+   3 says.
 
 5. Judgement. **Treat an app as a module with a public interface:
    other apps call its functions rather than import its models, and an
@@ -150,14 +149,15 @@ require.
    repeated in views, as `oo-designing-repositories` rule 3 and
    `oo-layering-the-system` rule 6 ask.** A filter chain in a view
    spells the question at the edge, so each caller writes its own
-   version and a change to the question touches every view. An extra
-   manager method is the preferred way to add table-level
-   functionality to a model, and `QuerySet.as_manager()` or
-   `Manager.from_queryset()` gives the manager and the queryset one set
-   of query methods, so `RadiologyRequest.objects.due_today()` answers
-   the question from either. A model method is for one row, not a
-   table, which is why row-level functionality goes on the model and
-   not a custom manager.
+   version and a change to the question touches every view. The
+   framework's documentation treats a method on the manager as the
+   usual place for a question about the whole table, and
+   `QuerySet.as_manager()` or `Manager.from_queryset()` gives the
+   manager and the queryset one set of query methods, so
+   `RadiologyRequest.objects.due_today()` answers the question from
+   either. A model method answers for one row, not a table, so that
+   documentation leaves a row's rules to the model rather than to a
+   manager.
 
    The exception is a read of one row already named by its identity,
    such as a detail screen loading the request whose primary key the
