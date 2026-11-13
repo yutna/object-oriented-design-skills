@@ -211,9 +211,7 @@ public final class RefillEligibility {
 ```java
 import java.time.Clock;
 import java.time.Instant;
-import org.springframework.stereotype.Service;
 
-@Service
 public final class CheckRefillEligibility {
     private final Clock clock;
     private final RefillEligibility eligibility;
@@ -247,6 +245,12 @@ public class RefillConfiguration {
     @Bean
     RefillEligibility refillEligibility() {
         return new RefillEligibility(Duration.ofDays(28));
+    }
+
+    @Bean
+    CheckRefillEligibility checkRefillEligibility(
+            Clock clock, RefillEligibility eligibility) {
+        return new CheckRefillEligibility(clock, eligibility);
     }
 }
 ```
