@@ -94,6 +94,7 @@ self-call leaves that write in `sign`'s transaction.
 ## The delivery after the commit
 
 ```java
+import java.time.Instant;
 import org.springframework.transaction.annotation.Transactional;
 
 public class NoteDeliveryService {
@@ -104,8 +105,8 @@ public class NoteDeliveryService {
     }
 
     @Transactional
-    public void deliver(VisitNote note) {
-        deliveries.save(new NoteDelivery(note.id(), note.signedAt()));
+    public void deliver(long noteId, Instant signedAt) {
+        deliveries.save(new NoteDelivery(noteId, signedAt));
     }
 }
 ```
@@ -136,21 +137,20 @@ public class NoteSigning {
     }
 
     @Transactional
-    public VisitNote sign(long noteId, Instant signedAt) {
+    public void sign(long noteId, Instant signedAt) {
         VisitNote note = notes.findById(noteId)
             .orElseThrow(() -> new IllegalArgumentException(
                 "no note " + noteId));
-        VisitNote signed = note.sign(signedAt);
-        notes.save(signed);
-        return signed;
+        notes.save(note.sign(signedAt));
     }
 }
 ```
 
 `sign` stores the signed note by its id in the visit note repository,
-inside the transaction its own `@Transactional` opens. It returns the
-signed note, so the caller holds it after this transaction has
-committed.
+inside the transaction its own `@Transactional` opens. It returns
+nothing, so the caller gets no value back when this transaction has
+committed, which keeps `oo-encapsulating-state-and-behaviour` rule 4.
+The signing time is the value the caller passed in.
 
 ```java
 import java.time.Instant;
@@ -166,8 +166,8 @@ public class SignAndDeliverNote {
     }
 
     public void signAndDeliver(long noteId, Instant signedAt) {
-        VisitNote signed = signing.sign(noteId, signedAt);
-        delivery.deliver(signed);
+        signing.sign(noteId, signedAt);
+        delivery.deliver(noteId, signedAt);
     }
 }
 ```
@@ -175,10 +175,12 @@ public class SignAndDeliverNote {
 `SignAndDeliverNote` is the use case's entry point, and `signAndDeliver`
 carries no `@Transactional`, so the two calls do not share a transaction.
 It calls `NoteSigning.sign` through that bean's proxy, whose transaction
-commits when `sign` returns; then it calls `NoteDeliveryService.deliver`
-through that bean's proxy, which opens a second transaction and changes
-only the delivery. The second transaction starts only after the first has
-committed. If the delivery fails, its transaction rolls back: the note
-stays signed and no delivery is stored. It stores only through those
-two calls. Each unit changes one aggregate in its own transaction, and
+commits when `sign` returns; that call stores the signed note and
+returns nothing. Then it calls `NoteDeliveryService.deliver` through
+that bean's proxy with the note's id and signing time, which opens a
+second transaction and stores a delivery under the note's id in the
+delivery repository. `signAndDeliver` itself stores nothing. The second
+transaction starts only after the first has committed. If the delivery
+fails, its transaction rolls back: the note stays signed and no delivery
+is stored. Each unit changes one aggregate in its own transaction, and
 that state keeps rule 3.

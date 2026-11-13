@@ -158,9 +158,9 @@ require.
 ## Pattern
 
 `RefillEligibility` decides whether a prescription may be dispensed
-again, from the date it was last dispensed and the clinic's clock. It is
-a domain class: a rule the clinic owns, not a bean the container
-describes.
+again, from the date it was last dispensed and the current time, within
+the clinic's refill interval. It is a domain class: a rule the clinic
+owns, not a bean the container describes.
 
 Before:
 
@@ -192,26 +192,48 @@ stores nothing.
 After:
 
 ```java
-import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 
-public class RefillEligibility {
-    private final Clock clock;
+public final class RefillEligibility {
+    private final Duration interval;
 
-    public RefillEligibility(Clock clock) {
-        this.clock = clock;
+    public RefillEligibility(Duration interval) {
+        this.interval = interval;
     }
 
-    public boolean allows(Instant lastDispensedAt) {
-        return !clock.instant().isBefore(
-            lastDispensedAt.plus(Duration.ofDays(28)));
+    public boolean allows(Instant lastDispensedAt, Instant now) {
+        return !now.isBefore(lastDispensedAt.plus(interval));
     }
 }
 ```
 
 ```java
 import java.time.Clock;
+import java.time.Instant;
+import org.springframework.stereotype.Service;
+
+@Service
+public final class CheckRefillEligibility {
+    private final Clock clock;
+    private final RefillEligibility eligibility;
+
+    public CheckRefillEligibility(
+            Clock clock, RefillEligibility eligibility) {
+        this.clock = clock;
+        this.eligibility = eligibility;
+    }
+
+    public boolean isEligible(Instant lastDispensedAt) {
+        Instant now = clock.instant();
+        return eligibility.allows(lastDispensedAt, now);
+    }
+}
+```
+
+```java
+import java.time.Clock;
+import java.time.Duration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -223,18 +245,26 @@ public class RefillConfiguration {
     }
 
     @Bean
-    RefillEligibility refillEligibility(Clock clock) {
-        return new RefillEligibility(clock);
+    RefillEligibility refillEligibility() {
+        return new RefillEligibility(Duration.ofDays(28));
     }
 }
 ```
 
-In the After, `RefillEligibility` has no Spring annotation or import and
-takes its clock through the constructor into a final field, which keeps
-rule 1. `RefillConfiguration` is the composition root: its `@Bean`
-methods name each object and the collaborator it takes, and the domain
-class is built there, which keeps rule 2. Neither fence stores
-anything.
+In the After, `RefillEligibility` has no Spring annotation or import,
+keeps the clinic's refill interval in a final `Duration` field, and
+takes the current time as a value in `allows`, which keeps
+`oo-designing-for-testability` rule 3. `CheckRefillEligibility` keeps
+rule 1: it receives the clock and the domain class through one
+constructor into final fields, and `isEligible` asks the clock once and
+passes the answer on. `RefillConfiguration` is the composition root:
+its `@Bean` methods name each object and the values or collaborator it
+takes, and the domain class is built there from `Duration.ofDays(28)`,
+which keeps rule 2. `RefillEligibility` and `CheckRefillEligibility`
+are final, because neither is a `@Configuration` class or a bean
+Spring proxies, which keeps `oo-java` rule 7. `RefillConfiguration` is
+non-final because a `@Configuration` class is subclassed at startup,
+which relaxes `oo-java` rule 7. None of the fences stores anything.
 
 ## Red flags
 
