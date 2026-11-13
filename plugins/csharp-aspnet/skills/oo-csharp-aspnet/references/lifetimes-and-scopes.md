@@ -133,6 +133,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 public sealed class ScreeningSweep(
     IServiceScopeFactory scopeFactory,
+    TimeProvider time,
     ILogger<ScreeningSweep> logger)
     : BackgroundService
 {
@@ -145,7 +146,8 @@ public sealed class ScreeningSweep(
             {
                 var db = scope.ServiceProvider
                     .GetRequiredService<ScreeningDbContext>();
-                var cutoff = DateTime.UtcNow.AddDays(-30);
+                var now = time.GetUtcNow().UtcDateTime;
+                var cutoff = now.AddDays(-30);
                 var overdue = await db.ScreeningInvitations
                     .Where(invitation =>
                         invitation.FlaggedAt == null &&
@@ -153,7 +155,7 @@ public sealed class ScreeningSweep(
                     .ToListAsync(stoppingToken);
                 foreach (var invitation in overdue)
                 {
-                    invitation.FlagOverdue(DateTime.UtcNow);
+                    invitation.FlagOverdue(now);
                     logger.LogWarning(
                         "Screening invitation {Id} is overdue",
                         invitation.Id);
@@ -168,17 +170,21 @@ public sealed class ScreeningSweep(
 ```
 
 `ScreeningSweep` now takes `IServiceScopeFactory`, which the container
+registers as a singleton, and the `TimeProvider` that `Program.cs`
 registers as a singleton, so the hosted service holds no scoped
-service. Each sweep opens one scope, resolves the scoped
-`ScreeningDbContext` from `scope.ServiceProvider`, uses it for the
-load, the changes and one `SaveChangesAsync`, and disposes it when the
-scope ends. Each sweep's scope disposes its context when the unit of
-work ends, so the context is never shared between sweeps. An exception
-that leaves one sweep also leaves `ExecuteAsync`, and the host stops by
-default, so no later sweep reuses that context. The fence stores each
-overdue invitation's `FlaggedAt` value under the invitation's id in the
-screening table, inside the transaction the scope's one
-`SaveChangesAsync` opens; each scope holds one unit of work. The state
-keeps rule 1: the singleton holds only `IServiceScopeFactory`, and
-every unit of work takes a scoped context from its own scope and
-disposes it with that scope.
+service. Each sweep asks that provider once, and the same answer serves
+the cutoff and every `FlagOverdue` call, which keeps
+`oo-designing-for-testability` rule 5. Each sweep opens one scope,
+resolves the scoped `ScreeningDbContext` from `scope.ServiceProvider`,
+uses it for the load, the changes and one `SaveChangesAsync`, and
+disposes it when the scope ends. Each sweep's scope disposes its
+context when the unit of work ends, so the context is never shared
+between sweeps. An exception that leaves one sweep also leaves
+`ExecuteAsync`, and the host stops by default, so no later sweep reuses
+that context. The fence stores each overdue invitation's `FlaggedAt`
+value under the invitation's id in the screening table, inside the
+transaction the scope's one `SaveChangesAsync` opens; each scope holds
+one unit of work. The state keeps rule 1 and
+`oo-designing-for-testability` rule 5: the singleton holds no scoped
+service, and every sweep asks one provider once and passes the answer
+on.
