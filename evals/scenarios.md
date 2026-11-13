@@ -680,7 +680,9 @@ them; the fee decision split from writing the charge, so a test checks it with
 plain values and no billing system; the test-only field and method removed, with
 the test checking what callers can see or what is sent through a port; the fee
 decision given the time as a value, with the clock asked once by the code that
-runs the decision.
+runs the decision; the fee decision moved into an object of its own that takes
+the times as values and holds no clock, random source or billing port, given as
+the change and not as one option among others.
 
 Should reach `oo-designing-for-testability`.
 

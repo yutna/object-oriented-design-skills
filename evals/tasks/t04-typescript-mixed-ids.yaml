@@ -38,3 +38,16 @@ graders:
       a private member. FAIL if the file is missing, or if the types
       are aliases of `string` (`type PatientId = string`), which the
       compiler treats as the same type.
+  - name: factory-checks-the-text
+    type: llm
+    focus: { source: file, path: src/domain/ids.ts }
+    criteria: |
+      You are grading the id types of a TypeScript clinic project,
+      added to stop a patient id and a slot id from being swapped.
+
+      PASS if every function that turns text into a patient id or a
+      slot id checks the text before it asserts the brand, and
+      refuses text that cannot be an id, such as blank text, by
+      throwing; and the brand is asserted nowhere else in the file.
+      FAIL if a factory returns the text cast to the id type with no
+      check, or if the file has no such function.

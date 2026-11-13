@@ -159,7 +159,6 @@ js has no interfaces: how do I pin what a slot store must do? -> oo-javascript
 is Object.freeze enough for a js Appointment value object? -> oo-javascript
 js Patient: use class syntax or plain prototypes? -> oo-javascript
 should Appointment be a record in C#? it has an id and changes status -> oo-csharp
-can't make the C# Clinic constructor async, where do I load the slots then? -> oo-csharp
 my @dataclass Appointment lets anyone reassign .slot after it's booked -> oo-python
 Appointment uses method_missing for status checks, typos only blow up in prod->oo-ruby
 in ruby I keep checking slot.is_a?(Slot) before booking, any better way? -> oo-ruby
@@ -221,4 +220,5 @@ calling schedule.freeSlots() somehow reorders the clinician's slot list -> oo-ap
 visit fee calc reads the db and the clock, can't unit test without mocks -> oo-applying-functional-techniques
 I have a ReminderPolicy interface with one method, could I just pass a lambda->oo-applying-functional-techniques
 Spring app: model VisitOutcome as a sealed interface or enum? -> oo-java
+can't make the C# Clinic constructor async, where do I load the slots then? -> oo-csharp
 ```
