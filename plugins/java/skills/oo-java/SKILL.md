@@ -3,7 +3,7 @@ name: oo-java
 description: Use when plain Java code with no framework needs a record or a sealed type, equals and hashCode, a checked exception, or a choice to make a class final.
 license: MIT
 metadata:
-  version: 0.17.1
+  version: 0.18.0
   pack: object-oriented-design-skills
 ---
 

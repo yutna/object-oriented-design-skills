@@ -1,6 +1,6 @@
 {
   "name": "object-oriented-design-csharp-aspnet",
-  "version": "0.17.1",
+  "version": "0.18.0",
   "description": "Object-oriented design rules kept in ASP.NET Core: service lifetimes, EF Core entities that keep their rules, one unit of work per use case, and endpoints at the edge",
   "author": {
     "name": "Yutthana Siphuengchai",

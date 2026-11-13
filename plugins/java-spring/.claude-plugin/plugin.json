@@ -1,6 +1,6 @@
 {
   "name": "object-oriented-design-java-spring",
-  "version": "0.17.1",
+  "version": "0.18.0",
   "description": "Object-oriented design rules kept in Java on Spring: constructor injection, a composition root in configuration, a transaction per use case and entities that keep their rules",
   "author": {
     "name": "Yutthana Siphuengchai",

@@ -3,7 +3,7 @@ name: oo-csharp-aspnet
 description: Use when ASP.NET Core code picks a scoped or singleton lifetime, tracks entities with EF Core, or keeps logic out of MapPost endpoints and middleware.
 license: MIT
 metadata:
-  version: 0.17.1
+  version: 0.18.0
   pack: object-oriented-design-skills
 ---
 

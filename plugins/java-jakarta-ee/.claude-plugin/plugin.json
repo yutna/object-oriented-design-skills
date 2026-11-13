@@ -1,6 +1,6 @@
 {
   "name": "object-oriented-design-java-jakarta-ee",
-  "version": "0.17.1",
+  "version": "0.18.0",
   "description": "Object-oriented design rules kept in Java on Jakarta EE: CDI injection and producers, container transactions that roll back refusals, and entities that keep their rules",
   "author": {
     "name": "Yutthana Siphuengchai",

@@ -3,7 +3,7 @@ name: oo-java-jakarta-ee
 description: Use when Java code on Jakarta EE picks a CDI bean or a @Stateless EJB, or a container transaction commits work that a refusal should undo.
 license: MIT
 metadata:
-  version: 0.17.1
+  version: 0.18.0
   pack: object-oriented-design-skills
 ---
 
