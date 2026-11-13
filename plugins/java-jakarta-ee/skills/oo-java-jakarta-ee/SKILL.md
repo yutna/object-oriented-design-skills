@@ -59,28 +59,25 @@ not.
    its proxy needs, which no code of yours calls:
    `oo-inverting-dependencies` rules 2 and 5.** The bean constructor is
    the one annotated `@Inject`, and two such constructors are a
-   definition error (CDI 4.1 section 3.5.1). CDI 4.1 section 3.10 asks
-   a bean type to be proxyable when the bean requires a client proxy or
-   has a bound interceptor, and a class without a non-private
-   constructor with no parameters is not proxyable, so a normal-scoped
-   bean and a bean with `@Transactional` both keep one that only the
-   container calls. An enterprise bean keeps the public no-argument
-   constructor its container requires (Jakarta Enterprise Beans 4.0
-   section 4.9.2) and receives its collaborators through the `@Inject`
-   constructor.
+   definition error. CDI asks a bean type to be proxyable when the bean
+   requires a client proxy or has a bound interceptor, and a class
+   without a non-private constructor with no parameters is not
+   proxyable, so a normal-scoped bean and a bean with `@Transactional`
+   both keep one that only the container calls. An enterprise bean
+   keeps the public no-argument constructor its container requires and
+   receives its collaborators through the `@Inject` constructor.
 
 2. Default. **Keep domain classes free of CDI and enterprise bean
    annotations, and make them in `@Produces` methods of one producer
    class that reads as the composition root; bean-defining annotations
    stay on edge classes such as resources and adapters:
    `oo-inverting-dependencies` rules 3 and 4,
-   `oo-working-within-a-framework` rule 2.** CDI 4.1 section 7.1 says
-   an object a producer method returns that is not another bean is not
-   injected or intercepted on its own, so the class stays plain, and
-   section 2.5 says the default discovery mode is `annotated`, so a
-   class without a bean-defining annotation is not discovered. The
-   producer class is the one place that names each domain object and
-   the collaborators it takes.
+   `oo-working-within-a-framework` rule 2.** CDI says an object a
+   producer method returns that is not another bean is not injected or
+   intercepted on its own, so the class stays plain, and the default
+   discovery mode is `annotated`, so a class without a bean-defining
+   annotation is not discovered. The producer class is the one place
+   that names each domain object and the collaborators it takes.
 
    The exception is a domain object the use case builds for one call:
    the object that holds the use case builds it with `new` from values
@@ -95,13 +92,13 @@ not.
    that choice once for the code base: `oo-working-within-a-framework`
    rules 3 and 4.** `@Transactional` is an interceptor binding, and a
    method that carries it on a CDI bean gets a container transaction
-   with `TxType.REQUIRED` as the default (Jakarta Transactions 2.0
-   section 3.7). Jakarta Concurrency 3.1 lets a CDI managed bean method
-   carry `@Asynchronous`, and its `runAt` schedules repeated execution,
-   so asynchronous and scheduled work is not by itself a reason to
-   choose an enterprise bean. What tips the balance is whether the code
-   needs a container service that CDI beans do not get; decide it once,
-   as `oo-working-within-a-framework` rule 4 asks, not class by class.
+   with `TxType.REQUIRED` as the default. Jakarta Concurrency 3.1 lets
+   a CDI managed bean method carry `@Asynchronous`, and its `runAt`
+   schedules repeated execution, so asynchronous and scheduled work is
+   not by itself a reason to choose an enterprise bean. What tips the
+   balance is whether the code needs a container service that CDI
+   beans do not get; decide it once, as
+   `oo-working-within-a-framework` rule 4 asks, not class by class.
 
 4. Rule. **Let a refusal leave nothing written: refuse before anything
    changes, and where a refusal can come after a change, make the
@@ -114,29 +111,27 @@ not.
    `oo-taming-persistence` rule 4, `oo-designing-aggregates` rule 4.**
    A `@Transactional` method marks the transaction for rollback on a
    `RuntimeException` by default and not on a checked exception, unless
-   `rollbackOn` names it (Jakarta Transactions 2.0 section 3.7). A
-   container-managed enterprise bean calls `setRollbackOnly` on its
-   `EJBContext` to mark the transaction such that it can never commit,
-   and the spec names that call as the step before throwing an
-   application exception that is not specified to roll back (Jakarta
-   Enterprise Beans 4.0 section 8.3.4.2); a checked exception in the
-   bean's business method is an application exception and does not roll
-   back on its own (section 9.2.1). Both paths otherwise leave the
-   write committed.
+   `rollbackOn` names it. A container-managed enterprise bean calls
+   `setRollbackOnly` on its `EJBContext` to mark the transaction such
+   that it can never commit, and that call is the step before throwing
+   an application exception that is not specified to roll back; a
+   checked exception in the bean's business method is an application
+   exception and does not roll back on its own. Both paths otherwise
+   leave the write committed.
 
 5. Rule. **Reach a method that needs its own transaction or interceptor
    through an injected reference to another bean, because a call
    through `this` is a plain Java call that no interceptor sees:
    `oo-placing-domain-logic` rule 2, `oo-taming-persistence` rule 4.**
-   CDI 4.1 section 7.2 treats a method invocation as a business method
-   invocation when the application invokes a method of a bean through a
-   contextual reference to the bean, and says an invocation that is not
-   a business method invocation is treated as a normal Java method call
-   and is not intercepted by the container. A call on `this` does not
-   pass through a contextual reference, so no interceptor sees it, and
-   the transaction or interceptor advice runs only when the call enters
-   a bean reference. A unit that needs its own transaction therefore
-   lives on another bean and the caller reaches it through the injected
+   CDI treats a method invocation as a business method invocation when
+   the application invokes a method of a bean through a contextual
+   reference to the bean, and says an invocation that is not a business
+   method invocation is treated as a normal Java method call and is not
+   intercepted by the container. A call on `this` does not pass through
+   a contextual reference, so no interceptor sees it, and the
+   transaction or interceptor advice runs only when the call enters a
+   bean reference. A unit that needs its own transaction therefore lives
+   on another bean and the caller reaches it through the injected
    reference.
 
 6. Default. **A Jakarta Persistence entity that is a domain object
@@ -145,12 +140,12 @@ not.
    other caller, and methods named for domain actions instead of
    setters: `oo-encapsulating-state-and-behaviour` rules 1 and 2,
    `oo-constructing-valid-objects` rule 3,
-   `oo-working-within-a-framework` rule 1.** Jakarta Persistence 3.2
-   section 2.1 requires a public or protected no-argument constructor
-   that the provider calls and a non-final entity class. The
-   constructor is the provider's way in; every other caller uses the
-   checking constructor or named factory, so no instance exists in a
-   state the clinic forbids. A setter would let a caller change a field
+   `oo-working-within-a-framework` rule 1.** Jakarta Persistence
+   requires a public or protected no-argument constructor that the
+   provider calls and a non-final entity class. The constructor is the
+   provider's way in; every other caller uses the checking constructor
+   or named factory, so no instance exists in a state the clinic
+   forbids. A setter would let a caller change a field
    without the rule, which `oo-encapsulating-state-and-behaviour` rule
    2 asks the entity to keep behind a method named for the action.
 
@@ -166,22 +161,21 @@ not.
    relaxes `oo-java` rule 7; a domain class made by a producer method
    that declares no scope keeps that rule, because a `@Dependent` bean
    needs no client proxy: `oo-java` rule 7,
-   `oo-honouring-substitutability` rule 5.** CDI 4.1 section 3.10
-   treats a final class as unproxyable when the bean type needs a
-   client proxy or has a bound interceptor, and section 5.4 says a
-   client proxy is never required for a `@Dependent` bean. A producer
-   method that declares no scope produces a `@Dependent` bean (section
-   2.4.4), so the domain class it returns may stay final. Jakarta
-   Enterprise Beans 4.0 section 4.9.2 requires a session bean class to
-   be public, not final and not abstract. Jakarta Persistence 3.2
-   section 2.1 requires an entity to be non-final. The sentence beside
-   each non-final class in the code says which case it is.
+   `oo-honouring-substitutability` rule 5.** CDI treats a final class
+   as unproxyable when the bean type needs a client proxy or has a
+   bound interceptor, and a client proxy is never required for a
+   `@Dependent` bean. A producer method that declares no scope produces
+   a `@Dependent` bean, so the domain class it returns may stay final.
+   Jakarta Enterprise Beans requires a session bean class to be public,
+   not final and not abstract. Jakarta Persistence requires an entity
+   to be non-final. The sentence beside each non-final class in the
+   code says which case it is.
 
 ## Pattern
 
 `CancellationCutoff` decides whether a cancellation came too late for
-the clinic's notice rule, from the appointment's start and the clinic's
-clock. It is a domain class: a rule the clinic owns, not an object the
+the clinic's notice rule, from the appointment's start and the current
+time. It is a domain class: a rule the clinic owns, not an object the
 container describes.
 
 Before:
@@ -214,20 +208,43 @@ client proxy, which relaxes `oo-java` rule 7. The fence stores nothing.
 After:
 
 ```java
-import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 
 public final class CancellationCutoff {
-    private final Clock clock;
+    private final Duration notice;
 
-    public CancellationCutoff(Clock clock) {
-        this.clock = clock;
+    public CancellationCutoff(Duration notice) {
+        this.notice = notice;
     }
 
-    public boolean hasPassed(Instant startsAt) {
-        return clock.instant().isAfter(
-            startsAt.minus(Duration.ofHours(24)));
+    public boolean hasPassed(Instant startsAt, Instant now) {
+        return now.isAfter(startsAt.minus(notice));
+    }
+}
+```
+
+```java
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
+import java.time.Clock;
+import java.time.Instant;
+
+@Dependent
+public final class CheckCancellationNotice {
+    private final Clock clock;
+    private final CancellationCutoff cutoff;
+
+    @Inject
+    public CheckCancellationNotice(Clock clock,
+            CancellationCutoff cutoff) {
+        this.clock = clock;
+        this.cutoff = cutoff;
+    }
+
+    public boolean isLate(Instant startsAt) {
+        Instant now = clock.instant();
+        return cutoff.hasPassed(startsAt, now);
     }
 }
 ```
@@ -236,6 +253,7 @@ public final class CancellationCutoff {
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import java.time.Clock;
+import java.time.Duration;
 
 @ApplicationScoped
 public class CancellationConfiguration {
@@ -245,22 +263,30 @@ public class CancellationConfiguration {
     }
 
     @Produces
-    CancellationCutoff cancellationCutoff(Clock clock) {
-        return new CancellationCutoff(clock);
+    CancellationCutoff cancellationCutoff() {
+        return new CancellationCutoff(Duration.ofHours(24));
     }
 }
 ```
 
-In the After, `CancellationCutoff` has no CDI annotation or import,
-takes the clock through its constructor into a final field, and is
-final, which keeps rules 1 and 2. `CancellationConfiguration` is the
-composition root: its `@Produces` methods name each object and the
-collaborator it takes, and the domain class is built there. The
-producer method declares no scope, so CDI makes a `@Dependent` bean,
-which needs no client proxy and lets the class stay final; that keeps
-`oo-java` rule 7. `CancellationConfiguration` itself is non-final
-because its `@ApplicationScoped` scope needs a client proxy, which
-relaxes `oo-java` rule 7. Neither fence stores anything.
+In the After, `CancellationCutoff` has no CDI annotation or import and
+holds no clock: its constructor takes the clinic's notice period as a
+`Duration` into a final field, and `hasPassed` takes the current time
+as a value beside the appointment's start, which keeps rule 2 and
+`oo-designing-for-testability` rule 3. `CheckCancellationNotice` keeps
+rule 1: it receives the clock and the cutoff through one `@Inject`
+constructor, asks the clock once in `isLate`, and passes the answer to
+the cutoff. `CancellationConfiguration` is the composition root:
+its `@Produces` methods name each object and the values or
+collaborators it takes, and the domain class is built there from the
+notice period. The producer method declares no scope, so CDI makes a
+`@Dependent` bean, which needs no client proxy and lets the class stay
+final; that keeps `oo-java` rule 7. `CancellationConfiguration` itself
+is non-final because its `@ApplicationScoped` scope needs a client
+proxy, which relaxes `oo-java` rule 7, and its implicit no-argument
+constructor is the one that proxy calls. `CheckCancellationNotice` is
+`@Dependent` and final, so it needs no client proxy either. None of the
+fences stores anything.
 
 ## Red flags
 

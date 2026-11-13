@@ -73,15 +73,21 @@ interface AppointmentStore {
 ```
 
 `ScheduledAppointment` is the aggregate root: its `visits` list holds
-the visit records, and `complete` refuses a second completion. The
+the visit records, and `complete` refuses a second completion. Two
+requests that load the same appointment at once both pass `complete()`;
+optimistic locking through a `@Version` field on
+`ScheduledAppointment`, left out of this fence, refuses the second: the
+provider compares the version it read with the one in the store when it
+writes the appointment, and when the versions differ it throws
+`OptimisticLockException` and marks the transaction for rollback. The
 appointment is loaded by the use case; its creation is outside this
 file. `VisitRecord` is the stored record inside that aggregate.
 `AppointmentStore` is the domain's repository; an adapter at the edge
 implements it and stores the whole appointment under the appointment's
 id, and this file leaves that adapter out. The types are shown in one
 file for reading; a project puts each type in its own file. The two
-entities are non-final because Jakarta Persistence 3.2 section 2.1
-requires it, which relaxes `oo-java` rule 7.
+entities are non-final because Jakarta Persistence requires it, which
+relaxes `oo-java` rule 7.
 
 ## The use case as it is
 
@@ -130,22 +136,22 @@ public class VisitRecording {
 ```
 
 `VisitRecording` is the use case as a CDI bean. It declares the
-`@Dependent` scope (CDI 4.1 section 2.4.4), and `@Transactional` is a
-bound interceptor, so CDI 4.1 section 3.10 asks its bean type to be
-proxyable. The class is non-final and keeps a non-private no-argument
-constructor that no code of yours calls, which relaxes `oo-java` rule
-7; the proxy needs both. The `@Inject` constructor receives the store.
+`@Dependent` scope, and `@Transactional` is a bound interceptor, so CDI
+asks its bean type to be proxyable. The class is non-final and keeps a
+non-private no-argument constructor that no code of yours calls, which
+relaxes `oo-java` rule 7; the proxy needs both. The `@Inject`
+constructor receives the store.
 
 `record` runs in one container transaction that `@Transactional` starts
-with `TxType.REQUIRED` (Jakarta Transactions 2.0 section 3.7). It loads
-the scheduled appointment by its id, adds a `VisitRecord` inside it,
-and stores the whole appointment through `AppointmentStore` under the
-appointment's id, in the appointment table and the visit record table,
-inside that transaction. The appointment is already completed, so
-`complete` refuses with `VisitAlreadyRecorded` after the store. The
-refusal is a checked exception and `record` names no `rollbackOn`, so
-the transactional interceptor does not mark the transaction for
-rollback (section 3.7), and the container commits the visit record.
+with `TxType.REQUIRED`. It loads the scheduled appointment by its id,
+adds a `VisitRecord` inside it, and stores the whole appointment
+through `AppointmentStore` under the appointment's id, in the
+appointment table and the visit record table, inside that transaction.
+The appointment is already completed, so `complete` refuses with
+`VisitAlreadyRecorded` after the store. The refusal is a checked
+exception and `record` names no `rollbackOn`, so the transactional
+interceptor does not mark the transaction for rollback, and the
+container commits the visit record.
 
 ## The use case after the change
 
@@ -187,8 +193,7 @@ public class VisitRecording {
 
 `VisitRecording` is the same bean: `@Dependent`, non-final and with a
 non-private no-argument constructor because its `@Transactional` method
-is a bound interceptor (CDI 4.1 section 3.10), which relaxes `oo-java`
-rule 7.
+is a bound interceptor, which relaxes `oo-java` rule 7.
 
 `record` loads the appointment, asks it to complete before anything
 changes, then adds the visit and stores the whole appointment through
