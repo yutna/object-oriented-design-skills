@@ -269,24 +269,24 @@ public class CancellationConfiguration {
 }
 ```
 
-In the After, `CancellationCutoff` has no CDI annotation or import and
-holds no clock, which keeps rule 2. Its constructor takes the clinic's
-notice period as a `Duration` into a final field, and `hasPassed` takes
-the current time as a value beside the appointment's start, which keeps
-`oo-designing-for-testability` rule 3. `CheckCancellationNotice` keeps
-rule 1: it receives the clock and the cutoff through one `@Inject`
-constructor, asks the clock once in `isLate`, and passes the answer to
-the cutoff. `CancellationConfiguration` is the composition root:
-its `@Produces` methods name each object and the values or
-collaborators it takes, and the domain class is built there from the
-notice period. The producer method declares no scope, so CDI makes a
-`@Dependent` bean, which needs no client proxy and lets the class stay
-final; that keeps `oo-java` rule 7. `CancellationConfiguration` itself
-is non-final because its `@ApplicationScoped` scope needs a client
-proxy, which relaxes `oo-java` rule 7, and its implicit no-argument
-constructor is the one that proxy calls. `CheckCancellationNotice` is
-`@Dependent` and final, so it needs no client proxy either. None of the
-fences stores anything.
+In the After, `CancellationCutoff` has no CDI annotation or import,
+which keeps rule 2, and it holds no clock. Its constructor takes the
+clinic's notice period as a `Duration` into a final field, and
+`hasPassed` takes the current time as a value beside the appointment's
+start, which keeps `oo-designing-for-testability` rule 3.
+`CheckCancellationNotice` keeps rule 1: it receives the clock and the
+cutoff through one `@Inject` constructor, asks the clock once in
+`isLate`, and passes the answer to the cutoff. `CancellationConfiguration`
+is the composition root: its `@Produces` methods name each object and
+the values or collaborators it takes, and the domain class is built
+there from the notice period. The producer method declares no scope, so
+CDI makes a `@Dependent` bean, which needs no client proxy and lets the
+class stay final; that keeps `oo-java` rule 7. `CancellationConfiguration`
+itself is non-final because its `@ApplicationScoped` scope needs a
+client proxy, which relaxes `oo-java` rule 7, and its implicit
+no-argument constructor is the one that proxy calls.
+`CheckCancellationNotice` is `@Dependent` and final, so it needs no
+client proxy either. None of the fences stores anything.
 
 ## Red flags
 
