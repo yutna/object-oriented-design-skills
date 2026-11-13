@@ -270,9 +270,9 @@ public class CancellationConfiguration {
 ```
 
 In the After, `CancellationCutoff` has no CDI annotation or import and
-holds no clock: its constructor takes the clinic's notice period as a
-`Duration` into a final field, and `hasPassed` takes the current time
-as a value beside the appointment's start, which keeps rule 2 and
+holds no clock, which keeps rule 2. Its constructor takes the clinic's
+notice period as a `Duration` into a final field, and `hasPassed` takes
+the current time as a value beside the appointment's start, which keeps
 `oo-designing-for-testability` rule 3. `CheckCancellationNotice` keeps
 rule 1: it receives the clock and the cutoff through one `@Inject`
 constructor, asks the clock once in `isLate`, and passes the answer to
