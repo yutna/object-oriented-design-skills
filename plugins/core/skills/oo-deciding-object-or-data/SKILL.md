@@ -3,7 +3,7 @@ name: oo-deciding-object-or-data
 description: Use when deciding if something should be a class or just data, when classes are only getters and setters, or when shaping DTOs and records.
 license: MIT
 metadata:
-  version: 0.17.1
+  version: 0.18.0
   pack: object-oriented-design-skills
 ---
 

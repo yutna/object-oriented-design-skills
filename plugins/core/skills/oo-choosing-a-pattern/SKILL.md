@@ -3,7 +3,7 @@ name: oo-choosing-a-pattern
 description: Use when picking a design pattern for a problem, when a pattern was added before its problem, or when deciding if a pattern still pays its way.
 license: MIT
 metadata:
-  version: 0.17.1
+  version: 0.18.0
   pack: object-oriented-design-skills
 ---
 

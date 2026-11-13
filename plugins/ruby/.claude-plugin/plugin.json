@@ -1,6 +1,6 @@
 {
   "name": "object-oriented-design-ruby",
-  "version": "0.17.1",
+  "version": "0.18.0",
   "description": "Object-oriented design rules kept in plain Ruby: duck typing, modules and mixins, Data values, and metaprogramming with discipline",
   "author": {
     "name": "Yutthana Siphuengchai",

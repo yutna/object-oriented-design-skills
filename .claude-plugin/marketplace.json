@@ -10,7 +10,7 @@
     {
       "name": "object-oriented-design-skills",
       "description": "Assign responsibilities, model a domain in objects, invert dependencies, structure a system, and refactor toward all of it",
-      "version": "0.17.1",
+      "version": "0.18.0",
       "source": "./plugins/core",
       "author": { "name": "Yutthana Siphuengchai" },
       "homepage": "https://github.com/yutna/object-oriented-design-skills",
@@ -22,7 +22,7 @@
     {
       "name": "object-oriented-design-java",
       "description": "Object-oriented design rules kept in plain Java, with no framework",
-      "version": "0.17.1",
+      "version": "0.18.0",
       "source": "./plugins/java",
       "author": { "name": "Yutthana Siphuengchai" },
       "homepage": "https://github.com/yutna/object-oriented-design-skills",
@@ -34,7 +34,7 @@
     {
       "name": "object-oriented-design-kotlin",
       "description": "Object-oriented design rules kept in plain Kotlin, with no framework",
-      "version": "0.17.1",
+      "version": "0.18.0",
       "source": "./plugins/kotlin",
       "author": { "name": "Yutthana Siphuengchai" },
       "homepage": "https://github.com/yutna/object-oriented-design-skills",
@@ -46,7 +46,7 @@
     {
       "name": "object-oriented-design-typescript",
       "description": "Object-oriented design rules kept in plain TypeScript, with no framework",
-      "version": "0.17.1",
+      "version": "0.18.0",
       "source": "./plugins/typescript",
       "author": { "name": "Yutthana Siphuengchai" },
       "homepage": "https://github.com/yutna/object-oriented-design-skills",
@@ -58,7 +58,7 @@
     {
       "name": "object-oriented-design-javascript",
       "description": "Object-oriented design rules kept in plain JavaScript, with no framework",
-      "version": "0.17.1",
+      "version": "0.18.0",
       "source": "./plugins/javascript",
       "author": { "name": "Yutthana Siphuengchai" },
       "homepage": "https://github.com/yutna/object-oriented-design-skills",
@@ -70,7 +70,7 @@
     {
       "name": "object-oriented-design-csharp",
       "description": "Object-oriented design rules kept in plain C#, with no framework",
-      "version": "0.17.1",
+      "version": "0.18.0",
       "source": "./plugins/csharp",
       "author": { "name": "Yutthana Siphuengchai" },
       "homepage": "https://github.com/yutna/object-oriented-design-skills",
@@ -82,7 +82,7 @@
     {
       "name": "object-oriented-design-python",
       "description": "Object-oriented design rules kept in plain Python, with no framework",
-      "version": "0.17.1",
+      "version": "0.18.0",
       "source": "./plugins/python",
       "author": { "name": "Yutthana Siphuengchai" },
       "homepage": "https://github.com/yutna/object-oriented-design-skills",
@@ -94,7 +94,7 @@
     {
       "name": "object-oriented-design-ruby",
       "description": "Object-oriented design rules kept in plain Ruby, with no framework",
-      "version": "0.17.1",
+      "version": "0.18.0",
       "source": "./plugins/ruby",
       "author": { "name": "Yutthana Siphuengchai" },
       "homepage": "https://github.com/yutna/object-oriented-design-skills",
@@ -106,7 +106,7 @@
     {
       "name": "object-oriented-design-java-spring",
       "description": "Object-oriented design rules kept in Java on Spring, added to the Java plugin",
-      "version": "0.17.1",
+      "version": "0.18.0",
       "source": "./plugins/java-spring",
       "author": { "name": "Yutthana Siphuengchai" },
       "homepage": "https://github.com/yutna/object-oriented-design-skills",
@@ -118,7 +118,7 @@
     {
       "name": "object-oriented-design-java-jakarta-ee",
       "description": "Object-oriented design rules kept in Java on Jakarta EE, added to the Java plugin",
-      "version": "0.17.1",
+      "version": "0.18.0",
       "source": "./plugins/java-jakarta-ee",
       "author": { "name": "Yutthana Siphuengchai" },
       "homepage": "https://github.com/yutna/object-oriented-design-skills",
@@ -130,7 +130,7 @@
     {
       "name": "object-oriented-design-ruby-rails",
       "description": "Object-oriented design rules kept in Ruby on Rails, added to the Ruby plugin",
-      "version": "0.17.1",
+      "version": "0.18.0",
       "source": "./plugins/ruby-rails",
       "author": { "name": "Yutthana Siphuengchai" },
       "homepage": "https://github.com/yutna/object-oriented-design-skills",
@@ -142,7 +142,7 @@
     {
       "name": "object-oriented-design-csharp-aspnet",
       "description": "Object-oriented design rules kept in ASP.NET Core, added to the C# plugin",
-      "version": "0.17.1",
+      "version": "0.18.0",
       "source": "./plugins/csharp-aspnet",
       "author": { "name": "Yutthana Siphuengchai" },
       "homepage": "https://github.com/yutna/object-oriented-design-skills",
@@ -154,7 +154,7 @@
     {
       "name": "object-oriented-design-python-django",
       "description": "Object-oriented design rules kept in Django, added to the Python plugin",
-      "version": "0.17.1",
+      "version": "0.18.0",
       "source": "./plugins/python-django",
       "author": { "name": "Yutthana Siphuengchai" },
       "homepage": "https://github.com/yutna/object-oriented-design-skills",

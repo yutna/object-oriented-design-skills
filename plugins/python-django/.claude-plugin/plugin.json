@@ -1,6 +1,6 @@
 {
   "name": "object-oriented-design-python-django",
-  "version": "0.17.1",
+  "version": "0.18.0",
   "description": "Object-oriented design rules kept in Django: models that keep their rules, no business logic in views or signals, and apps as modules",
   "author": {
     "name": "Yutthana Siphuengchai",

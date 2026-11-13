@@ -3,7 +3,7 @@ name: oo-csharp
 description: Use when plain C# with no framework needs a record or a struct, nullable reference types, a default interface member, or async and await.
 license: MIT
 metadata:
-  version: 0.17.1
+  version: 0.18.0
   pack: object-oriented-design-skills
 ---
 
