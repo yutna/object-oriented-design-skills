@@ -100,7 +100,7 @@ is missing, scores zero, or ranks outside the allowed top, and prints
 the first-place count. `--noise` also prints skills that reach the top
 three for cases they do not own.
 
-`routing-cases.md` holds 172 routing cases.
+`routing-cases.md` holds 174 routing cases.
 
 What it proves: the descriptions contain the words people use for the
 problems the skills own. What it does not prove: that an agent chooses
@@ -153,4 +153,4 @@ point in another file, the text says what to accept from this file
 alone, such as a hand-off to an object the file receives, and never
 asks the judge to confirm what happens inside that object.
 
-`tasks/` holds 15 task cases.
+`tasks/` holds 16 task cases.

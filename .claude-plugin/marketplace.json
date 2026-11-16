@@ -162,6 +162,18 @@
       "license": "MIT",
       "category": "development",
       "keywords": ["object-oriented-design", "python", "django"]
+    },
+    {
+      "name": "object-oriented-design-java-swing",
+      "description": "Object-oriented design rules kept in Java Swing, added to the Java plugin",
+      "version": "0.18.0",
+      "source": "./plugins/java-swing",
+      "author": { "name": "Yutthana Siphuengchai" },
+      "homepage": "https://github.com/yutna/object-oriented-design-skills",
+      "repository": "https://github.com/yutna/object-oriented-design-skills",
+      "license": "MIT",
+      "category": "development",
+      "keywords": ["object-oriented-design", "java", "swing"]
     }
   ]
 }
