@@ -183,6 +183,9 @@ double-booking check: Django view, ModelForm.clean() or model?->oo-python-django
 Django project: typing.Protocol or ABC for the SMS sender? -> oo-python
 JTable freezes while today's appointments load from the DB -> oo-java-swing
 Swing ActionListener checks whether the patient may book, ok? -> oo-java-swing
+JavaFX: bind the TextField straight to Patient's StringProperty?->oo-java-javafx
+where does the ViewModel go in a JavaFX app with FXML? -> oo-java-javafx
+JavaFX Task finished but the TableView never refreshed -> oo-java-javafx
 ```
 
 ## Known misses

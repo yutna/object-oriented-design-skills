@@ -1,0 +1,63 @@
+schema_version: "1.1"
+name: t15-java-javafx-visit-reason
+description: >-
+  Task (oo-java-javafx rules 3 and 5): the form's handler hands the
+  input on and decides none of the reason's rules, and the class that
+  holds them carries no JavaFX property.
+tags: [task]
+context:
+  scaffold_script: fixture-java-javafx.sh
+execution:
+  prompt: |
+    The desk now records the reason for a visit with more care. A reason
+    is 10 to 200 characters long, and an urgent reason needs a contact
+    phone number. Add `VisitReason` in
+    `src/main/java/clinic/VisitReason.java`, which holds a reason and
+    refuses one that breaks these rules, and make the Save button of
+    `VisitReasonForm` turn down a reason that breaks them and tell the
+    desk why.
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  max_turns: 30
+  timeout_seconds: 600
+graders:
+  - name: loaded-any-skill
+    type: tool_used
+    tool: Skill
+  - name: loaded-java-javafx
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?oo-java-javafx"'
+  - name: loaded-java
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?oo-java"'
+  - name: reason-is-plain
+    type: llm
+    focus: { source: file, path: src/main/java/clinic/VisitReason.java }
+    criteria: |
+      You are grading a class that holds the reason for a clinic visit.
+
+      PASS if `VisitReason` refuses, when it is built, a reason shorter
+      than 10 or longer than 200 characters and an urgent reason with
+      no contact phone number, and it imports nothing from `javafx`.
+      FAIL if it imports from `javafx`, if it can be built breaking
+      either rule, or the file does not exist.
+  - name: form-hands-it-on
+    type: llm
+    focus: { source: file, path: src/main/java/clinic/VisitReasonForm.java }
+    criteria: |
+      You are grading a desk form after a change that adds rules to the
+      reason for a visit.
+
+      PASS if the Save button's handler neither checks the reason's
+      length nor checks that an urgent reason has a phone number, nor
+      builds a `VisitReason`, nor calls `VisitReasons.save` itself: it
+      hands what the user entered to another object, such as a view
+      model the form receives or holds, and the form shows the answer
+      that object gives; and no control is bound to a property of a
+      `VisitReason`. This file does not show the code of that object:
+      judge only what the form does with it. FAIL if the handler
+      compares the length with 10 or 200, tests the urgent box against
+      the phone field, builds a `VisitReason`, or calls
+      `VisitReasons.save`, or if a control is bound to a property of a
+      `VisitReason`.
