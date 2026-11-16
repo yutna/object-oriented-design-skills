@@ -63,25 +63,25 @@ public class NoteSigning {
     }
 
     @Transactional
-    public void sign(long noteId, Instant signedAt) {
+    public void sign(long noteId, Instant at) {
         VisitNote note = notes.findById(noteId)
             .orElseThrow(() -> new IllegalArgumentException(
                 "no note " + noteId));
-        VisitNote signed = note.sign(signedAt);
+        VisitNote signed = note.sign(at);
         notes.save(signed);
-        deliver(signed);
+        deliver(signed, at);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void deliver(VisitNote note) {
-        deliveries.save(new NoteDelivery(note.id(), note.signedAt()));
+    public void deliver(VisitNote note, Instant deliveredAt) {
+        deliveries.save(new NoteDelivery(note.id(), deliveredAt));
     }
 }
 ```
 
 `sign` runs in one transaction and changes the visit note. `deliver`
 asks for `REQUIRES_NEW`, so its author meant the delivery to commit in
-an independent physical transaction. The call `deliver(signed)` is a
+an independent physical transaction. The call `deliver(signed, at)` is a
 call on `this`, which never enters the proxy, so the delivery joins the
 transaction `sign` already opened. The delivery has no transaction of
 its own, and a failure while it writes cannot roll back on its own.
@@ -105,8 +105,8 @@ public class NoteDeliveryService {
     }
 
     @Transactional
-    public void deliver(long noteId, Instant signedAt) {
-        deliveries.save(new NoteDelivery(noteId, signedAt));
+    public void deliver(long noteId, Instant deliveredAt) {
+        deliveries.save(new NoteDelivery(noteId, deliveredAt));
     }
 }
 ```
@@ -165,9 +165,9 @@ public class SignAndDeliverNote {
         this.delivery = delivery;
     }
 
-    public void signAndDeliver(long noteId, Instant signedAt) {
-        signing.sign(noteId, signedAt);
-        delivery.deliver(noteId, signedAt);
+    public void signAndDeliver(long noteId, Instant at) {
+        signing.sign(noteId, at);
+        delivery.deliver(noteId, at);
     }
 }
 ```
@@ -177,9 +177,10 @@ carries no `@Transactional`, so the two calls do not share a transaction.
 It calls `NoteSigning.sign` through that bean's proxy, whose transaction
 commits when `sign` returns; that call stores the signed note and
 returns nothing. Then it calls `NoteDeliveryService.deliver` through
-that bean's proxy with the note's id and signing time, which opens a
-second transaction and stores a delivery under the note's id in the
-delivery repository. `signAndDeliver` itself stores nothing. The second
+that bean's proxy with the note's id and the moment the caller passed,
+which opens a second transaction and stores a delivery under the note's
+id in the delivery repository. The note is signed and delivered at that
+moment. `signAndDeliver` itself stores nothing. The second
 transaction starts only after the first has committed. If the delivery
 fails, its transaction rolls back: the note stays signed and no delivery
 is stored. Each unit changes one aggregate in its own transaction, and
