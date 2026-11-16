@@ -239,15 +239,29 @@ and is loaded with its base language skill.
 - `oo-java-jakarta-ee`, from `object-oriented-design-java-jakarta-ee`:
   CDI producers, container transactions that roll back refusals, and
   enterprise beans chosen once.
+- `oo-java-swing`, from `object-oriented-design-java-swing`: the event
+  dispatch thread, passive views with presenters, and table models
+  over screen values.
+- `oo-java-javafx`, from `object-oriented-design-java-javafx`: view
+  models with screen-shaped properties, domain objects no control
+  binds to, and tasks that leave the scene alone.
 - `oo-kotlin`, from `object-oriented-design-kotlin`: data classes,
   sealed types, nullable types, delegation with `by`, and extension
   functions.
 - `oo-typescript`, from `object-oriented-design-typescript`: branded
   identifiers, `#private` state, abstract classes, decorators,
   discriminated unions, and a composition root.
+- `oo-typescript-angular`, from
+  `object-oriented-design-typescript-angular`: service lifetimes set by
+  the injector, shared state with one owner, and ports injected through
+  runtime tokens.
 - `oo-javascript`, from `object-oriented-design-javascript`: contract
   tests, `#private` state, frozen values, and classes rather than
   edited prototypes.
+- `oo-web-components`, from `object-oriented-design-web-components`:
+  two-step construction at the edge, attributes and properties as one
+  protocol, and events instead of calls; loaded with `oo-javascript` or
+  `oo-typescript`, whichever the code is written in.
 - `oo-csharp`, from `object-oriented-design-csharp`: records whose
   copies keep their checks, structs, nullable reference types,
   default interface members, and `async` kept in the shell.

@@ -45,6 +45,10 @@ install the language and core plugins as well:
 /plugin install object-oriented-design-ruby-rails@object-oriented-design-skills
 /plugin install object-oriented-design-csharp-aspnet@object-oriented-design-skills
 /plugin install object-oriented-design-python-django@object-oriented-design-skills
+/plugin install object-oriented-design-java-swing@object-oriented-design-skills
+/plugin install object-oriented-design-java-javafx@object-oriented-design-skills
+/plugin install object-oriented-design-typescript-angular@object-oriented-design-skills
+/plugin install object-oriented-design-web-components@object-oriented-design-skills
 ```
 
 A plugin install prints no `CLAUDE.md` block. A project that wants an

@@ -51,7 +51,7 @@ time, and `inject()` kept to the classes Angular creates.
 - The code is TypeScript with no framework: `oo-typescript` answers
   the question.
 - The code defines custom elements on the browser platform with no
-  framework: outside this skill.
+  framework: `oo-web-components` covers it.
 - No Angular feature bears on the question, such as which object owns
   a rule: the core skills, starting from `oo-design`.
 - The code is a different framework over TypeScript: outside this
@@ -326,6 +326,8 @@ evidence: a measurement, a reproducible bug, or a failing test.
 
 - `oo-typescript` supplies the TypeScript language rules this skill
   builds on.
+- `oo-web-components` covers a custom element that extends
+  `HTMLElement`, with the attributes, properties and events it exposes.
 - `oo-managing-shared-state` gives changing state one owner.
 - `oo-encapsulating-state-and-behaviour` keeps a rule with the state
   it guards.
