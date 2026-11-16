@@ -1,6 +1,6 @@
 # Tokens for Ports
 
-A thread screen needs the clinic's message service to load a thread
+The clinic's thread feature needs its message service to load a thread
 and post a reply. The port that names that service is where Angular's
 token rules decide whether the code compiles at all: an interface has
 no run-time value, so Angular cannot use it as a token. This reference
