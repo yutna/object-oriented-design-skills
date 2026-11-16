@@ -144,10 +144,10 @@ export class ReplyPolicy {
 `PostReply` is a plain use case. It receives the port and the policy
 through its constructor, asks the policy, and only then asks the port
 to post the reply. The clinic's message service stores the reply under
-the thread's identifier and refuses a second reply that passes the
-policy at the same moment; the fence leaves that rule, the adapter's
-code, its transaction and its version out. No fence needs the current
-time.
+the thread's identifier and refuses a post made against a thread that
+was closed or reassigned since the policy read it: it checks the
+thread's version, and the fence leaves that check, the adapter's code
+and its transaction out. No fence needs the current time.
 
 ```typescript
 import { MessageAuthor } from './message-author'

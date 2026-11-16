@@ -121,9 +121,11 @@ time, and `inject()` kept to the classes Angular creates.
    for Angular tokens. This keeps `oo-inverting-dependencies` rules 1
    and 2 and `oo-typescript` rule 3.
 
-   The exception is a port whose value a factory builds from
-   configuration, such as a client that needs a base address: give it
-   an `InjectionToken` with a `useFactory` and no adapter class.
+   The exception is a port whose adapter a factory builds from
+   configuration, such as a client that needs a base address: declare
+   the `InjectionToken` in the application's wiring, never in the domain
+   file, and give it a `useFactory` that builds the client answering
+   the port; no adapter class is needed.
 
 5. Rule. **Call `inject()` only in a class Angular creates, where an
    injection context runs, and hand collaborators to domain classes
@@ -300,8 +302,8 @@ evidence: a measurement, a reproducible bug, or a failing test.
 - A port used as a token while it is still an interface.
 - `inject()` in a plain class, or in a method that runs after
   construction.
-- A `useValue` object or a lambda where the application wires a port
-  to its adapter.
+- A `useValue` object literal, or a function that stands in for the
+  adapter itself, where the application wires a port to its adapter.
 
 ## Common mistakes
 
