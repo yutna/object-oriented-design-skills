@@ -260,7 +260,7 @@ import javafx.stage.Stage;
 public final class ClinicDeskApp extends Application {
     @Override
     public void start(Stage stage) {
-        AccessNeedsStore store = (patientId, needs) -> needs;
+        AccessNeedsStore store = new PatientAccessNeedsTable();
         AccessNeedsViewModel viewModel = new AccessNeedsViewModel(
             "p-204", new RecordAccessNeeds(store), new TaskBackground());
         AccessNeedsForm form = new AccessNeedsForm(viewModel);
