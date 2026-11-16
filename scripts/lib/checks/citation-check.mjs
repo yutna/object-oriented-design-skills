@@ -12,7 +12,11 @@ export class CitationCheck extends Check {
     /\bibid\./gi,
     /\bChapter \d+/gi,
     /\b\d+(?:st|nd|rd|th) edition\b/gi,
-    /\((?:18|19|20)\d{2}\)/g
+    /\((?:18|19|20)\d{2}\)/g,
+    /\bsection \d+(?:\.\d+)*/gi,
+    /\bthe documentation\b/gi,
+    /\bthe docs\b/gi,
+    /\b(?:guide|docs|documentation|spec|specification)\s+(?:says|states|recommends)\b/gi
   ])
 
   #repository
