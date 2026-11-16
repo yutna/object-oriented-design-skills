@@ -15,14 +15,14 @@ language.
 
 ## Overview
 
-Angular adds three things to `oo-typescript` that change where a
-clinic's rules are kept: an injector that decides how long a service
+Angular changes three things on top of `oo-typescript` that move where
+a clinic's rules are kept: an injector that decides how long a service
 lives, a service that can hold shared state through RxJS or signals,
 and a token that names a port at run time. This skill covers only those
 changes; load `oo-typescript` too, because its rules for `#private`
 state, abstract classes and the composition root still hold. Each
 addition brings a shortcut that looks harmless: one screen's thread
-kept in a service every screen reaches, a writable signal or
+kept in a service every screen can reach, a writable signal or
 `BehaviorSubject` any component can change, a clinic rule written in a
 template or a component, and a port named by an interface that does
 not exist at run time. The rules below close those shortcuts
