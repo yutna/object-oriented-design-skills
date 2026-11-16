@@ -47,7 +47,7 @@ that holds the markup, and composition between elements.
 
 ## When not to use
 
-- The application is Angular: outside this skill.
+- The application is Angular: `oo-typescript-angular` covers it.
 - The code is JavaScript or TypeScript with no custom element:
   `oo-javascript` or `oo-typescript` covers it.
 - No custom element feature bears on the question, such as which object
@@ -367,6 +367,8 @@ evidence: a measurement, a reproducible bug, or a failing test.
 - `oo-design` sizes a task and defines the rule labels.
 - `oo-javascript` keeps the pack's rules in plain JavaScript.
 - `oo-typescript` keeps the same rules where the compiler checks them.
+- `oo-typescript-angular` covers Angular: service lifetimes, shared
+  state in a service, and injection tokens.
 - `oo-constructing-valid-objects` says when an object is complete.
 - `oo-working-within-a-framework` decides which platform demands the
   edge may meet.

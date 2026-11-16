@@ -43,7 +43,7 @@ composition root on Java SE 25's `java.desktop`.
 ## When not to use
 
 - The code is plain Java with no user interface. `oo-java` covers it.
-- The code is a JavaFX application: outside this skill.
+- The code is a JavaFX application: `oo-java-javafx` covers it.
 - The question is one no Swing feature changes, such as which object
   owns a rule. The core skills answer it, starting from `oo-design`.
 
@@ -494,6 +494,8 @@ evidence: a measurement, a reproducible bug, or a failing test.
 ## Related skills
 
 - `oo-java` holds the language rules this skill applies.
+- `oo-java-javafx` covers a JavaFX application, from view models with
+  screen-shaped properties to the scene graph.
 - `oo-separating-presentation-from-domain` chooses how much the view
   knows and keeps the business out of it.
 - `oo-designing-for-testability` keeps a screen's logic reachable

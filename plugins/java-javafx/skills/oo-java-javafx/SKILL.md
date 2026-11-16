@@ -47,7 +47,7 @@ root in the `Application` subclass.
 ## When not to use
 
 - There is no user interface, so `oo-java` alone answers the question.
-- The application is built with Swing: outside this skill.
+- The application is built with Swing: `oo-java-swing` covers it.
 - No JavaFX feature bears on the question, such as where a rule
   belongs; start with the core skills, at `oo-design`.
 
@@ -434,6 +434,8 @@ evidence: a measurement, a reproducible bug, or a failing test.
 ## Related skills
 
 - `oo-java` supplies the Java language rules this skill builds on.
+- `oo-java-swing` covers a Swing application: the event dispatch
+  thread, and domain objects behind a table.
 - `oo-separating-presentation-from-domain` weighs what a view knows and
   keeps clinic rules behind a use case.
 - `oo-designing-for-testability` makes a screen's logic reachable with
