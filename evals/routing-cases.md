@@ -181,6 +181,8 @@ Django apps scheduling and patients import each other's models->oo-python-django
 Django Appointment model or a separate domain class for rules?->oo-python-django
 double-booking check: Django view, ModelForm.clean() or model?->oo-python-django
 Django project: typing.Protocol or ABC for the SMS sender? -> oo-python
+JTable freezes while today's appointments load from the DB -> oo-java-swing
+Swing ActionListener checks whether the patient may book, ok? -> oo-java-swing
 ```
 
 ## Known misses
@@ -221,4 +223,6 @@ visit fee calc reads the db and the clock, can't unit test without mocks -> oo-a
 I have a ReminderPolicy interface with one method, could I just pass a lambda->oo-applying-functional-techniques
 Spring app: model VisitOutcome as a sealed interface or enum? -> oo-java
 can't make the C# Clinic constructor async, where do I load the slots then? -> oo-csharp
+JLabel set from a background thread is sometimes blank -> oo-java-swing
+Swing app: record or class for a VisitDuration value? -> oo-java
 ```

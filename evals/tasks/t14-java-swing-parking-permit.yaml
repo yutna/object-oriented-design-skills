@@ -1,0 +1,59 @@
+schema_version: "1.1"
+name: t14-java-swing-parking-permit
+description: >-
+  Task (oo-java-swing rules 3 and 6): the window's listener decides
+  nothing and receives the class that holds the new rule.
+tags: [task]
+context:
+  scaffold_script: fixture-java-swing.sh
+execution:
+  prompt: |
+    Patients whose visit is booked for more than 90 minutes may now have
+    a free parking permit. Add `PermitEligibility` in
+    `src/main/java/clinic/PermitEligibility.java`, which decides whether
+    a visit qualifies, and give `VisitWindow` a "Parking permit" button
+    that issues the permit through `PermitDesk` when the visit
+    qualifies and shows why not when it does not.
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  max_turns: 30
+  timeout_seconds: 600
+graders:
+  - name: loaded-any-skill
+    type: tool_used
+    tool: Skill
+  - name: loaded-java-swing
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?oo-java-swing"'
+  - name: loaded-java
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?oo-java"'
+  - name: eligibility-is-plain
+    type: llm
+    focus: { source: file, path: src/main/java/clinic/PermitEligibility.java }
+    criteria: |
+      You are grading a class that decides whether a visit qualifies for
+      a free parking permit.
+
+      PASS if `PermitEligibility` decides the 90 minutes in a method of
+      its own and imports nothing from `javax.swing` or `java.awt`. FAIL
+      if it imports from either, or the file does not exist.
+  - name: window-hands-it-on
+    type: llm
+    focus: { source: file, path: src/main/java/clinic/VisitWindow.java }
+    criteria: |
+      You are grading a desk window after a change that adds a parking
+      permit button.
+
+      PASS if the button's listener neither compares the visit's length
+      with 90 minutes itself, nor creates a `PermitEligibility` with
+      `new`, nor calls a static method of it, nor calls
+      `PermitDesk.issue` directly inside the listener; it asks a
+      `PermitEligibility` the window receives, or hands the click to an
+      object the window receives. This file does not show the code of an
+      object the window receives: judge only what the window does with
+      it. FAIL if the listener compares with 90 itself, creates the
+      eligibility or that object with `new`, calls a static method of
+      `PermitEligibility`, or calls `issue` directly inside the
+      listener.
