@@ -12,15 +12,15 @@ goes out after that transaction has committed, through
 ## The model as it is
 
 ```ruby
-class CallbackRequest < ApplicationRecord
-  after_create :create_callback_task
+class ReturnCallRequest < ApplicationRecord
+  after_create :create_return_call_task
   after_create :send_confirmation
 
   private
 
-  def create_callback_task
-    CallbackTask.create!(
-      callback_request_id: id,
+  def create_return_call_task
+    ReturnCallTask.create!(
+      return_call_request_id: id,
       due_at: requested_at + 3600)
   end
 
@@ -29,15 +29,15 @@ class CallbackRequest < ApplicationRecord
   end
 end
 
-class CallbackTask < ApplicationRecord
+class ReturnCallTask < ApplicationRecord
 end
 ```
 
-`CallbackRequest` is the Active Record model for the request, with
-`patient_id` and `requested_at` columns, and `CallbackTask` is the
-desk's row, with `callback_request_id` and `due_at` columns.
+`ReturnCallRequest` is the Active Record model for the request, with
+`patient_id` and `requested_at` columns, and `ReturnCallTask` is the
+desk's row, with `return_call_request_id` and `due_at` columns.
 `after_create` runs both callbacks after the request row is inserted but
-while the save's transaction is open. `create_callback_task` stores a
+while the save's transaction is open. `create_return_call_task` stores a
 task under the request's id, and `send_confirmation` builds a sender and
 sends before the commit. If a
 later step rolls the save back, the task goes with it and the text has
@@ -49,39 +49,39 @@ inside that transaction.
 ## The use case after the change
 
 ```ruby
-class CallbackRequest < ApplicationRecord
-  def plan_callback(at:)
-    CallbackTask.create!(
-      callback_request_id: id,
+class ReturnCallRequest < ApplicationRecord
+  def plan_return_call(at:)
+    ReturnCallTask.create!(
+      return_call_request_id: id,
       due_at: at + 3600)
   end
 end
 
-class CallbackTask < ApplicationRecord
+class ReturnCallTask < ApplicationRecord
 end
 ```
 
 Both models keep their columns and hold no callback. The fence shows the
 two models in one file for reading. A save of either stores its row
 under its id in its own table, inside the transaction the caller opens.
-`CallbackTask` is one row inside the request's aggregate, one task for
+`ReturnCallTask` is one row inside the request's aggregate, one task for
 one request, so the use case creates one aggregate and changes no
-existing one. `plan_callback` is the root's message that stores the
-task, and `RequestCallback` calls it itself; a save of the request
+existing one. `plan_return_call` is the root's message that stores the
+task, and `RequestReturnCall` calls it itself; a save of the request
 triggers neither effect.
 
 ```ruby
-class RequestCallback
+class RequestReturnCall
   def initialize(texts)
     @texts = texts
   end
 
   def call(patient_id:, at:)
-    CallbackRequest.transaction do |transaction|
-      request = CallbackRequest.create!(
+    ReturnCallRequest.transaction do |transaction|
+      request = ReturnCallRequest.create!(
         patient_id: patient_id,
         requested_at: at)
-      request.plan_callback(at: at)
+      request.plan_return_call(at: at)
       transaction.after_commit do
         @texts.confirm(patient_id, at)
       end
@@ -91,11 +91,11 @@ class RequestCallback
 end
 ```
 
-`RequestCallback` is the use case: a plain Ruby object that receives the
+`RequestReturnCall` is the use case: a plain Ruby object that receives the
 clinic's `TextMessages` sender through its constructor and never builds
-it. `call` opens one transaction; inside it `CallbackRequest.create!`
+it. `call` opens one transaction; inside it `ReturnCallRequest.create!`
 stores a request under the id the database assigns, and
-`request.plan_callback` stores a task under that request's id, both in
+`request.plan_return_call` stores a task under that request's id, both in
 the clinic's database. `transaction.after_commit` registers the send on
 that transaction, so `@texts.confirm` runs only after the transaction
 commits. If the transaction rolls back, neither row is stored and the
