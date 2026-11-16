@@ -247,9 +247,10 @@ public final class TaskBackground implements OffThreadWork {
 }
 ```
 
-`ClinicDeskApp` is the composition root. `start` builds the store, the
-use case, the view model, the task background and the form with
-constructor calls, sets the scene and shows the stage (rule 6).
+`ClinicDeskApp` is the composition root. `start` gives a store to a new
+`RecordAccessNeeds`, then builds the view model, the task background and
+the form with constructor calls, sets the scene and shows the stage
+(rule 6).
 
 ```java
 import javafx.application.Application;
