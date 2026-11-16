@@ -354,8 +354,8 @@ evidence: a measurement, a reproducible bug, or a failing test.
 - Calling the page's save function from the element and calling the
   element reusable.
 - Forgetting `bubbles`, so a page listener never hears the event, or
-  `composed`, so a listener never hears it where the element sits in
-  another element's shadow root.
+  `composed`, so the event never leaves the shadow root of another
+  element that holds this one.
 - Extending a working element to reuse one method, then inheriting its
   whole public surface.
 - Believing `private` in TypeScript keeps an element's field out of the
