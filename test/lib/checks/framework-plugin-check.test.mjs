@@ -61,6 +61,32 @@ class TempRepository {
     }
   }
 
+  static javascriptPlugin() {
+    return {
+      directory: 'javascript',
+      name: 'object-oriented-design-javascript',
+      skills: [
+        {
+          name: 'oo-javascript',
+          body: ['## Overview', '', 'Plain JavaScript rules.', '']
+        }
+      ]
+    }
+  }
+
+  static typescriptPlugin() {
+    return {
+      directory: 'typescript',
+      name: 'object-oriented-design-typescript',
+      skills: [
+        {
+          name: 'oo-typescript',
+          body: ['## Overview', '', 'Plain TypeScript rules.', '']
+        }
+      ]
+    }
+  }
+
   static frameworkPlugin({
     dependencies = [
       'object-oriented-design-skills',
@@ -82,8 +108,12 @@ class TempRepository {
   }
 
   static webPlugin({
-    dependencies = [],
-    overview = 'Keep components small.'
+    dependencies = [
+      'object-oriented-design-skills',
+      'object-oriented-design-javascript',
+      'object-oriented-design-typescript'
+    ],
+    overview = 'Load `oo-javascript` and `oo-typescript` with this skill.'
   } = {}) {
     return {
       directory: 'web-components',
@@ -237,6 +267,64 @@ test('a framework skill Overview must name its base skill in backticks', async (
     assert.ok(report.lines().includes(
       `error ${repository.skillPath('java-spring', 'oo-java-spring')}: ` +
       'Overview must name `oo-java` in backticks'))
+  } finally {
+    await repository.close()
+  }
+})
+
+test('a platform plugin must list both base families as dependencies', async () => {
+  const repository = await TempRepository.create([
+    TempRepository.corePlugin(),
+    TempRepository.javascriptPlugin(),
+    TempRepository.typescriptPlugin(),
+    TempRepository.webPlugin({
+      dependencies: [
+        'object-oriented-design-skills',
+        'object-oriented-design-javascript'
+      ]
+    })
+  ])
+  try {
+    const report = repository.inspect()
+    assert.ok(report.lines().includes(
+      `error ${repository.pluginPath('web-components')}: ` +
+      'framework plugin object-oriented-design-web-components must ' +
+      'list dependency object-oriented-design-typescript'))
+  } finally {
+    await repository.close()
+  }
+})
+
+test('a platform skill Overview must name both base skills in backticks', async () => {
+  const repository = await TempRepository.create([
+    TempRepository.corePlugin(),
+    TempRepository.javascriptPlugin(),
+    TempRepository.typescriptPlugin(),
+    TempRepository.webPlugin({
+      overview: 'Load `oo-javascript` with this skill.'
+    })
+  ])
+  try {
+    const report = repository.inspect()
+    assert.ok(report.lines().includes(
+      `error ${repository.skillPath('web-components', 'oo-web-components')}: ` +
+      'Overview must name `oo-typescript` in backticks'))
+  } finally {
+    await repository.close()
+  }
+})
+
+test('a platform plugin with both dependencies and both names passes', async () => {
+  const repository = await TempRepository.create([
+    TempRepository.corePlugin(),
+    TempRepository.javascriptPlugin(),
+    TempRepository.typescriptPlugin(),
+    TempRepository.webPlugin()
+  ])
+  try {
+    const report = repository.inspect()
+    assert.equal(report.failed, false)
+    assert.deepEqual(report.lines(), ['ok 3 plugin(s)'])
   } finally {
     await repository.close()
   }
