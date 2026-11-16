@@ -26,6 +26,9 @@ plugins/<family>/                 a language plugin, from v0.16.0
 plugins/<family>-<framework>/     a framework plugin, from v0.18.0
   .claude-plugin/plugin.json      object-oriented-design-<family>-<framework>
   skills/oo-<family>-<framework>/SKILL.md
+plugins/web-components/           the platform plugin, from v0.19.0
+  .claude-plugin/plugin.json      object-oriented-design-web-components
+  skills/oo-web-components/SKILL.md
 scripts/                          entry scripts, one per check or tool
 scripts/lib/                      the classes every script uses
 test/                             node:test unit tests and fixtures
@@ -331,8 +334,16 @@ A base language skill lives in its family's plugin,
 `object-oriented-design-<family>-<framework>`, whose manifest lists
 the core plugin and its family's plugin under `dependencies`, by
 bare name and with no version range, so that installing it installs
-both. Every marketplace entry has the same fields as the core
-plugin's. A new manifest, entry or skill takes the version in
+both. The one platform skill, `oo-web-components`, keeps the rules on
+the browser's custom elements in JavaScript or TypeScript. It lives in
+`plugins/web-components/`, named
+`object-oriented-design-web-components`, and its manifest lists the
+core plugin and both the `object-oriented-design-javascript` and
+`object-oriented-design-typescript` plugins under `dependencies`.
+Every framework skill bullet below holds for it, with both
+`oo-javascript` and `oo-typescript` wherever a bullet names the base
+language skill. Every marketplace entry has the same fields as the
+core plugin's. A new manifest, entry or skill takes the version in
 `package.json`. Every Skill house style bullet holds, with these
 changes:
 

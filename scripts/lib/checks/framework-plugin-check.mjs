@@ -5,6 +5,10 @@ import { Check } from '../check.mjs'
 export class FrameworkPluginCheck extends Check {
   static #CORE = 'object-oriented-design-skills'
 
+  static #PLATFORM_FAMILIES = Object.freeze({
+    'web-components': Object.freeze(['javascript', 'typescript'])
+  })
+
   #repository
 
   constructor(repository) {
@@ -23,10 +27,20 @@ export class FrameworkPluginCheck extends Check {
       .filter((plugin) => plugin.name !== FrameworkPluginCheck.#CORE)
     report.count('plugin(s)', plugins.length)
     for (const plugin of plugins) {
-      const base = this.#baseOf(plugin, plugins)
-      if (base === null) continue
-      this.#inspectFrameworkPlugin(plugin, base, report)
+      const families = this.#baseFamiliesOf(plugin, plugins)
+      if (families.length === 0) continue
+      this.#inspectPlugin(plugin, families, report)
     }
+  }
+
+  #baseFamiliesOf(plugin, plugins) {
+    const directory = basename(plugin.directory)
+    if (Object.hasOwn(FrameworkPluginCheck.#PLATFORM_FAMILIES, directory)) {
+      return FrameworkPluginCheck.#PLATFORM_FAMILIES[directory]
+    }
+    const base = this.#baseOf(plugin, plugins)
+    if (base === null) return []
+    return [basename(base.directory)]
   }
 
   #baseOf(plugin, plugins) {
@@ -43,11 +57,10 @@ export class FrameworkPluginCheck extends Check {
         basename(left.directory).length)[0] ?? null
   }
 
-  #inspectFrameworkPlugin(plugin, base, report) {
-    const family = basename(base.directory)
+  #inspectPlugin(plugin, families, report) {
     const dependencies = [
       FrameworkPluginCheck.#CORE,
-      `object-oriented-design-${family}`
+      ...families.map((family) => `object-oriented-design-${family}`)
     ]
     for (const dependency of dependencies) {
       // Installing a framework skill alone would load half the rules.
@@ -56,16 +69,18 @@ export class FrameworkPluginCheck extends Check {
         join(plugin.directory, '.claude-plugin', 'plugin.json'),
         `framework plugin ${plugin.name} must list dependency ${dependency}`)
     }
-    const baseSkill = `oo-${family}`
+    const baseSkills = families.map((family) => `oo-${family}`)
     for (const skill of plugin.skills()) {
       const overview = skill.document.section('Overview')
-      // The framework skill defers to its base skill, so it names it.
-      if (overview !== null && overview.includes(`\`${baseSkill}\``)) {
-        continue
+      for (const baseSkill of baseSkills) {
+        // The framework skill defers to its base skill, so it names it.
+        if (overview !== null && overview.includes(`\`${baseSkill}\``)) {
+          continue
+        }
+        report.error(
+          skill.path,
+          `Overview must name \`${baseSkill}\` in backticks`)
       }
-      report.error(
-        skill.path,
-        `Overview must name \`${baseSkill}\` in backticks`)
     }
   }
 }
