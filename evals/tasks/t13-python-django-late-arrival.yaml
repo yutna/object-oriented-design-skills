@@ -44,8 +44,10 @@ graders:
       You are grading a view after a change that refuses a check-in more
       than 15 minutes after the appointment starts.
 
-      PASS if the view neither compares times nor sets the status itself,
-      directly or with `QuerySet.update()`, and hands the check-in to the
-      appointment's method, or to a function or object that does; and a
-      refusal reaches the caller as a response. FAIL if the view decides
-      the 15 minutes or sets the status.
+      PASS if the view neither compares times nor sets the status
+      itself, directly or with `QuerySet.update()`; it hands the
+      check-in to the appointment's method, or to a function or object
+      it calls; and a refusal reaches the caller as a response. This
+      file does not show the code of a function or object defined in
+      another file: judge only what the view does with it. FAIL if the
+      view decides the 15 minutes or sets the status.

@@ -41,14 +41,16 @@ graders:
     type: llm
     focus: { source: file, path: Program.cs }
     criteria: |
-      You are grading a booking endpoint after a change that stops a slot
-      being booked twice.
+      You are grading a booking endpoint after a change that stops a
+      slot being booked twice.
 
       PASS if the endpoint neither tests whether the slot is taken nor
-      sets the booked flag itself, directly or with `ExecuteUpdate`, and
-      hands the booking to the slot's booking method, or to an object it
-      receives that does; and a refusal reaches the caller as an error
-      result such as 409 Conflict, mapped in the endpoint or by an
-      exception handler registered in this file. FAIL if the endpoint
-      checks the flag, queries for an existing appointment to decide, or
-      sets the flag.
+      sets the booked flag itself, directly or with `ExecuteUpdate`;
+      it hands the booking to the slot's booking method, or hands the
+      whole booking to an object it receives; and a refusal reaches
+      the caller as an error result such as 409 Conflict, mapped in
+      the endpoint or by an exception handler this file registers.
+      This file does not show the code of an object or handler it
+      receives or registers: judge only what the endpoint does with
+      it. FAIL if the endpoint checks the flag, queries for an
+      existing appointment to decide, or sets the flag.
