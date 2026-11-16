@@ -1,0 +1,90 @@
+schema_version: "1.1"
+name: t17-web-components-letter-format
+description: >-
+  Task (oo-web-components rules 1 to 4): the constructor leaves the
+  attributes alone, the format is checked behind both routes and kept
+  private, the markup sits in a shadow root, and a pick reaches the
+  page as an event.
+tags: [task]
+context:
+  scaffold_script: fixture-web-components.sh
+execution:
+  prompt: |
+    Patients can now choose how the clinic's letters reach them:
+    standard print, large print or braille. Write the
+    `<letter-format-picker>` custom element in
+    `src/letter-format-picker.js`. It shows the three choices and
+    starts from the choice in its `format` attribute. Put it on
+    `settings.html`, and save each pick through `LetterPreferences.save`
+    in `src/letter-preferences.js`.
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  max_turns: 30
+  timeout_seconds: 600
+graders:
+  - name: loaded-any-skill
+    type: tool_used
+    tool: Skill
+  - name: loaded-web-components
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?oo-web-components"'
+  - name: loaded-javascript
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?oo-javascript"'
+  - name: loaded-typescript
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?oo-typescript"'
+  - name: constructor-leaves-attributes
+    type: llm
+    focus: { source: file, path: src/letter-format-picker.js }
+    criteria: |
+      You are grading a custom element's class.
+
+      PASS if the constructor neither reads nor adds attributes or
+      children of the element itself: it calls no `getAttribute`,
+      `hasAttribute`, `setAttribute`, `toggleAttribute`, no
+      `this.innerHTML`, `this.append`, `this.appendChild` or
+      `this.textContent`; building and filling a shadow root is
+      allowed; and the `format` attribute is read in
+      `attributeChangedCallback` or `connectedCallback`. FAIL if the
+      constructor does any of these, or the file does not exist.
+  - name: pick-is-an-event
+    type: llm
+    focus: { source: file, path: src/letter-format-picker.js }
+    criteria: |
+      You are grading a custom element's class after a change that lets
+      a patient pick how letters reach them.
+
+      PASS if, when the patient picks, the element dispatches an event,
+      such as a `CustomEvent` with the choice in `detail`, and neither
+      imports nor calls `LetterPreferences`, `fetch` or any function of
+      the page. FAIL if the element imports or calls
+      `LetterPreferences`, calls `fetch`, or calls a global or imported
+      function to save the pick.
+  - name: markup-in-shadow-root
+    type: llm
+    focus: { source: file, path: src/letter-format-picker.js }
+    criteria: |
+      You are grading where a custom element puts its markup.
+
+      PASS if the element attaches a shadow root and builds its choices
+      inside it. FAIL if it builds its choices as children of the
+      element itself, with `this.innerHTML`, `this.append`,
+      `this.appendChild`, `this.replaceChildren` or the like, or if the
+      file does not exist.
+  - name: format-is-checked
+    type: llm
+    focus: { source: file, path: src/letter-format-picker.js }
+    criteria: |
+      You are grading how a custom element takes the letter format it
+      starts from.
+
+      PASS if a value of the `format` attribute or the `format`
+      property that is not one of the three formats is refused or
+      ignored by one check, which both routes pass through, and the
+      chosen format is kept in a `#private` field. FAIL if the element
+      takes any text as the format without checking it, if the
+      attribute and the property are checked in two separate places,
+      or if the format is kept in no `#private` field.

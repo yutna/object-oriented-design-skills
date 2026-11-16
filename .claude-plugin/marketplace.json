@@ -198,6 +198,18 @@
       "license": "MIT",
       "category": "development",
       "keywords": ["object-oriented-design", "typescript", "angular"]
+    },
+    {
+      "name": "object-oriented-design-web-components",
+      "description": "Object-oriented design rules kept in custom elements, added to the JavaScript and TypeScript plugins",
+      "version": "0.18.0",
+      "source": "./plugins/web-components",
+      "author": { "name": "Yutthana Siphuengchai" },
+      "homepage": "https://github.com/yutna/object-oriented-design-skills",
+      "repository": "https://github.com/yutna/object-oriented-design-skills",
+      "license": "MIT",
+      "category": "development",
+      "keywords": ["object-oriented-design", "javascript", "typescript", "web-components"]
     }
   ]
 }

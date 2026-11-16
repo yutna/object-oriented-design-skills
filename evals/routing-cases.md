@@ -189,6 +189,9 @@ JavaFX Task finished but the TableView never refreshed -> oo-java-javafx
 Angular service providedIn root keeps the last patient's data->oo-typescript-angular
 two components share a BehaviorSubject in a service, who owns it?->oo-typescript-angular
 Angular DI token for the API port: interface or abstract class?->oo-typescript-angular
+custom element constructor calls getAttribute and gets null -> oo-web-components
+<appointment-card>: attribute or property for the patient id?->oo-web-components
+web component: call the app's booking function or fire an event?->oo-web-components
 ```
 
 ## Known misses
@@ -232,4 +235,5 @@ can't make the C# Clinic constructor async, where do I load the slots then? -> o
 JLabel set from a background thread is sometimes blank -> oo-java-swing
 Swing app: record or class for a VisitDuration value? -> oo-java
 Angular app: branded types so PatientId and SlotId never mix? -> oo-typescript
+vanilla custom element project: freeze the Appointment value? -> oo-javascript
 ```
