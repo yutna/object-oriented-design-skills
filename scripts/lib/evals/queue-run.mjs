@@ -20,14 +20,16 @@ export class QueueRun extends Check {
   #meter
   #runner
   #clock
+  #lock
 
-  constructor(repository, argv, meter, runner, clock) {
+  constructor(repository, argv, meter, runner, clock, lock) {
     super()
     this.#repository = repository
     this.#argv = Object.freeze([...argv])
     this.#meter = meter
     this.#runner = runner
     this.#clock = clock
+    this.#lock = lock
     Object.freeze(this)
   }
 
@@ -79,7 +81,8 @@ export class QueueRun extends Check {
     const script = this.#argv[separator + 1]
     const args = this.#argv.slice(separator + 2)
     const id = `eval-${this.#clock.now().getTime()}`
-    queue.add({ id, label, script, args })
+    // The commit is read when the piece is queued, so a later repin is seen.
+    queue.add({ id, label, script, args, commit: this.#commit() })
     report.count('queued entry(ies)', queue.entries().length)
   }
 
@@ -100,59 +103,80 @@ export class QueueRun extends Check {
       report.count('entry(ies) previewed', first === null ? 0 : 1)
       return
     }
-    const policy = new QuotaPolicy(lines)
+    // One run holds the lock every worktree can see until it returns.
+    this.#lock.acquire(report)
     let piecesRun = 0
     let paused = false
     let waiting = 0
-    while (true) {
-      const entry = queue.peek()
-      if (entry === null) break
-      if (entry.pause !== undefined) {
-        // A pause is consumed once its note has been printed.
-        report.note(`PAUSE: ${entry.pause}`)
+    let moved = false
+    try {
+      const policy = new QuotaPolicy(lines)
+      while (true) {
+        const entry = queue.peek()
+        if (entry === null) break
+        if (entry.pause !== undefined) {
+          // A pause is consumed once its note has been printed.
+          report.note(`PAUSE: ${entry.pause}`)
+          queue.drop()
+          paused = true
+          break
+        }
+        const before = this.#meter.read()
+        if (!policy.mayStart(before)) {
+          // A WAIT is not a failure: the piece stays queued for the reset.
+          waiting = this.#waitingCount(queue)
+          report.note(this.#waitLine(before))
+          break
+        }
+        const commit = this.#commit()
+        if (entry.commit !== undefined && entry.commit !== commit) {
+          // A piece queued on another commit never runs on this checkout.
+          report.note(
+            `MOVED: ${entry.id} queued on ${entry.commit} ` +
+            `but HEAD is ${commit}`)
+          moved = true
+          break
+        }
+        if (entry.commit === undefined) {
+          // An entry from before commits were recorded still runs, and says so.
+          report.note(
+            `NOTE: ${entry.id} has no recorded commit; it runs on ${commit}`)
+        }
+        const dirty = this.#dirty()
+        const startedAt = this.#clock.now().toISOString()
+        const result = this.#runPiece(entry)
+        const endedAt = this.#clock.now().toISOString()
+        const after = this.#meter.read()
+        const log = this.#logPath(entry.id)
+        this.#writeLog(log, result.output)
+        this.#appendRun({
+          id: entry.id,
+          label: entry.label,
+          script: entry.script,
+          args: entry.args,
+          commit,
+          dirty,
+          startedAt,
+          endedAt,
+          log,
+          exitStatus: result.exitCode,
+          quotaBefore: before,
+          quotaAfter: after
+        })
         queue.drop()
-        paused = true
-        break
+        piecesRun += 1
+        // A failed measurement is recorded, not hidden, so it is a note.
+        if (result.exitCode !== 0) {
+          report.note(
+            `piece ${entry.id} exited ${result.exitCode}; see ${log}`)
+        }
+        if (!policy.mayContinue(after)) break
       }
-      const before = this.#meter.read()
-      if (!policy.mayStart(before)) {
-        // A WAIT is not a failure: the piece stays queued for the reset.
-        waiting = this.#waitingCount(queue)
-        report.note(this.#waitLine(before))
-        break
-      }
-      const commit = this.#commit()
-      const dirty = this.#dirty()
-      const startedAt = this.#clock.now().toISOString()
-      const result = this.#runPiece(entry)
-      const endedAt = this.#clock.now().toISOString()
-      const after = this.#meter.read()
-      const log = this.#logPath(entry.id)
-      this.#writeLog(log, result.output)
-      this.#appendRun({
-        id: entry.id,
-        label: entry.label,
-        script: entry.script,
-        args: entry.args,
-        commit,
-        dirty,
-        startedAt,
-        endedAt,
-        log,
-        exitStatus: result.exitCode,
-        quotaBefore: before,
-        quotaAfter: after
-      })
-      queue.drop()
-      piecesRun += 1
-      // A failed measurement is recorded, not hidden, so it is a note.
-      if (result.exitCode !== 0) {
-        report.note(
-          `piece ${entry.id} exited ${result.exitCode}; see ${log}`)
-      }
-      if (!policy.mayContinue(after)) break
+    } finally {
+      // A thrown piece leaves the queue intact and the lock released.
+      this.#lock.release()
     }
-    this.#count(report, { piecesRun, paused, waiting })
+    this.#count(report, { piecesRun, paused, waiting, moved })
   }
 
   #quotaLines() {
@@ -218,7 +242,13 @@ export class QueueRun extends Check {
     return parsed
   }
 
-  #count(report, { piecesRun, paused, waiting }) {
+  #count(report, { piecesRun, paused, waiting, moved }) {
+    if (moved) {
+      // A queue head on another commit refuses the run, so it fails.
+      report.error('eval-queue', 'the first piece is queued on another commit')
+      report.count('piece(s) run', piecesRun)
+      return
+    }
     if (piecesRun > 0) {
       report.count('piece(s) run', piecesRun)
       return

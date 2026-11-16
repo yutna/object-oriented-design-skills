@@ -64,12 +64,14 @@ export class EvalQueue {
     if (typeof entry.pause === 'string') {
       return Object.freeze({ pause: entry.pause })
     }
-    return Object.freeze({
+    const frozen = {
       id: entry.id,
       label: entry.label,
       script: entry.script,
       args: Object.freeze([...entry.args])
-    })
+    }
+    if (entry.commit !== undefined) frozen.commit = entry.commit
+    return Object.freeze(frozen)
   }
 
   static #validated(entry) {
@@ -82,13 +84,18 @@ export class EvalQueue {
       typeof entry.label === 'string' &&
       typeof entry.script === 'string' &&
       Array.isArray(entry.args) &&
-      entry.args.every((argument) => typeof argument === 'string')) {
-      return {
+      entry.args.every((argument) => typeof argument === 'string') &&
+      (entry.commit === undefined ||
+        (typeof entry.commit === 'string' && entry.commit !== ''))) {
+      const validated = {
         id: entry.id,
         label: entry.label,
         script: entry.script,
         args: entry.args
       }
+      // An entry queued before commits were recorded has none, and loads.
+      if (entry.commit !== undefined) validated.commit = entry.commit
+      return validated
     }
     throw new Error('entry is neither a piece nor a pause')
   }

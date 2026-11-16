@@ -104,7 +104,7 @@ export class PluginEvalRun {
   queueEntry() {
     // One queue slot carries the flags and only this piece's case names, so
     // the queue runs one small invocation rather than the whole suite.
-    return Object.freeze({
+    const entry = {
       id: `eval-${this.#clock.now().getTime()}-${this.#name}`,
       label: `plugin-eval ${this.#name}`,
       script: 'scripts/eval-plugin.mjs',
@@ -116,7 +116,17 @@ export class PluginEvalRun {
         '--max-cost-usd', String(this.#options.maxCostUsd),
         '--runs', String(this.#options.runs)
       ])
-    })
+    }
+    const commit = this.#queuedCommit()
+    if (commit !== undefined) entry.commit = commit
+    return Object.freeze(entry)
+  }
+
+  #queuedCommit() {
+    // A directory outside a git checkout has no commit to name, so its
+    // entry runs like one queued before commits were recorded.
+    if (!this.#repository.exists('.git')) return undefined
+    return this.#commit()
   }
 
   execute(report) {
