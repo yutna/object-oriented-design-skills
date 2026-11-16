@@ -326,8 +326,8 @@ evidence: a measurement, a reproducible bug, or a failing test.
 
 - `oo-typescript` supplies the TypeScript language rules this skill
   builds on.
-- `oo-web-components` covers a custom element that extends
-  `HTMLElement`, with the attributes, properties and events it exposes.
+- `oo-web-components` covers a custom element, with the attributes,
+  properties and events it exposes.
 - `oo-managing-shared-state` gives changing state one owner.
 - `oo-encapsulating-state-and-behaviour` keeps a rule with the state
   it guards.

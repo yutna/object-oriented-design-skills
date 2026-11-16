@@ -434,8 +434,8 @@ evidence: a measurement, a reproducible bug, or a failing test.
 ## Related skills
 
 - `oo-java` supplies the Java language rules this skill builds on.
-- `oo-java-swing` covers a Swing application, from the event dispatch
-  thread to a `JTable` backed by domain objects.
+- `oo-java-swing` covers a Swing application: the event dispatch
+  thread, and domain objects behind a table.
 - `oo-separating-presentation-from-domain` weighs what a view knows and
   keeps clinic rules behind a use case.
 - `oo-designing-for-testability` makes a screen's logic reachable with
