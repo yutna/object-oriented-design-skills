@@ -94,6 +94,46 @@ test('EvalQueue keeps pieces and pauses in the order added', async () => {
   }
 })
 
+test('EvalQueue keeps the commit a piece was queued on', async () => {
+  const fixture = await TempQueue.of()
+  try {
+    const piece = {
+      id: 'p1',
+      label: 'first piece',
+      script: 'evals/piece.mjs',
+      args: ['--arm'],
+      commit: 'abc123'
+    }
+    fixture.queue.add(piece)
+    assert.deepEqual(fixture.queue.entries(), [piece])
+    assert.deepEqual(await fixture.saved(), [piece])
+    const reloaded = new EvalQueue(new FakeRepository(fixture.root))
+    assert.deepEqual(reloaded.entries(), [piece])
+  } finally {
+    await fixture.close()
+  }
+})
+
+test('EvalQueue keeps a piece queued before commits were recorded',
+  async () => {
+    const fixture = await TempQueue.of()
+    try {
+      const piece = {
+        id: 'p1',
+        label: 'first piece',
+        script: 'evals/piece.mjs',
+        args: []
+      }
+      fixture.queue.add(piece)
+      assert.deepEqual(fixture.queue.entries(), [piece])
+      assert.equal('commit' in (await fixture.saved())[0], false)
+      const reloaded = new EvalQueue(new FakeRepository(fixture.root))
+      assert.deepEqual(reloaded.entries(), [piece])
+    } finally {
+      await fixture.close()
+    }
+  })
+
 test('EvalQueue drops the oldest entry first', async () => {
   const fixture = await TempQueue.of()
   try {

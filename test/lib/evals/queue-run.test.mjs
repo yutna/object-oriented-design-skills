@@ -70,10 +70,20 @@ class FakeRunner {
   #calls = []
   #dirty
   #piece
+  #pieceThrows
+  #onPiece
 
-  constructor({ dirty = false, exitCode = 0, output = 'piece done\n' } = {}) {
+  constructor({
+    dirty = false,
+    exitCode = 0,
+    output = 'piece done\n',
+    pieceThrows = false,
+    onPiece = null
+  } = {}) {
     this.#dirty = dirty
     this.#piece = { exitCode, output }
+    this.#pieceThrows = pieceThrows
+    this.#onPiece = onPiece
   }
 
   run(command, args, cwd) {
@@ -92,6 +102,8 @@ class FakeRunner {
         output: this.#dirty ? ' M evals/x\n' : ''
       }
     }
+    if (this.#onPiece !== null) this.#onPiece()
+    if (this.#pieceThrows) throw new Error('piece broke')
     return { ...this.#piece }
   }
 
@@ -121,6 +133,22 @@ class FakeClock {
 
   hhmm() {
     return '13:00'
+  }
+}
+
+class FakeLock {
+  #events
+
+  constructor(events) {
+    this.#events = events
+  }
+
+  acquire() {
+    this.#events.push('acquire')
+  }
+
+  release() {
+    this.#events.push('release')
   }
 }
 
@@ -162,7 +190,8 @@ class PieceEntry {
       id: 'p1',
       label: 'piece one',
       script: 'evals/piece.mjs',
-      args: ['--arm', 'clinic']
+      args: ['--arm', 'clinic'],
+      commit: 'abc123'
     }
   }
 
@@ -171,7 +200,27 @@ class PieceEntry {
       id: 'p2',
       label: 'piece two',
       script: 'evals/other.mjs',
-      args: []
+      args: [],
+      commit: 'abc123'
+    }
+  }
+
+  static legacy() {
+    return {
+      id: 'p1',
+      label: 'piece one',
+      script: 'evals/piece.mjs',
+      args: ['--arm', 'clinic']
+    }
+  }
+
+  static moved() {
+    return {
+      id: 'p1',
+      label: 'piece one',
+      script: 'evals/piece.mjs',
+      args: ['--arm', 'clinic'],
+      commit: 'old111'
     }
   }
 }
@@ -200,25 +249,28 @@ class TempRun {
   }
 
   inspect(argv, meter, runner = new FakeRunner(),
-    clock = new FakeClock(Times.pieceRun())) {
+    clock = new FakeClock(Times.pieceRun()), lock = new FakeLock([])) {
     const report = new Report()
     new QueueRun(
       new FakeRepository(this.#root),
       argv,
       meter,
       runner,
-      clock).inspect(report)
+      clock,
+      lock).inspect(report)
     return report
   }
 
-  async exitOf(argv, meter, runner = new FakeRunner()) {
+  async exitOf(argv, meter, runner = new FakeRunner(),
+    clock = new FakeClock([]), lock = new FakeLock([])) {
     const processLike = new FakeProcess()
     await new Cli(processLike).run(new QueueRun(
       new FakeRepository(this.#root),
       argv,
       meter,
       runner,
-      new FakeClock([])))
+      clock,
+      lock))
     return processLike
   }
 
@@ -302,10 +354,14 @@ test('--add keeps every argument after the separator for the piece',
         id: `eval-${Date.UTC(2026, 9, 23, 9, 0, 0)}`,
         label: 'piece one',
         script: 'evals/piece.mjs',
-        args: ['--arm', '--dry-run']
+        args: ['--arm', '--dry-run'],
+        commit: 'abc123'
       }])
       assert.equal(meter.reads, 0)
-      assert.equal(runner.calls.length, 0)
+      assert.deepEqual(runner.calls.map(({ command, args }) => ({
+        command,
+        args
+      })), [{ command: 'git', args: ['rev-parse', 'HEAD'] }])
     } finally {
       await fixture.close()
     }
@@ -364,6 +420,138 @@ test('--run waits without running or changing the queue', async () => {
     assert.deepEqual(await fixture.runs(), [])
     assert.equal(meter.reads, 1)
     assert.equal(runner.calls.length, 0)
+  } finally {
+    await fixture.close()
+  }
+})
+
+test('--run refuses a piece queued on another commit with MOVED',
+  async () => {
+    const entry = PieceEntry.moved()
+    const fixture = await TempRun.of([entry])
+    const events = []
+    try {
+      const runner = new FakeRunner()
+      const processLike = await fixture.exitOf(
+        ['--run'],
+        new FakeMeter([ReadingAt.of(10, 20)]),
+        runner,
+        new FakeClock([]),
+        new FakeLock(events))
+      assert.equal(processLike.exitCode, 1)
+      const printed = processLike.stdoutChunks.join('')
+      assert.ok(printed.includes(
+        'MOVED: p1 queued on old111 but HEAD is abc123'), printed)
+      assert.deepEqual(processLike.stderrChunks, [])
+      assert.deepEqual(await fixture.queue(), [entry])
+      assert.equal(runner.pieceCalls.length, 0)
+      assert.deepEqual(events, ['acquire', 'release'])
+      assert.deepEqual(await fixture.runs(), [])
+    } finally {
+      await fixture.close()
+    }
+  })
+
+test('--run notes a piece queued before commits were recorded',
+  async () => {
+    const fixture = await TempRun.of([PieceEntry.legacy()])
+    try {
+      const report = fixture.inspect(
+        ['--run'],
+        new FakeMeter([ReadingAt.of(10, 20), ReadingAt.of(12, 21)]),
+        new FakeRunner(),
+        new FakeClock(Times.pieceRun()))
+      assert.deepEqual(report.lines(), [
+        'NOTE: p1 has no recorded commit; it runs on abc123',
+        'ok 1 piece(s) run'
+      ])
+      assert.deepEqual(await fixture.queue(), [])
+      assert.deepEqual(await fixture.runs(), [{
+        id: 'p1',
+        label: 'piece one',
+        script: 'evals/piece.mjs',
+        args: ['--arm', 'clinic'],
+        commit: 'abc123',
+        dirty: false,
+        startedAt: '2026-10-23T10:00:00.000Z',
+        endedAt: '2026-10-23T10:00:05.000Z',
+        log: 'evals/results/pieces/p1.log',
+        exitStatus: 0,
+        quotaBefore: {
+          fiveHour: 10,
+          sevenDay: 20,
+          fiveHourResetsAt: 1792783200,
+          sevenDayResetsAt: 1793127600
+        },
+        quotaAfter: {
+          fiveHour: 12,
+          sevenDay: 21,
+          fiveHourResetsAt: 1792783200,
+          sevenDayResetsAt: 1793127600
+        }
+      }])
+    } finally {
+      await fixture.close()
+    }
+  })
+
+test('--run takes the lock before the first piece and releases it after',
+  async () => {
+    const fixture = await TempRun.of([PieceEntry.first()])
+    const events = []
+    try {
+      const runner = new FakeRunner({ onPiece: () => events.push('piece') })
+      const report = fixture.inspect(
+        ['--run'],
+        new FakeMeter([ReadingAt.of(10, 20), ReadingAt.of(12, 21)]),
+        runner,
+        new FakeClock(Times.pieceRun()),
+        new FakeLock(events))
+      assert.deepEqual(report.lines(), ['ok 1 piece(s) run'])
+      assert.deepEqual(events, ['acquire', 'piece', 'release'])
+    } finally {
+      await fixture.close()
+    }
+  })
+
+test('--run releases the lock when a piece throws', async () => {
+  const fixture = await TempRun.of([PieceEntry.first()])
+  const events = []
+  try {
+    const runner = new FakeRunner({
+      pieceThrows: true,
+      onPiece: () => events.push('piece')
+    })
+    const processLike = await fixture.exitOf(
+      ['--run'],
+      new FakeMeter([ReadingAt.of(10, 20)]),
+      runner,
+      new FakeClock([Date.UTC(2026, 9, 23, 10, 0, 0)]),
+      new FakeLock(events))
+    assert.equal(processLike.exitCode, 2)
+    assert.deepEqual(events, ['acquire', 'piece', 'release'])
+    assert.deepEqual(await fixture.queue(), [PieceEntry.first()])
+    assert.deepEqual(await fixture.runs(), [])
+  } finally {
+    await fixture.close()
+  }
+})
+
+test('--run --dry-run takes no lock', async () => {
+  const fixture = await TempRun.of([PieceEntry.first()])
+  const events = []
+  try {
+    const report = fixture.inspect(
+      ['--run', '--dry-run'],
+      new FakeMeter([]),
+      new FakeRunner(),
+      new FakeClock([]),
+      new FakeLock(events))
+    assert.deepEqual(report.lines(), [
+      'RUN: node evals/piece.mjs --arm clinic',
+      'ok 1 entry(ies) previewed'
+    ])
+    assert.deepEqual(events, [])
   } finally {
     await fixture.close()
   }
