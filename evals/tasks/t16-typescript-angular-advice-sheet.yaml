@@ -1,0 +1,61 @@
+schema_version: "1.1"
+name: t16-typescript-angular-advice-sheet
+description: >-
+  Task (oo-typescript-angular rules 1 and 2): the service that holds
+  one visit screen's state lives and ends with that screen, and keeps
+  that state in a #private field.
+tags: [task]
+context:
+  scaffold_script: fixture-typescript-angular.sh
+execution:
+  prompt: |
+    Clinicians now give patients an advice sheet at the end of a visit.
+    Add one to the visit screen: the clinician picks advice lines in
+    `AdviceEditorComponent`, and `AdviceSheetPreviewComponent` shows the
+    sheet as the patient will get it; both sit inside
+    `VisitScreenComponent`. Keep the sheet in `AdviceSheet`, in
+    `src/app/advice-sheet.ts`. The desk shows several visits side by
+    side, and each visit screen builds the sheet for its own patient.
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  max_turns: 30
+  timeout_seconds: 600
+graders:
+  - name: loaded-any-skill
+    type: tool_used
+    tool: Skill
+  - name: loaded-typescript-angular
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?oo-typescript-angular"'
+  - name: loaded-typescript
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?oo-typescript"'
+  - name: sheet-not-app-wide
+    type: llm
+    focus: { source: file, path: src/app/advice-sheet.ts }
+    criteria: |
+      You are grading the class that holds the advice sheet of one visit
+      screen in an Angular app.
+
+      PASS if `AdviceSheet` is not provided for the whole application:
+      it carries no `@Injectable` with a `providedIn` of `'root'` or
+      `'platform'` (an `@Injectable()` with no `providedIn`, or no
+      decorator at all, both count); and it keeps the picked lines in a
+      `#private` field, changed only through its own methods. A field
+      marked with TypeScript's `private` keyword is not a `#private`
+      field. FAIL if it is `providedIn: 'root'` or `'platform'`, if it
+      keeps the sheets of several visits in one map or list keyed by
+      visit, or if its lines sit in a field that is not `#private`.
+  - name: screen-owns-the-sheet
+    type: llm
+    focus: { source: file, path: src/app/visit-screen.component.ts }
+    criteria: |
+      You are grading a visit screen component after a change that adds
+      an advice sheet.
+
+      PASS if `VisitScreenComponent` lists `AdviceSheet` in its
+      `providers` or `viewProviders`, so each visit screen gets its own
+      sheet. This file does not show the code of `AdviceSheet`: judge
+      only what the component declares. FAIL if `AdviceSheet` is in
+      neither list.

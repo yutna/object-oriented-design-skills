@@ -186,6 +186,9 @@ Swing ActionListener checks whether the patient may book, ok? -> oo-java-swing
 JavaFX: bind the TextField straight to Patient's StringProperty?->oo-java-javafx
 where does the ViewModel go in a JavaFX app with FXML? -> oo-java-javafx
 JavaFX Task finished but the TableView never refreshed -> oo-java-javafx
+Angular service providedIn root keeps the last patient's data->oo-typescript-angular
+two components share a BehaviorSubject in a service, who owns it?->oo-typescript-angular
+Angular DI token for the API port: interface or abstract class?->oo-typescript-angular
 ```
 
 ## Known misses
@@ -228,4 +231,5 @@ Spring app: model VisitOutcome as a sealed interface or enum? -> oo-java
 can't make the C# Clinic constructor async, where do I load the slots then? -> oo-csharp
 JLabel set from a background thread is sometimes blank -> oo-java-swing
 Swing app: record or class for a VisitDuration value? -> oo-java
+Angular app: branded types so PatientId and SlotId never mix? -> oo-typescript
 ```

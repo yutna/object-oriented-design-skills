@@ -186,6 +186,18 @@
       "license": "MIT",
       "category": "development",
       "keywords": ["object-oriented-design", "java", "javafx"]
+    },
+    {
+      "name": "object-oriented-design-typescript-angular",
+      "description": "Object-oriented design rules kept in Angular, added to the TypeScript plugin",
+      "version": "0.18.0",
+      "source": "./plugins/typescript-angular",
+      "author": { "name": "Yutthana Siphuengchai" },
+      "homepage": "https://github.com/yutna/object-oriented-design-skills",
+      "repository": "https://github.com/yutna/object-oriented-design-skills",
+      "license": "MIT",
+      "category": "development",
+      "keywords": ["object-oriented-design", "typescript", "angular"]
     }
   ]
 }
