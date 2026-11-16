@@ -390,8 +390,10 @@ is in [the thread reference](references/tasks-and-the-application-thread.md).
 
 A save gives `RecordAccessNeeds` the patient's id and the new
 `PatientAccessNeeds`; the store keeps one row per patient id, inside one
-transaction. The fences leave the store, its transaction and its version
-out, and no fence needs the current time.
+transaction. A second save for the same patient at the same moment is
+refused by the store's key on the patient id, which the fence leaves
+out. The fences leave the store, its transaction and its version out,
+and no fence needs the current time.
 
 ## Red flags
 
