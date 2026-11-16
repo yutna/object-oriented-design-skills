@@ -1,0 +1,15 @@
+{
+  "name": "object-oriented-design-web-components",
+  "version": "0.18.0",
+  "description": "Object-oriented design rules kept in custom elements: two-step construction at the edge, attributes and properties as one protocol, and events instead of calls",
+  "author": {
+    "name": "Yutthana Siphuengchai",
+    "url": "https://github.com/yutna"
+  },
+  "homepage": "https://github.com/yutna/object-oriented-design-skills",
+  "repository": "https://github.com/yutna/object-oriented-design-skills",
+  "license": "MIT",
+  "keywords": ["object-oriented-design", "javascript", "typescript", "web-components"],
+  "skills": "./skills/",
+  "dependencies": ["object-oriented-design-skills", "object-oriented-design-javascript", "object-oriented-design-typescript"]
+}
