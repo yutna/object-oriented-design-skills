@@ -87,8 +87,9 @@ that holds the markup, and composition between elements.
    The attribute is the route that markup and the page's styles read,
    and the property is the route that script writes. A setter that keeps
    the value in a field and never reflects it leaves the attribute
-   showing an older value; an `attributeChangedCallback` that ignores
-   its name or its value leaves the field older than the attribute. Both
+   showing an older value; an attribute the class does not list in
+   `observedAttributes` never reaches the callback, and a callback that
+   drops the new value leaves the field older than the attribute. Both
    routes run the same check through the value class and end on the one
    `#private` field: a checked value reaches both, an invalid property
    write throws before the attribute changes, and invalid markup leaves
@@ -108,9 +109,11 @@ that holds the markup, and composition between elements.
    An element that calls the page's save function holds the page's job
    and cannot be used by another screen; a listener on the page holds
    the job instead, and the element states what happened in the clinic's
-   words. `bubbles` and `composed` both default to `false`, and an event
-   crosses a shadow boundary only when `bubbles` is also `true`, so a
-   page listener hears nothing unless both are set. `detail` defaults to
+   words. `bubbles` carries an event dispatched on the host up to the
+   page, where a listener hears it; `composed` lets the event cross a
+   shadow boundary, and the event meets one only when the element sits
+   inside another element's shadow root. Both default to `false`, so a
+   page listener hears nothing without `bubbles`. `detail` defaults to
    `null`, so the event carries the value itself.
    This keeps `oo-separating-presentation-from-domain` rules 1 and 4 and
    `oo-inverting-dependencies` rule 2.
@@ -307,8 +310,10 @@ arrives, and nothing renders or sends before that value exists.
 `connectedCallback` sets `role` and renders the first time, and `#shown`
 stops that work when a move brings the element back. The After keeps
 rule 3 too: `#pick` dispatches `pain-score` with the score in `detail`,
-`bubbles` and `composed` let a listener outside the shadow root hear it,
-and the element calls nothing of the page's. It keeps rule 4: `#scale`
+`bubbles` carries it to a listener on the page, and `composed` lets it
+cross a shadow boundary if the element sits inside another element's
+shadow root, so the pick is heard wherever the element is placed; the
+element calls nothing of the page's. It keeps rule 4: `#scale`
 and `#root` are `#private`, the buttons live in the shadow root, and
 only the choices carry `part`. It keeps rule 5 because the element
 holds a `PainScale` in `#scale` rather than extending a class that has
@@ -324,8 +329,9 @@ evidence: a measurement, a reproducible bug, or a failing test.
 
 - A constructor that calls `getAttribute`, `hasAttribute` or
   `setAttribute`, or sets `innerHTML`.
-- A property whose setter never writes its attribute, or an
-  `attributeChangedCallback` that ignores the attribute's name.
+- A property whose setter never writes its attribute, an attribute
+  missing from `observedAttributes`, or an `attributeChangedCallback`
+  that drops the new value.
 - An element that imports a use case, calls `fetch`, or calls a global
   save function.
 - A public field, or a getter that hands out the shadow root.
@@ -347,8 +353,9 @@ evidence: a measurement, a reproducible bug, or a failing test.
   by hand in several places.
 - Calling the page's save function from the element and calling the
   element reusable.
-- Forgetting `composed`, so a listener outside a shadow root never
-  hears the event.
+- Forgetting `bubbles`, so a page listener never hears the event, or
+  `composed`, so a listener never hears it where the element sits in
+  another element's shadow root.
 - Extending a working element to reuse one method, then inheriting its
   whole public surface.
 - Believing `private` in TypeScript keeps an element's field out of the
