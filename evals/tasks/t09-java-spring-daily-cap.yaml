@@ -46,10 +46,12 @@ graders:
       You are grading a booking controller after a change that caps a
       clinician at twelve appointments a day.
 
-      PASS if, before anything is saved, the booking is checked against a
-      `DailyCap`: the booking method asks a `DailyCap` that the
-      constructor receives, or hands the booking to an object the
-      constructor receives that does; and the booking is refused when the
-      cap says no. FAIL if the controller counts appointments or compares
-      with twelve itself, or creates the `DailyCap`, or that object, with
-      `new`.
+      PASS if the controller neither counts appointments nor compares
+      with twelve itself, and before anything is saved it either asks
+      a `DailyCap` that the constructor receives and refuses the
+      booking when the cap says no, or hands the whole booking to an
+      object the constructor receives. This file does not show the
+      code of an object the controller receives: judge only what the
+      controller does with it. FAIL if the controller counts
+      appointments or compares with twelve itself, or creates the
+      `DailyCap`, or that object, with `new`.

@@ -48,9 +48,12 @@ graders:
       You are grading a booking resource after a change that limits a
       patient to two future appointments.
 
-      PASS if, before the appointment is added, the booking is checked
-      against a `FutureAppointmentLimit`: the booking method asks one that
-      the resource receives by injection, or hands the booking to an
-      injected object that does; and the booking is turned down when the
-      limit says no. FAIL if the resource counts appointments or compares
-      with two itself, or creates the limit, or that object, with `new`.
+      PASS if the resource neither counts appointments nor compares
+      with two itself, and before the appointment is added it either
+      asks a `FutureAppointmentLimit` that it receives by injection
+      and turns the booking down when the limit says no, or hands the
+      whole booking to an object it receives by injection. This file
+      does not show the code of an object the resource receives:
+      judge only what the resource does with it. FAIL if the resource
+      counts appointments or compares with two itself, or creates the
+      limit, or that object, with `new`.

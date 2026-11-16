@@ -146,4 +146,11 @@ installed beside the core skills, so the case can measure that skill.
 A framework task case also names its base language skill, so both are
 installed.
 
+An `llm` grader's judge sees only its focus: one file, or the last
+message when the grader names none. Its PASS and FAIL text asks only
+what that file can show. Where a correct answer may put part of the
+point in another file, the text says what to accept from this file
+alone, such as a hand-off to an object the file receives, and never
+asks the judge to confirm what happens inside that object.
+
 `tasks/` holds 15 task cases.
