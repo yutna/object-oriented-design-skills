@@ -106,8 +106,57 @@ test('CitationCheck rejects a year in the 2000s', () => {
   ])
 })
 
+test('CitationCheck rejects a section number', () => {
+  const report = CheckRun.of(
+    'Section 3.10.2 sets the spacing that section 3 describes.')
+  assert.deepEqual(report.lines(), [
+    `${ERROR}Section 3.10.2`,
+    `${ERROR}section 3`,
+    'failed: 2 error(s)'
+  ])
+})
+
+test('CitationCheck rejects the documentation', () => {
+  const report = CheckRun.of('The documentation explains it.')
+  assert.deepEqual(report.lines(), [
+    `${ERROR}The documentation`,
+    'failed: 1 error(s)'
+  ])
+})
+
+test('CitationCheck rejects the docs', () => {
+  const report = CheckRun.of('The docs explain it.')
+  assert.deepEqual(report.lines(), [
+    `${ERROR}The docs`,
+    'failed: 1 error(s)'
+  ])
+})
+
+test('CitationCheck rejects a guide that says', () => {
+  const report = CheckRun.of(
+    'The specification recommends it and the guide says so.')
+  assert.deepEqual(report.lines(), [
+    `${ERROR}specification recommends`,
+    `${ERROR}guide says`,
+    'failed: 2 error(s)'
+  ])
+})
+
 test('CitationCheck ignores a mark inside backticks', () => {
   const report = CheckRun.of(
     'The check looks for `ISBN` and `Chapter 4` in prose.')
+  assert.deepEqual(report.lines(), ['ok 1 prose file(s)'])
+})
+
+test('CitationCheck ignores the new marks inside backticks', () => {
+  const report = CheckRun.of(
+    'The check looks for `section 3`, `the documentation`, ' +
+    '`the docs` and `guide says` in prose.')
+  assert.deepEqual(report.lines(), ['ok 1 prose file(s)'])
+})
+
+test('CitationCheck accepts prose that names no source', () => {
+  const report = CheckRun.of(
+    'This section explains why documentation comments help.')
   assert.deepEqual(report.lines(), ['ok 1 prose file(s)'])
 })

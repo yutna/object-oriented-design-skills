@@ -137,9 +137,11 @@ Breaking one of these fails review, whatever the issue says.
 - Every tracked file is in English.
 - Skill content under `plugins/` never cites: no book titles, author
   names, publishers, chapter numbers, editions, or years in
-  parentheses. Pattern names such as Strategy or Repository are common
-  vocabulary and allowed. Every description, grouping, table and
-  example is written fresh, in this pack's own words.
+  parentheses, and no documentation page, guide or specification
+  section named as the source of a statement. Pattern names such as
+  Strategy or Repository are common vocabulary and allowed. Every
+  description, grouping, table and example is written fresh, in this
+  pack's own words.
 - Do not open `OOP_SOURCES.md` or `PRIVATE-NOTES.md`. They are the
   owner's local notes and are never tracked; CI fails if they are.
 - Skill content never names another skill pack or repository.
@@ -274,6 +276,17 @@ metadata:
   a visit is the patient's time with a clinician, and booking is the
   act. The pack's own word for that time is visit; "encounter" appears
   only where another system's or old code's word is quoted.
+- A fence that checks a state and then changes it shows what refuses
+  a second caller that passes the same check at the same moment, such
+  as a lock, a version column or a unique index, or one sentence
+  beside it names what refuses that caller and says the fence leaves
+  it out.
+- A state that a domain action guards has no public writer. Where a
+  framework generates one, the skill names the relaxation, and no
+  code outside the action method uses the writer.
+- A domain object takes the current time as a value. A fence that
+  needs the time reaches it through a collaborator passed in, such as
+  a clock, and asks it once per operation.
 - A worked example in a reference ends in a state that keeps the rule
   it names, and its last sentence says so.
 - An example's classes and story are new to the pack: grep `plugins/`
