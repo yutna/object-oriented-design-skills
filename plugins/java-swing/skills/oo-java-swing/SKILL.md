@@ -197,16 +197,24 @@ After:
 
 ```java
 import java.util.List;
+import java.util.function.BiConsumer;
 
 public interface LateBoardView {
+    void addReportListener(BiConsumer<String, String> listener);
+
+    void addWaitEditListener(BiConsumer<LateRow, String> listener);
+
     void showRows(List<LateRow> rows);
 
     void showProblem(String message);
 }
 ```
 
-`LateBoardView` is what the presenter may tell the window: the rows the
-table shows and a line for a problem. It imports nothing from Swing.
+`LateBoardView` is the window as the presenter knows it: two methods
+that register a listener for the desk's report and for an edited wait,
+and two that show the rows and a problem. A Swing button takes its
+`ActionListener` the same way; the interface imports nothing from
+Swing.
 
 ```java
 import java.time.Duration;
@@ -224,6 +232,8 @@ public final class LateBoardPresenter {
         this.view = view;
         this.board = board;
         this.background = background;
+        view.addReportListener(this::report);
+        view.addWaitEditListener(this::waitEdited);
     }
 
     public void report(String clinician, String minutes) {
@@ -278,13 +288,14 @@ public final class LateBoardPresenter {
 ```
 
 `LateBoardPresenter` holds the screen's state in `rows` and its logic in
-`report` and `waitEdited`. It imports no `javax.swing` or `java.awt`
-type, so a test builds it with a fake view and a `BackgroundWork` that
-runs the work and its callbacks at once, then reads what the view was
-told (rule 2). A change that follows the slow work happens in a method
-the view is given, called from the worker's callback, never from the
-listener itself. It stores the rows it shows and changes no domain
-state.
+`report` and `waitEdited`, and its constructor registers both methods
+with the view, so nothing of the presenter reaches the window after it
+is built. It imports no `javax.swing` or `java.awt` type, so a test
+builds it with a fake view and a `BackgroundWork` that runs the work and
+its callbacks at once, then reads what the view was told (rule 2). A
+change that follows the slow work happens in a method the view calls
+from the worker's callback, never from the listener itself. It stores
+the rows it shows and changes no domain state.
 
 ```java
 import java.util.concurrent.Callable;
@@ -331,6 +342,7 @@ fence stores nothing.
 ```java
 import java.awt.BorderLayout;
 import java.util.List;
+import java.util.function.BiConsumer;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -365,11 +377,16 @@ public final class RunningLateWindow implements LateBoardView {
         frame.pack();
     }
 
-    public void connect(LateBoardPresenter presenter) {
-        model = new LateBoardTableModel(presenter);
-        waits.setModel(model);
-        report.addActionListener(event -> presenter.report(
+    @Override
+    public void addReportListener(BiConsumer<String, String> listener) {
+        report.addActionListener(event -> listener.accept(
             clinician.getText(), minutes.getText()));
+    }
+
+    @Override
+    public void addWaitEditListener(BiConsumer<LateRow, String> listener) {
+        model = new LateBoardTableModel(listener);
+        waits.setModel(model);
     }
 
     @Override
@@ -390,10 +407,12 @@ public final class RunningLateWindow implements LateBoardView {
 
 `RunningLateWindow` holds a `JFrame` and adds its panel to it instead of
 extending it (rule 5). Its `ActionListener` reads the two fields and
-hands them to the presenter, and it decides nothing (rule 3). Every
-component change arrives through `showRows` or `showProblem`. The
-composition root calls `connect` before it shows the window, so `model`
-is set before the presenter calls `showRows`.
+hands them to the report listener it was given, and it decides nothing
+(rule 3). Every component change arrives through `showRows` or
+`showProblem`. The presenter registers both listeners in its
+constructor, before the window is shown, and `addWaitEditListener`
+builds the table model over the presenter's row values, so a cell edit
+reaches the presenter and the window holds no presenter of its own.
 
 `MaintainLateBoard` is the use case the presenter asks; it is shown in
 [the table model reference](references/table-models-over-row-values.md),
@@ -419,9 +438,7 @@ public final class ClinicDesk {
         MaintainLateBoard board =
             new MaintainLateBoard(Clock.systemUTC(), reports);
         RunningLateWindow window = new RunningLateWindow();
-        LateBoardPresenter presenter = new LateBoardPresenter(
-            window, board, new SwingBackground());
-        window.connect(presenter);
+        new LateBoardPresenter(window, board, new SwingBackground());
         window.show();
     }
 }
@@ -432,9 +449,11 @@ public final class ClinicDesk {
 event dispatch thread (rule 1), and `start` builds the store adapter,
 the use case, the window, the presenter and the background worker with
 constructor calls in the order they need one another (rule 6). Each
-collaborator arrives through a constructor, and no clinic service sits
-in a static field (rules 2 and 6). The fence leaves out where the store
-keeps its rows.
+collaborator arrives through a constructor: the presenter receives the
+window there and registers its two methods with it in its own
+constructor, as a Swing button takes its listeners, so the window gets
+no presenter after it is built. No clinic service sits in a static
+field (rule 6). The fence leaves out where the store keeps its rows.
 
 `LateRow` is one row shaped for the screen, and `LateBoardTableModel` is
 the table's model over those rows. Both are shown in

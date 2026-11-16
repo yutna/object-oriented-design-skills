@@ -172,20 +172,21 @@ public final class RunningLateReport {
 }
 ```
 
-`LateBoardTableModel` holds the presenter's row values, and its
-`setValueAt` hands the edited row and text to `LateBoardPresenter` as an
-intent.
+`LateBoardTableModel` holds the presenter's row values and the edit
+listener the window built it with, and its `setValueAt` hands the edited
+row and text to that listener as an intent.
 
 ```java
 import java.util.List;
+import java.util.function.BiConsumer;
 import javax.swing.table.AbstractTableModel;
 
 public final class LateBoardTableModel extends AbstractTableModel {
-    private final LateBoardPresenter presenter;
+    private final BiConsumer<LateRow, String> edit;
     private List<LateRow> rows = List.of();
 
-    public LateBoardTableModel(LateBoardPresenter presenter) {
-        this.presenter = presenter;
+    public LateBoardTableModel(BiConsumer<LateRow, String> edit) {
+        this.edit = edit;
     }
 
     @Override
@@ -216,7 +217,7 @@ public final class LateBoardTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object value, int row, int column) {
-        presenter.waitEdited(rows.get(row), String.valueOf(value));
+        edit.accept(rows.get(row), String.valueOf(value));
     }
 
     public void showRows(List<LateRow> rows) {
@@ -227,8 +228,10 @@ public final class LateBoardTableModel extends AbstractTableModel {
 ```
 
 `LateBoardPresenter` keeps the rows the screen shows and turns an edit
-into the use case, run through `BackgroundWork`; the view is told the
-new rows in the worker's `done` callback, on the event dispatch thread.
+into the use case, run through `BackgroundWork`; its constructor
+registers `report` and `waitEdited` with the view, and the view is told
+the new rows in the worker's `done` callback, on the event dispatch
+thread.
 
 ```java
 import java.time.Duration;
@@ -246,6 +249,8 @@ public final class LateBoardPresenter {
         this.view = view;
         this.board = board;
         this.background = background;
+        view.addReportListener(this::report);
+        view.addWaitEditListener(this::waitEdited);
     }
 
     public void report(String clinician, String minutes) {
@@ -343,8 +348,9 @@ public final class MaintainLateBoard {
 
 In the After, an edited cell carries a `LateRow`, never a domain object,
 so the table depends on values shaped for the screen (rule 4).
-`setValueAt` writes no field: it hands the row and the typed text to
-`LateBoardPresenter.waitEdited`, which runs `MaintainLateBoard.correct`
+`setValueAt` writes no field: it hands the row and the typed text to the
+edit listener the presenter registered, which is
+`LateBoardPresenter.waitEdited`; that runs `MaintainLateBoard.correct`
 in a worker's `doInBackground`, shows the rows it answers in `done`, and
 puts the report's refusal on the board when a wait is outside the range
 `RunningLateReport` allows (rules 1 and 4). `RunningLateReport` has no
