@@ -42,10 +42,11 @@ class Examination
     chaperone := null
   + start(attendant: Chaperone?): void
     raises ChaperoneRequired
-    if needsChaperone and declined = false and attendant = null then
-      raise ChaperoneRequired
-    else
-      chaperone := attendant
+    if needsChaperone then
+      if declined = false then
+        if attendant = null then
+          raise ChaperoneRequired
+    chaperone := attendant
     return
 ```
 
@@ -65,7 +66,9 @@ chaperone twice.
 
 Move the one-at-a-time rule to the chaperone. The examination is its own
 aggregate, as in the first candidate, but holds `chaperone:
-ChaperoneId?` and keeps the same `start`.
+ChaperoneId?`; its `start` takes `attendant: ChaperoneId?` and assigns it
+to `chaperone`, raising `ChaperoneRequired` when a needed examination is
+not declined and no attendant is given.
 
 ```text
 class Chaperone
@@ -135,19 +138,20 @@ class ClinicDay
   + start(id: ExaminationId, needsChaperone: Boolean,
       declined: Boolean, attendant: ChaperoneId?): void
     raises ChaperoneRequired, ChaperoneBusy
-    if needsChaperone and declined = false and attendant = null then
-      raise ChaperoneRequired
+    if needsChaperone then
+      if declined = false then
+        if attendant = null then
+          raise ChaperoneRequired
+    if attendant = null then
+      examinations.add(new Examination(id, needsChaperone, declined,
+        null))
     else
-      if attendant = null then
-        examinations.add(new Examination(id, needsChaperone, declined,
-          null))
+      if attending.contains(attendant) then
+        raise ChaperoneBusy
       else
-        if attending.contains(attendant) then
-          raise ChaperoneBusy
-        else
-          attending.add(attendant)
-          examinations.add(new Examination(id, needsChaperone, declined,
-            attendant))
+        attending.add(attendant)
+        examinations.add(new Examination(id, needsChaperone, declined,
+          attendant))
     return
   + finish(attendant: ChaperoneId): void
     attending.remove(attendant)
@@ -190,10 +194,11 @@ class Examination
   + new(id: ExaminationId, visit: VisitId, needsChaperone: Boolean,
       declined: Boolean, chaperone: ChaperoneId?)
     raises ChaperoneRequired
-    if needsChaperone and declined = false and chaperone = null then
-      raise ChaperoneRequired
-    else
-      -- every field is set from the parameter of its name
+    if needsChaperone then
+      if declined = false then
+        if chaperone = null then
+          raise ChaperoneRequired
+    -- every field is set from the parameter of its name
 ```
 
 The constructor sets every field from the parameter of its name, and
