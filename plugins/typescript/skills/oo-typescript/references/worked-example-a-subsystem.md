@@ -234,12 +234,13 @@ its first, where a raw pair of days would repeat the check
 (`oo-modeling-values-and-entities` rule 5).
 
 `AbsenceNote` keeps `#purpose`, `#period`, `#version` and `#cancelled`
-in `#private` fields; `amend` and `cancel` are the only methods that
-write them (`oo-typescript` rule 2). The identity, the visit, the
-patient, the clinician and the issue day are read-only public fields,
-because no action changes them. There is no setter: `amend` and `cancel`
-are named for the clinic's actions (`oo-encapsulating-state-and-behaviour`
-rule 2, `oo-designing-aggregates` rule 2).
+in `#private` fields; after construction, `amend` and `cancel` are the
+only methods that write them (`oo-typescript` rule 2). The identity, the
+visit, the patient, the clinician and the issue day are read-only
+public fields, because no action changes them. There is no setter:
+`amend` and `cancel` are named for the clinic's actions
+(`oo-encapsulating-state-and-behaviour` rule 2,
+`oo-designing-aggregates` rule 2).
 
 A cancelled note stays cancelled: `amend` and `cancel` both raise
 `AbsenceNoteAlreadyCancelled`, and no method reopens it
@@ -591,8 +592,9 @@ executes synchronously. The port is what lets another adapter replace
 it: no domain or application file names the module, so a different store
 is one new class and one line in the composition root.
 
-`SqliteAbsenceNotes` is the only class that names `DatabaseSync`, a
-table, a column or `errcode`; the row shape and the mapping stay in it
+`SqliteAbsenceNotes` is the only class that names a table, a column or
+`errcode`; `SqliteUnitOfWork` names `DatabaseSync` only to run the
+transaction, and the row shape and the mapping stay in the notes class
 (`oo-hiding-implementation` rule 3, `oo-taming-persistence` rule 2). It
 rebuilds a note through `AbsenceNote.restore`, so no field is set from
 outside the class (`oo-designing-repositories` rule 2).
@@ -803,8 +805,8 @@ response:
   lock that outlasts the timeout, and no port declares it.
 
 The `AbsenceNoteUnreadable` branch answers the declared fault and the
-last branch any other; the five before it turn a declared refusal into
-the response its caller can act on
+last branch any other; the five before it turn a declared error or a
+malformed request into the response its caller can act on
 (`oo-designing-failure-behaviour` rule 7). This fence stores nothing:
 `serve` calls a use case, and the use cases' `run` stores the note.
 
