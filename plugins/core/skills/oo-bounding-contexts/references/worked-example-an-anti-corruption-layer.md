@@ -42,7 +42,7 @@ when the regulator lists nothing for that licence and day;
 answer. `RegulatorEntry` carries the regulator's status code in
 `statusCode`, the date its entry starts in `effectiveFrom`, and its
 conditions as free text in `restrictions`. Codes `"A1"` and `"S2"` are
-the two this example uses; the regulator may publish others.
+the regulator's active and suspended codes; it may publish others.
 
 ```text
 -- the regulator's model, as it arrives
