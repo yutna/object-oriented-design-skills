@@ -12,13 +12,13 @@ The clinic says:
 
 > Before a clinician's day begins, the manager wants to know whether
 > this clinician may hold visits today, and which conditions the
-> regulator attaches. The regulator publishes one entry for each
-> clinician it regulates, with the date on which the entry takes
-> effect, a status in the regulator's own code, and any conditions in
-> free text. We cannot change the regulator's model. Show the manager
-> the answer in the clinic's words. If the answer is one we do not
-> understand, say so, and let the manager decide by hand. Moving a
-> clinician's visits is the manager's own step.
+> regulator attaches. The regulator publishes an entry for a clinician
+> whenever it changes that clinician's status or conditions, with the
+> date that entry takes effect, a status in the regulator's own code,
+> and any conditions in free text. We cannot change the regulator's
+> model. Show the manager the answer in the clinic's words. If the
+> answer is one we do not understand, say so, and let the manager
+> decide by hand. Moving a clinician's visits is the manager's own step.
 
 The clinic depends on a model it does not control. `oo-bounding-contexts`
 rule 4 asks for one translator at the depending context's edge, and this
@@ -120,7 +120,7 @@ manager must see. Its state is one of four clinic states. `Unrecognised`
 says the regulator used a code the translator does not know, and
 `NotListed` says the regulator has no entry for the clinician on the
 day. `LicenceNumber` is the clinic's value for the number the regulator
-prints on its entries; it is a type only here.
+prints on its entries; its constructor sets the text, and `text` returns it.
 
 ```text
 -- domain
