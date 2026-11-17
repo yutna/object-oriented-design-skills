@@ -33,7 +33,7 @@ public final class AccessNeedsViewModel {
     private final RecordAccessNeeds recorder;
     private final BooleanProperty stepFree = new SimpleBooleanProperty();
     private final BooleanProperty hearingLoop = new SimpleBooleanProperty();
-    private final BooleanProperty companion =
+    private final BooleanProperty canine =
         new SimpleBooleanProperty();
     private final StringProperty notice = new SimpleStringProperty("");
 
@@ -51,8 +51,8 @@ public final class AccessNeedsViewModel {
         return hearingLoop;
     }
 
-    public BooleanProperty companionProperty() {
-        return companion;
+    public BooleanProperty canineProperty() {
+        return canine;
     }
 
     public StringProperty noticeProperty() {
@@ -63,7 +63,7 @@ public final class AccessNeedsViewModel {
         PatientAccessNeeds needs;
         try {
             needs = new PatientAccessNeeds(
-                stepFree.get(), hearingLoop.get(), companion.get());
+                stepFree.get(), hearingLoop.get(), canine.get());
         } catch (IllegalArgumentException refused) {
             notice.set(refused.getMessage());
             return;
@@ -142,7 +142,7 @@ public final class AccessNeedsViewModel {
     private final OffThreadWork offThread;
     private final BooleanProperty stepFree = new SimpleBooleanProperty();
     private final BooleanProperty hearingLoop = new SimpleBooleanProperty();
-    private final BooleanProperty companion =
+    private final BooleanProperty canine =
         new SimpleBooleanProperty();
     private final ReadOnlyStringWrapper notice =
         new ReadOnlyStringWrapper("");
@@ -162,8 +162,8 @@ public final class AccessNeedsViewModel {
         return hearingLoop;
     }
 
-    public BooleanProperty companionProperty() {
-        return companion;
+    public BooleanProperty canineProperty() {
+        return canine;
     }
 
     public ReadOnlyStringProperty noticeProperty() {
@@ -174,7 +174,7 @@ public final class AccessNeedsViewModel {
         PatientAccessNeeds needs;
         try {
             needs = new PatientAccessNeeds(
-                stepFree.get(), hearingLoop.get(), companion.get());
+                stepFree.get(), hearingLoop.get(), canine.get());
         } catch (IllegalArgumentException refused) {
             notice.set(refused.getMessage());
             return;
