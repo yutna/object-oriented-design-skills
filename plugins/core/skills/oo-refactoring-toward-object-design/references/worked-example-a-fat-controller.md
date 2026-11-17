@@ -89,7 +89,7 @@ replies, and every commit runs them. In the table, *values* is
 `oo-modeling-lifecycles`; *naming* `oo-naming-classes-and-methods`;
 *refactoring* is this skill.
 
-| # | What moves | Rule or move | Kept by |
+| # | What changes | Rule or move | Kept by |
 | --- | --- | --- | --- |
 | 1 | The replies are pinned | refactoring 2 | T1: success and two refusals |
 | 2 | The due date becomes `DueDate` | values 5 | T2: the same stored date |
@@ -98,14 +98,18 @@ replies, and every commit runs them. In the table, *values* is
 | 5 | Identity becomes a value and a check | placing 3 | T5: the same refusal |
 | 6 | A use case takes it | responsibilities 5 | T6: one row, one notice |
 | 7 | The index refuses a second | aggregates 6 | T7: one stored, one refused |
-| 8 | The copy send closes | lifecycles 1, 2 | T8: closed, off the list |
-| 9 | The overdue list becomes a read | reads 2 | T9: the same rows |
+| 8 | A send endpoint is added | lifecycles 2 | T8 (new): the send closes it |
+| 9 | An overdue endpoint is added | reads 2 | T9 (new): the read answers it |
 | 10 | The controller reads and delegates | presentation 1 | T1 to T9 |
 
-Commit 7 changes behaviour under two requests at once, so it is a step
-of its own, as `oo-refactoring-toward-object-design` rule 1 asks; the
-sequential reply is unchanged, and the store now refuses the second
-that the old query could not see.
+Commits 7, 8 and 9 change behaviour, each as a step of its own, as
+`oo-refactoring-toward-object-design` rule 1 asks. Commit 7 changes
+what two requests at once do: the sequential reply is unchanged, and
+the store now refuses the second that the old query could not see.
+Commit 8 adds the endpoint that sends the copy and closes the request,
+and commit 9 adds the endpoint that lists the overdue requests; the
+start controller has neither, so T8 and T9 are new tests of the new
+replies, and the replies the start controller had stay the same.
 
 ## The turns
 
@@ -258,11 +262,14 @@ The unique index is a partial unique index on the records-request
 table, over the patient column for rows whose sent time is empty; the
 database adapter raises `RecordsRequestAlreadyOpen` when the insert
 meets it, and the in-memory adapter keeps the same index
-(`oo-designing-aggregates` rule 6). The caller tells the patient that a
-request is already open. The notice is sent
-after the add's transaction commits, so a failed notice leaves the
-request stored and the caller retries the notice, not the request; a
-refused `add` sends no notice. Each message is sent once.
+(`oo-designing-aggregates` rule 6). The framework answers that error
+with the start controller's reply for an open request. The notice is
+sent after the add's transaction commits, so a notice that raises
+`NoticeNotSent` leaves the request stored and sends nothing. A refused
+`add` sends no notice. Running `RequestRecordsCopy.run` again takes a
+new id and reaches `requests.add` with a second request, which raises
+`RecordsRequestAlreadyOpen` before any notice, so one stored request
+sends at most one notice.
 
 ## The end state
 
@@ -315,8 +322,8 @@ class SendRecordsCopy
       clock: Clock)
   + run(id: RecordsRequestId): void
     request := requests.find(id)
-    copies.send(request)
     request.close(clock.now())
+    copies.send(request)
     requests.save(request)
     return
 
@@ -335,16 +342,20 @@ pass to the framework, which turns each into the reply the start
 controller returned (`oo-placing-domain-logic` rule 5). The framework's
 types appear only in the controller (`oo-layering-the-system` rule 3).
 `SendRecordsCopy.run` sends `close` and never reads `sentAt` to set it
-(`oo-encapsulating-state-and-behaviour` rule 3). The copy is sent before
-the close, so `CopyNotSent` leaves the request open and the caller
-retries the send. The close checks `sentAt` and changes it in one
-method; the store's version check refuses a save made from a replaced
-copy with `StaleRecordsRequest`, and the caller reloads and retries. A
-retry on a closed request raises `RecordsRequestAlreadySent`, and a
-retry before that sends a second copy, which no clinic rule refuses. A
-missing request raises `RecordsRequestNotFound` and the caller stops.
-The request is stored whole under its `RecordsRequestId`, in the
-clinic's database, in the transaction `run` opens around `save`
+(`oo-encapsulating-state-and-behaviour` rule 3). `close` checks
+`sentAt` and changes it in one method; a request already sent raises
+`RecordsRequestAlreadySent` before any copy leaves. The copy is sent
+after the close and before the save, so a send that raises
+`CopyNotSent` leaves the loaded request closed and the stored request
+open; the caller sends `SendRecordsCopy.run` again, which loads the
+open request and sends the copy. The store's version check refuses a
+save made from a replaced copy with `StaleRecordsRequest`; that save
+leaves the copy sent and the stored request as it was, so the caller
+sends `SendRecordsCopy.run` again, which loads the request and may send
+a second copy, which no clinic rule refuses. A missing request raises
+`RecordsRequestNotFound`, and no copy is sent. The request is stored
+whole under its `RecordsRequestId`, in the clinic's database, in the
+transaction `run` opens around `save`
 (`oo-designing-repositories` rule 6); the fence leaves the store and
 that transaction out.
 
@@ -373,10 +384,10 @@ notice, a due date and an overdue request each keep one word
 clinic's, and no Row, Table, Dto or Json appears in the domain
 (`oo-speaking-the-domain-language` rules 1 and 6). The 14 days have one
 home in `DueDate.after` (`oo-modeling-values-and-entities` rule 5);
-`confirm` opens and `close` closes, each as its own method
-(`oo-modeling-lifecycles` rules 1 and 2); the write and read use cases
-are separate (`oo-separating-reads-from-writes` rule 1), and `run`
-asks the clock once in each (`oo-modeling-lifecycles` rule 5).
+`close` refuses a second close with `RecordsRequestAlreadySent`
+(`oo-modeling-lifecycles` rule 2); the write and read use cases are
+separate (`oo-separating-reads-from-writes` rule 1), and `run` asks the
+clock once in each (`oo-modeling-lifecycles` rule 5).
 
 That state keeps `oo-layering-the-system` rules 1, 2 and 3,
 `oo-separating-presentation-from-domain` rule 1,
@@ -387,7 +398,7 @@ That state keeps `oo-layering-the-system` rules 1, 2 and 3,
 `oo-designing-aggregates` rules 1, 2, 3 and 6,
 `oo-encapsulating-state-and-behaviour` rules 1, 2, 3 and 4,
 `oo-modeling-values-and-entities` rules 1, 4 and 5,
-`oo-modeling-lifecycles` rules 1, 2 and 5,
+`oo-modeling-lifecycles` rules 2 and 5,
 `oo-separating-reads-from-writes` rules 1 and 2,
 `oo-naming-classes-and-methods` rules 1, 2 and 4,
 `oo-speaking-the-domain-language` rules 1 and 6, and it keeps the
