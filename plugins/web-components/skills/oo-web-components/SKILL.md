@@ -3,7 +3,7 @@ name: oo-web-components
 description: Use when a custom element that extends HTMLElement reads attributes in its constructor, exposes attributes and properties, or dispatches custom events.
 license: MIT
 metadata:
-  version: 0.19.0
+  version: 0.20.0
   pack: object-oriented-design-skills
 ---
 
