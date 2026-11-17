@@ -223,3 +223,4 @@ evidence: a measurement, a reproducible bug, or a failing test.
 
 - [Finding the boundary](references/finding-the-boundary.md)
 - [Consistency across aggregates](references/consistency-across-aggregates.md)
+- [A worked example of rules that conflict](references/worked-example-rules-that-conflict.md)
