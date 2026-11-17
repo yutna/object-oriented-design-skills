@@ -3,6 +3,8 @@ name: t09-java-spring-daily-cap
 description: >-
   Task (oo-java-spring rule 2): the class that holds a new rule
   carries no Spring annotation, and the controller receives it.
+  `controller-asks-the-cap` passes with no pack too, so it measures
+  nothing alone; with no pack the case fails on `daily-cap-is-plain`.
 tags: [task]
 context:
   scaffold_script: fixture-java-spring.sh

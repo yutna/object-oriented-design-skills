@@ -3,6 +3,8 @@ name: t14-java-swing-parking-permit
 description: >-
   Task (oo-java-swing rules 3 and 6): the window's listener decides
   nothing and receives the class that holds the new rule.
+  `eligibility-is-plain` passes with no pack too, so it measures
+  nothing alone; with no pack the case fails on `window-hands-it-on`.
 tags: [task]
 context:
   scaffold_script: fixture-java-swing.sh
@@ -36,9 +38,13 @@ graders:
       You are grading a class that decides whether a visit qualifies for
       a free parking permit.
 
-      PASS if `PermitEligibility` decides the 90 minutes in a method of
-      its own and imports nothing from `javax.swing` or `java.awt`. FAIL
-      if it imports from either, or the file does not exist.
+      PASS if `PermitEligibility` imports nothing from `javax.swing` or
+      `java.awt`, and one of its own methods compares the visit's booked
+      length with 90 minutes. Any way of answering counts: a `boolean`,
+      an `Optional`, a thrown exception, or a result type the class
+      declares, such as a record or a sealed interface that carries the
+      reason. FAIL if it imports from either package, if none of its
+      methods makes that comparison, or the file does not exist.
   - name: window-hands-it-on
     type: llm
     focus: { source: file, path: src/main/java/clinic/VisitWindow.java }

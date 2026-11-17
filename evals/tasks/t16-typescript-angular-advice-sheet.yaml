@@ -3,7 +3,9 @@ name: t16-typescript-angular-advice-sheet
 description: >-
   Task (oo-typescript-angular rules 1 and 2): the service that holds
   one visit screen's state lives and ends with that screen, and keeps
-  that state in a #private field.
+  that state in a #private field. `screen-owns-the-sheet` passes with
+  no pack too, so it measures nothing alone; with no pack the case
+  fails on `sheet-not-app-wide`.
 tags: [task]
 context:
   scaffold_script: fixture-typescript-angular.sh
@@ -54,8 +56,15 @@ graders:
       You are grading a visit screen component after a change that adds
       an advice sheet.
 
-      PASS if `VisitScreenComponent` lists `AdviceSheet` in its
-      `providers` or `viewProviders`, so each visit screen gets its own
-      sheet. This file does not show the code of `AdviceSheet`: judge
-      only what the component declares. FAIL if `AdviceSheet` is in
-      neither list.
+      PASS if `VisitScreenComponent` lists, in its `providers` or
+      `viewProviders`, the class that keeps this screen's advice sheet
+      or the advice chosen for it, so each visit screen gets its own:
+      `AdviceSheet` itself, or a class of the app that holds the sheet
+      or its chosen advice, whatever its name, listed directly or
+      through a provider object such as `useClass` or `useFactory`. The
+      component may build the sheet from that class's state. This file
+      does not show the code of those classes: judge from what the
+      component declares, imports and uses for the sheet. FAIL if
+      neither list holds such a class, so the sheet's content comes
+      from a service provided elsewhere or is a plain field of the
+      component.
