@@ -3,7 +3,7 @@ name: oo-java-spring
 description: Use when Java code on Spring wires beans with @Autowired or annotations, places @Transactional, or gives a JPA entity setters instead of its own rules.
 license: MIT
 metadata:
-  version: 0.20.0
+  version: 0.21.0
   pack: object-oriented-design-skills
 ---
 
