@@ -225,10 +225,10 @@ Otherwise it asks the regulator once for the entry on the day and
 answers `NotListed` when the regulator has no entry, `Permitted` for
 code `"A1"`, `Suspended` for `"S2"`, and `Unrecognised` for any other
 code. The conditions go into the clinic's value, which copies them. No
-call with an effect runs twice. The translator decides no clinic rule: it never asks
-`mayHoldVisits`, and it does not choose what the manager does with a
-status. When `entryFor` raises `RegulatorUnreachable`, the regulator
-client's own error, the translator turns it into
+call with an effect runs twice. The translator decides no clinic rule:
+it never asks `mayHoldVisits`, and it does not choose what the manager
+does with a status. When `entryFor` raises `RegulatorUnreachable`, the
+regulator client's own error, the translator turns it into
 `PractisingStatusUnavailable`, so no clinic caller ever names it; this
 fence leaves that turn out because the notation has no way to catch an
 error. The fence stores nothing.
