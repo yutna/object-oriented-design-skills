@@ -103,8 +103,7 @@ writes change two aggregates that both exist, so `oo-designing-aggregates`
 rule 4 does not allow one transaction. If `attend` is first, a refused
 start leaves her taken for an examination that never started; if `start`
 is first and `attend` refuses, an examination starts while she is busy.
-A later step can correct either, but the two are not one commit, and
-every start waits on her row.
+A later step can correct either, but the two are not one commit.
 
 `attend` checks `attending` and changes it in one method. Two starts can
 both load her free and both save; the store's version check refuses the
@@ -259,10 +258,11 @@ the chaperone under her `ChaperoneId`, in the clinic's database, in that
 transaction.
 
 The start rule, the one-at-a-time rule and the decline rule are true
-when the transaction commits. The release is brought true later: an
-ending step, left out here, loads the chaperone and sends `finish` after
-the examination ends, and is retried when its save is refused with
-`StaleChaperone`; a stale `finish` clears only the examination it names.
+when the transaction commits. The release is brought true later by
+`oo-designing-aggregates` rule 4: an ending step, left out here, loads
+the chaperone and sends `finish` after the examination ends, and is
+retried when its save is refused with `StaleChaperone`; a stale `finish`
+clears only the examination it names.
 
 No fence books an appointment; booking changes the appointment and its
 slot, never these two aggregates, so it never waits for the rota.
