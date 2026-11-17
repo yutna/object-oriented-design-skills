@@ -65,7 +65,7 @@ interface RegulatorFeed
 ```
 
 The entry's constructor sets its three fields before `statusCode`,
-`effectiveFrom` or `restrictions` reads them. `entryFor` answers the
+`effectiveFrom` or `restrictions` read them. `entryFor` answers the
 entry whose `effectiveFrom` is the latest on or before `day`, or `null`
 when no entry covers the day; the regulator's own client selects the
 entry, so the translator never chooses a date. When the regulator does
@@ -99,7 +99,7 @@ class DayRoster
 ```
 
 The constructor sets both fields before `mayHoldVisits` or `conditions`
-reads them. `effectiveFrom.isAfter(day)` is taken to mean the entry
+read them. `effectiveFrom.isAfter(day)` is taken to mean the entry
 starts after the day. `mayHoldVisits` reads the regulator's code `"A1"`
 and its `effectiveFrom`: when the code is `"A1"` and the entry starts
 after `day`, it answers `false`, and when the entry has started it
