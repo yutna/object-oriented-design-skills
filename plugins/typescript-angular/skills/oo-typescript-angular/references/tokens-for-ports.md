@@ -195,8 +195,8 @@ bootstrapApplication(ThreadScreenComponent, {
 }).catch((error: unknown) => console.error(error))
 ```
 
-`ThreadScreenComponent` is the Pattern's After, with the same store and
-the same fields.
+`ThreadScreenComponent` is the Pattern's After, with the same state
+service and the same fields.
 
 ## The state it ends in
 

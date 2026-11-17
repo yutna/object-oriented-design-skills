@@ -26,7 +26,7 @@ kept in a service every screen can reach, a writable signal or
 `BehaviorSubject` any component can change, a clinic rule written in a
 template or a component, and a port named by an interface that does
 not exist at run time. The rules below close those shortcuts
-with a store provided by the screen, a read-only view and named
+with a state service provided by the screen, a read-only view and named
 methods, a domain class that owns the rule, a token that exists at run
 time, and `inject()` kept to the classes Angular creates.
 
@@ -147,8 +147,8 @@ time, and `inject()` kept to the classes Angular creates.
 `MessageThread` is the thread a patient and the clinic exchange: its
 identifier, subject, patient, assigned clinician, whether it accepts
 replies, and its replies. Every field is read only, the reply list is
-copied in the constructor, and no method changes the object, so a store
-that holds it holds a value that cannot change.
+copied in the constructor, and no method changes the object, so a state
+service that holds it holds a value that cannot change.
 
 ```typescript
 export class ThreadReply {
@@ -229,7 +229,7 @@ method of the service keeps the rule.
 
 After:
 
-`ThreadStore` is listed in the component's `providers`, keeps its
+`ThreadScreenState` is listed in the component's `providers`, keeps its
 writable signal in a `#private` field, hands out `asReadonly()`, and
 changes the state only through `open` and `close`, named for what the
 user did.
@@ -239,7 +239,7 @@ import { Injectable, signal } from '@angular/core'
 import { MessageThread } from './message-thread'
 
 @Injectable()
-export class ThreadStore {
+export class ThreadScreenState {
   #thread = signal<MessageThread | null>(null)
   readonly thread = this.#thread.asReadonly()
 
@@ -253,36 +253,37 @@ export class ThreadStore {
 }
 ```
 
-`ThreadScreenComponent` lists `ThreadStore` in its `providers` and asks
-it for the thread. The After stores the open thread in the screen's own
-store, under the thread's identifier inside the value, in memory and in
-no transaction; the fences leave persistence out.
+`ThreadScreenComponent` lists `ThreadScreenState` in its `providers`
+and asks it for the thread. The After stores the open thread in the
+screen's own state, under the thread's identifier inside the value, in
+memory and in no transaction; the fences leave persistence out.
 
 ```typescript
 import { Component, inject } from '@angular/core'
 import { MessageThread } from './message-thread'
-import { ThreadStore } from './thread-store'
+import { ThreadScreenState } from './thread-screen-state'
 
 @Component({
   selector: 'app-thread-screen',
-  providers: [ThreadStore],
-  template: '<h2>{{ store.thread()?.subject }}</h2>',
+  providers: [ThreadScreenState],
+  template: '<h2>{{ state.thread()?.subject }}</h2>',
 })
 export class ThreadScreenComponent {
-  readonly store = inject(ThreadStore)
+  readonly state = inject(ThreadScreenState)
 
   open(thread: MessageThread): void {
-    this.store.open(thread)
+    this.state.open(thread)
   }
 }
 ```
 
-The After keeps rule 1: the store is in the component's `providers`, so
-each instance of the screen gets its own store and the store ends with
-the screen. It keeps rule 2 as well: the writable signal is `#private`,
-the component reads `asReadonly()`, the value it holds is immutable,
-and `open` and `close` are the only writers. The store receives a
-thread through `open` and never a component.
+The After keeps rule 1: the state service is in the component's
+`providers`, so each instance of the screen gets its own state service
+and the state service ends with the screen. It keeps rule 2 as well:
+the writable signal is `#private`, the component reads `asReadonly()`,
+the value it holds is immutable, and `open` and `close` are the only
+writers. The state service receives a thread through `open` and never a
+component.
 
 ## Red flags
 
@@ -307,8 +308,8 @@ evidence: a measurement, a reproducible bug, or a failing test.
 
 ## Common mistakes
 
-- Providing a screen's store in the root injector because two screens
-  may show the same thread.
+- Providing a screen's state service in the root injector because two
+  screens may show the same thread.
 - Handing out the writable signal and asking callers not to call
   `set`.
 - Keeping a mutable list or object in the signal and changing it in
