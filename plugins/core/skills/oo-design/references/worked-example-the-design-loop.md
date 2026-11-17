@@ -50,17 +50,18 @@ The hold and the release are what the end state is checked against.
 
 ## Step 1: the clinic's words
 
-The clinic says *reading*, *safe range*, *hold* and *release*. The
-staff's noun for what the thermometer shows is a reading, so the code
-gets a `FridgeReading`; the safe range gets a `TemperatureRange`; the
-object that holds both gets a `FridgeLog`. No flag called `isBad` stands in for
-the range, and no status number stands in for the hold.
+The clinic says *reading*, *safe range*, *hold* and *release*. The code
+has no class for the first three, so each gets one: the reading becomes
+a `FridgeReading`, the safe range a `TemperatureRange`, and the log that
+holds both a `FridgeLog` (`oo-speaking-the-domain-language` rule 2). No
+flag called `isBad` stands in for the range, and no status number stands
+in for the hold.
 
-The reading holds the degrees and asks the range whether they are safe
-(`oo-speaking-the-domain-language` rule 2). The range holds its two ends
-and answers whether one degree lies within them
-(`oo-assigning-responsibilities` rule 1). The clinic's two rounds,
-`Morning` and `Afternoon`, are an enumeration because they carry no data.
+The reading holds the degrees and asks the range whether they are safe,
+and the range holds its two ends and answers whether one degree lies
+within them (`oo-assigning-responsibilities` rule 1). The clinic's two
+rounds, `Morning` and `Afternoon`, are an enumeration because they carry
+no data.
 
 ```text
 enum ReadingRound
@@ -159,13 +160,18 @@ gives it; this example uses it as a type only.
 inside the range returns, and one outside sets `held` true. `release`
 reads `held` once and either clears it and records the nurse, or raises
 `ContentsNotHeld`. Two nurses releasing the same hold both read the same
-loaded log; the store's version check refuses the second save, so one
-release is recorded, and the fence leaves the version column out.
+loaded log; the store's version check refuses the second save with
+`StaleFridgeLog`, which step 5's `save` declares, so one release is
+recorded, and the fence leaves the version column out. What this fence
+changes is one `FridgeLog`; step 5 stores it whole under its `FridgeId`,
+in the clinic's database, in the transaction `RecordFridgeReading` or
+`ReleaseFridgeContents` opens, and this fence leaves the store and that
+transaction out.
 
 ## Step 4: messages and states
 
 The log answers two commands that change it, `record` and `release`, and
-two queries that only answer, `isHeld` and `releasedBy`
+three queries that only answer, `isHeld`, `releasedBy` and `hasReading`
 (`oo-encapsulating-state-and-behaviour` rule 4). No setter exists for
 `held` or `releasedBy`; a caller changes either only by sending `record`
 or `release` (`oo-encapsulating-state-and-behaviour` rule 2). A new hold
@@ -180,6 +186,8 @@ class FridgeLog
     return held
   + releasedBy(): ClinicianId?
     return releasedBy
+  + hasReading(round: ReadingRound, day: DateTime): Boolean
+    return readings.hasReading(round, day)
   + record(reading: FridgeReading): void
     readings.add(reading)
     if reading.isWithin(range) then
@@ -191,21 +199,28 @@ class FridgeLog
 ```
 
 `release` is unchanged from step 3. `isHeld` and `releasedBy` read fields
-the constructor sets and the two commands change; no query changes a
-field. `record` still appends one reading, and its outside branch now
-sets two fields once.
+the constructor sets and the two commands change; `hasReading` asks the
+log's own readings whether one of that round was taken on the day of
+`day`, and changes nothing. `record` still appends one reading, and its
+outside branch now sets two fields once. The store's version check
+refuses a save made from a copy another change has replaced, so a
+`record` that races a `release` is retried on the current copy; the
+fence leaves the version column out. What this fence changes is the same
+one `FridgeLog`; step 5 stores it whole under its `FridgeId`, in the
+clinic's database, in the transaction `RecordFridgeReading` opens, and
+this fence leaves that store and that transaction out.
 
 ## Step 5: ports and layers
 
 The domain knows no database. The log is found and saved through
 `FridgeLogs`, a port declared beside the domain, and the store's adapter
 answers it at the edge (`oo-inverting-dependencies` rule 1). Two use
-cases sit in the application layer: `RecordFridgeReading` loads the log,
-sends `record` and saves it; `ReleaseFridgeContents` loads the log,
-sends `release` and saves it (`oo-layering-the-system` rule 2,
-`oo-placing-domain-logic` rule 2). The front desk's missing list is a
-read with no change behind it, so it gets a read query shaped for the
-screen, not the log's repository (`oo-separating-reads-from-writes`
+cases change a log: `RecordFridgeReading` loads the log, sends `record`
+and saves it; `ReleaseFridgeContents` loads the log, sends `release` and
+saves it (`oo-layering-the-system` rule 2, `oo-placing-domain-logic`
+rule 2). The front desk's missing list changes nothing, so a read query
+shaped for the screen serves it, not the log's repository, and the rule
+the list applies stays in the domain (`oo-separating-reads-from-writes`
 rule 2).
 
 ```text
@@ -215,7 +230,28 @@ interface FridgeLogs
   + find(fridge: FridgeId): FridgeLog
     raises FridgeLogNotFound
   + save(log: FridgeLog): void
+    raises StaleFridgeLog
   + remove(log: FridgeLog): void
+
+value MissingReadingCheck
+  - round: ReadingRound
+  - deadline: DateTime
+  - now: DateTime
+  + new(round: ReadingRound, deadline: DateTime, now: DateTime)
+  + round(): ReadingRound
+    return round
+  + deadline(): DateTime
+    return deadline
+  + now(): DateTime
+    return now
+  + isSatisfiedBy(log: FridgeLog): Boolean
+    if now.isBefore(deadline) then
+      return false
+    else
+      if log.hasReading(round, deadline) then
+        return false
+      else
+        return true
 
 -- application
 value MissingReading
@@ -225,7 +261,7 @@ value MissingReading
   + new(fridge: FridgeId, round: ReadingRound, deadline: DateTime)
 
 interface MissingReadings
-  + at(asOf: DateTime): List<MissingReading>
+  + matching(check: MissingReadingCheck): List<MissingReading>
 
 class RecordFridgeReading
   - logs: FridgeLogs
@@ -244,6 +280,14 @@ class ReleaseFridgeContents
     log.release(nurse)
     logs.save(log)
     return
+
+class ListMissingReadings
+  - missing: MissingReadings
+  - clock: Clock
+  + new(missing: MissingReadings, clock: Clock)
+  + run(round: ReadingRound, deadline: DateTime): List<MissingReading>
+    now := clock.now()
+    return missing.matching(new MissingReadingCheck(round, deadline, now))
 ```
 
 The `-- domain` and `-- application` comments mark the layers. `FridgeLogs`
@@ -251,31 +295,56 @@ is the port the domain declares; an adapter at the edge answers it, and
 the composition root builds each use case with that adapter
 (`oo-inverting-dependencies` rule 3). The clinic builds a log when it
 installs a fridge, in a use case this example leaves out; no use case
-removes a log, so no fence sends `remove`. `MissingReadings.at` answers
-one row per fridge and round whose deadline has passed with no
-reading; its adapter holds the clinic's two deadlines and runs one query
-over the log tables, so the front desk's read loads no aggregate. Each
-`run` opens one transaction, loads one log, sends one command and saves
-the log whole; what is stored is the log, under its `FridgeId`, in the
-clinic's database, in that transaction. The store's version check refuses
-a save made from a log another change has replaced, so one of two saves
-from the same copy is refused; the fence leaves the version column, the
-adapter and the transaction boundary out. No field is read before it is
-set, and each `run` sends each message once.
+removes a log, so no fence sends `remove`.
+
+A business condition found in an adapter moves inward
+(`oo-layering-the-system` rule 2), so the missing rule is
+`MissingReadingCheck`, a value in the domain. The read asks its clock
+once and builds the check with that moment, because a rule the passing of
+time decides takes the time as a value (`oo-modeling-lifecycles`
+rule 5). `ListMissingReadings.run` hands the check to
+`MissingReadings.matching`. A database adapter turns `round()`,
+`deadline()` and `now()` into one query over the log tables, an in-memory
+one sends `isSatisfiedBy` to each log, and the front desk asks once for
+each of the clinic's two deadlines, 09:00 and 17:00, which are the
+`deadline` values the request states. Before its deadline no log
+satisfies `MissingReadingCheck`, and after it only a log with no reading
+of that round that day does, so no row appears before a reading is due.
+The read loads no aggregate: the adapter selects the rows and
+`MissingReading` carries the fridge, round and deadline to the screen,
+with no change to any state. `Clock` is the inverting dependencies
+skill's port, whose `now()` answers the current time.
+
+Each write `run` opens one transaction, loads one log, sends one command
+and saves the log whole; what is stored is the log, under its `FridgeId`,
+in the clinic's database, in that transaction. The store's version check
+refuses a save made from a log another change has replaced, and `save`
+declares that refusal as `StaleFridgeLog`. A refused `save` passes out
+of `run`; its caller reloads the log, repeats the change on the current
+copy and saves again. For `RecordFridgeReading` the retry records the
+reading, and an outside reading still sets the hold, so a reading that
+loses the race is not dropped; the clinic has no rule that refuses a
+second reading, so the retry records it. For `ReleaseFridgeContents` the
+retry reads the current copy, and when another release has already
+cleared the hold, `release` raises `ContentsNotHeld`, which is the
+clinic's rule and not the version check. The fence leaves the version
+column, the adapters and the transaction boundaries out. No field is
+read before it is set, and each `run` sends each message once.
 
 ## Step 6: names and comments
 
 The names already use the clinic's words and say what each method does.
-`FridgeLog`, `FridgeReading` and `TemperatureRange` are nouns; `record`
-and `release` are verbs for the effects they have; `isHeld`,
-`releasedBy`, `includes`, `isWithin` and `at` answer a question
-(`oo-naming-classes-and-methods` rules 1 and 2). The same word is used
-once: a *reading* is never a *measurement*, a *hold* is never a
+`FridgeLog`, `FridgeReading`, `TemperatureRange` and `MissingReadingCheck` are
+nouns; `record` and `release` are verbs for the effects they have;
+`ListMissingReadings` names the read's job; `isHeld`, `releasedBy`,
+`hasReading`, `matching`, `includes`, `isWithin` and `now` answer a
+question (`oo-naming-classes-and-methods` rules 1 and 2). The same word
+is used once: a *reading* is never a *measurement*, a *hold* is never a
 *quarantine*, and a *release* is never a *clear*. No comment is added:
 the names carry what the code can say, the range is a value the log
-holds, and the deadlines belong to the read query that answers the front
-desk's list (`oo-commenting-what-code-cannot` rules 2 and 4). This step
-changes no fence.
+holds, and the deadline is a value `MissingReadingCheck` holds
+(`oo-commenting-what-code-cannot` rules 2 and 4). This step changes no
+fence.
 
 ## Step 7: the review
 
@@ -289,16 +358,18 @@ fence and no rule.
 ## The end state
 
 The finished classes are `ReadingRound`, `TemperatureRange`,
-`FridgeReading` and `MissingReading` (values and one enumeration),
-`FridgeLog` (the one aggregate root), `FridgeLogs` and `MissingReadings`
-(the ports), and `RecordFridgeReading` and `ReleaseFridgeContents` (the
-use cases). `FridgeLog` holds its readings, range, hold and last release;
-the use cases load and save one log; and the front desk's list is one
-read query.
+`FridgeReading`, `MissingReading` and `MissingReadingCheck` (values and one
+enumeration), `FridgeLog` (the one aggregate root), `FridgeLogs` and
+`MissingReadings` (the ports), and `RecordFridgeReading`,
+`ReleaseFridgeContents` and `ListMissingReadings` (the use cases).
+`FridgeLog` holds its readings, range, hold and last release; the write
+use cases load and save one log; and the front desk's list is one read
+query whose missing rule is `MissingReadingCheck`.
 
 That state keeps `oo-designing-aggregates` rule 1,
 `oo-encapsulating-state-and-behaviour` rules 2 and 4,
-`oo-making-illegal-states-impossible` rule 1 and
-`oo-inverting-dependencies` rule 1; it also keeps the gate's rule,
-because the contents stay held from the outside reading until `release`
-names the nurse, and no later reading lifts the hold.
+`oo-making-illegal-states-impossible` rule 1,
+`oo-inverting-dependencies` rule 1, `oo-layering-the-system` rule 2 and
+`oo-modeling-lifecycles` rule 5; it also keeps the gate's rule, because
+the contents stay held from the outside reading until `release` names
+the nurse, and no later reading lifts the hold.
