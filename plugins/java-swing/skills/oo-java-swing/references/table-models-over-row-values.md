@@ -240,14 +240,15 @@ import java.util.List;
 
 public final class LateBoardPresenter {
     private final LateBoardView view;
-    private final MaintainLateBoard board;
+    private final MaintainLateBoard maintainLateBoard;
     private final BackgroundWork background;
     private List<LateRow> rows = List.of();
 
-    public LateBoardPresenter(LateBoardView view, MaintainLateBoard board,
+    public LateBoardPresenter(LateBoardView view,
+            MaintainLateBoard maintainLateBoard,
             BackgroundWork background) {
         this.view = view;
-        this.board = board;
+        this.maintainLateBoard = maintainLateBoard;
         this.background = background;
         view.addReportListener(this::report);
         view.addWaitEditListener(this::waitEdited);
@@ -259,7 +260,7 @@ public final class LateBoardPresenter {
             return;
         }
         background.run(
-            () -> board.report(clinician, wait),
+            () -> maintainLateBoard.report(clinician, wait),
             this::showRows,
             this::showFailure);
     }
@@ -270,7 +271,7 @@ public final class LateBoardPresenter {
             return;
         }
         background.run(
-            () -> board.correct(row.clinician(), wait),
+            () -> maintainLateBoard.correct(row.clinician(), wait),
             this::showRows,
             this::showFailure);
     }

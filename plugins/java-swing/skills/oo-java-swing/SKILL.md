@@ -133,7 +133,7 @@ public class RunningLateWindow extends JFrame {
     private final JTextField clinician = new JTextField(12);
     private final JTextField minutes = new JTextField(4);
     private final JButton report = new JButton("Report late");
-    private final JLabel board = new JLabel(" ");
+    private final JLabel statusLine = new JLabel(" ");
     private final SlowLateReports reports = new SlowLateReports();
 
     public RunningLateWindow() {
@@ -146,16 +146,16 @@ public class RunningLateWindow extends JFrame {
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(entry, BorderLayout.NORTH);
         panel.add(report, BorderLayout.CENTER);
-        panel.add(board, BorderLayout.SOUTH);
+        panel.add(statusLine, BorderLayout.SOUTH);
         add(panel);
         report.addActionListener(event -> {
             int late = Integer.parseInt(minutes.getText());
             if (late < 0 || late > 120) {
-                board.setText("a delay runs from 0 to 120 minutes");
+                statusLine.setText("a delay runs from 0 to 120 minutes");
                 return;
             }
             reports.record(clinician.getText(), Duration.ofMinutes(late));
-            board.setText(clinician.getText() + " is " + late
+            statusLine.setText(clinician.getText() + " is " + late
                 + " minutes late");
         });
         setSize(420, 160);
@@ -213,7 +213,9 @@ public interface LateBoardView {
 `LateBoardView` is the window as the presenter knows it: two methods
 that register a listener for the desk's report and for an edited wait,
 and two that show the rows and a problem. A Swing button takes its
-`ActionListener` the same way; the interface imports nothing from
+`ActionListener` the same way `addReportListener` adds one, whereas
+`addWaitEditListener` builds the table model around its listener, so a
+second call replaces the first; the interface imports nothing from
 Swing.
 
 ```java
@@ -223,14 +225,15 @@ import java.util.List;
 
 public final class LateBoardPresenter {
     private final LateBoardView view;
-    private final MaintainLateBoard board;
+    private final MaintainLateBoard maintainLateBoard;
     private final BackgroundWork background;
     private List<LateRow> rows = List.of();
 
-    public LateBoardPresenter(LateBoardView view, MaintainLateBoard board,
+    public LateBoardPresenter(LateBoardView view,
+            MaintainLateBoard maintainLateBoard,
             BackgroundWork background) {
         this.view = view;
-        this.board = board;
+        this.maintainLateBoard = maintainLateBoard;
         this.background = background;
         view.addReportListener(this::report);
         view.addWaitEditListener(this::waitEdited);
@@ -242,7 +245,7 @@ public final class LateBoardPresenter {
             return;
         }
         background.run(
-            () -> board.report(clinician, wait),
+            () -> maintainLateBoard.report(clinician, wait),
             this::showRows,
             this::showFailure);
     }
@@ -253,7 +256,7 @@ public final class LateBoardPresenter {
             return;
         }
         background.run(
-            () -> board.correct(row.clinician(), wait),
+            () -> maintainLateBoard.correct(row.clinician(), wait),
             this::showRows,
             this::showFailure);
     }
@@ -293,8 +296,9 @@ with the view, so nothing of the presenter reaches the window after it
 is built. It imports no `javax.swing` or `java.awt` type, so a test
 builds it with a fake view and a `BackgroundWork` that runs the work and
 its callbacks at once, then reads what the view was told (rule 2). A
-change that follows the slow work happens in a method the view calls
-from the worker's callback, never from the listener itself. It stores
+change that follows the slow work happens when the worker's `done`
+callback calls the presenter's `showRows` or `showFailure`, and the
+presenter then tells the view, never from the listener itself. It stores
 the rows it shows and changes no domain state.
 
 ```java
@@ -356,7 +360,7 @@ public final class RunningLateWindow implements LateBoardView {
     private final JTextField clinician = new JTextField(12);
     private final JTextField minutes = new JTextField(4);
     private final JButton report = new JButton("Report late");
-    private final JLabel board = new JLabel(" ");
+    private final JLabel statusLine = new JLabel(" ");
     private final JTable waits = new JTable();
     private LateBoardTableModel model;
 
@@ -368,7 +372,7 @@ public final class RunningLateWindow implements LateBoardView {
         entry.add(minutes);
         JPanel south = new JPanel(new BorderLayout());
         south.add(report, BorderLayout.NORTH);
-        south.add(board, BorderLayout.SOUTH);
+        south.add(statusLine, BorderLayout.SOUTH);
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(entry, BorderLayout.NORTH);
         panel.add(new JScrollPane(waits), BorderLayout.CENTER);
@@ -396,7 +400,7 @@ public final class RunningLateWindow implements LateBoardView {
 
     @Override
     public void showProblem(String message) {
-        board.setText(message);
+        statusLine.setText(message);
     }
 
     public void show() {
@@ -435,10 +439,11 @@ public final class ClinicDesk {
 
     private static void start() {
         LateReports reports = new DatabaseLateReports();
-        MaintainLateBoard board =
+        MaintainLateBoard maintainLateBoard =
             new MaintainLateBoard(Clock.systemUTC(), reports);
         RunningLateWindow window = new RunningLateWindow();
-        new LateBoardPresenter(window, board, new SwingBackground());
+        new LateBoardPresenter(window, maintainLateBoard,
+            new SwingBackground());
         window.show();
     }
 }
