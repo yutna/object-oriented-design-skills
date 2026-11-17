@@ -280,10 +280,14 @@ metadata:
   act. The pack's own word for that time is visit; "encounter" appears
   only where another system's or old code's word is quoted.
 - A fence that checks a state and then changes it shows what refuses
-  a second caller that passes the same check at the same moment, such
-  as a lock, a version column or a unique index, or one sentence
-  beside it names what refuses that caller and says the fence leaves
-  it out.
+  the change if that state moves between the check and the change,
+  such as a lock, a version column or a unique index, or one sentence
+  beside it names what would refuse that change and says the fence
+  leaves it out. Where nothing else can run between the two, such as
+  code on one UI thread with no `await` between them, one sentence
+  says so instead. A fence that changes a state without checking it
+  first needs neither. A sentence says a second request is refused
+  only where the clinic's rule refuses it.
 - A state that a domain action guards has no public writer. Where a
   framework generates one, the skill names the relaxation, and no
   code outside the action method uses the writer.
