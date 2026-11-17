@@ -294,7 +294,7 @@ her is left out.
 That state keeps `oo-designing-aggregates` rules 1, 3, 4 and 5,
 `oo-encapsulating-state-and-behaviour` rules 2 and 4,
 `oo-placing-domain-logic` rule 2, `oo-inverting-dependencies` rule 1 and
-`oo-layering-the-system` rule 2, and it keeps the clinic's four rules: a
-needed examination is stored only after a chaperone attends, a chaperone
-attends one examination at a time, a recorded decline lets a start with
-no chaperone, and no booking touches either aggregate.
+`oo-layering-the-system` rule 2, and it keeps the clinic's rules: a
+needed examination starts with a chaperone or a recorded decline, a
+chaperone attends one examination at a time, and no booking touches
+either aggregate.
