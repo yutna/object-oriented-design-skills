@@ -32,7 +32,7 @@ the code, whatever the size of the change.
 |A feature inside an existing flow|The idiom that flow uses|New boundaries|
 |A new class or module|The design loop|Nothing|
 |A new context|The loop, then its boundaries|Nothing|
-|A new system from nothing|The loop, contexts, then structure|Nothing|
+|A new system|Loop, contexts, then structure; `oo-typescript` walks it|Nothing|
 
 ## Before designing
 
@@ -322,6 +322,24 @@ evidence: a measurement, a reproducible bug, or a failing test.
 - A constructor that leaves the object unusable until a setter runs.
 - One business rule whose change touches many classes.
 - A test that needs many mocks to check one decision.
+
+## Worked examples
+
+- [A worked example of the design loop](references/worked-example-the-design-loop.md)
+  Read it when a small feature brings classes and rules of its own and
+  the whole loop applies to it.
+- [A worked example of rules that conflict](../oo-designing-aggregates/references/worked-example-rules-that-conflict.md)
+  Read it when two rules pull an aggregate boundary two ways and you
+  must choose one.
+- [A worked example of a fat controller](../oo-refactoring-toward-object-design/references/worked-example-a-fat-controller.md)
+  Read it when a controller holds the flow, the checks and the storage,
+  and you want the commits that take it apart.
+- [A worked example of an anti-corruption layer](../oo-bounding-contexts/references/worked-example-an-anti-corruption-layer.md)
+  Read it when another system's model enters yours and the clinic's
+  answer has to be its own.
+- Read `oo-typescript`'s worked example, in
+  `references/worked-example-a-subsystem.md`, when a subsystem starts
+  from nothing and every layer must be built from the domain out.
 
 ## Further reading
 
