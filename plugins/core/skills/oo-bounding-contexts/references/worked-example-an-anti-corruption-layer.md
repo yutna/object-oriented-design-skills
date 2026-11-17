@@ -177,7 +177,7 @@ interface ClinicianLicences
 ```
 
 `PractisingCheck` is the clinic's port; no signature on this side names
-`RegulatorEntry`, `RegulatorFeed`, its codes or its `restrictions`.
+a regulator type, a regulator field or a regulator code.
 `ClinicianLicences` is the clinic's own lookup for the licence number
 it holds for a clinician, and it answers `null` when the clinic has
 none. The port declares `PractisingStatusUnavailable`; the translator
