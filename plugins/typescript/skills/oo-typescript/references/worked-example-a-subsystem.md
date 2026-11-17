@@ -371,7 +371,7 @@ signature names a database, a row or a query
 `UnitOfWork` are the other ports; each is a promise its implementations
 share. `Clock` is the port the inverting dependencies skill shows for
 the current time, with a JavaScript `Date` as this language's moment;
-`Clock.now` and `AbsenceNoteIds.next` raise nothing.
+`Clock.now` and `AbsenceNoteIds.next` raise no refusal.
 
 The port declares every error its implementation raises:
 
