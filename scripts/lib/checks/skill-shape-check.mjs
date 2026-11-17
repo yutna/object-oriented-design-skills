@@ -11,6 +11,7 @@ export class SkillShapeCheck extends Check {
     'Language skills',
     'Quick reference',
     'Red flags',
+    'Worked examples',
     'Further reading'
   ])
 
