@@ -910,7 +910,7 @@ from a stale copy answers 409 `stale-absence-note`; an amend or a cancel
 after a cancel answers 409 `absence-note-cancelled`; an identity no note
 has answers 404; a request the values refuse answers 400.
 
-That state keeps `oo-typescript` rules 1, 2 and 6,
+The finished state keeps `oo-typescript` rules 1, 2 and 6,
 `oo-layering-the-system` rules 1, 2, 3 and 5,
 `oo-inverting-dependencies` rules 1 and 3,
 `oo-designing-repositories` rules 1, 2 and 6,
