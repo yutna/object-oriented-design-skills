@@ -57,7 +57,11 @@ imports nothing.
 ```typescript
 export class AbsenceNoteRefused extends Error {}
 export class AbsenceNoteAlreadyCancelled extends AbsenceNoteRefused {}
-export class AbsenceNoteAlreadyLive extends AbsenceNoteRefused {}
+export class AbsenceNoteAlreadyLive extends AbsenceNoteRefused {
+  constructor(readonly live: AbsenceNoteId) {
+    super(`the visit already has the live note ${live}`)
+  }
+}
 export class AbsenceNoteNotFound extends AbsenceNoteRefused {}
 export class AbsenceNoteUnreadable extends Error {}
 export class StaleAbsenceNote extends AbsenceNoteRefused {}
@@ -370,13 +374,14 @@ export class CancelAbsenceNote {
 signature names a database, a row or a query
 (`oo-inverting-dependencies` rule 1). `Clock`, `AbsenceNoteIds` and
 `UnitOfWork` are the other ports; each is a promise its implementations
-share. `Clock` is the port the inverting dependencies skill shows for
-the current time, with a JavaScript `Date` as this language's moment;
+share. `Clock` is the port `oo-inverting-dependencies` shows for the
+current time, with a JavaScript `Date` as this language's moment;
 `Clock.now` and `AbsenceNoteIds.next` raise no refusal.
 
 The port declares every error its implementation raises:
 
-- `add` raises `AbsenceNoteAlreadyLive`, the visit's one live note.
+- `add` raises `AbsenceNoteAlreadyLive`, naming the live note the visit
+  already has.
 - `find` raises `AbsenceNoteNotFound` for an identity no note has, and
   `AbsenceNoteUnreadable` for a stored row that does not satisfy the
   values.
@@ -388,8 +393,10 @@ The port declares every error its implementation raises:
 builds one note and sends `add`; it returns the new identity. It does
 not look for a live note first: the index in the database adapter is the
 only refusal, and `run` lets `AbsenceNoteAlreadyLive` pass. The HTTP
-adapter answers 409, so the caller learns that the visit already has a
-live note and may amend or cancel that note.
+adapter answers 409 with the live note's identity, so the caller can
+send amend or cancel to that note. The identity comes from a read the
+adapter makes after the index refuses, not from a check before the
+insert.
 
 `AmendAbsenceNote.run` loads the note, sends `amend` to its root and
 stores the whole note (`oo-designing-repositories` rule 6). The load,
@@ -399,9 +406,11 @@ decides a clinic rule; `AbsenceNoteAlreadyCancelled` comes from the note
 and passes to the caller. A missing note makes `find` raise
 `AbsenceNoteNotFound`, and the HTTP adapter answers 404; a row that
 cannot be read raises `AbsenceNoteUnreadable`, and the HTTP adapter
-answers 500. A save from a stale copy raises `StaleAbsenceNote`, and the
-HTTP adapter answers 409; the caller reloads the note and repeats the
-change.
+answers 500. `save` raises `StaleAbsenceNote` when the row has a version
+other than the one before the note it is given; no use case shown
+reaches it, because `AmendAbsenceNote.run` and `CancelAbsenceNote.run`
+load each note after their transaction opens, so the copy each saves is
+the row it read.
 
 `UnitOfWork.run` is the port that opens and ends the transaction
 without naming SQLite (`oo-placing-domain-logic` rule 2). It raises no
@@ -500,6 +509,7 @@ export class SqliteAbsenceNotes implements AbsenceNotes {
 
   readonly #insert: StatementSync
   readonly #select: StatementSync
+  readonly #selectLive: StatementSync
   readonly #update: StatementSync
 
   constructor(database: DatabaseSync) {
@@ -515,6 +525,10 @@ export class SqliteAbsenceNotes implements AbsenceNotes {
         first_day, last_day, issued_on, version, cancelled
       FROM absence_notes
       WHERE id = ?
+    `)
+    this.#selectLive = database.prepare(`
+      SELECT id FROM absence_notes
+      WHERE visit_id = ? AND cancelled = 0
     `)
     this.#update = database.prepare(`
       UPDATE absence_notes
@@ -532,11 +546,11 @@ export class SqliteAbsenceNotes implements AbsenceNotes {
         note.version, note.cancelled ? 1 : 0
       )
     } catch (error) {
-      if (this.#isUniqueRefusal(error)) {
-        throw new AbsenceNoteAlreadyLive(
-          `visit ${note.visit} already has a live note`)
-      }
-      throw error
+      if (!this.#isUniqueRefusal(error)) throw error
+      const live = this.#selectLive.get(note.visit) as
+        { id: string } | undefined
+      if (live === undefined) throw error
+      throw new AbsenceNoteAlreadyLive(asAbsenceNoteId(live.id))
     }
   }
 
@@ -604,34 +618,37 @@ The schema holds one row per note and a partial unique index over
 made by the store: the use case does not load the notes of a visit and
 compare them, because the second insert is refused by the index
 (`oo-designing-aggregates` rule 6). `add` turns only the unique-index
-refusal, `errcode` 2067, into `AbsenceNoteAlreadyLive`; a different
-constraint, a busy database or a closed file is not that error and
-passes as a fault (`oo-designing-failure-behaviour` rules 2 and 7). The
-turn happens here because the provider's error codes belong to its
-adapter (`oo-hiding-implementation` rule 3).
+refusal, `errcode` 2067, into `AbsenceNoteAlreadyLive`, naming the live
+row it reads; a different constraint, a busy database or a closed file
+is not that error and passes as a fault
+(`oo-designing-failure-behaviour` rules 2 and 7). The turn happens here
+because the provider's error codes belong to its adapter
+(`oo-hiding-implementation` rule 3).
 
 `find` selects the row and rebuilds the note. A missing row raises
 `AbsenceNoteNotFound`, a refusal the port declares
 (`oo-designing-failure-behaviour` rule 1); a row that fails a value's
 check is wrapped in `AbsenceNoteUnreadable`, the fault the port declares
 (`oo-designing-failure-behaviour` rule 2). `save` updates the whole note
-by its identity and the version before it; a save from a copy the store
-has moved past changes no row and raises `StaleAbsenceNote`
-(`oo-designing-failure-behaviour` rule 1).
+by its identity and the version before it, so it guards a lost update: a
+save of a copy the store has moved past changes no row and raises
+`StaleAbsenceNote` (`oo-designing-failure-behaviour` rule 1). No use
+case shown reaches that guard, because `AmendAbsenceNote.run` and
+`CancelAbsenceNote.run` load their notes after `BEGIN IMMEDIATE` takes
+the write lock and save them before `COMMIT`.
 
 `SqliteUnitOfWork.run` shows what a transaction is on this module:
 there is no helper, so it runs `BEGIN IMMEDIATE`, the work, `COMMIT`,
-and `ROLLBACK` when `isTransaction` is still true. The version condition
-in `save` refuses a copy another writer has moved past. The database
-opens with a five-second busy timeout in the composition root, so a
-second process waits for the write lock instead of failing at once.
+and `ROLLBACK` when `isTransaction` is still true. The database opens
+with a five-second busy timeout in the composition root, so a second
+process waits for the write lock instead of failing at once.
 
 What `add` stores is one whole note, under its `AbsenceNoteId`; what
 `save` stores is the changed note, under the same identity. Both rows go
 into the SQLite file the composition root opens, in the transaction
 `run` opens. The index refuses the second live note for one visit, so
 two requests that each issue a note for the same visit end with one note
-and one `AbsenceNoteAlreadyLive`.
+and one `AbsenceNoteAlreadyLive`, which names the live note.
 
 ## The HTTP adapter
 
@@ -751,8 +768,9 @@ export class AbsenceNoteHttp {
       return this.#send(response, 404, { error: 'absence-note-not-found' })
     }
     if (error instanceof AbsenceNoteAlreadyLive) {
-      return this.#send(response, 409,
-        { error: 'absence-note-already-live' })
+      return this.#send(response, 409, {
+        error: 'absence-note-already-live', id: error.live
+      })
     }
     if (error instanceof AbsenceNoteAlreadyCancelled) {
       return this.#send(response, 409, { error: 'absence-note-cancelled' })
@@ -791,14 +809,14 @@ response:
   `malformed-request`; the caller fixes the request.
 - `AbsenceNoteNotFound`: 404 with `absence-note-not-found`; the caller
   checks the identity.
-- `AbsenceNoteAlreadyLive`: 409 with `absence-note-already-live`; the
-  caller sees the visit already has a live note and amends or cancels
-  that note.
+- `AbsenceNoteAlreadyLive`: 409 with `absence-note-already-live` and the
+  live note's `id`; the caller sends amend or cancel to that id.
 - `AbsenceNoteAlreadyCancelled`: 409 with `absence-note-cancelled`; the
   caller sees the note is cancelled and issues a new note if the clinic
   allows one.
-- `StaleAbsenceNote`: 409 with `stale-absence-note`; the caller reloads
-  the note and repeats the change.
+- `StaleAbsenceNote`: 409 with `stale-absence-note`; no route reaches
+  it, because the two use cases that save load and save in one write
+  transaction, so it answers a save of a copy the store has moved past.
 - `AbsenceNoteUnreadable`: 500 with `internal`; the caller reports the
   fault and the row is repaired.
 - Any other error: 500 with `internal`; this is a database fault or a
@@ -873,8 +891,9 @@ constructor needs (`oo-inverting-dependencies` rule 3,
 The database opens with a five-second busy timeout, so a second process
 waits for the write lock instead of failing at once; a wait that
 outlasts it is a fault, not a declared error, and the HTTP adapter
-answers 500. The version condition in `save` refuses a change made from
-a copy the store has moved past.
+answers 500. The version condition in `save` guards a lost update, and
+no use case here reaches it, because the two that save run `find` and
+`save` in one write transaction.
 
 The root decides no clinic rule. It opens the file, builds the graph and
 returns the server; the caller listens, so a test can start it without a
@@ -904,11 +923,12 @@ The finished subsystem is five files:
 `AbsenceNoteHttp` is the one way in. The note is stored whole under its
 `AbsenceNoteId` in the SQLite file, in the transaction each `run` opens.
 Two requests at once for one visit end with one 201 and one 409
-`absence-note-already-live`; the second insert met the partial unique
-index, and only `errcode` 2067 became `AbsenceNoteAlreadyLive`. A save
-from a stale copy answers 409 `stale-absence-note`; an amend or a cancel
-after a cancel answers 409 `absence-note-cancelled`; an identity no note
-has answers 404; a request the values refuse answers 400.
+`absence-note-already-live`, whose body names the live note; the second
+insert met the partial unique index, and only `errcode` 2067 became
+`AbsenceNoteAlreadyLive`. A save from a stale copy would answer 409
+`stale-absence-note`, though no use case shown reaches it; an amend or a
+cancel after a cancel answers 409 `absence-note-cancelled`; an identity
+no note has answers 404; a request the values refuse answers 400.
 
 The finished state keeps `oo-typescript` rules 1, 2 and 6,
 `oo-layering-the-system` rules 1, 2, 3 and 5,
