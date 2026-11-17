@@ -2,7 +2,7 @@
 
 - [The rules](#the-rules)
 - [Candidate 1: the examination holds the chaperone](#candidate-1-the-examination-holds-the-chaperone)
-- [Candidate 2: the chaperone holds her examinations](#candidate-2-the-chaperone-holds-her-examinations)
+- [Candidate 2: the chaperone holds its examinations](#candidate-2-the-chaperone-holds-its-examinations)
 - [Candidate 3: one day for the clinic](#candidate-3-one-day-for-the-clinic)
 - [The boundary chosen](#the-boundary-chosen)
 - [What the chosen boundary gives up](#what-the-chosen-boundary-gives-up)
@@ -30,7 +30,7 @@ chaperone. Each candidate is a separate design; only one ships.
 
 ## Candidate 1: the examination holds the chaperone
 
-One aggregate per examination, with her object inside it.
+One aggregate per examination, with the chaperone object inside it.
 
 ```text
 class Examination
@@ -57,11 +57,11 @@ the transaction out.
 The start rule and the decline rule are kept in one transaction; the
 booking rule is untouched. The one-at-a-time rule is broken: two
 examinations can each hold a copy of one chaperone, and each `start` sees
-only its own examination, so both start. Holding her object also breaks
-`oo-designing-aggregates` rule 3, and a save writes one chaperone twice;
-the rule is about her, so the examination is the wrong home.
+only its own examination, so both start. Holding the chaperone object
+also breaks `oo-designing-aggregates` rule 3, and a save writes one
+chaperone twice.
 
-## Candidate 2: the chaperone holds her examinations
+## Candidate 2: the chaperone holds its examinations
 
 Move the one-at-a-time rule to the chaperone. The examination is its own
 aggregate, as in the first candidate, but holds `chaperone:
@@ -93,22 +93,23 @@ reads them. `attend` reads `attending` and sets it once for a free
 chaperone or a repeat of the same examination, and raises for a
 different one; a repeat is not a second attendance, so the clinic does
 not refuse it. `finish` clears it only for the examination it names. The
-chaperone is stored under her `ChaperoneId`; this fence leaves the store,
+chaperone is stored under its `ChaperoneId`; this fence leaves the store,
 the version column and the transaction out.
 
 The one-at-a-time rule is kept here, the decline rule on the examination,
 and the booking rule is untouched. The start rule is delayed: the two
 writes change two aggregates that both exist, so `oo-designing-aggregates`
 rule 4 does not allow one transaction. If `attend` is first, a refused
-start leaves her taken for an examination that never started; if `start`
-is first and `attend` refuses, an examination starts while she is busy.
-A later step can correct either, but the two are not one commit.
+start leaves the chaperone taken for an examination that never started;
+if `start` is first and `attend` refuses, an examination starts while
+the chaperone is busy. A later step can correct either, but the two are
+not one commit.
 
 `attend` checks `attending` and changes it in one method. Two starts can
-both load her free and both save; the store's version check refuses the
-second save with `StaleChaperone`, so the second start reloads; a
-different examination then raises `ChaperoneBusy`, and the same one
-returns.
+both load the chaperone free and both save; the store's version check
+refuses the second save with `StaleChaperone`, so the second start
+reloads; a different examination then raises `ChaperoneBusy`, and the
+same one returns.
 
 ## Candidate 3: one day for the clinic
 
@@ -163,23 +164,21 @@ The start rule, the one-at-a-time rule and the decline rule are kept in
 one transaction; the booking rule is untouched. What the candidate gives
 up is size: every start loads and saves every examination and every
 attending id, and two starts for different chaperones collide on the
-day's version, though the rules would let both proceed.
-`oo-designing-aggregates` rule 5 tips against it. The check of
-`attending` and its change is behind the day's version check; a racing
-save is refused and the retry sees the first id, and the fence leaves the
-version column out.
+day's version. `oo-designing-aggregates` rule 5 tips against it. The
+check of `attending` and its change is behind the day's version check; a
+racing save is refused and the retry sees the first id, and the fence
+leaves the version column out.
 
 ## The boundary chosen
 
 Take the one-examination boundary of the first candidate and the
 chaperone aggregate of the second, and create the examination when it
 starts. The examination holds the chaperone's identity; the chaperone
-holds the one examination she is attending; the start takes her and
+holds the one examination it is attending; the start takes it and
 stores the new examination in one transaction. Creating the examination
 is the change `oo-designing-aggregates` rule 4's exception allows: one
 aggregate is new, so nobody else can change it, and a conflict on the
-chaperone refuses the whole start. The chaperone is the second
-candidate's class, unchanged; its fence keeps the one-at-a-time rule.
+chaperone refuses the whole start.
 
 ```text
 class Examination
@@ -237,8 +236,8 @@ class StartExamination
 The constructor sets both ports before `run` reads them. `run` builds one
 examination; a needed chaperone with no decline and no id raises
 `ChaperoneRequired` before any store is touched. With no chaperone it
-adds one examination; with one it finds her once, sends `attend` once,
-saves her once and adds the examination once. The ports declare
+adds one examination; with one it finds it once, sends `attend` once,
+saves it once and adds the examination once. The ports declare
 `ChaperoneNotFound` from `find`, `StaleChaperone` from `save` and
 `ExaminationAlreadyRecorded` from `add`; `attend` raises `ChaperoneBusy`
 for a different examination.
@@ -248,14 +247,14 @@ or neither. The examination is new, so `oo-designing-aggregates` rule
 4's exception covers the pair. If `save` raises `StaleChaperone` or
 `add` raises `ExaminationAlreadyRecorded`, the transaction rolls back:
 no examination is stored and the chaperone is unchanged. A caller that
-catches `StaleChaperone` reloads her and runs the start again; the
-current copy either takes her, names the same examination and returns,
+catches `StaleChaperone` reloads it and runs the start again; the
+current copy either takes it, names the same examination and returns,
 or names a different one and raises `ChaperoneBusy`. A caller that
 catches `ExaminationAlreadyRecorded`
 treats the examination as started; one that catches `ChaperoneNotFound`
 stops; one that catches `ChaperoneBusy` asks for another chaperone or
 tries later. The examination is stored under its `ExaminationId` and
-the chaperone under her `ChaperoneId`, in the clinic's database, in that
+the chaperone under its `ChaperoneId`, in the clinic's database, in that
 transaction.
 
 The start rule, the one-at-a-time rule and the decline rule are true
@@ -279,17 +278,18 @@ It also needs one store that commits both aggregates; when they cannot
 share a transaction, the second candidate's hold returns.
 
 The release is a later step, so a chaperone is free only after it runs;
-if it fails, she stays busy and the clinic waits. Every start of the same
-chaperone also waits on her row, for as long as one start's transaction.
+if it fails, the chaperone stays busy and the clinic waits. Every start
+of the same chaperone also waits on its row, for as long as one start's
+transaction.
 
 ## The end state
 
 `Examination` is one record per examination that started, holding its
 visit, its need and decline, and the chaperone's identity or `null`;
-`Chaperone` holds the examination she is attending or `null`.
+`Chaperone` holds the examination it is attending or `null`.
 `Chaperones` and `Examinations` are the ports; `StartExamination` creates
 the examination and takes the chaperone, and the ending step that frees
-her is left out.
+the chaperone is left out.
 
 That state keeps `oo-designing-aggregates` rules 1, 3, 4 and 5,
 `oo-encapsulating-state-and-behaviour` rules 2 and 4,
