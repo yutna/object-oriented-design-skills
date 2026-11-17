@@ -232,3 +232,4 @@ evidence: a measurement, a reproducible bug, or a failing test.
 
 - [Smells and moves](references/smells-and-moves.md)
 - [Toward and away from a pattern](references/toward-and-away-from-a-pattern.md)
+- [A worked example of a fat controller](references/worked-example-a-fat-controller.md)
