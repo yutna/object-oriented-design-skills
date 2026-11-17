@@ -3,7 +3,7 @@ name: oo-ruby-rails
 description: Use when a Rails app's Active Record models gather rules, callbacks hide side effects, or a service or query object is being weighed.
 license: MIT
 metadata:
-  version: 0.18.0
+  version: 0.19.0
   pack: object-oriented-design-skills
 ---
 

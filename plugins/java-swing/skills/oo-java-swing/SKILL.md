@@ -3,7 +3,7 @@ name: oo-java-swing
 description: Use when Java Swing code updates components off the event dispatch thread, decides rules inside listeners, or backs a JTable with domain objects.
 license: MIT
 metadata:
-  version: 0.18.0
+  version: 0.19.0
   pack: object-oriented-design-skills
 ---
 
