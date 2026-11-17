@@ -260,10 +260,10 @@ clinic's decision to `PractisingStatus`, and `conditionsFor` copies the
 list out for the manager. When the port raises
 `PractisingStatusUnavailable`, the fence shows the call and the declared
 error leaving `DayRoster`; the screen catches it at the framework edge
-and shows the manager that the regulator did not answer. The manager
-then checks the regulator's site and moves the visits by hand; no fence
-books, moves or cancels an appointment or a slot. The fence stores
-nothing and changes nothing.
+and shows the manager that the clinic could not get an answer. The
+manager then checks the clinic's record and the regulator's site, and
+moves the visits by hand; no fence books, moves or cancels an
+appointment or a slot. The fence stores nothing and changes nothing.
 
 The clinic's side is `PractisingState`, `PractisingStatus`,
 `LicenceNumber`, `PractisingCheck` and `ClinicianLicences`;
