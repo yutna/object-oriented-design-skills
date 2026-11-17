@@ -214,12 +214,12 @@ class RegulatorTranslator implements PractisingCheck
 
 In the end state, regulator terms appear in one clinic class:
 `RegulatorTranslator` names `RegulatorFeed`, `entryFor`, `statusCode`,
-`restrictions` and the codes `"A1"` and `"S2"`. The type name
-`RegulatorEntry` and the field `effectiveFrom` appear only in the
-regulator's model and in the state before the translator; the
-translator reaches an entry through `entryFor`. Its constructor sets
-both collaborators before `statusFor` reads them. `statusFor` first asks
-the clinic's licence lookup once; when the clinic has no number, it
+`restrictions` and the codes `"A1"` and `"S2"`. The type
+`RegulatorEntry` and the field `effectiveFrom` sit in the regulator's
+model and in the state before the translator; the translator reaches an
+entry through `entryFor`. Its constructor sets both collaborators
+before `statusFor` reads them. `statusFor` first asks the clinic's
+licence lookup once; when the clinic has no number, it
 raises `PractisingStatusUnavailable` before it calls the regulator.
 Otherwise it asks the regulator once for the entry on the day and
 answers `NotListed` when the regulator has no entry, `Permitted` for
