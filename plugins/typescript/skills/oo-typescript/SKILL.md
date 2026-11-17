@@ -315,3 +315,4 @@ evidence: a measurement, a reproducible bug, or a failing test.
 ## Further reading
 
 - [Outcomes and wiring](references/unions-and-wiring.md)
+- [A worked example of a subsystem](references/worked-example-a-subsystem.md)
