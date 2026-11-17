@@ -128,6 +128,20 @@ class TempRepository {
     }
   }
 
+  static uiKitPlugin() {
+    return {
+      directory: 'ui-kit',
+      name: 'object-oriented-design-ui-kit',
+      dependencies: [],
+      skills: [
+        {
+          name: 'oo-ui-kit',
+          body: ['## Overview', '', 'Plain UI kit rules.', '']
+        }
+      ]
+    }
+  }
+
   static async #writePlugin(root, plugin) {
     const manifest = join(
       root,
@@ -334,7 +348,7 @@ test('a directory with no language plugin beside it is not a framework plugin', 
   const repository = await TempRepository.create([
     TempRepository.corePlugin(),
     TempRepository.languagePlugin(),
-    TempRepository.webPlugin()
+    TempRepository.uiKitPlugin()
   ])
   try {
     const report = repository.inspect()
