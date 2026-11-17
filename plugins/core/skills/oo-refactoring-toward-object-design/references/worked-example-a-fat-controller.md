@@ -8,7 +8,7 @@
 
 ## The rules
 
-The clinic says:
+The clinic's words:
 
 > A patient may ask the clinic for a copy of the records we keep for
 > them. Reception confirms who is asking before the request counts. The
@@ -336,13 +336,15 @@ controller returned (`oo-placing-domain-logic` rule 5). The framework's
 types appear only in the controller (`oo-layering-the-system` rule 3).
 `SendRecordsCopy.run` sends `close` and never reads `sentAt` to set it
 (`oo-encapsulating-state-and-behaviour` rule 3). The copy is sent before
-the close, so a failed copy leaves the request open; the close checks
-`sentAt` and changes it in one method, and the store's version check
-refuses a save made from a replaced copy. The caller reloads and
-retries; a retry on a closed request raises `RecordsRequestAlreadySent`,
-and a retry before that sends a second copy, which no clinic rule
-refuses. The request is stored whole under its `RecordsRequestId`, in
-the clinic's database, in the transaction `run` opens around `save`
+the close, so `CopyNotSent` leaves the request open and the caller
+retries the send. The close checks `sentAt` and changes it in one
+method; the store's version check refuses a save made from a replaced
+copy with `StaleRecordsRequest`, and the caller reloads and retries. A
+retry on a closed request raises `RecordsRequestAlreadySent`, and a
+retry before that sends a second copy, which no clinic rule refuses. A
+missing request raises `RecordsRequestNotFound` and the caller stops.
+The request is stored whole under its `RecordsRequestId`, in the
+clinic's database, in the transaction `run` opens around `save`
 (`oo-designing-repositories` rule 6); the fence leaves the store and
 that transaction out.
 
@@ -379,6 +381,7 @@ asks the clock once in each (`oo-modeling-lifecycles` rule 5).
 That state keeps `oo-layering-the-system` rules 1, 2 and 3,
 `oo-separating-presentation-from-domain` rule 1,
 `oo-placing-domain-logic` rules 2, 3 and 5,
+`oo-assigning-responsibilities` rule 5,
 `oo-inverting-dependencies` rules 1 and 2,
 `oo-designing-repositories` rules 1, 2 and 6,
 `oo-designing-aggregates` rules 1, 2, 3 and 6,
