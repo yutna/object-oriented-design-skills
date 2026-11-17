@@ -1,6 +1,6 @@
 {
   "name": "object-oriented-design-typescript-angular",
-  "version": "0.20.0",
+  "version": "0.21.0",
   "description": "Object-oriented design rules kept in Angular: service lifetimes set by the injector, shared state with one owner, and ports injected through runtime tokens",
   "author": {
     "name": "Yutthana Siphuengchai",

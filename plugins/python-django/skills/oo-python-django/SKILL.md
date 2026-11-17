@@ -3,7 +3,7 @@ name: oo-python-django
 description: Use when a Django project's models, views or signals carry business rules, or its apps are being drawn as boundaries.
 license: MIT
 metadata:
-  version: 0.20.0
+  version: 0.21.0
   pack: object-oriented-design-skills
 ---
 
