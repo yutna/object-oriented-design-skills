@@ -248,14 +248,13 @@ or neither. The examination is new, so `oo-designing-aggregates` rule
 `add` raises `ExaminationAlreadyRecorded`, the transaction rolls back:
 no examination is stored and the chaperone is unchanged. A caller that
 catches `StaleChaperone` reloads it and runs the start again; the
-current copy either takes it, names the same examination and returns,
-or names a different one and raises `ChaperoneBusy`. A caller that
-catches `ExaminationAlreadyRecorded`
-treats the examination as started; one that catches `ChaperoneNotFound`
-stops; one that catches `ChaperoneBusy` asks for another chaperone or
-tries later. The examination is stored under its `ExaminationId` and
-the chaperone under its `ChaperoneId`, in the clinic's database, in that
-transaction.
+current copy either takes the examination, names the same one and
+returns, or names a different one and raises `ChaperoneBusy`. A caller
+that catches `ExaminationAlreadyRecorded` treats the examination as
+started; one that catches `ChaperoneNotFound` stops; one that catches
+`ChaperoneBusy` asks for another chaperone or tries later. The
+examination is stored under its `ExaminationId` and the chaperone under
+its `ChaperoneId`, in the clinic's database, in that transaction.
 
 The start rule, the one-at-a-time rule and the decline rule are true
 when the transaction commits. The release is brought true later by
