@@ -3,7 +3,9 @@ name: t10-java-jakarta-ee-future-limit
 description: >-
   Task (oo-java-jakarta-ee rule 2): the class that holds a new rule
   carries no CDI or enterprise bean annotation, and the resource
-  receives it.
+  receives it. `resource-asks-the-limit` passes with no pack too, so
+  it measures nothing alone; with no pack the case fails on
+  `limit-is-plain`.
 tags: [task]
 context:
   scaffold_script: fixture-java-jakarta-ee.sh
