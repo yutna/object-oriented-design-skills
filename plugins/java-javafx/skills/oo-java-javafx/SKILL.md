@@ -127,9 +127,9 @@ root in the `Application` subclass.
 
 `AccessNeedsForm` is the desk's form for a patient's access needs:
 three tick boxes record whether the patient needs step-free access, a
-hearing loop or an assistance dog, and a Save button records them. The
-third tick box is labelled `Companion` and records the dog. The clinic's
-rule is that a companion needs step-free access, because the room that
+hearing loop or a canine, and a Save button records them. The
+third tick box is labelled `Canine` and records the canine. The clinic's
+rule is that a canine needs step-free access, because the room that
 takes one is reached by the step-free route. The form shows what the
 desk ticked and hands the save to a view model; the view model builds
 the patient's access needs and asks a use case.
@@ -143,7 +143,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 public final class PatientAccessNeeds {
     private final BooleanProperty stepFree = new SimpleBooleanProperty();
     private final BooleanProperty hearingLoop = new SimpleBooleanProperty();
-    private final BooleanProperty companion =
+    private final BooleanProperty canine =
         new SimpleBooleanProperty();
 
     public BooleanProperty stepFreeProperty() {
@@ -154,8 +154,8 @@ public final class PatientAccessNeeds {
         return hearingLoop;
     }
 
-    public BooleanProperty companionProperty() {
-        return companion;
+    public BooleanProperty canineProperty() {
+        return canine;
     }
 }
 ```
@@ -175,10 +175,10 @@ import javafx.scene.layout.VBox;
 public final class AccessNeedsForm {
     private final CheckBox stepFree = new CheckBox("Step-free access");
     private final CheckBox hearingLoop = new CheckBox("Hearing loop");
-    private final CheckBox companion = new CheckBox("Companion");
+    private final CheckBox canine = new CheckBox("Canine");
     private final Button save = new Button("Save");
     private final VBox root =
-        new VBox(8, stepFree, hearingLoop, companion, save);
+        new VBox(8, stepFree, hearingLoop, canine, save);
     private final PatientAccessNeeds needs;
     private final AccessNeedsStore store;
 
@@ -190,8 +190,8 @@ public final class AccessNeedsForm {
             .bindBidirectional(needs.stepFreeProperty());
         hearingLoop.selectedProperty()
             .bindBidirectional(needs.hearingLoopProperty());
-        companion.selectedProperty()
-            .bindBidirectional(needs.companionProperty());
+        canine.selectedProperty()
+            .bindBidirectional(needs.canineProperty());
         save.setOnAction(event -> store.save("p-204", needs));
     }
 
@@ -211,7 +211,7 @@ public interface AccessNeedsStore {
 ```
 
 In the Before, `PatientAccessNeeds` carries JavaFX properties and no
-rule, so a tick can record an assistance dog without step-free access
+rule, so a tick can record a canine without step-free access
 (rule 3). The two-way bindings write the domain object as the user
 ticks, before any rule checks it (rule 3), and the Save handler calls
 the store itself (rule 5). No view model holds the screen's state
@@ -222,16 +222,16 @@ object, its transaction and its version, and they need no current time.
 After:
 
 `PatientAccessNeeds` is now a value with no JavaFX property: its compact
-constructor refuses an assistance dog without step-free access.
+constructor refuses a canine without step-free access.
 
 ```java
 public record PatientAccessNeeds(
-        boolean stepFree, boolean hearingLoop, boolean companion) {
+        boolean stepFree, boolean hearingLoop, boolean canine) {
 
     public PatientAccessNeeds {
-        if (companion && !stepFree) {
+        if (canine && !stepFree) {
             throw new IllegalArgumentException(
-                "a companion needs step-free access");
+                "a canine needs step-free access");
         }
     }
 }
@@ -285,7 +285,7 @@ public final class AccessNeedsViewModel {
     private final OffThreadWork offThread;
     private final BooleanProperty stepFree = new SimpleBooleanProperty();
     private final BooleanProperty hearingLoop = new SimpleBooleanProperty();
-    private final BooleanProperty companion =
+    private final BooleanProperty canine =
         new SimpleBooleanProperty();
     private final ReadOnlyStringWrapper notice =
         new ReadOnlyStringWrapper("");
@@ -305,8 +305,8 @@ public final class AccessNeedsViewModel {
         return hearingLoop;
     }
 
-    public BooleanProperty companionProperty() {
-        return companion;
+    public BooleanProperty canineProperty() {
+        return canine;
     }
 
     public ReadOnlyStringProperty noticeProperty() {
@@ -317,7 +317,7 @@ public final class AccessNeedsViewModel {
         PatientAccessNeeds needs;
         try {
             needs = new PatientAccessNeeds(
-                stepFree.get(), hearingLoop.get(), companion.get());
+                stepFree.get(), hearingLoop.get(), canine.get());
         } catch (IllegalArgumentException refused) {
             notice.set(refused.getMessage());
             return;
@@ -352,19 +352,19 @@ import javafx.scene.layout.VBox;
 public final class AccessNeedsForm {
     private final CheckBox stepFree = new CheckBox("Step-free access");
     private final CheckBox hearingLoop = new CheckBox("Hearing loop");
-    private final CheckBox companion = new CheckBox("Companion");
+    private final CheckBox canine = new CheckBox("Canine");
     private final Label notice = new Label();
     private final Button save = new Button("Save");
     private final VBox root =
-        new VBox(8, stepFree, hearingLoop, companion, save, notice);
+        new VBox(8, stepFree, hearingLoop, canine, save, notice);
 
     public AccessNeedsForm(AccessNeedsViewModel viewModel) {
         stepFree.selectedProperty()
             .bindBidirectional(viewModel.stepFreeProperty());
         hearingLoop.selectedProperty()
             .bindBidirectional(viewModel.hearingLoopProperty());
-        companion.selectedProperty()
-            .bindBidirectional(viewModel.companionProperty());
+        canine.selectedProperty()
+            .bindBidirectional(viewModel.canineProperty());
         notice.textProperty().bind(viewModel.noticeProperty());
         save.setOnAction(event -> viewModel.save());
     }
@@ -381,7 +381,7 @@ synchronous `OffThreadWork` and no `Stage` (rule 2). The form binds each
 `CheckBox` to a writable property of the view model and the label to its
 read-only notice, and its handler only calls `viewModel.save()` (rules
 3, 4 and 5). `PatientAccessNeeds` has no JavaFX property: it is built
-only when the user saves, and its constructor refuses an assistance dog
+only when the user saves, and its constructor refuses a canine
 without step-free access (rule 3). The form receives the view model
 through its constructor and binds to it there; the view model never
 holds the form. The composition root that builds the store, the use
