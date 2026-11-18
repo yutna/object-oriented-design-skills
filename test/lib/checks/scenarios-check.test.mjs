@@ -112,6 +112,50 @@ test('scenarios reject an unknown skill', () => {
   ])
 })
 
+test('scenarios reject a smoke mark that is not exact', () => {
+  const report = CheckRun.of(SKILLS, [
+    '## 1. A slot rule in the controller',
+    '',
+    '> Our appointment controller decides whether a slot is free.',
+    '',
+    'Must contain: the rule moving to the object that holds the slot.',
+    '',
+    'Should reach `oo-assigning-responsibilities`.',
+    '',
+    '## 2. A one-line fix',
+    '',
+    '> Appointment.total() forgets the discount.',
+    '',
+    'Must contain: changing the method body and stopping there.',
+    '',
+    'Should reach `oo-design`.',
+    '',
+    'Smoke set'
+  ])
+  assert.equal(report.failed, true)
+  assert.deepEqual(report.lines(), [
+    'error evals/scenarios.md: ' +
+      'scenario 2 must mark the smoke set with exactly "Smoke set."',
+    'failed: 1 error(s)'
+  ])
+})
+
+test('an exact smoke mark passes and counts its scenario', () => {
+  const report = CheckRun.of(SKILLS, [
+    '## 1. A slot rule in the controller',
+    '',
+    '> Our appointment controller decides whether a slot is free.',
+    '',
+    'Must contain: the rule moving to the object that holds the slot.',
+    '',
+    'Should reach `oo-assigning-responsibilities`.',
+    '',
+    'Smoke set.'
+  ])
+  assert.equal(report.failed, false)
+  assert.deepEqual(report.lines(), ['ok 1 scenario(s)'])
+})
+
 test('a passing scenarios file counts its scenarios', () => {
   const report = CheckRun.of(SKILLS, [
     '## 1. A slot rule in the controller',

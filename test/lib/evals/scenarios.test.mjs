@@ -62,6 +62,30 @@ test('Scenarios reads the numbered blocks', () => {
     ])
 })
 
+test('Scenarios reads the smoke mark from its own paragraph', () => {
+  const [marked, unmarked] = Scenarios.of(ScenarioFile.of([
+    '## 1. The slot rule keeps moving',
+    '',
+    '> Our appointment controller decides whether a slot is free.',
+    '',
+    'Must contain: one owner for the rule.',
+    '',
+    'Should reach `oo-assigning-responsibilities`.',
+    '',
+    'Smoke set.',
+    '',
+    '## 2. A one-line fix',
+    '',
+    '> Appointment.total() forgets the discount.',
+    '',
+    'Must contain: changing the method body and stopping there.',
+    '',
+    'Should reach `oo-design`.'
+  ]))
+  assert.equal(marked.smoke, true)
+  assert.equal(unmarked.smoke, false)
+})
+
 test('Scenarios leaves a missing Must contain paragraph empty', () => {
   const [scenario] = Scenarios.of(ScenarioFile.of([
     '## 1. A visit class doing too much',
