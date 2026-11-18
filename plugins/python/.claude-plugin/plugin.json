@@ -1,6 +1,6 @@
 {
   "name": "object-oriented-design-python",
-  "version": "0.21.0",
+  "version": "0.22.0",
   "description": "Object-oriented design rules kept in plain Python: protocols, frozen dataclasses, mixins and method resolution, and properties",
   "author": {
     "name": "Yutthana Siphuengchai",
