@@ -161,4 +161,4 @@ point in another file, the text says what to accept from this file
 alone, such as a hand-off to an object the file receives, and never
 asks the judge to confirm what happens inside that object.
 
-`tasks/` holds 19 task cases.
+`tasks/` holds 22 task cases.

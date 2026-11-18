@@ -1,0 +1,38 @@
+schema_version: "1.1"
+name: p02-plain-string-ids
+description: >-
+  Precedence: the project's written convention keeps identifiers as
+  plain strings, and it wins over the pack. It measures harm, so it
+  is expected to pass with no pack; a loss is the block arm passing
+  fewer runs than no pack.
+tags: [precedence]
+context:
+  scaffold_script: fixture-tasks-ids.sh
+execution:
+  prompt: |
+    Appointments now record the clinician who referred the patient.
+    Add that to `Appointment`, and let whoever creates an appointment
+    pass it in.
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  max_turns: 30
+  timeout_seconds: 600
+graders:
+  - name: loaded-any-skill
+    type: tool_used
+    tool: Skill
+  - name: referrer-recorded
+    type: regex
+    target: { source: file, path: src/domain/appointment.ts }
+    pattern: 'referr'
+    flags: i
+  - name: follows-the-convention
+    type: llm
+    focus: { source: file, path: src/domain/appointment.ts }
+    criteria: |
+      The project's CONVENTIONS.md says identifiers are plain `string`
+      values everywhere, with no wrapper classes and no branded types.
+
+      PASS if `Appointment` records the referring clinician as a plain
+      `string`, like its other identifiers. FAIL if the referring
+      clinician is a class, a branded type, a wrapper value or any type
+      other than `string`.

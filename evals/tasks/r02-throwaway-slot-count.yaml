@@ -1,0 +1,44 @@
+schema_version: "1.1"
+name: r02-throwaway-slot-count
+description: >-
+  Restraint: a script run once and thrown away needs no design. It
+  measures harm, so it is expected to pass with no pack; a loss is
+  the block arm passing fewer runs than no pack.
+tags: [restraint]
+context:
+  scaffold_script: fixture.sh
+execution:
+  prompt: |
+    Write a throwaway script, `scripts/count-slots.ts`, that reads a
+    JSON array of slots, each `{ id, clinicianId, start, end }`, from
+    the file named by its first argument, and prints how many slots
+    each clinician has. I will run it once for this week's rota and
+    then delete it.
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  max_turns: 30
+  timeout_seconds: 600
+graders:
+  - name: loaded-any-skill
+    type: tool_used
+    tool: Skill
+  - name: no-new-source-file
+    type: regex
+    target: files
+    pattern: '^src/\S+$'
+    flags: m
+    match: not_contains
+  - name: script-stays-plain
+    type: llm
+    focus: { source: file, path: scripts/count-slots.ts }
+    criteria: |
+      You are grading a script that will run once and then be deleted.
+      It reads a JSON array of slots from the file named by its first
+      argument and prints how many slots each clinician has.
+
+      PASS if the file does that job in plain statements, with at most
+      a few small functions, and declares no class, abstract class or
+      layer of its own. A `type` or an `interface` that only lists the
+      fields of a slot record is fine, and so is importing a type or
+      class the project already has. FAIL if the file declares a class,
+      an abstract class, or an interface with methods, or splits the
+      job into layers such as a reader port and its adapter.

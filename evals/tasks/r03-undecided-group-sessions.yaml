@@ -1,0 +1,39 @@
+schema_version: "1.1"
+name: r03-undecided-group-sessions
+description: >-
+  Restraint: a ticket asks for flexibility nobody has decided on, so
+  the slot stays as it is. It can fail with no pack: an agent with
+  no pack may build that flexibility anyway.
+tags: [restraint]
+context:
+  scaffold_script: fixture.sh
+execution:
+  prompt: |
+    Ticket CLN-88 says: "Group sessions, where one clinician sees
+    several patients in one slot, might come next year. Product has
+    not decided yet. Make the booking code ready for them." Do what
+    the ticket asks.
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+  max_turns: 30
+  timeout_seconds: 600
+graders:
+  - name: loaded-any-skill
+    type: tool_used
+    tool: Skill
+  - name: no-new-source-file
+    type: regex
+    target: files
+    pattern: '^src/\S+$'
+    flags: m
+    match: not_contains
+  - name: slot-holds-one-patient
+    type: llm
+    focus: { source: file, path: src/domain/slot.ts }
+    criteria: |
+      You are grading the slot class of a clinic after a request to
+      prepare for group sessions that nobody has decided to build.
+
+      PASS if `Slot` still holds at most one patient: it has no list of
+      patients, no capacity, no session kind and no interface or base
+      class added for group sessions. A slot that is unchanged passes.
+      FAIL if `Slot` gained any of these.
