@@ -130,7 +130,11 @@ A scenario joins the smoke set with a paragraph that reads exactly
 `Smoke set.` after its "Should reach" paragraph. `--tag smoke`
 selects these scenarios and the task cases tagged `smoke`.
 
-`scenarios.md` holds 47 scenarios.
+`scenarios.md` holds 50 scenarios.
+
+Scenarios 49 and 50 refuse a pattern that scenarios 12 and 24 ask
+for. They are expected to pass with no pack; a loss is the block
+arm passing fewer runs than no pack.
 
 What it proves: the file's structure is complete enough to run. What it
 does not prove: that an answer will be good. Scenario results move with
