@@ -852,3 +852,63 @@ second architecture.
 Should reach `oo-applying-functional-techniques`.
 
 Smoke set.
+
+## 48. A weight programme from nothing
+
+> Our dietitians are starting a weight-management programme, and we
+> are building its software from nothing. A doctor refers a patient;
+> the patient joins a twelve-week programme with a visit every
+> fortnight, where the dietitian records the weight and sets the next
+> goal; after the last visit, a progress letter goes to the referring
+> doctor. Visits are booked in the clinic's appointment system, which
+> another team owns. Our team wants to start by creating the database
+> tables and generating the web framework's screens for every table.
+> How should we go from nothing to a system in production?
+
+Must contain: starting from the programme's rules in the clinic's own
+words, at least one stated with an example it accepts and one it
+rejects, before any table or screen; the programme's objects designed
+around those rules and tested without the database or the framework;
+the appointment system reached through one translator or port on the
+programme's side, so its model does not spread into the programme; the
+database and the framework kept at the edges, depending on the domain
+and holding none of its rules.
+
+Should reach `oo-design`.
+
+## 49. A class for every grade
+
+> Each clinician has a grade: trainee, specialist or senior. The grade
+> sets the most appointments the clinician may hold in one morning and
+> the colour of their badge on the desk screen. Today
+> `ClinicianGrade.limits()` has one switch that returns both values, and
+> it is the only place in the code that tests the grade. A teammate's
+> pull request replaces it with an abstract `GradePolicy` and three
+> subclasses, one per grade, each returning its two values. Should we
+> merge it?
+
+Must contain: keeping one grade type whose values come from one table
+or one switch, because the grades differ only in values; no class per
+grade while no grade behaves differently; a class per grade only once
+a grade needs behaviour of its own, with that need named.
+
+Should reach `oo-replacing-conditionals-with-polymorphism`.
+
+## 50. An event between check-in and the pack
+
+> Patients can buy a prepaid pack of five visits. The finance team's
+> rule: a visit paid from a pack is checked in only when one visit comes
+> off that pack at the same moment, and a pack with none left checks
+> nothing in. Today `CheckInVisit.record` marks the visit checked in and
+> takes one visit off the pack in one transaction. A teammate wants
+> `record` to publish a `VisitCheckedIn` event and a handler to take the
+> visit off the pack afterwards, "to decouple billing". Should we?
+
+Must contain: the check-in and the pack's count kept true together in
+one transaction, because the finance rule needs both at the same
+moment; no event and handler between them, since a handler that runs
+after the commit lets a visit be checked in with nothing taken off or
+on an empty pack; an event kept only for a reaction that may come
+later, such as a receipt to the patient.
+
+Should reach `oo-publishing-domain-events`.

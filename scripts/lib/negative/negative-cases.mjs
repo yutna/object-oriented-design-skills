@@ -69,7 +69,8 @@ export class NegativeCases {
     'Should reach `oo-assigning-responsibilities`.'
   static #SCENARIO_UNKNOWN_REPLACE =
     'Should reach `oo-no-such-skill`.'
-  static #SCENARIO_DESIGN_FIND = 'Should reach `oo-design`.'
+  static #SCENARIO_LIFECYCLES_FIND =
+    'Should reach `oo-modeling-lifecycles`.'
   static #SHARED_COPY =
     "The pack is design rules for codebases written in an object-oriented\n" +
     "style, not universal advice. A project's own written conventions " +
@@ -77,7 +78,7 @@ export class NegativeCases {
     "This skill sizes\nthe task and names the skill that fits."
   static #COUNT_FIND = 'carries one of three labels'
   static #COUNT_REPLACE = 'carries one of four labels'
-  static #SCENARIO_CLAIM_FIND = '`scenarios.md` holds 47 scenarios'
+  static #SCENARIO_CLAIM_FIND = '`scenarios.md` holds 50 scenarios'
   static #SCENARIO_CLAIM_REPLACE = '`scenarios.md` contains 8 scenarios'
   static #TASK_TAGS_FIND = 'tags: [task, smoke]'
   static #TASK_TAGS_REPLACE = 'tags: [smoke]'
@@ -423,9 +424,9 @@ export class NegativeCases {
       NegativeCases.#EVAL,
       new ReplaceText(
         NegativeCases.#SCENARIOS,
-        NegativeCases.#SCENARIO_DESIGN_FIND,
+        NegativeCases.#SCENARIO_LIFECYCLES_FIND,
         ''),
-      'oo-design has no scenario'),
+      'oo-modeling-lifecycles has no scenario'),
     new NegativeCase(
       'patterns reject a catalogue item with no index entry',
       NegativeCases.#PATTERNS,
