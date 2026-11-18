@@ -5,6 +5,7 @@ export class Scenarios {
   static #ANY_HEADING = /^#{1,2}[ \t]+\S/
   static #MUST = 'Must contain:'
   static #REACH = 'Should reach'
+  static #SMOKE = 'Smoke set.'
 
   static of(textFile) {
     const lines = textFile.lines()
@@ -36,7 +37,8 @@ export class Scenarios {
       title,
       Scenarios.#prompt(lines),
       Scenarios.#mustContain(lines),
-      Scenarios.#skills(lines))
+      Scenarios.#skills(lines),
+      lines.includes(Scenarios.#SMOKE))
   }
 
   static #prompt(lines) {

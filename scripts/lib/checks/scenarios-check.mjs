@@ -3,6 +3,8 @@ import { Scenarios } from '../evals/scenarios.mjs'
 
 export class ScenariosCheck extends Check {
   static #SCENARIOS = 'evals/scenarios.md'
+  static #HEADING = /^##[ \t]+(\d+)\.(?:[ \t]+(.+))?$/
+  static #SMOKE = 'Smoke set.'
 
   #repository
 
@@ -17,8 +19,8 @@ export class ScenariosCheck extends Check {
   }
 
   inspect(report) {
-    const scenarios = Scenarios.of(
-      this.#repository.file(ScenariosCheck.#SCENARIOS))
+    const file = this.#repository.file(ScenariosCheck.#SCENARIOS)
+    const scenarios = Scenarios.of(file)
     // A run that read no scenario is a failed measurement, not a clean pass.
     report.count('scenario(s)', scenarios.length)
     const names = new Set(
@@ -34,6 +36,27 @@ export class ScenariosCheck extends Check {
       }
       expected = scenario.number + 1
       this.#inspectScenario(scenario, names, report)
+    }
+    this.#inspectSmokeMarks(file.lines(), report)
+  }
+
+  #inspectSmokeMarks(lines, report) {
+    let number = null
+    for (const line of lines) {
+      const heading = ScenariosCheck.#HEADING.exec(line)
+      if (heading !== null) {
+        number = Number(heading[1])
+        continue
+      }
+      // A smoke mark is exact, and only a scenario block can hold one.
+      if (number !== null &&
+        line.startsWith('Smoke') &&
+        line !== ScenariosCheck.#SMOKE) {
+        report.error(
+          ScenariosCheck.#SCENARIOS,
+          `scenario ${number} must mark the smoke set with exactly ` +
+          `"${ScenariosCheck.#SMOKE}"`)
+      }
     }
   }
 
