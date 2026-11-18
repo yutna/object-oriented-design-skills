@@ -126,6 +126,10 @@ The paragraph holds the points only, joined by semicolons into one
 sentence, because the grader reads all of it as points.
 It does not run a model.
 
+A scenario joins the smoke set with a paragraph that reads exactly
+`Smoke set.` after its "Should reach" paragraph. `--tag smoke`
+selects these scenarios and the task cases tagged `smoke`.
+
 `scenarios.md` holds 47 scenarios.
 
 What it proves: the file's structure is complete enough to run. What it

@@ -118,6 +118,26 @@ test('QuestionCase gives every reached skill both indicators', () => {
     ])
 })
 
+test('QuestionCase tags a smoke scenario after its question tag', () => {
+  const marked = new QuestionCase(new Scenario(
+    3,
+    'A one-line fix',
+    'The fix is one line.',
+    'changing the method body and stopping there.',
+    ['oo-design'],
+    true))
+  assert.deepEqual(marked.tags, ['question', 'smoke'])
+  assert.deepEqual(marked.document().tags, ['question', 'smoke'])
+  const unmarked = new QuestionCase(new Scenario(
+    4,
+    'A one-line fix',
+    'The fix is one line.',
+    'changing the method body and stopping there.',
+    ['oo-design']))
+  assert.deepEqual(unmarked.tags, ['question'])
+  assert.deepEqual(unmarked.document().tags, ['question'])
+})
+
 test('QuestionCase pads the number and slugs the title', () => {
   const testCase = new QuestionCase(new Scenario(
     7,

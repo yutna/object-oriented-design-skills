@@ -22,6 +22,8 @@ the use-case object, with no check of the slot of its own.
 
 Should reach `oo-assigning-responsibilities`.
 
+Smoke set.
+
 ## 2. The visit class that does everything
 
 > Our `Visit` class books the appointment, prints the intake form and
@@ -46,6 +48,8 @@ existing owner; no service, new class or redesign.
 
 Should reach `oo-design`.
 
+Smoke set.
+
 ## 4. The change that touches everything
 
 > Every time we change how a slot is booked, we also edit the reminder
@@ -61,6 +65,8 @@ in the history as evidence before restructuring; loosening the
 strongest, most widespread tie first.
 
 Should reach `oo-diagnosing-coupling`.
+
+Smoke set.
 
 ## 5. Getters, setters and a form every clinic defines
 
@@ -230,6 +236,8 @@ it replaces.
 
 Should reach `oo-designing-interfaces`.
 
+Smoke set.
+
 ## 16. Tests that need the production database
 
 > `InvoiceService` calls `Database.instance().query(...)` and
@@ -292,6 +300,8 @@ the type code and the flag replaced by named states or types; the
 agreed words written down with the radiographers and used in the code.
 
 Should reach `oo-speaking-the-domain-language`.
+
+Smoke set.
 
 ## 20. The clinician who holds everything
 
@@ -402,6 +412,8 @@ tool; which parts are core decided by where the clinic differs, with
 the consent tool treated as generic and kept behind a translation.
 
 Should reach `oo-bounding-contexts`.
+
+Smoke set.
 
 ## 26. Every test starts the web server
 
@@ -536,6 +548,8 @@ pattern brought back when its force appears, with the evidence named.
 
 Should reach `oo-choosing-a-pattern`.
 
+Smoke set.
+
 ## 33. Fifteen classes with one method
 
 > Our billing code has fifteen `TariffRule` classes, each with one
@@ -572,6 +586,8 @@ told from faults no caller can repair, with faults handled once at the
 edge rather than caught and ignored in every controller.
 
 Should reach `oo-designing-failure-behaviour`.
+
+Smoke set.
 
 ## 35. Two samples with one label
 
@@ -663,6 +679,8 @@ port the clinic owns, with a stand-in for that port in these tests and
 the adapter checked against the real pharmacy service on its own.
 
 Should reach `oo-testing-object-oriented-code`.
+
+Smoke set.
 
 ## 40. The fee test that fails at month end
 
@@ -764,6 +782,8 @@ every table and class.
 
 Should reach `oo-documenting-design-decisions`.
 
+Smoke set.
+
 ## 45. The comments nobody trusts
 
 > Every method in `ConsentRecorder` has a comment that restates its name.
@@ -830,3 +850,5 @@ function values, unless the staff name them; objects kept, with no
 second architecture.
 
 Should reach `oo-applying-functional-techniques`.
+
+Smoke set.

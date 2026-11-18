@@ -2,6 +2,8 @@ export class QuestionCase {
   static #FAMILY = 'question'
   // The tag selects the question family without inspecting the case name.
   static #TAGS = Object.freeze(['question'])
+  // A marked scenario also joins the quick set the smoke tag selects.
+  static #SMOKE = 'smoke'
   // A question only reads and searches, so the run may not change the workspace.
   static #TOOLS = Object.freeze(['Read', 'Glob', 'Grep', 'Skill'])
   // A question has no fixture, so a search cannot stand in for an answer.
@@ -13,6 +15,7 @@ export class QuestionCase {
 
   #scenario
   #name
+  #tags
   #graders
 
   constructor(scenario) {
@@ -20,6 +23,9 @@ export class QuestionCase {
     // The case id carries the scenario number so a report can order them.
     this.#name = `q${String(scenario.number).padStart(2, '0')}-` +
       QuestionCase.#slug(scenario.title)
+    this.#tags = Object.freeze(scenario.smoke
+      ? [...QuestionCase.#TAGS, QuestionCase.#SMOKE]
+      : [...QuestionCase.#TAGS])
     // Both roads to a skill become indicators, so one case checks routing.
     this.#graders = Object.freeze(QuestionCase.#gradersOf(scenario))
     Object.freeze(this)
@@ -34,7 +40,7 @@ export class QuestionCase {
   }
 
   get tags() {
-    return QuestionCase.#TAGS
+    return this.#tags
   }
 
   get prompt() {
@@ -58,7 +64,7 @@ export class QuestionCase {
     return {
       schema_version: '1.1',
       name: this.#name,
-      tags: [...QuestionCase.#TAGS],
+      tags: [...this.#tags],
       execution: {
         prompt: this.#scenario.prompt,
         allowed_tools: [...QuestionCase.#TOOLS],
