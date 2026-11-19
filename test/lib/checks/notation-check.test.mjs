@@ -96,6 +96,68 @@ test('NotationCheck rejects every spaced comparison operator', () => {
   ])
 })
 
+test('NotationCheck rejects and, or and not as operators', () => {
+  const report = CheckRun.of(SkillText.of(
+    'class Appointment',
+    '  + remind(now: DateTime): void',
+    '    if patient is present and slot is open then',
+    '      notify(patient)',
+    '    if slot is open or patient is waiting then',
+    '      notify(patient)',
+    '    if not patient then',
+    '      notify(clinician)'))
+  assert.deepEqual(report.lines(), [
+    `error ${PATH} line 6: notation: operator "and" is not defined`,
+    `error ${PATH} line 8: notation: operator "or" is not defined`,
+    `error ${PATH} line 10: notation: operator "not" is not defined`,
+    'failed: 3 error(s)'
+  ])
+})
+
+test('NotationCheck reports each boolean word once per occurrence', () => {
+  const report = CheckRun.of(SkillText.of(
+    'class Slot',
+    '  + bookable(now: DateTime): Boolean',
+    '    if not open and not held or booked then',
+    '      return false',
+    '    return true'))
+  assert.deepEqual(report.lines(), [
+    `error ${PATH} line 6: notation: operator "not" is not defined`,
+    `error ${PATH} line 6: notation: operator "and" is not defined`,
+    `error ${PATH} line 6: notation: operator "not" is not defined`,
+    `error ${PATH} line 6: notation: operator "or" is not defined`,
+    'failed: 4 error(s)'
+  ])
+})
+
+test('NotationCheck passes boolean words in a comment', () => {
+  const report = CheckRun.of(SkillText.of(
+    'class Appointment',
+    '  + cancel(reason: CancellationReason): void',
+    '    -- refuse when the slot is held and not paid or expired',
+    '    status := Cancelled'))
+  assert.deepEqual(report.lines(), ['ok 1 fence(s)'])
+})
+
+test('NotationCheck passes boolean words in quoted text', () => {
+  const report = CheckRun.of(SkillText.of(
+    'class Appointment',
+    '  + note(): Text',
+    '    reason := "held and not paid or expired"',
+    '    return reason'))
+  assert.deepEqual(report.lines(), ['ok 1 fence(s)'])
+})
+
+test('NotationCheck passes names that hold the letters', () => {
+  const report = CheckRun.of(SkillText.of(
+    'class Slot',
+    '  + isNotDue(now: DateTime): Boolean',
+    '    return endsAt.isAfter(now)',
+    '  + orderId(): OrderId',
+    '    return order'))
+  assert.deepEqual(report.lines(), ['ok 1 fence(s)'])
+})
+
 test('NotationCheck rejects infix arithmetic on a body line', () => {
   const report = CheckRun.of(SkillText.of(
     'class Appointment',

@@ -4,6 +4,8 @@ import { MarkdownDocument } from '../markdown-document.mjs'
 export class NotationCheck extends Check {
   static #COMMENT = /--.*$/
   static #OPERATOR = /(?<= )(<=|>=|!=|<>|==|<|>)(?= )/g
+  static #BOOLEAN = /\b(and|or|not)\b/g
+  static #QUOTED = /"[^"]*"/g
   static #ARITHMETIC = /(?<=\S)[ \t]+([+\-*/])[ \t]+(?=\S)/g
   static #LOOP = /^\s*(for|while)\b/
   static #CONSTRUCTION =
@@ -106,6 +108,7 @@ export class NotationCheck extends Check {
 
   #inspectLine(path, number, line, inBody, report) {
     this.#inspectOperators(path, number, line, report)
+    this.#inspectBooleans(path, number, line, report)
     if (inBody) this.#inspectArithmetic(path, number, line, report)
     this.#inspectLoops(path, number, line, report)
     this.#inspectConstructions(path, number, line, report)
@@ -127,6 +130,18 @@ export class NotationCheck extends Check {
   #inspectOperators(path, number, line, report) {
     // An ordering or inequality operator has no meaning here.
     for (const match of line.matchAll(NotationCheck.#OPERATOR)) {
+      this.#report(
+        report,
+        path,
+        number,
+        `notation: operator "${match[1]}" is not defined`)
+    }
+  }
+
+  #inspectBooleans(path, number, line, report) {
+    // No boolean operator joins conditions, and quoted text is a value.
+    const unquoted = line.replace(NotationCheck.#QUOTED, '')
+    for (const match of unquoted.matchAll(NotationCheck.#BOOLEAN)) {
       this.#report(
         report,
         path,
