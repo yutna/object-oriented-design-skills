@@ -158,7 +158,10 @@ once; `patient` and `due` come from the constructor's parameters.
 `Recall`'s constructor sets `booking` once, and `book` reads it once
 and sets it once when it is empty. `RecallAlreadyBooked` is raised the
 way `Slot.reserve` raises `SlotTaken` in the notation. No field is read
-before it is set, and no step runs twice.
+before it is set, and no step runs twice. Nothing else runs between
+`book`'s test of `booking` and the change that follows it: the method
+runs on one thread with nothing awaited between the two, so no other
+caller books the recall in between.
 
 ## Red flags
 

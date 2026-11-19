@@ -93,7 +93,10 @@ on one whose slot has not ended, raises `AppointmentNoShowNotRecordable`
 and changes nothing. The job holds the port, not the database, and
 passes the time it was given, so a test can pass any moment. This fence
 leaves out the store, and each appointment's change is stored in its
-own transaction, as rule 4 of `oo-designing-aggregates` asks.
+own transaction, as rule 4 of `oo-designing-aggregates` asks. A store
+that saves an appointment whole and refuses a save made from an older
+copy is what would refuse the second of two `recordNoShow` calls that
+both read `Scheduled`; this fence leaves that version check out.
 
 ## A history the business can read
 

@@ -91,7 +91,10 @@ before one. `schedule`, `complete` and `decline` each change the status
 once. `decline` reaches `recordDecline` from either source state, and
 each call runs exactly one branch, so `status` and `declineReason` are
 assigned once per call. `recordDecline` is private, so no caller skips
-the checks.
+the checks. Nothing else runs between each test of `status` and the
+change that follows it: `schedule`, `complete` and `decline` run on one
+thread with nothing awaited between the two, so no other caller moves
+the visit in between.
 
 ## Reading the table for gaps
 

@@ -57,7 +57,10 @@ once, `isBilled` and `invoice` read them without changing anything, and
 `cancel` sets the status and releases the slot once. Nothing stops
 billing from marking an appointment billed after reception cancelled
 it, because the class holds both decisions and neither group sees the
-other's rule.
+other's rule. Nothing else runs between `cancel`'s test of `status` and
+the change that follows it: the method runs on one thread with nothing
+awaited between the two, so no other caller cancels the appointment in
+between.
 
 ## Two classes with their own words
 
@@ -107,7 +110,10 @@ once. `BillableVisit` sets `invoiceNumber` once in its constructor and
 once in `bill`, and `invoice` reads it without changing anything. The
 identifier keeps the two models apart while billing can still name the
 appointment it prices, and a second `bill` is refused instead of
-overwriting the first invoice number.
+overwriting the first invoice number. Nothing else runs between each
+test and the change that follows it: `bill` and `cancel` run on one
+thread with nothing awaited between the two, so no other caller changes
+`invoiceNumber` or `status` in between.
 
 ## A glossary entry
 

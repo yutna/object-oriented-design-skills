@@ -224,7 +224,10 @@ because the constructor is private. `ConsultationScreen.begin` sends
 `start()`, and `finish` sends `complete()`, so the screen never reads
 the status and a cancelled or completed appointment refuses both. Each
 transition changes the status once, `book` reserves the slot once, and
-`cancel` releases it once.
+`cancel` releases it once. Neither fence shows what would refuse a
+second `cancel` that read the appointment as `Scheduled`: a store that
+saves the appointment whole and refuses a save made from an older copy
+would, and both fences leave that store and its version check out.
 
 ## Red flags
 
