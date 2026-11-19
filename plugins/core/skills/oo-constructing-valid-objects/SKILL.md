@@ -156,7 +156,9 @@ class Appointment
 
 `BookingDesk.book` hands the reservation to the factory and has no
 other step. The private constructor is reached only from the two
-factories in the fence.
+factories in the fence. Both fences give `Appointment` `previousVisit`,
+`followUp` and `duration` fields and a five-argument constructor, where
+the notation's class holds a `status` and takes it in its constructor.
 
 ## Red flags
 

@@ -27,6 +27,9 @@ class Patient
   + ageOn(date: Date): Age
 ```
 
+This `Patient` holds a name and a date of birth rather than the allergy
+list another reference gives the class.
+
 ## Structures other objects
 
 It keeps other objects in order or makes a whole from parts. A

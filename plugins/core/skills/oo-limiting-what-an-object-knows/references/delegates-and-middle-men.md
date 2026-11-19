@@ -55,12 +55,15 @@ class Slot
     return room.name()
 ```
 
-`RoomName` is taken to be the value a room answers for its name. `Slot`
-in this section also holds the `Room` it is in, and the fence declares
-that field. Each object talks only to its own field, and each forward
-hides one step rather than replacing the object underneath. The cost is
-visible: every new question about a room adds a method to two classes.
-Hiding a delegate contains change, and the forwards are what it costs.
+`RoomName` is taken to be the value a room answers for its name.
+`Appointment` here adds a `kind` and a constructor parameter for it, and
+`Slot` holds a `clinician` of type `Clinician` in place of the notation's
+`ClinicianId`, a `length`, and the `room` it is in; all these fields are
+declared in the fence. Each object talks only to its own field, and each
+forward hides one step rather than replacing the object underneath. The
+cost is visible: every new question about a room adds a method to two
+classes. Hiding a delegate contains change, and the forwards are what it
+costs.
 
 ## Removing a middle man
 
@@ -142,6 +145,7 @@ class Slot
 
 `SlotSummary` is taken to be a value built from a clinician, a start time
 and a length. Each read is now of a field `Slot` owns, and the three
-getters that existed only to feed the desk can go. A method that stays
-behind as a forward keeps the old path alive, and the forward and the
-moved method drift apart. Move the callers, then delete the shell.
+getters that existed only to feed the desk can go. This `Slot` keeps the
+`length` field this reference adds and has no `room`. A method that
+stays behind as a forward keeps the old path alive, and the forward and
+the moved method drift apart. Move the callers, then delete the shell.

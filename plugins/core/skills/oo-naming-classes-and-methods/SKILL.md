@@ -143,7 +143,8 @@ class PatientRegister
 `add` and `register` each send `add` to the field once. `lookup` and
 `isRegistered` each send `contains` to the field once and change
 nothing. The constructor sets the field before any read, and the list
-stays private, so no caller receives it.
+stays private, so no caller receives it. Both fences leave out what is
+stored, under which identity, where and in which transaction.
 
 ## Red flags
 

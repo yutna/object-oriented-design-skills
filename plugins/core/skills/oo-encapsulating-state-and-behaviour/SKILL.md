@@ -152,7 +152,13 @@ and returns nothing; `slots()` is a query and changes nothing. Every
 field is private, and the constructor sets `slots` before `addSlot` or
 `slots` reads it. The clinician keeps the `Slot` it was given, because a
 slot is an entity shared by identity and the copy rule does not apply to
-it.
+it. Both fences give `Clinician` a private `slots` list and a constructor
+that takes or builds it, which the notation's `Clinician` does not
+declare. A store that saves the clinician whole and refuses a save made
+from an older copy would refuse the second of two `addSlot` calls that
+read the same slots as free of overlap; this fence leaves that store and
+its version check out. Both fences leave out what is stored, under which
+identity, where and in which transaction.
 
 ## Red flags
 

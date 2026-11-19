@@ -52,6 +52,11 @@ readers cannot change. The constructor raises rather than store an
 overlapping list, and it copies first and checks the copy, so a caller
 that changes its own list cannot slip past the check. It sets `periods`
 before any method reads it, and every field is private.
+The constructor's check reads only its argument, but a store that saves
+the working hours whole and refuses a save made from an older copy would
+refuse a second `add` that read the same periods as free of overlap;
+this fence leaves that store and its version check out. The fence leaves
+out what is stored, under which identity, where and in which transaction.
 
 ## Methods that name the action
 
@@ -93,6 +98,14 @@ nothing. The constructor raises rather than store a duplicate, and it
 copies first and checks the copy, so a caller that changes its own list
 cannot slip past the check. It sets `allergies` before either query
 reads it, and every field is private.
+The constructor's check reads only its argument, but a store that saves
+the patient whole and refuses a save made from an older copy would
+refuse a second `record` of an allergy that both requests read as
+absent; this fence leaves that store and its version check out. This
+`Patient` holds an allergy list and a constructor that copies it, where
+the object-roles reference's `Patient` holds a name and a date of birth.
+The fence leaves out what is stored, under which identity, where and in
+which transaction.
 
 ## Copy what crosses the boundary
 

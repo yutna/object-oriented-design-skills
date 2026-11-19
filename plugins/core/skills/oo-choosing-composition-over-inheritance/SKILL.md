@@ -152,7 +152,11 @@ appending when the patient is already there, and appends once otherwise.
 cannot append to it. Only `new`, `join` and `waiting` are public: no
 `add`, no `contains`, and no way to replace the list. The constructor is
 plain because the list has one way to be made; a factory would add a step
-without adding a rule.
+without adding a rule. Neither fence shows the store that saves the
+waiting list whole and refuses a save made from an older copy, so the
+second of two joins for one patient that both read the list as free of
+that patient fails there. Both fences leave out what is stored, under
+which identity, where and in which transaction.
 
 ## Red flags
 
