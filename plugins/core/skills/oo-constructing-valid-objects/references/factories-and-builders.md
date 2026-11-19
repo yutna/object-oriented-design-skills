@@ -47,6 +47,9 @@ Both factories reserve the slot once and then create the appointment.
 refused follow-up leaves the slot untouched. The constructor is private,
 and `forNewPatient` and `followUp` are the only methods in the class
 that call it, so every appointment is built with all five fields set.
+This `Appointment` is the skill's five-field appointment: it adds
+`previousVisit`, `followUp` and `duration` to the notation's class,
+drops its `status`, and takes all five in its constructor.
 
 ## When a builder earns its code
 

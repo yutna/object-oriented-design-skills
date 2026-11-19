@@ -59,7 +59,8 @@ middle classes cannot deliver on their own; only the bottom class gives
 that step a body. `channel` is set by the bottom class's constructor
 before `deliver` reads it, and no other class in the hierarchy declares a
 field. For one `send`, the message is formatted once and the channel
-delivers once.
+delivers once. This `Reminder` is the substitutability skill's value with
+the `mobile` field and the `patient` message left out.
 
 The base class is fragile because `send` decides which of its own methods
 run. If the top's author replaces `format(reminder)` with
@@ -129,7 +130,8 @@ sends the message. The sender's constructor sets both fields before
 `send` reads them, and `send` asks each collaborator once. To follow one
 send, a reader opens the sender and the two interfaces. The sender
 offers no `format` and no `deliver`, so a subclass cannot override a step
-the sender did not mean to expose.
+the sender did not mean to expose. This `Reminder` is the substitutability
+skill's value with the `mobile` field and the `patient` message left out.
 
 ## When a mixin is safe
 

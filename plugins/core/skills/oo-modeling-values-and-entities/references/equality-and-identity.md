@@ -41,7 +41,8 @@ contents. The surname stays out of the answer, because `rename` changes
 it during the clinician's life; a comparison by surname would answer
 differently before and after one rename. Comparing the two `Clinician`
 objects with `=` would also answer false, because they are two object
-instances.
+instances. This `Clinician` holds an identifier and a surname rather than
+the slots or rates other examples give the class.
 
 ## Equality, hashing and ordering agree
 

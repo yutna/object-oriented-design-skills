@@ -41,6 +41,12 @@ the guarantee; a caller that sends it after an acceptance gets the
 declared error. The constructor sets `acceptedBy` to `null`, so a referral
 starts with no accepting clinician. Because `accept` is named as
 overridable, its three comments are the contract an override must keep.
+A store that saves the referral whole and refuses a save made from an
+older copy would refuse the second of two acceptances that both read
+`acceptedBy` as null; this fence leaves that store and its version check
+out. This `Referral` holds `patient` and `acceptedBy` and takes the
+patient in its constructor, where the modeling skill's `Referral` holds
+the patient and clinician and takes both.
 
 ## A subtype that refuses an input
 
@@ -135,3 +141,7 @@ of each runs for one send. The comment under `send` writes that promise
 down, and a subclass may rely on it. The comments beside the two methods
 are the only promises a subclass has to keep. The class stays open
 because those promises are written where a subclass author reads them.
+A store that saves the appointment whole and refuses a save made from an
+older copy is what would refuse a second `cancel` that read the status
+as `Scheduled`; the `Appointment` fence leaves that store and its
+version check out.
