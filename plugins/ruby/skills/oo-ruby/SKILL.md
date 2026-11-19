@@ -45,7 +45,8 @@ with `respond_to_missing?`.
 ## When not to use
 
 - A framework builds or wires the objects, such as a web framework
-  whose models are table rows: outside this skill.
+  whose models are table rows: outside this skill; `oo-ruby-rails`
+  covers Rails.
 - The code is Python, which `oo-python` covers.
 - The question is one no Ruby feature changes, such as which object
   owns a rule or where a system boundary runs: the core skills,

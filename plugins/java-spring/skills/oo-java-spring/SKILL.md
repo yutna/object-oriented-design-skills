@@ -46,7 +46,7 @@ require.
 
 - The code is plain Java with no framework. `oo-java` covers that.
 - The code runs in Jakarta EE's own container, such as CDI or
-  enterprise beans with no Spring: outside this skill.
+  enterprise beans with no Spring. `oo-java-jakarta-ee` covers that.
 - The question is one no Spring feature changes, such as which object
   owns a rule. The core skills answer it, starting from `oo-design`.
 

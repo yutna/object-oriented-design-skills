@@ -257,12 +257,15 @@ one aggregate root: its period, purpose, version and cancellation state
 change together, with no other aggregate inside
 (`oo-designing-aggregates` rule 1).
 
-`amend` and `cancel` check `#cancelled` and then change the note. In one
-process, nothing runs between the two: `DatabaseSync` is synchronous and
-no method here awaits. When a second process shares the database, the
-write lock in the database adapter makes it wait for the first to
-commit; its `find` then reads the cancelled note, and `amend` or
-`cancel` raises `AbsenceNoteAlreadyCancelled`. A wait longer than the
+`amend` and `cancel` check `#cancelled` and then change the note. A
+store that saves the note whole and refuses a save made from an older
+copy is what would refuse a second `amend` or `cancel` call that read
+the note before the first changed it; the database adapter below does
+that with its version column, and this fence leaves that store and its
+version check out. When a second process shares the database, the write
+lock in the database adapter makes it wait for the first to commit; its
+`find` then reads the cancelled note, and `amend` or `cancel` raises
+`AbsenceNoteAlreadyCancelled`. A wait longer than the
 five-second busy timeout is a database fault, which no port declares and
 the HTTP adapter answers with 500.
 

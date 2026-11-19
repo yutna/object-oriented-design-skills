@@ -41,7 +41,7 @@ method names, and a `@final` mark that only the checker enforces.
 ## When not to use
 
 - A framework builds or wires the objects, such as a web framework with
-  its own models: outside this skill.
+  its own models: outside this skill; `oo-python-django` covers Django.
 - The code is JavaScript, which `oo-javascript` covers.
 - The question is one no Python feature changes, such as which object
   owns a rule or where a module boundary runs: the core skills,

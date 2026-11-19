@@ -169,7 +169,9 @@ In the Before, `items` is an ordinary property, so
 never runs (rule 3). `Object.freeze(checklist)` freezes the checklist's
 own properties and answers the same checklist; the array it holds stays
 changeable, so the last push still changes the checklist (rule 4). The
-fence stores nothing.
+fence stores nothing. The check in `add` reads `this.items.length`,
+the push follows it, and no `await` sits between the two, so one thread
+runs the check and the change.
 
 After:
 

@@ -320,7 +320,10 @@ holds a `PainScale` in `#scale` rather than extending a class that has
 one. The name `pain-scale` starts with a lowercase alphabetic ASCII
 character and holds a hyphen, as a valid custom element name must. The
 element stores the scale in `#scale`, on the element in memory, under no
-identity and in no transaction; the fence leaves persistence out.
+identity and in no transaction; the fence leaves persistence out. The
+element runs on the page's one UI thread, and no method here awaits, so
+nothing runs between the check of `#shown` or `#scale` and the change
+it guards.
 
 ## Red flags
 

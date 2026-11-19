@@ -39,7 +39,9 @@ cannot ignore a refusal by accident.
 ## When not to use
 
 - The classes are built, wired or extended by a framework, such as one
-  that fills objects from annotations: outside this skill.
+  that fills objects from annotations: outside this skill;
+  `oo-java-spring`, `oo-java-jakarta-ee`, `oo-java-swing` and
+  `oo-java-javafx` cover the frameworks this pack has.
 - The question is one no Java feature changes, such as which object owns
   a rule or where a module's boundary runs. The core skills answer it,
   starting from `oo-design`.

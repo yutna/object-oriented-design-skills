@@ -150,6 +150,8 @@ export class ListedFeeSchedule {
   `find`, so a code's fee is replaced rather than shadowed (rule 1).
 - The class stores its fees in the process, under the service code, in
   no transaction this fence shows.
+- `setFee` reads `#entries` and writes it with no `await` between the
+  two, so one thread runs the lookup and the change.
 - The test's list gains `['listed', () => new ListedFeeSchedule()]`,
   and its import names the class; the checks in the test do not change.
 
