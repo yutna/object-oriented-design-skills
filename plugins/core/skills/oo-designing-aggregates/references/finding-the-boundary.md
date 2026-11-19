@@ -50,6 +50,10 @@ all three lists before any method reads them; each method appends once;
 `book` raises without appending when the approval is used up. The plan
 keeps the whole `TherapySession` object, so a load of the plan loads
 every session, and a change to one session saves the whole plan.
+What is stored is the whole plan, under its `CarePlanId`; a store that
+refuses a save made from an older copy is what would refuse the second
+of two `book` calls that read the approval as not used up, and the fence
+leaves that store and the transaction out.
 
 ## Split by the rules
 
@@ -137,7 +141,12 @@ session holds the plan's identity for the same reason. The
 constructor sets every field before a method reads it; `recordSession`
 appends one id only when the approval is not used up; a session records
 its attendance once, and a second record raises instead of overwriting
-it.
+it. What is stored is the plan under its `CarePlanId` or the session
+under its `TherapySessionId`; a store that refuses a save made from an
+older copy is what would refuse a second `recordSession` that read the
+approval as not used up, or a second `recordAttended` or `recordMissed`
+that read the status as `Booked`, and the fence leaves that store, the
+transaction and the version check out.
 
 ## The rule that waits
 

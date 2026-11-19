@@ -58,7 +58,9 @@ class BookingIntake
 reader cannot see that it uses `Appointments`; a test that passes a
 locator without an appointment store fails only when `book` runs. The
 locator also ties every test to the same lookup and hides which adapter
-the program chose.
+the program chose. What `book` stores is one new appointment, through
+`Appointments.add`; this fence leaves its identity, the appointment
+store behind the locator and the transaction out.
 
 ## When a framework creates the objects
 

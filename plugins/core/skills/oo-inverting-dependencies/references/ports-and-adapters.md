@@ -47,7 +47,9 @@ class DatabaseAppointments implements Appointments
 `ClinicDatabase.insert` is taken to store one appointment once. The
 adapter holds the database its constructor receives, and `add` sends
 `insert` once per call. No domain class names `ClinicDatabase` or
-`DatabaseClient`.
+`DatabaseClient`. What `add` stores is one new appointment, through
+`insert`; this fence leaves its identity, the store behind
+`ClinicDatabase` and the transaction out.
 
 ## A clock the test can fix
 

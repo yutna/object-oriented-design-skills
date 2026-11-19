@@ -235,7 +235,10 @@ both boundaries out.
 
 Each version changes the status once and stores it once: the Before
 version through `changeStatus` and `save()`, the After version through
-`complete()` and `appointments.save`.
+`complete()` and `appointments.save`. A store that saves the appointment
+whole and refuses a save made from an older copy is what would refuse a
+second `complete` call that read the status as `InProgress`; this fence
+leaves that store and its version check out.
 
 ## Red flags
 

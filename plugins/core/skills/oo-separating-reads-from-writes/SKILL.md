@@ -186,7 +186,10 @@ it was last brought up to date, which rule 4 requires of the screen.
 reads it. For a new event, `handle` sends `updates.markCancelled` once,
 marking the appointment's one row, and sends `add` once; for a repeated
 one, it returns before either. No other step runs twice, and the fence
-uses only keywords the notation defines.
+uses only keywords the notation defines. A unique index on the event's
+identity in `HandledEvents` is what would refuse the second `add` from
+two copies of one event that both read `handled.contains(id)` as false;
+this fence leaves that index out.
 
 ## Red flags
 

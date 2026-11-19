@@ -97,7 +97,10 @@ starts the consultation for the clinician. `AppointmentNotFound` from
 `StartConsultation.run` opens the transaction and ends it after `save`,
 and the fence leaves those boundaries out. What is stored is the whole
 appointment, in the `Appointments` store, in that transaction, and no
-other aggregate changes.
+other aggregate changes. A store that saves the appointment whole and
+refuses a save made from an older copy is what would refuse a second
+`run` call that read `isSatisfiedBy` as true; this fence leaves that
+store and its version check out.
 
 Many are selected when the reception desk asks which appointments the
 clinician may start now:

@@ -169,6 +169,8 @@ appending when the room is full, and sends `attendees.add(patient)` once
 otherwise. `EnrolPatient.run` sends one message and decides nothing. When
 a store saves the session whole and refuses a save made from an older
 copy, the second of two enrolments for the last place fails.
+What is stored is the session whole, under its `GroupSessionId`; both
+fences leave the store and the transaction out.
 
 The examples in `notation.md` and `oo-limiting-what-an-object-knows` show
 a slot's syntax or another rule, not a boundary: once a slot is its own

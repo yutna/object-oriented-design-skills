@@ -64,7 +64,11 @@ patient at the front of the list, or `null` when the list is empty.
 the slot the cancelled appointment released. `notices.send(patient,
 slot)` is taken to send one message to that patient and change nothing in
 the aggregates. The constructor sets `notices` before `run` reads it, and
-`run` sends one notice and removes one patient.
+`run` sends one notice and removes one patient. A store that saves the
+waiting list whole and refuses a save made from an older copy is what
+would refuse the second of two `join` calls for one patient that both
+read the list as free of that patient; this fence leaves that store and
+its version check out.
 
 ## When the later step fails
 
@@ -133,6 +137,9 @@ the reserved slot to that store and opens one transaction over it and
 `Appointments`. `Appointments.add` is the store call of the port the
 inverting skill declares, answered by its `DatabaseAppointments`
 adapter. The constructor sets `appointments` before `run` reads it.
+This `BookAppointment` holds only `appointments` and takes a whole
+`Slot`, while the placing domain logic skill's `BookAppointment` also
+holds the slot's store and takes the slot's identity.
 `run` reserves once, creates one appointment and stores it once. When
 the slot and the appointment share one store, that transaction covers
 both aggregates: the appointment is new, so nobody else can change it,
