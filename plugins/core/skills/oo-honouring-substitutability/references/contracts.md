@@ -111,6 +111,11 @@ class Appointment
     return
 ```
 
+A store that saves the appointment whole and refuses a save made from an
+older copy is what would refuse a second `cancel` that read the status
+as `Scheduled`; the `Appointment` fence leaves that store and its
+version check out.
+
 A class opened on purpose names the methods a subclass may override, each
 with the contract an override keeps:
 
@@ -141,7 +146,3 @@ of each runs for one send. The comment under `send` writes that promise
 down, and a subclass may rely on it. The comments beside the two methods
 are the only promises a subclass has to keep. The class stays open
 because those promises are written where a subclass author reads them.
-A store that saves the appointment whole and refuses a save made from an
-older copy is what would refuse a second `cancel` that read the status
-as `Scheduled`; the `Appointment` fence leaves that store and its
-version check out.

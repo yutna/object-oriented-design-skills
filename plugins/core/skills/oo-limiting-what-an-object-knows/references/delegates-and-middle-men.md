@@ -144,7 +144,7 @@ class Slot
 
 `SlotSummary` is taken to be a value built from a clinician, a start time
 and a length. Each read is now of a field `Slot` owns, and the three
-getters that existed only to feed the desk can go. A method that stays
-behind as a forward keeps the old path alive, and the forward and the
-moved method drift apart. Move the callers, then delete the shell. This
-`Slot` keeps the `length` field this reference adds and has no `room`.
+getters that existed only to feed the desk can go. This `Slot` keeps the
+`length` field this reference adds and has no `room`. A method that
+stays behind as a forward keeps the old path alive, and the forward and
+the moved method drift apart. Move the callers, then delete the shell.
