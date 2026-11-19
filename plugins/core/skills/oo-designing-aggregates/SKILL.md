@@ -97,6 +97,17 @@ is brought true soon after.
    check refuses the second save; when a rare one can be fixed by hand, a
    check before the change and a later report are enough.
 
+7. Default. **Save an aggregate whole, and have the store refuse a
+   save made from a copy older than the one it holds, such as by a
+   version column, so the second of two changes that read the same
+   state fails instead of overwriting the first.** A rule the
+   aggregate keeps is checked against the copy each change loaded;
+   without that refusal, two people who load the same copy both pass
+   the check, and the later save wins.
+
+   The exception is a change nothing else can run beside, such as a
+   one-off import, which needs no version.
+
 ## Pattern
 
 Before, the enrolment rule lives in a use case that reads the session's
