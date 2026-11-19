@@ -159,6 +159,8 @@ and a call to `Appointments.add` is taken to store one appointment once.
 database, builds the adapter once and the scheduler once, and is the
 only place that names the adapter. The entry script opens the database
 and passes it to `start`. `Appointment.book` is sent, not redeclared.
+Both fences store one new appointment and leave out its identity, the
+store behind `insert` or `add`, and the transaction.
 
 ## Red flags
 

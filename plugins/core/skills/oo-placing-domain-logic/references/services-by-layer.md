@@ -136,7 +136,10 @@ once when it is present. `release` sets `patient` back to null.
 The method knows its own fields and its parameter, and nothing else: no
 repository, no port and no transaction. It changes the slot in memory,
 and the fence stores nothing; the application service saves the whole
-slot through `Slots.save` in the transaction it opened.
+slot through `Slots.save` in the transaction it opened. A store that
+saves the slot whole and refuses a save made from an older copy is what
+would refuse a second `reserve` call that read `patient` as null; this
+fence leaves that store and its version check out.
 
 ## Telling them apart
 

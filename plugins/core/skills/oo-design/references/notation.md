@@ -119,7 +119,9 @@ construction with `new`. `:=` assigns, `=` compares, `null` is the
 absent value of a `Type?`, and `void` means the method returns
 nothing. A bare `return` ends a `void` method.
 An `if … then …` may leave out its `else`, and then does nothing when
-the condition is false.
+the condition is false. The fences in this file show syntax and leave out
+what refuses a change when the state a method checks moves before it
+changes.
 
 ```text
 class Appointment

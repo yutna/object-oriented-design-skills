@@ -201,6 +201,10 @@ is left out of the fence.
 no billing class in the After names the `Appointment` class: the
 identifier is all billing holds. Every field is set in a constructor
 named for it before a query or `handle` reads it, and no step runs twice.
+Neither fence shows what would refuse a second `bill` call that read
+`invoiceNumber` as null: a store that saves `BillableVisit` whole and
+refuses a save made from an older copy would, and both fences leave that
+store and its version check out.
 
 ## Red flags
 
