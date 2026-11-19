@@ -259,8 +259,8 @@ fee the price list holds for that kind and length. `Appointment.date` and
 of their own. Neither fence shows how a `Slot` or a `Clinician` is made;
 both leave out the method that calls each private constructor.
 Both fences also give `Appointment` a `kind` and a constructor parameter
-for it, `Slot` a `length` and `Clinician` a `rates`, none of which the
-notation's classes declare.
+for it, `Slot` a `length` field and `Clinician` a `rates` field, none of
+which the notation's classes declare.
 
 ## Red flags
 
