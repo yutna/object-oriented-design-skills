@@ -42,7 +42,7 @@ method names, and a `@final` mark that only the checker enforces.
 
 - A framework builds or wires the objects, such as a web framework with
   its own models: outside this skill; `oo-python-django` covers Django.
-- The code is JavaScript, which `oo-javascript` covers.
+- The code is Ruby, which `oo-ruby` covers.
 - The question is one no Python feature changes, such as which object
   owns a rule or where a module boundary runs: the core skills,
   starting from `oo-design`.
@@ -280,6 +280,7 @@ evidence: a measurement, a reproducible bug, or a failing test.
   object instead of extending a class.
 - `oo-javascript` shows how the same rules read in a language with no
   type checker.
+- `oo-ruby` shows how the same rules read in Ruby.
 
 ## Further reading
 
