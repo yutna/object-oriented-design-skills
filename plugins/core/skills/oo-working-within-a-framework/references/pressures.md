@@ -57,8 +57,8 @@ demand at the edge and refuses the second.
    4 asks.
 2. The save hook: a developer proposes to flag high home readings for
    review in it. That would move a rule into the framework, so the team
-   refuses it, and the reading answers whether it needs review from the
-   moment it is built (rule 1).
+   refuses it (rule 3), and the reading answers whether it needs review
+   from the moment it is built (rule 1).
 
 The work ends with the record class on the row at the edge and the save
 hook refused, so the review rule stays in the domain (rule 1).
