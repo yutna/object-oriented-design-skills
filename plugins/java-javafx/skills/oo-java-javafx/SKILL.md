@@ -3,7 +3,7 @@ name: oo-java-javafx
 description: Use when JavaFX code binds controls to domain objects, decides where a view model's properties live, or changes the scene graph from a Task's thread.
 license: MIT
 metadata:
-  version: 0.22.0
+  version: 1.0.0
   pack: object-oriented-design-skills
 ---
 

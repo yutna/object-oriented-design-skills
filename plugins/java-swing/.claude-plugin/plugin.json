@@ -1,6 +1,6 @@
 {
   "name": "object-oriented-design-java-swing",
-  "version": "0.22.0",
+  "version": "1.0.0",
   "description": "Object-oriented design rules kept in Java Swing: the event dispatch thread, passive views with presenters, and table models over screen values",
   "author": {
     "name": "Yutthana Siphuengchai",
