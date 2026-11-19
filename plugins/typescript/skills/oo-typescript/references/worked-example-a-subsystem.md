@@ -110,8 +110,16 @@ export function asCalendarDay(text: string): CalendarDay {
   return text as CalendarDay
 }
 
-export function calendarDayOf(date: Date): CalendarDay {
-  return asCalendarDay(date.toISOString().slice(0, 10))
+export function calendarDayOf(date: Date, timeZone: string): CalendarDay {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).formatToParts(date)
+  const value = (type: string): string =>
+    parts.find((part) => part.type === type)?.value ?? ''
+  return asCalendarDay(`${value('year')}-${value('month')}-${value('day')}`)
 }
 
 export class AbsencePeriod {
@@ -308,13 +316,15 @@ export class IssueAbsenceNote {
   readonly #notes: AbsenceNotes
   readonly #ids: AbsenceNoteIds
   readonly #clock: Clock
+  readonly #timeZone: string
   readonly #unitOfWork: UnitOfWork
 
   constructor(notes: AbsenceNotes, ids: AbsenceNoteIds, clock: Clock,
-    unitOfWork: UnitOfWork) {
+    timeZone: string, unitOfWork: UnitOfWork) {
     this.#notes = notes
     this.#ids = ids
     this.#clock = clock
+    this.#timeZone = timeZone
     this.#unitOfWork = unitOfWork
   }
 
@@ -323,7 +333,8 @@ export class IssueAbsenceNote {
     const id = this.#ids.next()
     this.#unitOfWork.run(() => {
       const note = AbsenceNote.issue(id, visit, patient, clinician,
-        purpose, period, calendarDayOf(this.#clock.now()))
+        purpose, period,
+        calendarDayOf(this.#clock.now(), this.#timeZone))
       this.#notes.add(note)
     })
     return id
@@ -397,6 +408,13 @@ adapter answers 409 with the live note's identity, so the caller can
 send amend or cancel to that note. The identity comes from a read the
 adapter makes after the index refuses, not from a check before the
 insert.
+
+`IssueAbsenceNote` dates the note in the clinic's day: `calendarDayOf`
+reads the `year`, `month` and `day` parts `Intl.DateTimeFormat` returns
+in the zone the caller of `startAbsenceNoteServer` passes, and
+`asCalendarDay` checks the text. A zone name the platform does not know
+makes `Intl.DateTimeFormat` throw a `RangeError` at the first issue,
+which no port declares, as the ports declare no database fault.
 
 `AmendAbsenceNote.run` loads the note, sends `amend` to its root and
 stores the whole note (`oo-designing-repositories` rule 6). The load,
@@ -866,13 +884,15 @@ class SystemClock implements Clock {
   }
 }
 
-export function startAbsenceNoteServer(databasePath: string): Server {
+export function startAbsenceNoteServer(databasePath: string,
+  timeZone: string): Server {
   const database = new DatabaseSync(databasePath, { timeout: 5_000 })
   const notes = new SqliteAbsenceNotes(database)
   const unitOfWork = new SqliteUnitOfWork(database)
   const ids = new RandomAbsenceNoteIds()
   const clock = new SystemClock()
-  const issue = new IssueAbsenceNote(notes, ids, clock, unitOfWork)
+  const issue = new IssueAbsenceNote(notes, ids, clock, timeZone,
+    unitOfWork)
   const amend = new AmendAbsenceNote(notes, unitOfWork)
   const cancel = new CancelAbsenceNote(notes, unitOfWork)
   const http = new AbsenceNoteHttp(issue, amend, cancel)
@@ -887,6 +907,8 @@ unit-of-work adapter, the identity adapter, the clock, the three use
 cases, the HTTP adapter and the server, each once and in the order each
 constructor needs (`oo-inverting-dependencies` rule 3,
 `oo-typescript` rule 6). It is the only place that names an adapter.
+It takes the clinic's time zone from its caller and passes it to
+`IssueAbsenceNote`.
 
 The database opens with a five-second busy timeout, so a second process
 waits for the write lock instead of failing at once; a wait that
