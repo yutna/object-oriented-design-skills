@@ -289,6 +289,9 @@ evidence: a measurement, a reproducible bug, or a failing test.
 - A `final` class whose methods carry `@Transactional`.
 - A controller that takes a request record and passes it into the
   domain.
+- A controller that reads a repository for what a rule needs, then
+  asks the rule itself, instead of calling the application service
+  rule 3 puts that work in.
 
 ## Common mistakes
 

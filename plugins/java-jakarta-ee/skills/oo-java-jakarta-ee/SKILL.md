@@ -311,6 +311,9 @@ evidence: a measurement, a reproducible bug, or a failing test.
 - A JPA entity with a public no-argument constructor or a setter.
 - A producer method for a domain class that declares a normal scope
   while the class is final.
+- A resource class that reads a repository for what a rule needs,
+  then asks the rule itself, instead of calling the application
+  service rule 3 chooses.
 
 ## Common mistakes
 
