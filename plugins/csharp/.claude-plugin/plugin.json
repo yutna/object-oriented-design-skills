@@ -1,6 +1,6 @@
 {
   "name": "object-oriented-design-csharp",
-  "version": "0.21.0",
+  "version": "0.22.0",
   "description": "Object-oriented design rules kept in plain C#: records, nullable reference types, default interface members, structs and async at the edge",
   "author": {
     "name": "Yutthana Siphuengchai",
