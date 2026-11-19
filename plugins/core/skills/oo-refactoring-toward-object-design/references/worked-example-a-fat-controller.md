@@ -174,7 +174,10 @@ set by a constructor before a method reads it; `close` reads `sentAt`
 and sets it once or raises, and `isOverdueOn` reads it and changes
 nothing. The request is stored whole under its `RecordsRequestId`, in
 the clinic's database, in the transaction `RequestRecordsCopy.run`
-opens; the fence leaves the store and that transaction out.
+opens; the fence leaves the store and that transaction out. A store
+that saves the request whole and refuses a save made from an older copy
+is what would refuse the second of two closes that both read `sentAt`
+as empty; this fence leaves that store and its version check out.
 
 `close` is the only writer of `sentAt`, and no getter hands out a field
 a caller may write (`oo-designing-aggregates` rule 2,

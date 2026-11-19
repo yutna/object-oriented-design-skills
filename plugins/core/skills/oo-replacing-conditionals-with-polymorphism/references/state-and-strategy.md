@@ -70,7 +70,9 @@ command reads them. `collect` stores the specimen once and changes the
 status once. `cancel` changes the status once. `report` stores the text
 once. Each command tests `status` in the same shape, and the last two
 branches of each chain have the same body, which is the copy this
-reference removes.
+reference removes. A store that saves the order whole and refuses a save made
+from an older copy is what would refuse a second `collect` call that read the
+status as `Pending`; this fence leaves that store and its version check out.
 
 ## The status objects
 

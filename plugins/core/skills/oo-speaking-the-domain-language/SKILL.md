@@ -158,7 +158,10 @@ once; `patient` and `due` come from the constructor's parameters.
 `Recall`'s constructor sets `booking` once, and `book` reads it once
 and sets it once when it is empty. `RecallAlreadyBooked` is raised the
 way `Slot.reserve` raises `SlotTaken` in the notation. No field is read
-before it is set, and no step runs twice.
+before it is set, and no step runs twice. A store that saves the recall whole
+and refuses a save made from an older copy is what would refuse a second `book`
+call that read `booking` as null; this fence leaves that store and its version
+check out.
 
 ## Red flags
 
