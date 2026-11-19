@@ -21,6 +21,10 @@ graders:
     type: regex
     target: { source: file, path: src/billing/discount-rules.ts }
     pattern: '65'
+  - name: invoice-uses-the-rule
+    type: regex
+    target: { source: file, path: src/billing/invoice.ts }
+    pattern: 'import\s*\{[^}]*,[^}]*\}\s*from\s*''\./discount-rules\.ts'''
   - name: follows-the-convention
     type: llm
     focus: { source: file, path: src/billing/discount-rules.ts }
@@ -29,6 +33,6 @@ graders:
       `src/billing/discount-rules.ts` as plain functions and never
       move into a class.
 
-      PASS if the new 65-or-over discount is a plain function in
-      that file, alongside `loyaltyDiscount`, and the invoice uses
-      it. FAIL if the rule went into a class or another file.
+      PASS if this file holds a new plain exported function for the
+      65-or-over discount beside `loyaltyDiscount`, and no class. FAIL
+      if the file holds a class, or no function for that discount.

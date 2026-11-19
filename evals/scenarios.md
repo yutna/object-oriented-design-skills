@@ -15,10 +15,13 @@ route passes.
 > new places that decide whether a slot is taken. Where should that
 > decision live?
 
-Must contain: the check moving to the object that holds the slot's booking data;
-neither the scheduler nor the controller deciding it from the slot's fields
-itself; one owner for the rule; the controller handing the booking request to
-the use-case object, with no check of the slot of its own.
+Must contain: the check moving to the object that holds the slot's
+booking data; neither the scheduler nor the controller deciding from
+the slot's fields whether the slot can be booked; one owner for the
+rule; the controller handing the booking request to the use-case
+object and deciding nothing itself about whether the slot is taken,
+where reading which slots are free to show them on offer is not that
+decision.
 
 Should reach `oo-assigning-responsibilities`.
 
@@ -313,9 +316,9 @@ Smoke set.
 
 Must contain: each aggregate drawn around a rule that must hold at
 every change, not around everything a clinician is related to; smaller
-aggregates, such as a clinician's day, changed and saved apart; other
-aggregates referred to by identity, such as a `ClinicianId`; one
-aggregate changed in one transaction.
+aggregates, such as a clinician's day or a slot, changed and saved
+apart; other aggregates referred to by identity, such as a
+`ClinicianId`; one aggregate changed in one transaction.
 
 Should reach `oo-designing-aggregates`.
 
@@ -346,12 +349,13 @@ Should reach `oo-modeling-lifecycles`.
 > used, and nobody can find every place that changes it. How should
 > storing and finding patients be designed?
 
-Must contain: one repository for patients that reads like a
-collection and hands back whole patients; queries named for the
-questions the clinic asks, and a specification or a query object for
-the free search; the phone number changed through the patient, which
-keeps the new rule, then stored whole; no connection or query text
-outside the implementation at the edge.
+Must contain: one repository for patients that reads like a collection
+and hands back whole patients; queries named for the questions the
+clinic asks, and the free search through a specification or a query
+object, held by the repository or by a separate read query that
+returns plain data; the phone number changed through the patient,
+which keeps the new rule, then stored whole; no connection or query
+text outside the implementation at the edge.
 
 Should reach `oo-designing-repositories`.
 
@@ -563,9 +567,9 @@ Must contain: the one-method rules with no state turned into function
 values, unless the staff name a rule and discuss it as such; the
 factory's switch replaced by a lookup of functions or by wiring at the
 composition root; the visitor replaced by a closed set of visit kinds
-with exhaustive matching, if new operations arrive more often than new
-kinds; the iterator replaced by the language's iteration over a
-read-only view; the module's idiom followed.
+with exhaustive matching, since the language checks every match; the
+iterator replaced by the language's iteration over a read-only view;
+the module's idiom followed.
 
 Should reach `oo-patterns-the-language-provides`.
 
