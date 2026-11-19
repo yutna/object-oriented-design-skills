@@ -170,6 +170,15 @@ export class NegativeCases {
       new ReplaceText('package.json', '"acorn": "', '"acorn": "^'),
       'dependency acorn is not pinned to an exact version'),
     new NegativeCase(
+      'core dependency rejects a language plugin without the core',
+      NegativeCases.#SKILLS,
+      new ReplaceText(
+        'plugins/java/.claude-plugin/plugin.json',
+        '"dependencies": ["object-oriented-design-skills"]',
+        '"dependencies": []'),
+      'plugin object-oriented-design-java must list dependency ' +
+      'object-oriented-design-skills'),
+    new NegativeCase(
       'shape rejects a missing When not to use',
       NegativeCases.#SKILLS,
       new ReplaceText(

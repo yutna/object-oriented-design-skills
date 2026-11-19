@@ -10,5 +10,6 @@
   "repository": "https://github.com/yutna/object-oriented-design-skills",
   "license": "MIT",
   "keywords": ["object-oriented-design", "kotlin"],
-  "skills": "./skills/"
+  "skills": "./skills/",
+  "dependencies": ["object-oriented-design-skills"]
 }

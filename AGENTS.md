@@ -332,8 +332,9 @@ The index skill `oo-design` has its own shape, given in its issue.
 A language skill shows how this pack's rules are kept in one language.
 A base language skill lives in its family's plugin,
 `plugins/<family>/`, whose manifest names the plugin
-`object-oriented-design-<family>`. A framework skill,
-`oo-<family>-<framework>`, lives in a plugin of its own,
+`object-oriented-design-<family>` and lists the core plugin under
+`dependencies`, by bare name and with no version range. A framework
+skill, `oo-<family>-<framework>`, lives in a plugin of its own,
 `plugins/<family>-<framework>/`, named
 `object-oriented-design-<family>-<framework>`, whose manifest lists
 the core plugin and its family's plugin under `dependencies`, by

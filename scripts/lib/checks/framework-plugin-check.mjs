@@ -58,10 +58,8 @@ export class FrameworkPluginCheck extends Check {
   }
 
   #inspectPlugin(plugin, families, report) {
-    const dependencies = [
-      FrameworkPluginCheck.#CORE,
-      ...families.map((family) => `object-oriented-design-${family}`)
-    ]
+    const dependencies = families
+      .map((family) => `object-oriented-design-${family}`)
     for (const dependency of dependencies) {
       // Installing a framework skill alone would load half the rules.
       if (plugin.dependencies.includes(dependency)) continue
