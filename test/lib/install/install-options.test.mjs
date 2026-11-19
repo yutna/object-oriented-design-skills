@@ -5,15 +5,21 @@ import { InstallOptions } from '../../../scripts/lib/install/install-options.mjs
 import { RepoError } from '../../../scripts/lib/errors.mjs'
 
 class FakeMarketplace {
+  #plugins
+
+  constructor(plugins) {
+    this.#plugins = plugins
+  }
+
   plugins() {
-    return [
-      { name: 'object-oriented-design-skills' },
-      { name: 'another-pack' }
-    ]
+    return this.#plugins
   }
 }
 
-const MARKETPLACE = new FakeMarketplace()
+const MARKETPLACE = new FakeMarketplace([
+  { name: 'object-oriented-design-skills', dependencies: [] },
+  { name: 'another-pack', dependencies: [] }
+])
 
 test('InstallOptions rejects an unknown option', () => {
   assert.throws(
@@ -57,6 +63,58 @@ test('InstallOptions --all selects every plugin', () => {
   assert.deepEqual(
     options.plugins,
     ['object-oriented-design-skills', 'another-pack'])
+})
+
+test('InstallOptions adds a plugin\'s dependencies after it, in order', () => {
+  const marketplace = new FakeMarketplace([
+    { name: 'first-pack', dependencies: ['second-pack', 'third-pack'] },
+    { name: 'second-pack', dependencies: ['fourth-pack'] },
+    { name: 'third-pack', dependencies: [] },
+    { name: 'fourth-pack', dependencies: [] }
+  ])
+  const options = InstallOptions.parse(['--plugin', 'first-pack'], marketplace)
+  assert.deepEqual(
+    options.plugins,
+    ['first-pack', 'second-pack', 'third-pack', 'fourth-pack'])
+})
+
+test('InstallOptions adds a dependency\'s own dependencies', () => {
+  const marketplace = new FakeMarketplace([
+    { name: 'outer-pack', dependencies: ['middle-pack'] },
+    { name: 'middle-pack', dependencies: ['inner-pack'] },
+    { name: 'inner-pack', dependencies: [] }
+  ])
+  const options = InstallOptions.parse(['--plugin', 'outer-pack'], marketplace)
+  assert.deepEqual(
+    options.plugins,
+    ['outer-pack', 'middle-pack', 'inner-pack'])
+})
+
+test('InstallOptions lists a plugin reached twice once', () => {
+  const marketplace = new FakeMarketplace([
+    { name: 'first-pack', dependencies: ['shared-pack'] },
+    { name: 'second-pack', dependencies: ['shared-pack'] },
+    { name: 'shared-pack', dependencies: [] }
+  ])
+  const options = InstallOptions.parse([
+    '--plugin', 'first-pack',
+    '--plugin', 'second-pack',
+    '--plugin', 'first-pack'
+  ], marketplace)
+  assert.deepEqual(
+    options.plugins,
+    ['first-pack', 'second-pack', 'shared-pack'])
+})
+
+test('InstallOptions rejects an unknown dependency', () => {
+  const marketplace = new FakeMarketplace([
+    { name: 'broken-pack', dependencies: ['missing-pack'] }
+  ])
+  assert.throws(
+    () => InstallOptions.parse(['--plugin', 'broken-pack'], marketplace),
+    (error) => error instanceof RepoError &&
+      error.message ===
+        'plugin broken-pack lists unknown dependency missing-pack')
 })
 
 test('InstallOptions compares by value', () => {

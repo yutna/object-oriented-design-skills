@@ -75,14 +75,14 @@ On Windows:
 ```
 
 The scripts accept `--plugin <name>` (repeatable), `--all`, `--force`
-and `--dry-run`. With no selection they use the core plugin. They do
-not follow a plugin's dependencies: name the core plugin beside a
-language plugin, and a framework plugin's language plugin and the core
-plugin beside it. They copy a skill when the name is free. They skip a
-skill this pack already installed unless `--force` replaces it. They
-refuse a name that belongs to another pack or claims no pack, and
-leave it alone. A copy prints `copied`, a skip prints `skipped`, and a
-refusal prints an error.
+and `--dry-run`. With no selection they use the core plugin. They
+follow a plugin's dependencies, as `/plugin install` does: a framework
+plugin brings its language plugin and the core plugin. They copy a
+skill when the name is free. They skip a skill this pack already
+installed unless `--force` replaces it. They refuse a name that
+belongs to another pack or claims no pack, and leave it alone. A copy
+prints `copied`, a skip prints `skipped`, and a refusal prints an
+error.
 
 The script also prints the `CLAUDE.md` block to paste into a project,
 so an agent working there knows the pack is available.
