@@ -59,9 +59,10 @@ missing is not design, and this pack cannot supply it.
    and make illegal states impossible to construct
    ([making illegal states impossible](../oo-making-illegal-states-impossible/SKILL.md)).
 5. Invert dependencies so the domain knows nothing of the database or
-   the framework
+   the framework, and test its objects without either
    ([inverting dependencies](../oo-inverting-dependencies/SKILL.md),
-   [layering the system](../oo-layering-the-system/SKILL.md)).
+   [layering the system](../oo-layering-the-system/SKILL.md),
+   [designing for testability](../oo-designing-for-testability/SKILL.md)).
 6. Name things in the domain's words, and comment only what the code
    cannot say
    ([naming classes and methods](../oo-naming-classes-and-methods/SKILL.md),
