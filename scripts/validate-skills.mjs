@@ -1,6 +1,9 @@
 import { Cli } from './lib/cli.mjs'
 import { CheckSuite } from './lib/checks/check-suite.mjs'
 import {
+  CoreDependencyCheck
+} from './lib/checks/core-dependency-check.mjs'
+import {
   FrameworkPluginCheck
 } from './lib/checks/framework-plugin-check.mjs'
 import { FrontmatterCheck } from './lib/checks/frontmatter-check.mjs'
@@ -19,6 +22,7 @@ if (import.meta.main) {
     new FrontmatterCheck(repository),
     new ManifestCheck(repository),
     new FrameworkPluginCheck(repository),
+    new CoreDependencyCheck(repository),
     new ListingBudgetCheck(repository),
     new PinnedDependencyCheck(repository),
     new SkillShapeCheck(repository),

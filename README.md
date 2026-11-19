@@ -22,7 +22,9 @@ In Claude Code:
 /plugin install object-oriented-design-skills@object-oriented-design-skills
 ```
 
-Each language plugin is installed beside the core plugin:
+Each language plugin installs the core plugin with it, through the
+plugin's `dependencies`. On a version that does not install it,
+install the core plugin as well:
 
 ```text
 /plugin install object-oriented-design-java@object-oriented-design-skills
@@ -74,12 +76,13 @@ On Windows:
 
 The scripts accept `--plugin <name>` (repeatable), `--all`, `--force`
 and `--dry-run`. With no selection they use the core plugin. They do
-not follow a plugin's dependencies: name a framework plugin's
-language plugin and the core plugin too. They copy a skill when the
-name is free. They skip a skill this pack already installed unless
-`--force` replaces it. They refuse a name that belongs to another pack
-or claims no pack, and leave it alone. A copy prints `copied`, a skip
-prints `skipped`, and a refusal prints an error.
+not follow a plugin's dependencies: name the core plugin beside a
+language plugin, and a framework plugin's language plugin and the core
+plugin beside it. They copy a skill when the name is free. They skip a
+skill this pack already installed unless `--force` replaces it. They
+refuse a name that belongs to another pack or claims no pack, and
+leave it alone. A copy prints `copied`, a skip prints `skipped`, and a
+refusal prints an error.
 
 The script also prints the `CLAUDE.md` block to paste into a project,
 so an agent working there knows the pack is available.

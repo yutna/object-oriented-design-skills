@@ -230,25 +230,6 @@ test('a framework plugin with both dependencies and its base name passes', async
   }
 })
 
-test('a framework plugin must list the core plugin as a dependency', async () => {
-  const repository = await TempRepository.create([
-    TempRepository.corePlugin(),
-    TempRepository.languagePlugin(),
-    TempRepository.frameworkPlugin({
-      dependencies: ['object-oriented-design-java']
-    })
-  ])
-  try {
-    const report = repository.inspect()
-    assert.ok(report.lines().includes(
-      `error ${repository.pluginPath('java-spring')}: ` +
-      'framework plugin object-oriented-design-java-spring must list ' +
-      'dependency object-oriented-design-skills'))
-  } finally {
-    await repository.close()
-  }
-})
-
 test('a framework plugin must list its family plugin as a dependency', async () => {
   const repository = await TempRepository.create([
     TempRepository.corePlugin(),
