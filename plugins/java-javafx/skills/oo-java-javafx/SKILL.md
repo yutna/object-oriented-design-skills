@@ -128,11 +128,11 @@ root in the `Application` subclass.
 `AccessNeedsForm` is the desk's form for a patient's access needs:
 three tick boxes record whether the patient needs step-free access, a
 hearing loop or a canine, and a Save button records them. The
-third tick box is labelled `Canine` and records the canine. The clinic's
-rule is that a canine needs step-free access, because the room that
-takes one is reached by the step-free route. The form shows what the
-desk ticked and hands the save to a view model; the view model builds
-the patient's access needs and asks a use case.
+third tick box is labelled `Canine` and records that the patient comes with
+an assistance dog. The clinic's rule is that a canine needs step-free access,
+because the room that takes one is reached by the step-free route. The form
+shows what the desk ticked and hands the save to a view model; the view model
+builds the patient's access needs and asks a use case.
 
 Before:
 
