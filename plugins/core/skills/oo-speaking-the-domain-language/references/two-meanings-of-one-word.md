@@ -57,10 +57,9 @@ once, `isBilled` and `invoice` read them without changing anything, and
 `cancel` sets the status and releases the slot once. Nothing stops
 billing from marking an appointment billed after reception cancelled
 it, because the class holds both decisions and neither group sees the
-other's rule. Nothing else runs between `cancel`'s test of `status` and
-the change that follows it: the method runs on one thread with nothing
-awaited between the two, so no other caller cancels the appointment in
-between.
+other's rule. A store that saves the appointment whole and refuses a save made
+from an older copy is what would refuse a second `cancel` call that read the
+status as `Scheduled`; this fence leaves that store and its version check out.
 
 ## Two classes with their own words
 
@@ -110,10 +109,10 @@ once. `BillableVisit` sets `invoiceNumber` once in its constructor and
 once in `bill`, and `invoice` reads it without changing anything. The
 identifier keeps the two models apart while billing can still name the
 appointment it prices, and a second `bill` is refused instead of
-overwriting the first invoice number. Nothing else runs between each
-test and the change that follows it: `bill` and `cancel` run on one
-thread with nothing awaited between the two, so no other caller changes
-`invoiceNumber` or `status` in between.
+overwriting the first invoice number. A store that saves `BillableVisit` or
+`Appointment` whole and refuses a save made from an older copy would refuse a
+second `bill` call that read `invoiceNumber` as null, or a second `cancel` call
+that read the status as `Scheduled`; this fence leaves that version check out.
 
 ## A glossary entry
 

@@ -91,10 +91,9 @@ before one. `schedule`, `complete` and `decline` each change the status
 once. `decline` reaches `recordDecline` from either source state, and
 each call runs exactly one branch, so `status` and `declineReason` are
 assigned once per call. `recordDecline` is private, so no caller skips
-the checks. Nothing else runs between each test of `status` and the
-change that follows it: `schedule`, `complete` and `decline` run on one
-thread with nothing awaited between the two, so no other caller moves
-the visit in between.
+the checks. A store that saves the home visit whole and refuses a save made from
+an older copy is what would refuse a second `schedule` call that read the status
+as `Requested`; this fence leaves that store and its version check out.
 
 ## Reading the table for gaps
 
