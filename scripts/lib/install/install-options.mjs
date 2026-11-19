@@ -21,7 +21,8 @@ export class InstallOptions {
   }
 
   static parse(argv, marketplace) {
-    const valid = marketplace.plugins().map(({ name }) => name)
+    const plugins = marketplace.plugins()
+    const valid = plugins.map(({ name }) => name)
     let force = false
     let dryRun = false
     let all = false
@@ -60,11 +61,37 @@ export class InstallOptions {
       throw new RepoError(
         `unknown plugin: ${unknown}; valid plugins: ${valid.join(', ')}`)
     }
-    if (all) return new InstallOptions(valid, force, dryRun)
-    if (requested.length > 0) {
-      return new InstallOptions([...new Set(requested)], force, dryRun)
+    let chosen = [InstallOptions.#DEFAULT]
+    if (all) {
+      chosen = valid
+    } else if (requested.length > 0) {
+      chosen = [...new Set(requested)]
     }
-    return new InstallOptions([InstallOptions.#DEFAULT], force, dryRun)
+    return new InstallOptions(
+      InstallOptions.#withDependencies(chosen, plugins),
+      force,
+      dryRun)
+  }
+
+  static #withDependencies(chosen, plugins) {
+    const byName = new Map(plugins.map((plugin) => [plugin.name, plugin]))
+    const queue = [...chosen]
+    const names = []
+    const seen = new Set()
+    for (let index = 0; index < queue.length; index += 1) {
+      const name = queue[index]
+      if (seen.has(name)) continue
+      seen.add(name)
+      names.push(name)
+      for (const dependency of byName.get(name).dependencies) {
+        if (!byName.has(dependency)) {
+          throw new RepoError(
+            `plugin ${name} lists unknown dependency ${dependency}`)
+        }
+        queue.push(dependency)
+      }
+    }
+    return names
   }
 
   get plugins() {
