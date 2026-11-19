@@ -51,7 +51,8 @@ the ports while the domain stays synchronous.
 
 - A framework builds or wires the objects, such as a web framework
   that fills a request object or a data-access framework that maps a
-  table: outside this skill.
+  table: outside this skill; `oo-csharp-aspnet` covers ASP.NET Core
+  and EF Core.
 - The code is Java, which `oo-java` covers.
 - The question is one no C# feature changes, such as which object
   owns a rule or where a module boundary runs: the core skills,

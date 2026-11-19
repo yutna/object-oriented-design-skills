@@ -49,7 +49,7 @@ that names every adapter once.
 
 - A framework builds or decorates the classes, such as a server
   framework that reads decorators or a UI framework that constructs its
-  components: outside this skill.
+  components: outside this skill; `oo-typescript-angular` covers Angular.
 - The question is one no TypeScript feature changes, such as which
   object owns a rule or where a module boundary runs: the core skills,
   starting from `oo-design`.
@@ -247,7 +247,9 @@ the compile passes only while the compiler refuses it. `attempts` is
 add an ordinary `attempts` property but cannot reach `#attempts`, and
 `recordAttempt` is still the method that keeps the rule (rule 2). The
 constructor sets `patientId`, `clinicianId` and `#attempts` before
-`recordAttempt` reads `#attempts`. The fences store nothing.
+`recordAttempt` reads `#attempts`. The fences store nothing. Neither
+fence awaits between the check of the attempt count in `recordAttempt`
+and the increment, so one thread runs the check and the change.
 
 ## Red flags
 
