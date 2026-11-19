@@ -95,10 +95,13 @@ replace them where it does the same job.
    handles every case.** A visitor is an object that adds an operation
    to every case by being sent each case in turn. With a closed set, a
    new operation is one match and no change to the cases, while adding
-   a case makes the compiler list every match to update. What tips the
-   balance is whether new operations or new cases arrive more often, as
-   replacing conditionals with polymorphism, rule 7, weighs it, and
-   whether the language checks exhaustiveness.
+   a case makes the compiler list every match to update.
+   What tips the balance is whether the language checks
+   exhaustiveness: a visitor pays the same as a closed set when a case
+   is added, and the closed set drops the accept methods. Whether
+   either fits, rather than one class per case, is the question of
+   which side grows that replacing conditionals with polymorphism,
+   rule 7, weighs.
 
 6. Rule. **Let the composition root, written by hand, do a factory's
    wiring work, and a container only where a framework builds its own
