@@ -10,8 +10,9 @@ a project's own written conventions win.
 
 ## Status
 
-Pre-1.0 and growing. Each 0.x release adds skills. The index skill
-lists only skills that exist.
+Version 1. The index skill lists every skill this release holds.
+A 1.x release may add skills, such as Android and Kotlin
+Multiplatform, and its notes name any skill it renames or removes.
 
 ## Installation
 
@@ -120,10 +121,10 @@ quality checks and how to run them.
 
 The pack has not been checked in real projects, with models other
 than the ones a release names, in long sessions that change many
-files, or in languages with no language skill. A release sweep of
-every case in both arms has not run yet; it is planned for v0.21.0.
-Each release's notes carry that release's numbers; this README states
-none.
+files, or in languages with no language skill. v0.22.0 ran every
+case in both arms; a later release reruns the cases whose skills
+changed. Each release's notes carry that release's numbers; this
+README states none.
 
 To report what happened, open an issue with the early-adopter form. A
 useful report says what was asked of the agent, which skill it opened
