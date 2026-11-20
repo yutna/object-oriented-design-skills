@@ -45,7 +45,7 @@
     "@tree-sitter-grammars/tree-sitter-kotlin": "1.1.0",
     "acorn": "8.19.0",
     "acorn-walk": "8.3.5",
-    "markdownlint-cli2": "0.24.0",
+    "markdownlint-cli2": "0.24.1",
     "tree-sitter-c-sharp": "0.23.5",
     "tree-sitter-java": "0.23.5",
     "tree-sitter-javascript": "0.25.0",
