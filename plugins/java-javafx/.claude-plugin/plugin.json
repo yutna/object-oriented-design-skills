@@ -1,6 +1,6 @@
 {
   "name": "object-oriented-design-java-javafx",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Object-oriented design rules kept in JavaFX: view models with screen-shaped properties, domain objects no control binds to, and tasks that leave the scene alone",
   "author": {
     "name": "Yutthana Siphuengchai",

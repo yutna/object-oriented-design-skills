@@ -3,7 +3,7 @@ name: oo-testing-object-oriented-code
 description: Use when writing tests for objects, when tests break although behaviour did not change, or when choosing a mock, stub or fake.
 license: MIT
 metadata:
-  version: 1.0.0
+  version: 1.0.1
   pack: object-oriented-design-skills
 ---
 

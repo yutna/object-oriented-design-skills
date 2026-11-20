@@ -3,7 +3,7 @@ name: oo-reviewing-object-design
 description: Use when reviewing a pull request or a design for object-design problems, or when deciding which review findings must block a merge.
 license: MIT
 metadata:
-  version: 1.0.0
+  version: 1.0.1
   pack: object-oriented-design-skills
 ---
 

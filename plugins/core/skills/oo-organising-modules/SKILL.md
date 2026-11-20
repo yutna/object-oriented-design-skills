@@ -3,7 +3,7 @@ name: oo-organising-modules
 description: Use when grouping classes into packages, when packages depend on each other in a cycle, or choosing between a modular monolith and services.
 license: MIT
 metadata:
-  version: 1.0.0
+  version: 1.0.1
   pack: object-oriented-design-skills
 ---
 

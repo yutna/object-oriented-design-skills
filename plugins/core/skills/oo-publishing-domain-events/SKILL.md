@@ -3,7 +3,7 @@ name: oo-publishing-domain-events
 description: Use when other parts react after a change is saved, when a use case grows a step per reaction, or a message goes out before the change commits.
 license: MIT
 metadata:
-  version: 1.0.0
+  version: 1.0.1
   pack: object-oriented-design-skills
 ---
 

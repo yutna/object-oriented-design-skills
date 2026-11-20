@@ -3,7 +3,7 @@ name: oo-documenting-design-decisions
 description: Use when nobody remembers why a design is this way, when a choice is costly to reverse, or before drawing a picture of the system for a redesign.
 license: MIT
 metadata:
-  version: 1.0.0
+  version: 1.0.1
   pack: object-oriented-design-skills
 ---
 

@@ -3,7 +3,7 @@ name: oo-modeling-lifecycles
 description: Use when deciding which status transitions are allowed, when something cancelled can still go ahead, or a closed one is reopened and edited.
 license: MIT
 metadata:
-  version: 1.0.0
+  version: 1.0.1
   pack: object-oriented-design-skills
 ---
 

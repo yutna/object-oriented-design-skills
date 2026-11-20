@@ -3,7 +3,7 @@ name: oo-bounding-contexts
 description: Use when splitting a large model between teams, choosing how parts with their own models talk, or deciding which parts to build or buy.
 license: MIT
 metadata:
-  version: 1.0.0
+  version: 1.0.1
   pack: object-oriented-design-skills
 ---
 

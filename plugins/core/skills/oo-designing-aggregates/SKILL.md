@@ -3,7 +3,7 @@ name: oo-designing-aggregates
 description: Use when choosing what one transaction keeps consistent, when two people saving at the same time break it, or one load pulls in too much.
 license: MIT
 metadata:
-  version: 1.0.0
+  version: 1.0.1
   pack: object-oriented-design-skills
 ---
 

@@ -3,7 +3,7 @@ name: oo-typescript
 description: Use when plain TypeScript (TS) with no framework mixes up same-shaped types, or needs private fields, an abstract class, a decorator or a discriminated union.
 license: MIT
 metadata:
-  version: 1.0.0
+  version: 1.0.1
   pack: object-oriented-design-skills
 ---
 
