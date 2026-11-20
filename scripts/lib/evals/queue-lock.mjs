@@ -1,15 +1,7 @@
 import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 
-import { RepoError } from '../errors.mjs'
-
-export class QueueLockedError extends RepoError {
-  constructor(holder) {
-    super(
-      'another --run holds the eval queue lock: ' +
-      `${holder.worktree} pid ${holder.pid} since ${holder.startedAt}`)
-  }
-}
+import { QueueLockedError, RepoError } from '../errors.mjs'
 
 export class QueueLock {
   static #FILE = 'oo-eval-queue.lock'

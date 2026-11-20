@@ -18,6 +18,14 @@ export class QueueGateError extends RepoError {
   }
 }
 
+export class QueueLockedError extends RepoError {
+  constructor(holder) {
+    super(
+      'another --run holds the eval queue lock: ' +
+      `${holder.worktree} pid ${holder.pid} since ${holder.startedAt}`)
+  }
+}
+
 export class UnreadableFileError extends RepoError {
   constructor(path) {
     super(`Cannot read file: ${path}`)
