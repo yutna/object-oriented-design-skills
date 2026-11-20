@@ -5,6 +5,6 @@ on:
 permissions: {}
 jobs:
   issue-check:
-    uses: yutna/oss-kit/.github/workflows/issue-check.yml@main
+    uses: yutna/oss-kit/.github/workflows/issue-check.yml@11a95f398a14797d99cfdcb1ffef2c2c8ea355ba # v0.1.0
     permissions:
       issues: write
