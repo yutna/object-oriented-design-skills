@@ -3,7 +3,7 @@ name: oo-speaking-the-domain-language
 description: Use when code words differ from what staff say, when staff talk about something no class models, or two teams mean different things by one word.
 license: MIT
 metadata:
-  version: 1.0.0
+  version: 1.0.1
   pack: object-oriented-design-skills
 ---
 

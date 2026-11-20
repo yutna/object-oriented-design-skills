@@ -3,7 +3,7 @@ name: oo-typescript-angular
 description: Use when Angular code picks providedIn or a component's providers, keeps shared state in a service with RxJS or signals, or chooses an injection token.
 license: MIT
 metadata:
-  version: 1.0.0
+  version: 1.0.1
   pack: object-oriented-design-skills
 ---
 

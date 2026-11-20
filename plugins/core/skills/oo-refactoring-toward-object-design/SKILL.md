@@ -3,7 +3,7 @@ name: oo-refactoring-toward-object-design
 description: Use when restructuring working code without changing what it does, when a refactoring grew too big to finish, or when moving toward a pattern.
 license: MIT
 metadata:
-  version: 1.0.0
+  version: 1.0.1
   pack: object-oriented-design-skills
 ---
 

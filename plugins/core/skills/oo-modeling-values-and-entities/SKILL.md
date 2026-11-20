@@ -3,7 +3,7 @@ name: oo-modeling-values-and-entities
 description: Use when picking value or entity, when ids are raw strings or numbers, when editing one object changes another, or equal objects compare unequal.
 license: MIT
 metadata:
-  version: 1.0.0
+  version: 1.0.1
   pack: object-oriented-design-skills
 ---
 

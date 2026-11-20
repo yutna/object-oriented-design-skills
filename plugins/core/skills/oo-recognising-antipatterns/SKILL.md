@@ -3,7 +3,7 @@ name: oo-recognising-antipatterns
 description: Use when a review names an antipattern such as a god class, lava flow or poltergeist, or when sorting code smells into the rules they break.
 license: MIT
 metadata:
-  version: 1.0.0
+  version: 1.0.1
   pack: object-oriented-design-skills
 ---
 
