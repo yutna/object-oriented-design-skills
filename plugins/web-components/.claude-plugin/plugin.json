@@ -1,6 +1,6 @@
 {
   "name": "object-oriented-design-web-components",
-  "version": "0.22.0",
+  "version": "1.0.0",
   "description": "Object-oriented design rules kept in custom elements: two-step construction at the edge, attributes and properties as one protocol, and events instead of calls",
   "author": {
     "name": "Yutthana Siphuengchai",

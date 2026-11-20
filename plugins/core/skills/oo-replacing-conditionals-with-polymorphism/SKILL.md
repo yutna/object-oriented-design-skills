@@ -3,7 +3,7 @@ name: oo-replacing-conditionals-with-polymorphism
 description: Use when the same switch or if-chain on a type or status repeats across methods, or when choosing subclasses or pattern matching for cases.
 license: MIT
 metadata:
-  version: 0.22.0
+  version: 1.0.0
   pack: object-oriented-design-skills
 ---
 
