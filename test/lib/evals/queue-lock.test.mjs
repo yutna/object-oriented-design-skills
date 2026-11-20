@@ -5,11 +5,8 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 
-import { RepoError } from '../../../scripts/lib/errors.mjs'
-import {
-  QueueLock,
-  QueueLockedError
-} from '../../../scripts/lib/evals/queue-lock.mjs'
+import { QueueLockedError, RepoError } from '../../../scripts/lib/errors.mjs'
+import { QueueLock } from '../../../scripts/lib/evals/queue-lock.mjs'
 import { Report } from '../../../scripts/lib/report.mjs'
 
 class FakeRepository {
