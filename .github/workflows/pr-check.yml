@@ -6,7 +6,7 @@ on:
 permissions: {}
 jobs:
   pr-check:
-    uses: yutna/oss-kit/.github/workflows/pr-check.yml@main
+    uses: yutna/oss-kit/.github/workflows/pr-check.yml@11a95f398a14797d99cfdcb1ffef2c2c8ea355ba # v0.1.0
     permissions:
       contents: read
       pull-requests: write
