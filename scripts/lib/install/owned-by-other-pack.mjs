@@ -15,6 +15,6 @@ export class OwnedByOtherPack extends Ownership {
   }
 
   decide(options) {
-    return new Conflict(this.#pack)
+    return new Conflict(`belongs to ${this.#pack}; remove it first`)
   }
 }
